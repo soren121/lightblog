@@ -1,5 +1,5 @@
 /* 
-		A Chung Story
+		LightBlog
 		Stylesheet - April 28, 2008
 		Copyright 2008 soren121.
 */
@@ -115,6 +115,11 @@ img.headerimg {
 	color: #000;
 	font-size: 0.9em;
 	text-decoration: none;
+}
+
+#sidebar img.rssi {
+	border: 0;
+	vertical-align: middle;
 }
 
 #sidebar a:hover {
