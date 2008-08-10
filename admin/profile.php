@@ -56,6 +56,7 @@
 	Email: <?php echo $_SESSION['email']; ?><br />
 	Real Name: <?php echo $_SESSION['realname']; ?><br />
 	Rank: <?php if($_SESSION['uservip'] == 1) { echo'Admin'; } else { echo 'Normal'; } ?></td></tr></table><br />
+		<?php if(isset($_SESSION['openid_url'])) { echo ''; } else { echo '
 		<h3>Update password</h3><br />
 			<form action="" method="post">
       		<table>
@@ -70,6 +71,7 @@
       		<tr><td>Confirm email: </td><td colspan="2"><input name="cnfemail" type="text" /></td></tr>
       		<tr><td>&nbsp;</td><td colspan="2"><input name="updemail" type="submit" value="Update"/></td></tr>
     		</table></form>
+			'; ?>
 	</div>
 </div>
 </body>
