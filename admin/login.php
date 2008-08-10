@@ -64,8 +64,8 @@ if($_GET['openid_mode'] == "id_res") {
 	$openid->SetIdentity($_GET['openid_identity']);
 	$openid_validation = $openid->ValidateWithServer();
 	if($openid_validation == "true") {
-		$_SESSION['username'] = $_GET['openid.sreg.fullname'];
-		$_SESSION['email'] = $_GET['openid.sreg.email'];
+		$_SESSION['username'] = $openid->GetAttribute('fullname');
+		$_SESSION['email'] = $openid->GetAttribute('email');
 		$_SESSION['uservip'] = "0";
 		header('Location: dashboard.php');
 	}
