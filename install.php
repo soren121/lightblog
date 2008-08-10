@@ -202,7 +202,7 @@ img.headerimg {
 	elseif($step0 == "1" or $step0 == NULL) { echo '
 	<h3>Welcome to LightBlog!</h3>
 	<br />
-	<p>Welcome to the LightBlog installer. Click the Install button and we\'ll post started!</p>
+	<p>Welcome to the LightBlog installer. Click the Install button and we\'ll get started!</p>
 	<br />
 	<form action="" method="post">
 	<input name="step0" type="submit" value="Install"/>
