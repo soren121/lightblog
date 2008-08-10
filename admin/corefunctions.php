@@ -10,6 +10,6 @@ $stselect = sqlite_query($handle, "SELECT * FROM coreinfo") or die("SQLite query
 		$cmsinfo[$row['variable']] = stripslashes(stripslashes($row['value']));
 	}
 	
-$grav_default="http://mschung.110mb.com/admin/defaultg.gif";
+$grav_default=$site_url."/gravatar.gif";
 $gravatar = "http://www.gravatar.com/avatar.php?gravatar_id=".md5($_SESSION['email'])."&amp;default=".urlencode($grav_default)."&amp;size=60";
 ?>
