@@ -66,6 +66,7 @@ if($_GET['openid_mode'] == "id_res") {
 	if($openid_validation == "true") {
 		$_SESSION['username'] = $openid->GetAttribute('fullname');
 		$_SESSION['email'] = $openid->GetAttribute('email');
+		$_SESSION['realname'] = $openid->GetAttribute('fullname');
 		$_SESSION['uservip'] = "0";
 		header('Location: dashboard.php');
 	}
