@@ -76,7 +76,7 @@ class SimpleOpenID{
 	
 	function SimpleOpenID(){
 		if (!function_exists('curl_exec')) {
-			die('Error: Class SimpleOpenID requires curl extension to work');
+			die('OpenID: OpenID requires cURL in order to work properly. Please inform the webmaster.');
 		}
 	}
 	function SetOpenIDServer($a){
@@ -134,7 +134,7 @@ class SimpleOpenID{
 	}
 
 	function ErrorStore($code, $desc = null){
-		$errs['OPENID_NOSERVERSFOUND'] = 'Cannot find OpenID Server TAG on Identity page.';
+		$errs['OPENID_NOSERVERSFOUND'] = 'OpenID: Cannot find OpenID Server TAG on Identity page.';
 		if ($desc == null){
 			$desc = $errs[$code];
 		}
