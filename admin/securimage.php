@@ -149,7 +149,7 @@ class Securimage {
    *
    * @var mixed
    */
-  var $gd_font_file = 'fonts/bubblebath.gdf';
+  var $gd_font_file = '1';
 
   /**
    * The approximate size of the font in pixels.<br />
