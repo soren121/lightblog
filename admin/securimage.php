@@ -167,7 +167,7 @@ class Securimage {
    *
    * @var string
    */
-  var $ttf_file = "fonts/01-01-00.ttf";
+  var $ttf_file = "fonts/elephant.ttf";
 
   /**
    * The font size.<br />
