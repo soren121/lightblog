@@ -71,7 +71,7 @@
       		<tr><td>Confirm email: </td><td colspan="2"><input name="cnfemail" type="text" /></td></tr>
       		<tr><td>&nbsp;</td><td colspan="2"><input name="updemail" type="submit" value="Update"/></td></tr>
     		</table></form>
-			'; ?>
+			'; } ?>
 	</div>
 </div>
 </body>
