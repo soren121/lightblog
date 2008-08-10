@@ -27,8 +27,8 @@ if(isset($_POST['step1'])) {
 }
 if(isset($_POST['step2'])) {
 	$password = md5($_POST['password']);
+	echo $_POST['password'];
 	$username = addslashes(sqlite_escape_string($_POST['username']));
-    $password = md5($r['pass']);
     $email = addslashes(sqlite_escape_string($_POST['email']));
     $realname = addslashes(sqlite_escape_string($_POST['realname']));
 	$ip = addslashes(sqlite_escape_string($_SERVER['REMOTE_ADDR']));

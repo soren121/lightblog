@@ -88,7 +88,7 @@ if(isset($_GET['logout'])) {
 
 <body>
 <div id="registerbox">
-<h2 style="padding-top: 5px;"><?php echo $cmsinfo['site_title'] ?></h2><br />
+<h2 style="padding-top: 5px;"><?php echo $site_name; ?></h2><br />
 <h3 style="padding-bottom: 10px;">Login</h3>
 <?php
 
@@ -98,10 +98,10 @@ if(isset($_GET['logout'])) {
     <tr><td>Username:</td><td><input name="username" type="text" size="16" value="'.$_GET['username'].'" /></td></tr>
     <tr><td>Password:</td><td><input name="password" type="password" size="16" /></td></tr>
     <tr><td colspan="2"><input name="proclogin" type="submit" value="Login"/></td></tr>
-    <tr><td colspan="2">[<a href="register.php">Register</a>]</td></tr>
-    <tr><td colspan="2">[<a href="forgotpass.php">Forgot password?</a>]<br /></td></tr>
-	<tr><td>OpenID:</td><td><input name="openid_url" type="text" /></td></tr>
+    <tr><td>OpenID:</td><td><input name="openid_url" type="text" /></td></tr>
     <tr><td colspan="2"><input name="openid_submit" type="submit" value="Login"/></td></tr>	
+    <tr><td colspan="2">[<a href="register.php">Register</a>]</td></tr>
+    <tr><td colspan="2">[<a href="forgotpass.php">Forgot password?</a>]</td></tr>
     </table>
     </form>
     ';
