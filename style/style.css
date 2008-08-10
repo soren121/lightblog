@@ -1,0 +1,117 @@
+/* 
+		A Chung Story
+		Stylesheet - April 28, 2008
+		Copyright 2008 soren121.
+*/
+
+body {
+	background: #414141;
+	font-family: Verdana,Arial,Sans;
+}
+
+#container {
+	width: 670px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+}
+
+#header {
+	background: url('headbar.png') #252525;
+	width: 670px;
+	height: 30px;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+	float: left;
+}
+
+img.headerimg {
+	margin-left: 46px;
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+
+a.rss {
+	color: #E7731B;
+}
+
+img.rssi {
+	margin-left: 4px;
+	border: 0;
+}
+
+#content {
+	float: right;
+	background: #fff;
+	color: #252525;
+	margin: 0 0 0 0;
+	padding-top: 10px;
+	padding-left: 7px;
+	width: 503px;
+	display: inline;
+}
+
+#content .post-title {
+	color: #252525;
+	text-decoration: none;
+	font-size: 1.2em;
+	font-family: "Trebutchet MS",Verdana,Sans;
+}
+
+#content a:hover .post-title {
+	text-decoration: none;
+}
+
+#content span.date {
+	font-size: 0.8em;
+	margin-right: 15px;
+}
+
+#content span.author {
+	font-size: 0.8em;
+	margin-right: 15px;
+}
+
+#content span.commentnum {
+	font-size: 0.8em;
+}
+
+#content p.post {
+	padding: 5px;
+	margin-right: 10px;
+	border: 1px solid #F0A21B;
+}
+
+#sidebar {
+	background: #505050;
+	color: #fff;
+	margin: 0 0 0 0;
+	padding-top: 0px;
+	border-bottom: 3px solid #074CA4;
+	width: 160px;
+	float: left;
+}
+
+#sidebar li {
+	color: #fff;
+	padding-top: 3px;
+	font-size: 0.9em;
+	list-style-type: square;
+}
+
+#sidebar a {
+	color: #fff;
+	font-size: 0.9em;
+	text-decoration: none;
+}
+
+#sidebar a:hover {
+	color: #5CA7DE;
+} 
+
+#sidebar li:hover {
+	color: #5CA7DE;
+	font-weight: bold;
+}
+	
+	
