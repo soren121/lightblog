@@ -13,20 +13,25 @@ if(isset($_POST['proclogin'])) {
 	while($logindata = sqlite_fetch_object($result15)) {
 		// check if username and password are correct
 		if($logindata->username == $username and $logindata->password == $password) {
-			// send username, email, and first name to session
-			$_SESSION['username'] = $username;
-			$_SESSION['email'] = $logindata->email;
-			$_SESSION['realname'] = $logindata->realname;
-			// send user rank to session
-			if($logindata->vip == "1") {
-				$_SESSION['uservip'] = "1";
-				$_SESSION['usernormal'] = "0";
+			include("securimage.php");
+			$img = new Securimage();
+			$valid = $img->check($_POST['code']);
+			if($valid == true) {
+				// send username, email, and first name to session
+				$_SESSION['username'] = $username;
+				$_SESSION['email'] = $logindata->email;
+				$_SESSION['realname'] = $logindata->realname;
+				// send user rank to session
+				if($logindata->vip == "1") {
+					$_SESSION['uservip'] = "1";
+					$_SESSION['usernormal'] = "0";
+				}
+				else { $_SESSION['usernormal'] = "1";
+					$_SESSION['uservip'] = "0"; }
+					
+				// send user to the dashboard	    
+				header('Location: dashboard.php');
 			}
-			else { $_SESSION['usernormal'] = "1";
-				$_SESSION['uservip'] = "0"; }
-				
-			// send user to the dashboard	    
-			header('Location: dashboard.php');
 		}
 		else { echo 'Incorrect username or password!'; }	
    }
@@ -97,6 +102,8 @@ if(isset($_GET['logout'])) {
     <table style="margin-left: auto; margin-right: auto;">
     <tr><td>Username:</td><td><input name="username" type="text" size="16" value="'.$_GET['username'].'" /></td></tr>
     <tr><td>Password:</td><td><input name="password" type="password" size="16" /></td></tr>
+	<tr><td>Captcha:</td><td><img src="securimage_show.php?sid=<?php echo md5(uniqid(time())); ?>"></td></tr>
+	<tr><td>Enter text here:</td><td><input type="text" name="code" /></td></tr>
     <tr><td colspan="2"><input name="proclogin" type="submit" value="Login"/></td></tr>
     <tr><td>OpenID:</td><td><input name="openid_url" type="text" /></td></tr>
     <tr><td colspan="2"><input name="openid_submit" type="submit" value="Login"/></td></tr>	
