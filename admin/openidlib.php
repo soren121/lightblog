@@ -295,6 +295,10 @@ class SimpleOpenID{
 		}
 	}
 	
+	function GetAttribute($val) {
+	    return $_GET["openid_sreg_".$val];
+	}
+	
 	function ValidateWithServer(){
 		$params = array(
 			'openid.assoc_handle' => urlencode($_GET['openid_assoc_handle']),
