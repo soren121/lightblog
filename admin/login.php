@@ -13,61 +13,65 @@ if(isset($_POST['proclogin'])) {
 	while($logindata = sqlite_fetch_object($result15)) {
 		// check if username and password are correct
 		if($logindata->username == $username and $logindata->password == $password) {
-			include("securimage.php");
-			$img = new Securimage();
-			$valid = $img->check($_POST['code']);
-			if($valid == true) {
-				// send username, email, and first name to session
-				$_SESSION['username'] = $username;
-				$_SESSION['email'] = $logindata->email;
-				$_SESSION['realname'] = $logindata->realname;
-				// send user rank to session
-				if($logindata->vip == "1") {
-					$_SESSION['uservip'] = "1";
-					$_SESSION['usernormal'] = "0";
-				}
-				else { $_SESSION['usernormal'] = "1";
-					$_SESSION['uservip'] = "0"; }
-					
-				// send user to the dashboard	    
-				header('Location: dashboard.php');
+			// send username, email, and first name to session
+			$_SESSION['username'] = $username;
+			$_SESSION['email'] = $logindata->email;
+			$_SESSION['realname'] = $logindata->realname;
+			// send user rank to session
+			if($logindata->vip == "1") {
+				$_SESSION['uservip'] = "1";
+				$_SESSION['usernormal'] = "0";
 			}
-			else {
-				echo "Incorrect CAPTCHA. Please try again.";
-			}
+			else { $_SESSION['usernormal'] = "1";
+				$_SESSION['uservip'] = "0"; }
+				
+			// send user to the dashboard	    
+			header('Location: dashboard.php');
 		}
 		else { echo 'Incorrect username or password!'; }	
    }
 }
 
-// Process OpenID login
+// Process OpenID login (if used)
 if(isset($_POST['openid_submit'])) {
+	// load library file
 	require('openidlib.php');
+	// start class
 	$openid = new SimpleOpenID;
+	// set prefrences
 	$openid->SetIdentity($_POST['openid_url']);
 	$openid->SetTrustRoot($site_url);
 	$openid->SetRequiredFields(array('email','fullname'));
+	// find the OpenID server given
 	if($openid->GetOpenIDServer()) {
+		// set URL to come back to
 		$openid->SetApprovedURL($site_url.'login.php');
 		$_SESSION['openid_url'] = $_POST['openid_url'];
+		// redirect to the user's provider
 		$openid->Redirect();
 	}
 	else {
 		$error = $openid->GetError();
+		echo $error;
 	}
 }
 
-// Validate and login the user (with OpenID)
+// Validate and login the user with OpenID
 if($_GET['openid_mode'] == "id_res") {
+	// load library file
 	require('openidlib.php');
+	// start class
 	$openid = new SimpleOpenID;
 	$openid->SetIdentity($_GET['openid_identity']);
+	// validate OpenID URL with server
 	$openid_validation = $openid->ValidateWithServer();
 	if($openid_validation == "true") {
+		// send name and email to session
 		$_SESSION['username'] = $openid->GetAttribute('fullname');
 		$_SESSION['email'] = $openid->GetAttribute('email');
 		$_SESSION['realname'] = $openid->GetAttribute('fullname');
 		$_SESSION['uservip'] = "0";
+		// redirect to the dashboard
 		header('Location: dashboard.php');
 	}
 	else {
@@ -105,8 +109,6 @@ if(isset($_GET['logout'])) {
     <table style="margin-left: auto; margin-right: auto;">
     <tr><td>Username:</td><td><input name="username" type="text" size="16" value="'.$_GET['username'].'" /></td></tr>
     <tr><td>Password:</td><td><input name="password" type="password" size="16" /></td></tr>
-	<tr><td>Security image:</td><td><img src="securimage_show.php?sid=<?php echo md5(uniqid(time())); ?>"alt=""/></td></tr>
-	<tr><td>Verify image:</td><td><input type="text" name="code" size="4"/></td></tr>
     <tr><td colspan="2"><input name="proclogin" type="submit" value="Login"/></td></tr>
     <tr><td>OpenID:</td><td><input name="openid_url" type="text" /></td></tr>
     <tr><td colspan="2"><input name="openid_submit" type="submit" value="Login"/></td></tr>	
