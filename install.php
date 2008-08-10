@@ -1,8 +1,8 @@
 <?php session_start();define("Light", true);
-if(isset($_GET['step0'])) { 
+if(isset($_POST['step0'])) { 
 	$step0 = "0"; $step1 = "1"; 
 }
-if(isset($_GET['step1'])) { 
+if(isset($_POST['step1'])) { 
 	$dbrand = mt_rand(1000000,10000000);
 	$dbstr = "admin/".$dbrand.".db";
 	$cdb = fopen($dbstr, 'w') or die("Unable to create database."); 
@@ -25,18 +25,18 @@ if(isset($_GET['step1'])) {
 	$_SESSION['465650ad50650760ab'] = $dbstr;
 	$step0 = "0"; $step1 = "0"; $step2 = "1"; 
 }
-if(isset($_GET['step2'])) {
-	$password = md5($_GET['password']);
-	$username = addslashes(sqlite_escape_string($_GET['username']));
+if(isset($_POST['step2'])) {
+	$password = md5($_POST['password']);
+	$username = addslashes(sqlite_escape_string($_POST['username']));
     $password = md5($r['pass']);
-    $email = addslashes(sqlite_escape_string($_GET['email']));
-    $realname = addslashes(sqlite_escape_string($_GET['realname']));
+    $email = addslashes(sqlite_escape_string($_POST['email']));
+    $realname = addslashes(sqlite_escape_string($_POST['realname']));
 	$ip = addslashes(sqlite_escape_string($_SERVER['REMOTE_ADDR']));
 	$dbhle2 = sqlite_open(dirname(__FILE__)."/".$_SESSION['465650ad50650760ab']) or die("Could not open database");
 	sqlite_query($dbhle2, "INSERT INTO users (username,password,email,realname,vip,ip) VALUES('".$username."','".$password."','".$email."','".$realname."',1,'".$ip."')");
 	sqlite_close($dbhle2);
 	$ccp2 = fopen("config.php", 'a') or die("Unable to write to configuration file.");
-	$sitename = addslashes(sqlite_escape_string($_GET['sitename']));
+	$sitename = addslashes(sqlite_escape_string($_POST['sitename']));
 	$config2 = '// site data
 $site_name = "'.$sitename.'";
 $site_url = explode(\'/\', $_SERVER[\'SERVER_NAME\'].$_SERVER[\'REQUEST_URI\']);
@@ -48,7 +48,7 @@ $site_url = explode(\'/\', $_SERVER[\'SERVER_NAME\'].$_SERVER[\'REQUEST_URI\']);
 	session_destroy();
 	$step0 = "0"; $step1 = "0"; $step2 = "0"; $step3 = "1";
 }
-if(isset($_GET['step3'])) {
+if(isset($_POST['step3'])) {
 	header('Location: index.php');
 }
 
@@ -166,7 +166,7 @@ img.headerimg {
 	<br />
 	<p>--soren121, LightBlog Dev</p>
 	<br />
-	<form action="" method="get">
+	<form action="" method="post">
 	<p><input name="step3" type="submit" value="Finish"/></p>
 	</table>
 	</form>
@@ -177,7 +177,7 @@ img.headerimg {
 	<br />
 	<p>You\'re almost done! All we need now is your account data and the name of your site!</p>
 	<br />
-	<form action="" method="get">
+	<form action="" method="post">
 	<table style="margin-left: auto; margin-right: auto;">
 	<tr><td>Site Name:</td><td><input name="sitename" type="text" size="36" /></td></tr>
 	<tr><td>Username:</td><td><input name="username" type="text" size="16" /></td></tr>
@@ -194,7 +194,7 @@ img.headerimg {
 	<br />
 	<p>Please CHMOD the admin directory and root directory to 777 before continuing.\nDon\'t worry, you\'ll be able to change it back later.</p>
 	<br />
-	<form action="" method="get">
+	<form action="" method="post">
 	<p><input name="step1" type="submit" value="Create database"/></p>
 	</form>
 	<br />'; }
@@ -202,9 +202,9 @@ img.headerimg {
 	elseif($step0 == "1" or $step0 == NULL) { echo '
 	<h3>Welcome to LightBlog!</h3>
 	<br />
-	<p>Welcome to the LightBlog installer. Click the Install button and we\'ll get started!</p>
+	<p>Welcome to the LightBlog installer. Click the Install button and we\'ll post started!</p>
 	<br />
-	<form action="" method="get">
+	<form action="" method="post">
 	<input name="step0" type="submit" value="Install"/>
 	</form>
 	<br />'; }
