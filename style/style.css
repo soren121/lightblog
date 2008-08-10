@@ -120,6 +120,7 @@ img.headerimg {
 #sidebar img.rssi {
 	border: 0;
 	vertical-align: middle;
+	padding-left: 3px;
 }
 
 #sidebar a:hover {
