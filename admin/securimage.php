@@ -86,14 +86,14 @@ class Securimage {
    *
    * @var int
    */
-  var $image_width = 175;
+  var $image_width = 115;
 
   /**
    * The desired width of the CAPTCHA image.
    *
    * @var int
    */
-  var $image_height = 45;
+  var $image_height = 35;
 
   /**
    * The image format for output.<br />
@@ -108,7 +108,7 @@ class Securimage {
    *
    * @var int
    */
-  var $code_length = 4;
+  var $code_length = 3;
 
   /**
    * The character set for individual characters in the image.<br />
@@ -149,7 +149,7 @@ class Securimage {
    *
    * @var mixed
    */
-  var $gd_font_file = 'gdfonts/bubblebath.gdf';
+  var $gd_font_file = 'fonts/bubblebath.gdf';
 
   /**
    * The approximate size of the font in pixels.<br />
@@ -158,7 +158,7 @@ class Securimage {
    *
    * @var int
    */
-  var $gd_font_size = 20;
+  var $gd_font_size = 18;
 
   // Note: These font options below do not apply if you set $use_gd_font to true with the exception of $text_color
 
@@ -167,7 +167,7 @@ class Securimage {
    *
    * @var string
    */
-  var $ttf_file = "./elephant.ttf";
+  var $ttf_file = "fonts/01-01-00.ttf";
 
   /**
    * The font size.<br />
@@ -175,7 +175,7 @@ class Securimage {
    *
    * @var int
    */
-  var $font_size = 24;
+  var $font_size = 18;
 
   /**
    * The minimum angle in degrees, with 0 degrees being left-to-right reading text.<br />

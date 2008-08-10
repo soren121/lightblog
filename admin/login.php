@@ -32,6 +32,9 @@ if(isset($_POST['proclogin'])) {
 				// send user to the dashboard	    
 				header('Location: dashboard.php');
 			}
+			else {
+				echo "Incorrect CAPTCHA. Please try again.";
+			}
 		}
 		else { echo 'Incorrect username or password!'; }	
    }
@@ -90,11 +93,10 @@ if(isset($_GET['logout'])) {
 <title><?php echo $site_name; ?> - Login</title>
 <link rel="stylesheet" type="text/css" href="style/regstyle.css" />
 </head>
-
 <body>
 <div id="registerbox">
-<h2 style="padding-top: 5px;"><?php echo $site_name; ?></h2><br />
-<h3 style="padding-bottom: 10px;">Login</h3>
+<h2 style="padding-top: 5px;"><?php echo $site_name; ?></h2>
+<h3 style="padding-bottom: 5px;">Login</h3>
 <?php
 
     echo '
@@ -102,8 +104,8 @@ if(isset($_GET['logout'])) {
     <table style="margin-left: auto; margin-right: auto;">
     <tr><td>Username:</td><td><input name="username" type="text" size="16" value="'.$_GET['username'].'" /></td></tr>
     <tr><td>Password:</td><td><input name="password" type="password" size="16" /></td></tr>
-	<tr><td>Captcha:</td><td><img src="securimage_show.php?sid=<?php echo md5(uniqid(time())); ?>"></td></tr>
-	<tr><td>Enter text here:</td><td><input type="text" name="code" /></td></tr>
+	<tr><td>Security image:</td><td><img src="securimage_show.php?sid=<?php echo md5(uniqid(time())); ?>"alt=""/></td></tr>
+	<tr><td>Verify image:</td><td><input type="text" name="code" size="4"/></td></tr>
     <tr><td colspan="2"><input name="proclogin" type="submit" value="Login"/></td></tr>
     <tr><td>OpenID:</td><td><input name="openid_url" type="text" /></td></tr>
     <tr><td colspan="2"><input name="openid_submit" type="submit" value="Login"/></td></tr>	
