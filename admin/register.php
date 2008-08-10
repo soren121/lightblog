@@ -46,12 +46,12 @@ if(!$settings['registration']=='checked') {
       $error['parse'] = false;
     }
     if(!$error['username']) {
-    if(strlen($r['user'])<4) {
+    if(!isset($r['user']{4})) {
       echo '<p style="font-color: #cc0000;">Error! Username MUST be 4 characters or longer!</p>';
       $error['username'] = true;
       $error['parse'] = false;
     }
-    if(strlen($r['pass'])<6) {
+    if(!isset($r['pass']{6})) {
       echo '<p style="font-color: #cc0000;">Error! Password must be 6 characters or longer!</p>';
       $error['password'] = true;
       $error['parse'] = false;
