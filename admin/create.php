@@ -36,8 +36,14 @@
 	 	$text = stripslashes($text1);
 	 	$date = time();
 	 	$author = $_SESSION['realname'];
-	 	sqlite_query($handle, "INSERT INTO ".$_GET['type']."s (title,post,date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+		if($_GET['type'] == "post") {
+	 	sqlite_query($handle, "INSERT INTO posts (title,post,date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
       	echo "<p>Your post has been submitted. Thank you.</p>";
+		}
+		elseif($_GET['type'] == "page") {
+		sqlite_query($handle, "INSERT INTO pages (title,page) VALUES('".$title."','".$text."')") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+      	echo "<p>Your page has been submitted. Thank you.</p>";
+		}
       }
 	 if($_SESSION['uservip'] == "0" or !(isset($_SESSION['uservip']))) { echo'Hey, you shouldn\'t even be in here! <a href="javascript:history.go(-2)">Go back to where you came from.</a>'; }
 	 if($_SESSION['uservip'] == "1") {	 	
