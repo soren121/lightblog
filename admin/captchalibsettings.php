@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once('class.simplecaptcha.php');
+require_once('captchalib.php');
 
 /*
 *****CONFIGURATION STARTS*****
