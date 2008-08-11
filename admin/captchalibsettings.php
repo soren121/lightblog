@@ -22,7 +22,7 @@ $config['Width']=100;
 $config['Font_Size']=23;
 
 //text font style
-$config['Font']="BRADHITC.TTF";
+$config['Font']="includes/captchafont.ttf";
 
 //text angle to the left
 $config['TextMinimumAngle']=15;
