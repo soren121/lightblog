@@ -1,5 +1,9 @@
 <?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
 $result01 = sqlite_query($handle, "SELECT * FROM users ORDER BY id desc") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+if(isset($_POST['promote'])) {
+	$pvalue = explode(" ", $_POST['promote']);
+	sqlite_query($handle, "UPDATE users SET vip=1 WHERE id='".$pvalue[1]."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+}
 ?>
 <!--	LightBlog v0.9.0
 		Copyright 2008 soren121. Some Rights Reserved.
@@ -42,17 +46,20 @@ $result01 = sqlite_query($handle, "SELECT * FROM users ORDER BY id desc") or die
 			echo '<tr>';
 			// output ID
 			echo '<td class="postlist">'.$user->id.'</td>';
-			// output title
-			echo '<td class="postlist">'.$user->title.'</td>';
-			// output author name & date
-			echo '<td class="postlist">'.$user->author.'</td>';
-			echo '<td class="postlist">'.date("n/j/Y", $timestamp).'</td>';
-			// output edit & delete links
-			echo '<td class="postlist"><a style="text-align: center;" href="edit.php?id='.$user->id.'&amp;type='.$_GET['type'].'">Edit</a></td>';
-			echo '<td class="postlist"><a style="text-align: center;" href="delete.php?id='.$user->id.'&amp;type='.$_GET['type'].'">Delete</a></td>';
+			// output username
+			echo '<td class="postlist">'.$user->username.'</td>';
+			// output email and vip status
+			echo '<td class="postlist">'.$user->email.'</td>';
+			echo '<td class="postlist">'.$user->vip.'</td>';
+			// output promote, ban & delete links
+			echo '<td class="postlist"><a style="text-align: center;" onClick="promote()">Promote</a></td>';
+			echo '<form name="promoteform" action="" method="post"><input name="promote" type="hidden" value="p '.$user->id.'" /></form>';
+			//echo '<td class="postlist"><a style="text-align: center;" onClick="ban()">Ban</a></td>';
+			//echo '<form name="banform" action="" method="post"><input name="ban" type="hidden" value="b '.$user->id.'" /></form>';
+			echo '<td class="postlist"><a style="text-align: center;" href="delete.php?type=user&id='.$user->id.'">Delete</a></td>';
 			// end row
 			echo '</tr>';
-			// this code is repeated for every post in your database
+			// this code is repeated for every user in your database
 		}
 	echo '</table>';
 	}
