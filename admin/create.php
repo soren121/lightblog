@@ -30,10 +30,8 @@
 	 <?php 
 	 if(isset($_POST['publish'])) {
 	 	
-	 	$title1 = $_POST['title'];
-	 	$title = stripslashes($title1);
-	 	$text1 = $_POST['text'];
-	 	$text = stripslashes($text1);
+	 	$title = clean($_POST['title']);
+	 	$text = clean($_POST['text']);
 	 	$date = time();
 	 	$author = $_SESSION['realname'];
 		if($_GET['type'] == "post") {
@@ -52,7 +50,7 @@
   <form action="" method="post">
     <table>
       <tr><td>Title</td><td><input name="title" type="text" maxlength="39" /></td></tr>
-      <tr><td>Post:</td><td><textarea name="text" cols="30" rows="10"></textarea></td></tr>
+      <tr><td>Message:</td><td><textarea name="text" cols="30" rows="10"></textarea></td></tr>
       <tr><td colspan="2"><input name="publish" type="submit" value="Publish"/></td></tr>
     </table>
   </form>'; } ?>
