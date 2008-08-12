@@ -23,6 +23,9 @@ $result11 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
 	<!--[if IE]>
 	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
+	<script type="text/javascript" src="includes/jquery.js"></script>
+	<script type="text/javascript" src="includes/jquery-ui.js"></script>
+	<script type="text/javascript">$(document).ready(function(){ $(".jqresize").resizable(); });</script>
 </head>
 
 <body>
@@ -42,8 +45,8 @@ $result11 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
 	 	// submit the changes to the database
 	 	sqlite_query($handle, "UPDATE ".$_GET['type']."s SET title=\"".$title."\" , ".$_GET['type']."=\"".$text."\" WHERE id='".$_GET['id']."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
 	 	// update the textarea with the new changes
-	 	$pasttitle = $title1;
-	 	$pastpost = $text1;
+	 	$pasttitle = $title;
+	 	$pastpost = $text;
       	echo "<p>Your post has been edited. Thank you.</p>";
       }
 	 if($_SESSION['uservip'] == "0" or !(isset($_SESSION['uservip']))) { echo'Hey, you shouldn\'t even be in here! <a href="javascript:history.go(-2)">Go back to where you came from.</a>'; }
@@ -53,7 +56,7 @@ $result11 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
   <form action="" method="post">
     <table>
       <tr><td>Title</td><td><input name="title" type="text" maxlength="39" value="'.$pasttitle.'" /></td></tr>
-      <tr><td>Post:</td><td><textarea name="text" cols="30" rows="10">'.$pastpost.'</textarea></td></tr>
+      <tr><td>Post:</td><td><textarea class="jqresize" name="text" cols="30" rows="10">'.$pastpost.'</textarea></td></tr>
       <tr><td colspan="2"><input name="publish" type="submit" value="Save"/></td></tr>
     </table>
   </form>'; } ?>

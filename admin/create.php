@@ -16,6 +16,10 @@
 	<!--[if IE]>
 	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
+	<script type="text/javascript" src="includes/jquery.js"></script>
+	<script type="text/javascript" src="includes/jquery-ui.js"></script>
+	<script type="text/javascript">$(document).ready(function(){ $(".jqresize").resizable(); });
+</script>
 </head>
 
 <body>
@@ -50,7 +54,7 @@
   <form action="" method="post">
     <table>
       <tr><td>Title</td><td><input name="title" type="text" maxlength="39" /></td></tr>
-      <tr><td>Message:</td><td><textarea name="text" cols="30" rows="10"></textarea></td></tr>
+      <tr><td>Message:</td><td><textarea class="jqresize" name="text" cols="30" rows="10"></textarea></td></tr>
       <tr><td colspan="2"><input name="publish" type="submit" value="Publish"/></td></tr>
     </table>
   </form>'; } ?>
