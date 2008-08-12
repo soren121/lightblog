@@ -7,10 +7,10 @@ require_once('captchalib.php');
 *****CONFIGURATION STARTS*****
 */
 //Background Image
-$config['BackgroundImage'] = "white.png";
+$config['BackgroundImage'] = "includes/white.png";
 
 //Background Color- HEX
-$config['BackgroundColor'] = "FFFC00";
+$config['BackgroundColor'] = "173D7F";
 
 //image height - same as background image
 $config['Height']=30;
@@ -19,7 +19,7 @@ $config['Height']=30;
 $config['Width']=100;
 
 //text font size
-$config['Font_Size']=23;
+$config['Font_Size']=24;
 
 //text font style
 $config['Font']="includes/captchafont.ttf";
@@ -31,7 +31,7 @@ $config['TextMinimumAngle']=15;
 $config['TextMaximumAngle']=45;
 
 //Text Color - HEX
-$config['TextColor']='000000';
+$config['TextColor']='FFFFFF';
 
 //Number of Captcha Code Character
 $config['TextLength']=6;
