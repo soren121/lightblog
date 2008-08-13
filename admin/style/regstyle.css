@@ -22,3 +22,5 @@ body {
 	border: 1px solid #D1D1D1;
 	font-size: 0.8em;
 }
+
+.ui-tabs-hide { display: none; }
