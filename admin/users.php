@@ -1,8 +1,7 @@
 <?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
 $result01 = sqlite_query($handle, "SELECT * FROM users ORDER BY id desc") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
 if(isset($_POST['promote'])) {
-	$pvalue = explode(" ", $_POST['promote']);
-	sqlite_query($handle, "UPDATE users SET vip=1 WHERE id='".$pvalue[1]."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+	sqlite_query($handle, "UPDATE users SET vip=1 WHERE id='".$_POST['p']."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
 }
 ?>
 <!--	LightBlog v0.9.0
@@ -52,10 +51,8 @@ if(isset($_POST['promote'])) {
 			echo '<td class="postlist">'.$user->email.'</td>';
 			echo '<td class="postlist">'.$user->vip.'</td>';
 			// output promote, ban & delete links
-			echo '<td class="postlist"><a style="text-align: center;" onClick="promote()">Promote</a></td>';
-			echo '<form name="promoteform" action="" method="post"><input name="promote" type="hidden" value="p '.$user->id.'" /></form>';
-			//echo '<td class="postlist"><a style="text-align: center;" onClick="ban()">Ban</a></td>';
-			//echo '<form name="banform" action="" method="post"><input name="ban" type="hidden" value="b '.$user->id.'" /></form>';
+			echo '<td class="postlist"><form action="" method="post"><input name="p" value="p'.$user->id.'"type="hidden"/><input name="promote" type="button" value="Promote" /></form></td>';
+			//echo '<td class="postlist"><form action="" method="post"><input name="b" value="p'.$user->id.'"type="hidden"/><input name="ban" type="button" value="Ban" /></form></td>';
 			echo '<td class="postlist"><a style="text-align: center;" href="delete.php?type=user&id='.$user->id.'">Delete</a></td>';
 			// end row
 			echo '</tr>';

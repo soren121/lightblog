@@ -98,24 +98,27 @@ if(isset($_GET['logout'])) {
 <title><?php echo $site_name; ?> - Login</title>
 <link rel="stylesheet" type="text/css" href="style/regstyle.css" />
 </head>
+
 <body>
 <div id="registerbox">
 <h2 style="padding-top: 5px;"><?php echo $site_name; ?></h2>
 <h3 style="padding-bottom: 5px;">Login</h3>
-<?php
 
-    echo '
-    <form action="" method="post">
+	<form action="" method="post">
     <table style="margin-left: auto; margin-right: auto;">
-    <tr><td>Username:</td><td><input name="username" type="text" size="16" value="'.$_GET['username'].'" /></td></tr>
+    <tr><td>Username:</td><td><input name="username" type="text" size="16" value="<?php echo $_GET['username']; ?>" /></td></tr>
     <tr><td>Password:</td><td><input name="password" type="password" size="16" /></td></tr>
     <tr><td colspan="2"><input name="proclogin" type="submit" value="Login"/></td></tr>
-    <tr><td>OpenID:</td><td><input name="openid_url" type="text" /></td></tr>
-    <tr><td colspan="2"><input name="openid_submit" type="submit" value="Login"/></td></tr>	
     <tr><td colspan="2">[<a href="register.php">Register</a>]</td></tr>
     <tr><td colspan="2">[<a href="forgotpass.php">Forgot password?</a>]</td></tr>
     </table>
     </form>
-    ';
-?>
+	<br /><br />
+	<form action="" method="post">
+    <table style="margin-left: auto; margin-right: auto;">
+    <tr><td>OpenID:</td><td><input name="openid_url" type="text" /></td></tr>
+    <tr><td colspan="2"><input name="openid_submit" type="submit" value="Login"/></td></tr>	
+    </table>
+    </form>
+	
 </div></body></html>
