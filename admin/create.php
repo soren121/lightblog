@@ -18,7 +18,6 @@
 	<![endif]-->
 	<script type="text/javascript" src="includes/jquery.js"></script>
 	<script type="text/javascript" src="includes/jquery-ui.js"></script>
-	<script type="text/javascript" src="includes/wyzz.js"></script>
 	<script type="text/javascript">$(document).ready(function(){ $("#wysiwyg").resizable(); });</script>
 	
 </head>
