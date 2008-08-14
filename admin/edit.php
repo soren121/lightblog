@@ -39,9 +39,9 @@ $result11 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
 	<div id="content">
 	 <?php 
 	 if(isset($_POST['publish'])) {	 	
-	 	// give the POSTed text variables and clean 'em!
-	 	$title = clean($_POST['title']);
-	 	$text = clean($_POST['text']);
+	 	// give the POSTed text variables, BBCode 'em and clean 'em!
+	 	$title = sqlite_escape_string(bbcode_format($_POST['title']));
+	 	$text = sqlite_escape_string(bbcode_format($_POST['text']));
 	 	// submit the changes to the database
 	 	sqlite_query($handle, "UPDATE ".$_GET['type']."s SET title=\"".$title."\" , ".$_GET['type']."=\"".$text."\" WHERE id='".$_GET['id']."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
 	 	// update the textarea with the new changes
