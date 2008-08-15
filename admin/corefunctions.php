@@ -26,7 +26,9 @@ function bbcode_format ($str) {
 	'/\[quote=\"(.*?)\"\](.*?)\[\/quote\]/is',
 	'/\[quote\](.*?)\[\/quote\]/is',
 	'/\[url=(.*?)\](.*?)\[\/url\]/is',
-	'/\[url\](.*?)\[\/url\]/is');
+	'/\[url\](.*?)\[\/url\]/is',
+	'/\[break\](.*?)\[\/break\]/is',
+	'/\[youtube\](.*?)\[\/youtube\]/is');
 
 	// Translate BBCode to XHTML
 	$simple_replace = array(
@@ -38,7 +40,9 @@ function bbcode_format ($str) {
 	'$1 said: \"$2\"',
 	'"$1"',
 	'<a href=\"$1\">$2</a>',
-	'<a href=\"$1\">$1</a>');
+	'<a href=\"$1\">$1</a>',
+	'<br />',
+	'<object type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\" data=\"$1\"><param name=\"movie\" value=\"$1\"/></object>');
 
     // Output HTML translations
     $str = preg_replace ($simple_search, $simple_replace, $str);
