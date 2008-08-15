@@ -17,18 +17,28 @@ function bbcode_format ($str) {
 	$str = htmlentities($str);
 
 	// Find BBCode
-    $simple_search = array(
-    '/\[b\](.*?)\[\/b\]/is',                               
-    '/\[i\](.*?)\[\/i\]/is',                               
-    '/\[u\](.*?)\[\/u\]/is'
-    );
+	$simple_search = array(
+	'/\[b\](.*?)\[\/b\]/is',                               
+	'/\[i\](.*?)\[\/i\]/is',                               
+	'/\[u\](.*?)\[\/u\]/is',
+	'/\[s\](.*?)\[\/s\]/is',
+	'/\[img\](.*?)\[\/img\]/is',
+	'/\[quote=\"(.*?)\"\](.*?)\[\/quote\]/is',
+	'/\[quote\](.*?)\[\/quote\]/is',
+	'/\[url=(.*?)\](.*?)\[\/url\]/is',
+	'/\[url\](.*?)\[\/url\]/is');
 
-	// Translate BBCode to HTML
-    $simple_replace = array(
-    '<strong>$1</strong>',
-    '<em>$1</em>',
-    '<u>$1</u>'
-    );
+	// Translate BBCode to XHTML
+	$simple_replace = array(
+	'<strong>$1</strong>',
+	'<em>$1</em>',
+	'<span style="text-decoration: underline;">$1</span>',
+	'<del>$1</del>',
+	'<img src=\"$1\" alt=\"\" />',
+	'$1 said: \"$2\"',
+	'"$1"',
+	'<a href=\"$1\">$2</a>',
+	'<a href=\"$1\">$1</a>');
 
     // Output HTML translations
     $str = preg_replace ($simple_search, $simple_replace, $str);
