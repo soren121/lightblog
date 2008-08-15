@@ -23,11 +23,11 @@ function bbcode_format ($str) {
 	'/\[u\](.*?)\[\/u\]/is',
 	'/\[s\](.*?)\[\/s\]/is',
 	'/\[img\](.*?)\[\/img\]/is',
-	'/\[quote=\"(.*?)\"\](.*?)\[\/quote\]/is',
+	'/\[quote=(.*?)\](.*?)\[\/quote\]/is',
 	'/\[quote\](.*?)\[\/quote\]/is',
 	'/\[url=(.*?)\](.*?)\[\/url\]/is',
 	'/\[url\](.*?)\[\/url\]/is',
-	'/\[break\](.*?)\[\/break\]/is',
+	'/\[br\]/is',
 	'/\[youtube\](.*?)\[\/youtube\]/is');
 
 	// Translate BBCode to XHTML
