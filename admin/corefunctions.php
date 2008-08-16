@@ -13,9 +13,6 @@ $stselect = sqlite_query($handle, "SELECT * FROM coreinfo") or die("SQLite query
 
 // BBCode function	
 function bbcode_format ($str) {
-    // Strip HTML tags
-	$str = htmlentities($str);
-
 	// Find BBCode
 	$simple_search = array(
 	'/\[b\](.*?)\[\/b\]/is',                               
