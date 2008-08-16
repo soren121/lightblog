@@ -18,8 +18,7 @@
 	<![endif]-->
 	<script type="text/javascript" src="includes/jquery.js"></script>
 	<script type="text/javascript" src="includes/jquery-ui.js"></script>
-	<script type="text/javascript">$(document).ready(function(){ $("#wysiwyg").resizable(); });</script>
-	
+	<script type="text/javascript" src="includes/bbcode-editor.js"></script> 
 </head>
 
 <body>
@@ -57,7 +56,7 @@
   <form action="" method="post">
     <table>
       <tr><td>Title</td><td><input name="title" type="text" maxlength="39" /></td></tr>
-      <tr><td>Message:</td><td><textarea id="wysiwyg" name="text" cols="30" rows="10"></textarea></td></tr>
+      <tr><td>Message:</td><td><script type="text/javascript">Init(\'text\',30,10,\'\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>
       <tr><td colspan="2"><input name="publish" type="submit" value="Publish"/></td></tr>
     </table>
   </form>'; } ?>
