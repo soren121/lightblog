@@ -22,3 +22,7 @@ The CAPTCHA library is licensed under the GNU General
 Public License version 2, the full text of which can
 be found here: 
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+
+The Silk icon set is licensed under the Creative Commons
+Attribution 2.5 License. You can find the full text of
+the license here: http://creativecommons.org/licenses/by/2.5/

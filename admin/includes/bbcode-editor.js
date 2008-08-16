@@ -5,13 +5,14 @@ document.write("<link href=\"includes/bbstyles.css\" rel=\"stylesheet\" type=\"t
 
 function Init(obj,width,height, val) {
    
-	document.write("<img class=\"button\" src=\"includes/bold.gif\" name=\"btnBold\" onClick=\"doAddTags('[b]','[/b]')\">"); 
-    document.write("<img class=\"button\" src=\"includes/italic.gif\" name=\"btnItalic\" onClick=\"doAddTags('[i]','[/i]')\">"); 
-	document.write("<img class=\"button\" src=\"includes/underline.gif\" name=\"btnUnderline\" onClick=\"doAddTags('[u]','[/u]')\">"); 
-	document.write("<img class=\"button\" src=\"includes/link.gif\" name=\"btnLink\" onClick=\"doURL()\">");
-	document.write("<img class=\"button\" src=\"includes/picture.gif\" name=\"btnPicture\" onClick=\"doImage()\">");
-	document.write("<img class=\"button\" src=\"includes/quote.gif\" name=\"btnQuote\" onClick=\"doAddTags('[quote]','[/quote]')\">"); 
-  	document.write("<img class=\"button\" src=\"includes/code.gif\" name=\"btnCode\" onClick=\"doAddTags('[code]','[/code]')\">"); 
+	document.write("<img class=\"button\" src=\"includes/bold.png\" name=\"btnBold\" onClick=\"doAddTags('[b]','[/b]')\">"); 
+    document.write("<img class=\"button\" src=\"includes/italic.png\" name=\"btnItalic\" onClick=\"doAddTags('[i]','[/i]')\">"); 
+	document.write("<img class=\"button\" src=\"includes/underline.png\" name=\"btnUnderline\" onClick=\"doAddTags('[u]','[/u]')\">"); 
+	document.write("<img class=\"button\" src=\"includes/strike.png\" name=\"btnStrike\" onClick=\"doAddTags('[s]','[/s]')\">"); 
+	document.write("<img class=\"button\" src=\"includes/link.png\" name=\"btnLink\" onClick=\"doURL()\">");
+	document.write("<img class=\"button\" src=\"includes/image.png\" name=\"btnPicture\" onClick=\"doImage()\">");
+	document.write("<img class=\"button\" src=\"includes/quote.png\" name=\"btnQuote\" onClick=\"doAddTags('[quote]','[/quote]')\">"); 
+  	document.write("<img class=\"button\" src=\"includes/code.png\" name=\"btnCode\" onClick=\"doAddTags('[code]','[/code]')\">"); 
     document.write("<br>");
 	document.write("<textarea id=\""+ obj +"\" name = \"" + obj + "\" cols=\"" + width + "\" rows=\"" + height + "\"></textarea>");
 	
