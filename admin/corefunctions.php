@@ -25,7 +25,8 @@ function bbcode_format ($str) {
 	'/\[url=(.*?)\](.*?)\[\/url\]/is',
 	'/\[url\](.*?)\[\/url\]/is',
 	'/\[br\]/is',
-	'/\[youtube\](.*?)\[\/youtube\]/is');
+	'/\[youtube\](.*?)\[\/youtube\]/is',
+	'/\[code\](.*?)\[\/code\]/is');
 
 	// Translate BBCode to XHTML
 	$simple_replace = array(
@@ -39,7 +40,8 @@ function bbcode_format ($str) {
 	'<a href=\"$1\">$2</a>',
 	'<a href=\"$1\">$1</a>',
 	'<br />',
-	'<object type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\" data=\"$1\"><param name=\"movie\" value=\"$1\"/></object>');
+	'<object type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\" data=\"$1\"><param name=\"movie\" value=\"$1\"/></object>',
+	'$1');
 
     // Output HTML translations
     $str = preg_replace ($simple_search, $simple_replace, $str);
