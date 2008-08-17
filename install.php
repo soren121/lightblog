@@ -7,6 +7,10 @@ if(isset($_POST['step1'])) {
 	$dbstr = "admin/".$dbrand.".db";
 	$cdb = fopen($dbstr, 'w') or die("Unable to create database."); 
 	fclose($cdb);
+	$site_url = explode('/', $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
+	unset($site_url[count($site_url)-1]);
+	$site_url = implode('/', $site_url);
+	$site_url = 'http://'.$site_url.'/';
 	$dbhle = sqlite_open(dirname(__FILE__)."/".$dbstr) or die("Could not open database");
 	sqlite_query($dbhle, "CREATE TABLE coreinfo(variable text NOT NULL,value text NOT NULL)");
 	sqlite_query($dbhle, "CREATE TABLE comments(id integer primary key,post_id int(11) NOT NULL default '0',username text NOT NULL,email text NOT NULL,website text NOT NULL,text text NOT NULL)");
@@ -14,6 +18,7 @@ if(isset($_POST['step1'])) {
 	sqlite_query($dbhle, "CREATE TABLE posts(id INTEGER NOT NULL PRIMARY KEY DEFAULT '0',title TEXT NOT NULL,post TEXT NOT NULL,date TEXT NOT NULL,author TEXT NOT NULL)");
 	sqlite_query($dbhle, "INSERT INTO posts VALUES(1,'Welcome to LightBlog!','Welcome to LightBlog! We hope you enjoy it!<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1218324266,'LightBlog Devs')");
 	sqlite_query($dbhle, "CREATE TABLE users(id INTEGER NOT NULL PRIMARY KEY DEFAULT '0',username TEXT NOT NULL,password TEXT NOT NULL,email TEXT NOT NULL,realname TEXT NOT NULL,vip INTEGER NOT NULL,ip TEXT NOT NULL)");
+	sqlite_query($dbhle, "INSERT INTO coreinfo VALUES('site_url','".$site_url."')");
 	sqlite_close($dbhle);
 	$ccp = fopen("config.php", 'w') or die("Unable to write to configuration file.");
 	$config = '<?php // DO NOT TOUCH THIS FILE IF YOU DON\'T KNOW WHAT YOU\'RE DOING!
@@ -37,11 +42,7 @@ if(isset($_POST['step2'])) {
 	$ccp2 = fopen("config.php", 'a') or die("Unable to write to configuration file.");
 	$sitename = addslashes(sqlite_escape_string($_POST['sitename']));
 	$config2 = '// site data
-$site_name = "'.$sitename.'";
-$site_url = explode(\'/\', $_SERVER[\'SERVER_NAME\'].$_SERVER[\'REQUEST_URI\']);
-	unset($site_url[count($site_url)-1]);
-	$site_url = implode(\'/\', $site_url);
-	$site_url = \'http://\'.$site_url.\'/\'; ?>';
+$site_name = "'.$sitename.'";';
 	fwrite($ccp2, $config2);
 	fclose($ccp2);
 	session_destroy();

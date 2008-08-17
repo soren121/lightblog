@@ -35,7 +35,7 @@
 	 	// grab data from form, translate the BBCode, and escape the text
 		require_once('bbcodelib.php');
 	 	$title = sqlite_escape_string($_POST['title']);
-	 	$text = sqlite_escape_string(($_POST['text']);
+	 	$text = sqlite_escape_string($_POST['text']);
 		$parser = new parser;
 		$text = $parser->parse($text);
 	 	$date = time();
@@ -59,7 +59,7 @@
   <form action="" method="post">
     <table>
       <tr><td>Title</td><td><input name="title" type="text" maxlength="39" /></td></tr>
-      <tr><td>Message:</td><td><script type="text/javascript">Init(\'text\',30,10,\'\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>
+      <tr><td>Message:</td><td><script type="text/javascript">Init(\'text\',30,10,\'\',\'in\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>
       <tr><td colspan="2"><input name="publish" type="submit" value="Publish"/></td></tr>
     </table>
   </form>'; } ?>
