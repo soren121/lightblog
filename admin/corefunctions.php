@@ -11,43 +11,6 @@ $stselect = sqlite_query($handle, "SELECT * FROM coreinfo") or die("SQLite query
 		$cmsinfo[$row['variable']] = stripslashes(stripslashes($row['value']));
 	}
 
-// BBCode function	
-function bbcode_format ($str) {
-	// Find BBCode
-	$simple_search = array(
-	'/\[b\](.*?)\[\/b\]/is',                               
-	'/\[i\](.*?)\[\/i\]/is',                               
-	'/\[u\](.*?)\[\/u\]/is',
-	'/\[s\](.*?)\[\/s\]/is',
-	'/\[img\](.*?)\[\/img\]/is',
-	'/\[quote=(.*?)\](.*?)\[\/quote\]/is',
-	'/\[quote\](.*?)\[\/quote\]/is',
-	'/\[url=(.*?)\](.*?)\[\/url\]/is',
-	'/\[url\](.*?)\[\/url\]/is',
-	'/\[br\]/is',
-	'/\[youtube\](.*?)\[\/youtube\]/is',
-	'/\[code\](.*?)\[\/code\]/is');
-
-	// Translate BBCode to XHTML
-	$simple_replace = array(
-	'<strong>$1</strong>',
-	'<em>$1</em>',
-	'<span style="text-decoration: underline;">$1</span>',
-	'<del>$1</del>',
-	'<img src=\"$1\" alt=\"\" />',
-	'$1 said: \"$2\"',
-	'"$1"',
-	'<a href=\"$1\">$2</a>',
-	'<a href=\"$1\">$1</a>',
-	'<br />',
-	'<object type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\" data=\"$1\"><param name=\"movie\" value=\"$1\"/></object>',
-	'$1');
-
-    // Output HTML translations
-    $str = preg_replace ($simple_search, $simple_replace, $str);
-    return $str;
-}
-
 // Gravatar retrieval	
 $grav_default=$site_url."admin/style/gravatar.gif";
 $gravatar = "http://www.gravatar.com/avatar.php?gravatar_id=".md5($_SESSION['email'])."&amp;default=".urlencode($grav_default)."&amp;size=60";

@@ -33,8 +33,11 @@
 	 <?php 
 	 if(isset($_POST['publish'])) {
 	 	// grab data from form, translate the BBCode, and escape the text
-	 	$title = sqlite_escape_string(bbcode_format($_POST['title']));
-	 	$text = sqlite_escape_string(bbcode_format($_POST['text']));
+		require_once('bbcodelib.php');
+	 	$title = sqlite_escape_string($_POST['title']);
+	 	$text = sqlite_escape_string(($_POST['text']);
+		$parser = new parser;
+		$text = $parser->parse($text);
 	 	$date = time();
 	 	$author = $_SESSION['realname'];
 		// insert post data
