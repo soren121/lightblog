@@ -42,7 +42,7 @@ $result11 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
 	 	// give the POSTed text variables, BBCode 'em and clean 'em!
 		require_once('bbcodelib.php');
 	 	$title = sqlite_escape_string($_POST['title']);
-	 	$text = sqlite_escape_string(($_POST['text']);
+	 	$text = sqlite_escape_string($_POST['text']);
 		$parser = new parser;
 		$text = $parser->parse($text);
 	 	// submit the changes to the database
@@ -58,8 +58,8 @@ $result11 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
 	 	 <h2>Editing "'.$pasttitle.'"</h2><br />
   <form action="" method="post">
     <table>
-      <tr><td>Title</td><td><input name="title" type="text" maxlength="39" value="'.bbcode_format($pasttitle).'" /></td></tr>
-      <tr><td>Message:</td><td><script type="text/javascript">Init(\'text\',30,10,\''.bbcode_format($pastpost).'\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>
+      <tr><td>Title</td><td><input name="title" type="text" maxlength="39" value="'.$pasttitle.'" /></td></tr>
+      <tr><td>Message:</td><td><script type="text/javascript">Init(\'text\',30,10,\''.$pastpost.'\',\'in\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>
       <tr><td colspan="2"><input name="publish" type="submit" value="Save"/></td></tr>
     </table>
   </form>'; } ?>

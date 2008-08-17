@@ -20,6 +20,9 @@ $result09 = sqlite_query($handle, "SELECT * FROM comments WHERE post_id=".$_GET[
 	<!--[if IE]>
 	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
+	<script type="text/javascript" src="admin/includes/bbcode-editor.js"></script>
+	<script type="text/javascript" src="admin/includes/jquery.js"></script>
+	<script type="text/javascript" src="admin/includes/jquery-ui.js"></script>
 </head>
 
 <body>
@@ -74,7 +77,7 @@ $result09 = sqlite_query($handle, "SELECT * FROM comments WHERE post_id=".$_GET[
 	 	$com_website = $_POST['website'];
 	 	$com_text = $_POST['text'];
 	 	sqlite_query($handle, "INSERT INTO comments (post_id,username,email,website,text) VALUES('".$_GET['id']."','".$com_name."','".$com_email."','".$com_website."','".$com_text."')") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
-      	echo "<p>Your comment has been submitted. Thank you.</p>";
+		echo "<p>Your comment has been submitted. Thank you.</p>";
       }
       
     // get comment FORM
@@ -85,7 +88,7 @@ $result09 = sqlite_query($handle, "SELECT * FROM comments WHERE post_id=".$_GET[
       				<tr><td>Name:</td><td><input name="username" type="text" maxlength="28" /></td></tr>
       				<tr><td>Email:</td><td><input name="email" type="text"/></td></tr>
       				<tr><td>Website:</td><td><input name="website" type="text"/></td></tr>
-      				<tr><td>Post:</td><td><textarea name="text" cols="30" rows="10"></textarea></td></tr>';
+      				<tr><td>Post:</td><td><script type="text/javascript">Init(\'text\',30,10,\'\',\'out\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>';
       				echo '<tr><td colspan="2"><input name="comment_submit" type="submit" value="Submit"/></td></tr>
     			</table>
   				</form>';

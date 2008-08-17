@@ -1,9 +1,10 @@
 var textarea;
 var content;
-document.write("<link href=\"includes/bbstyles.css\" rel=\"stylesheet\" type=\"text/css\">");
+var dir;
 
 
-function Init(obj,width,height, val) {
+function Init(obj,width,height,val,where) {
+	document.write("<link href=\"includes/bbstyles.css\" rel=\"stylesheet\" type=\"text/css\">");
 	document.write("<img class=\"button\" src=\"includes/bold.png\" name=\"btnBold\" onClick=\"doAddTags('[b]','[/b]')\" />"); 
     document.write("<img class=\"button\" src=\"includes/italic.png\" name=\"btnItalic\" onClick=\"doAddTags('[i]','[/i]')\" />"); 
 	document.write("<img class=\"button\" src=\"includes/underline.png\" name=\"btnUnderline\" onClick=\"doAddTags('[u]','[/u]')\" />"); 
@@ -19,7 +20,7 @@ function Init(obj,width,height, val) {
 	
 	textarea = document.getElementById(obj);
 	textarea.value = val;
-		}
+}
 
 function doImage()
 {

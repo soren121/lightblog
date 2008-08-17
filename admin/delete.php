@@ -7,6 +7,9 @@ $result11 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
 	
 	if(isset($_POST['delete'])) {
 		sqlite_query($handle, "DELETE FROM ".$_GET['type']."s WHERE id='".$_GET['id']."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+		if($_GET['type'] == "post") {
+		sqlite_query($handle, "DELETE FROM comments WHERE post_id='".$_GET['id']."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+		}
 		header('Location: manage.php?type='.$_GET['type'].'');
 	}
 	

@@ -39,7 +39,7 @@ class parser
 			'u' => '<del>{value}</del>',
 			'img' => '<img src="{value}" alt="Picture" title="{parameter}" />',
 			'url' => '<a href="{value}">{parameter}</a>',
-			'size' => '<span style="font-size:{parameter}px;">{value}</span>',
+			'size' => '<span style="font-size:{parameter}pt;>{value}</span>',
 			'ul' => '<ul>{value}</ul>',
 			'ol' => '<ol>{value}</ol>',
 			'li' => '<li>{value}</li>'

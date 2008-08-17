@@ -10,6 +10,9 @@ $stselect = sqlite_query($handle, "SELECT * FROM coreinfo") or die("SQLite query
 	while($row = sqlite_fetch_array($stselect)) {
 		$cmsinfo[$row['variable']] = stripslashes(stripslashes($row['value']));
 	}
+	
+// Site URL grabber
+$site_url = $cmsinfo['site_url'];
 
 // Gravatar retrieval	
 $grav_default=$site_url."admin/style/gravatar.gif";
