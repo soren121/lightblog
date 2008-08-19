@@ -59,7 +59,7 @@ $result11 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
   <form action="" method="post">
     <table>
       <tr><td>Title</td><td><input name="title" type="text" maxlength="39" value="'.$pasttitle.'" /></td></tr>
-      <tr><td>Message:</td><td><script type="text/javascript">Init(\'text\',30,10,\''.$pastpost.'\',\'in\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>
+	  <tr><td>Message:</td><td><script type="text/javascript">Init(\'text\',30,10,\''.$pastpost.'\',\'in\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>
       <tr><td colspan="2"><input name="publish" type="submit" value="Save"/></td></tr>
     </table>
   </form>'; } ?>

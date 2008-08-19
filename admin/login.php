@@ -46,7 +46,7 @@ if(isset($_POST['openid_submit'])) {
 	if($openid->GetOpenIDServer()) {
 		// set URL to come back to
 		$openid->SetApprovedURL($site_url.'login.php');
-		$_SESSION['openid_url'] = $_POST['openid_url'];
+		$_SESSION['openid_url'] = $openid->GetOpenIDServer();
 		// redirect to the user's provider
 		$openid->Redirect();
 	}
