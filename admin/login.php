@@ -66,6 +66,9 @@ if($_GET['openid_mode'] == "id_res") {
 	// validate OpenID URL with server
 	$openid_validation = $openid->ValidateWithServer();
 	if($openid_validation == "true") {
+		// find OpenID in database
+		$openid_db_safe = $openid->OpenID_Standarize($_SESSION['openid_url']);
+		$result15 = sqlite_query($handle, "SELECT * FROM users WHERE openid='".$openid_db_safe."'");
 		// send name and email to session
 		$_SESSION['username'] = $openid->GetAttribute('fullname');
 		$_SESSION['email'] = $openid->GetAttribute('email');
