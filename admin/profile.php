@@ -20,6 +20,10 @@
 		}
 		else { echo'Emails don\'t match!'; }
 	}
+	if(isset($_POST['linkopenid'])) {
+		$openid = $openid->OpenID_Standarize($_SESSION['openid_url']);
+		sqlite_query($handle, "UPDATE users SET openid='".$openid."' WHERE username='".$_POST['username']."' AND password='".md5($_POST['password'])."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+	}
 ?>
 <!--	LightBlog v0.9.0
 		Copyright 2008 soren121. Some Rights Reserved.
@@ -56,7 +60,16 @@
 	Email: <?php echo $_SESSION['email']; ?><br />
 	Real Name: <?php echo $_SESSION['realname']; ?><br />
 	Rank: <?php if($_SESSION['uservip'] == 1) { echo'Admin'; } else { echo 'Normal'; } ?></td></tr></table><br />
-		<?php if(isset($_SESSION['openid_url'])) { echo ''; } else { echo '
+		<?php if(isset($_SESSION['openid_url'])) { echo '		
+		<h3>Link your OpenID</h3><br />
+			<p>You can link your OpenID to your regular account for easier login.</p><br />
+			<form action="" method="post">
+      		<table>
+      		<tr><td>Username: </td><td colspan="2"><input name="username" type="text" /></td></tr>
+      		<tr><td>Password: </td><td colspan="2"><input name="password" type="password" /></td></tr>
+      		<tr><td>&nbsp;</td><td colspan="2"><input name="linkopenid" type="submit" value="Link!"/></td></tr>
+    		</table></form><br />'; } 
+			else { echo '
 		<h3>Update password</h3><br />
 			<form action="" method="post">
       		<table>

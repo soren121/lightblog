@@ -45,7 +45,7 @@ if(isset($_POST['openid_submit'])) {
 	// find the OpenID server given
 	if($openid->GetOpenIDServer()) {
 		// set URL to come back to
-		$openid->SetApprovedURL($site_url.'login.php');
+		$openid->SetApprovedURL($site_url.'admin/login.php');
 		$_SESSION['openid_url'] = $openid->GetOpenIDServer();
 		// redirect to the user's provider
 		$openid->Redirect();
@@ -68,7 +68,21 @@ if($_GET['openid_mode'] == "id_res") {
 	if($openid_validation == "true") {
 		// find OpenID in database
 		$openid_db_safe = $openid->OpenID_Standarize($_SESSION['openid_url']);
-		$result15 = sqlite_query($handle, "SELECT * FROM users WHERE openid='".$openid_db_safe."'");
+		$result15 = sqlite_query($handle, "SELECT openid FROM users WHERE openid='".$openid_db_safe."'");
+		if($result15 == $openid_db_safe) {
+			$result16 = sqlite_query($handle, "SELECT * FROM users WHERE openid='".$openid_db_safe."'");
+			while($user = sqlite_fetch_object($result16)) {
+				// send name and email to session
+				$_SESSION['username'] = $user->username;
+				$_SESSION['email'] = $user->email;
+				$_SESSION['realname'] = $user->realname;
+				$_SESSION['uservip'] = $user->vip;
+				// redirect to the dashboard
+				header('Location: dashboard.php');
+			}
+		}
+		else {
+		$result17 = sqlite_query($handle, "SELECT * FROM users WHERE openid='".$openid_db_safe."'");
 		// send name and email to session
 		$_SESSION['username'] = $openid->GetAttribute('fullname');
 		$_SESSION['email'] = $openid->GetAttribute('email');
@@ -76,6 +90,7 @@ if($_GET['openid_mode'] == "id_res") {
 		$_SESSION['uservip'] = "0";
 		// redirect to the dashboard
 		header('Location: dashboard.php');
+		}
 	}
 	else {
 		echo "OpenID: Validation failed.";
