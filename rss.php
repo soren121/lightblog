@@ -1,12 +1,11 @@
 <?php session_start();define("Light", true);require('config.php');require('admin/corefunctions.php');
-$result = sqlite_query($handle,"SELECT title, id, post, date FROM posts ORDER BY id desc LIMIT 15");
 
 // LightBlog 0.9
 // Written by soren121 <soren121@northsalemcrew.net>
 // Released under the GNU GPL v3
 // http://tcn.110mb.com/
 
-while ($line = sqlite_fetch_array($result, SQLITE_ASSOC))
+while ($line = sqlite_fetch_array($result06, SQLITE_ASSOC))
         {
             $return[] = $line;
         }

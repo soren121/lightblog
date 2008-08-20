@@ -1,6 +1,4 @@
-<?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
-$result01 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s ORDER BY id desc") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
-?>
+<?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');?>
 <!--	LightBlog v0.9.0
 		Copyright 2008 soren121. Some Rights Reserved.
 		Licensed under the General Public License v3.
