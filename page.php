@@ -1,8 +1,4 @@
-<?php session_start();define("Light", true);require('config.php');require('admin/corefunctions.php');
-// set post query
-$result12 = sqlite_query($handle, "SELECT * FROM pages WHERE id=".$_GET['id']." ORDER BY id desc") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
-error_reporting(E_ALL);
-?>
+<?php session_start();define("Light", true);require('config.php');require('admin/corefunctions.php');?>
 <!--	LightBlog v0.9.0
 		Copyright 2008 soren121. Some Rights Reserved.
 		Licensed under the General Public License v3.
@@ -32,20 +28,16 @@ error_reporting(E_ALL);
 	<?php include('sidebar.php'); ?>
 	<div id="content">
 	<?php
-	// run blog post query
-	if (sqlite_num_rows($result10) > 0) {
-		// start post loop
-		while($page2 = sqlite_fetch_object($result12)) {
-			// start post structure
-			echo "<div class=\"pagebox\">";
-			// output title
-			echo "<h2 class=\"post-title\">".$page2->title."</h2><br />";
-			// output content
-			echo "<p class=\"post\">".$page2->page."</p><br /><br />";
-			// end post structure
-			echo "</div>";
-			// this code is repeated for every post in your database
-		}
+	while($page2 = sqlite_fetch_object($result05)) {
+		// start post structure
+		echo "<div class=\"pagebox\">";
+		// output title
+		echo "<h2 class=\"post-title\">".$page2->title."</h2><br />";
+		// output content
+		echo "<p class=\"post\">".$page2->page."</p><br /><br />";
+		// end post structure
+		echo "</div>";
+		// this code is repeated for every post in your database
 	}
 
 	// SQLite queries done, closing database

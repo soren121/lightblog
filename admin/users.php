@@ -1,5 +1,4 @@
 <?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
-$result01 = sqlite_query($handle, "SELECT * FROM users ORDER BY id desc") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
 if(isset($_POST['promote'])) {
 	sqlite_query($handle, "UPDATE users SET vip=1 WHERE id='".$_POST['p']."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
 }
@@ -37,10 +36,10 @@ if(isset($_POST['promote'])) {
 	 <?php if($_SESSION['uservip'] == "0" or !(isset($_SESSION['uservip']))) { echo'Hey, you shouldn\'t even be in here! <a href="javascript:history.go(-2)">Go back to where you came from.</a>'; }
 	 if($_SESSION['uservip'] == "1") {	 	
 	// run blog post query
-	if (sqlite_num_rows($result01) > 0) {
+	if (sqlite_num_rows($result10) > 0) {
 		echo'<table class="postlist">'; 
 		// start post loop
-		while($user = sqlite_fetch_object($result01)) {
+		while($user = sqlite_fetch_object($result10)) {
 			// start row
 			echo '<tr>';
 			// output ID
@@ -51,9 +50,9 @@ if(isset($_POST['promote'])) {
 			echo '<td class="postlist">'.$user->email.'</td>';
 			echo '<td class="postlist">'.$user->vip.'</td>';
 			// output promote, ban & delete links
-			echo '<td class="postlist"><form action="" method="post"><input name="p" value="p'.$user->id.'"type="hidden"/><input name="promote" type="button" value="Promote" /></form></td>';
+			echo '<td class="postlist"><form action="" method="post"><input name="p" value="p '.$user->id.'"type="hidden"/><input name="promote" type="button" value="Promote" /></form></td>';
 			//echo '<td class="postlist"><form action="" method="post"><input name="b" value="p'.$user->id.'"type="hidden"/><input name="ban" type="button" value="Ban" /></form></td>';
-			echo '<td class="postlist"><a style="text-align: center;" href="delete.php?type=user&id='.$user->id.'">Delete</a></td>';
+			echo '<td class="postlist"><form action="" method="post"><input name="d" value="d '.$user->id.'"type="hidden"/><input name="promote" type="button" value="Promote" /></form></td>';
 			// end row
 			echo '</tr>';
 			// this code is repeated for every user in your database

@@ -21,6 +21,8 @@
 		else { echo'Emails don\'t match!'; }
 	}
 	if(isset($_POST['linkopenid'])) {
+		require('openidlib.php');
+		$openid = new SimpleOpenID;
 		$openid = $openid->OpenID_Standarize($_SESSION['openid_url']);
 		sqlite_query($handle, "UPDATE users SET openid='".$openid."' WHERE username='".$_POST['username']."' AND password='".md5($_POST['password'])."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
 	}

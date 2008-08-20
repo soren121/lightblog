@@ -1,8 +1,4 @@
-<?php session_start();define("Light", true);require('config.php');require('admin/corefunctions.php');
-// set post query
-$result08 = sqlite_query($handle, "SELECT * FROM posts WHERE id=".$_GET['id']." ORDER BY id desc") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
-$result09 = sqlite_query($handle, "SELECT * FROM comments WHERE post_id=".$_GET['id']." ORDER BY id desc") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
-?>
+<?php session_start();define("Light", true);require('config.php');require('admin/corefunctions.php');?>
 <!--	LightBlog v0.9.0
 		Copyright 2008 soren121. Some Rights Reserved.
 		Licensed under the General Public License v3.
@@ -36,9 +32,9 @@ $result09 = sqlite_query($handle, "SELECT * FROM comments WHERE post_id=".$_GET[
 	<div id="content">
 	<?php
 	// run blog post query
-	if (sqlite_num_rows($result08) > 0) {
+	if (sqlite_num_rows($result03) > 0) {
 		// start post loop
-		while($post = sqlite_fetch_object($result08)) {
+		while($post = sqlite_fetch_object($result03)) {
 			// start post structure
 			echo "<div class=\"postbox\">";
 			// output title
@@ -53,13 +49,13 @@ $result09 = sqlite_query($handle, "SELECT * FROM comments WHERE post_id=".$_GET[
 	
 	// get comments
 	// if there are no comments:
-	if(sqlite_num_rows($result09) == 0) {
+	if(sqlite_num_rows($result04) == 0) {
 		echo "<p>No comments have been made on this post yet.</p>";
 	}
 	
 	// if comments exist, display them
 	else { 
-		while($comments = sqlite_fetch_array($result09)) {
+		while($comments = sqlite_fetch_array($result04)) {
 	    $grav_default="http://use.perl.org/images/pix.gif";
 	    $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5($comments['email'])."&amp;default=".urlencode($grav_default)."&amp;size=30";
 		echo "<div class=\"comment\">

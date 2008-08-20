@@ -1,6 +1,4 @@
 <?php session_start();define("Light", true);require('config.php');require('admin/corefunctions.php');
-// set post query
-$result01 = sqlite_query($handle, "SELECT * FROM posts ORDER BY id desc") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
 ?>
 <!--	LightBlog v0.9.0
 		Copyright 2008 soren121. Some Rights Reserved.
@@ -37,8 +35,6 @@ $result01 = sqlite_query($handle, "SELECT * FROM posts ORDER BY id desc") or die
 		while($post = sqlite_fetch_object($result01)) {
 			// timestamp for date
 			$timestamp = $post->date;
-			// result for comments link
-			$result12 = sqlite_query($handle, "SELECT * FROM comments WHERE post_id=".$post->id."") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
 			// start post structure
 			echo "<div class=\"postbox\">";
 			// output title
@@ -46,7 +42,7 @@ $result01 = sqlite_query($handle, "SELECT * FROM posts ORDER BY id desc") or die
 			// output comment link, author name & date
 			echo "<img src=\"style/date.png\" alt=\"Date\" /><span class=\"date\">".date("F j, Y", $timestamp)."</span>";
 			echo "<img src=\"style/user.png\" alt=\"Written by\" /><span class=\"author\">".$post->author."</span>";
-			echo "<img src=\"style/comment.png\" alt=\"Comments\" /><a href=\"post.php?id=".$post->id."\" title=\"Post a comment or read them!\"><span class=\"commentnum\">".sqlite_num_rows($result12)." Comments</span></a>";
+			echo "<img src=\"style/comment.png\" alt=\"Comments\" /><a href=\"post.php?id=".$post->id."\" title=\"Post a comment or read them!\"><span class=\"commentnum\">".sqlite_num_rows($result02)." Comments</span></a>";
 			// output content
 			echo "<p class=\"post\">".$post->post."</p><br />";
 			// end post structure

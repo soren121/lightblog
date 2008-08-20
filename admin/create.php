@@ -1,7 +1,4 @@
-<?php session_start();define("Light", true);require('../config.php');require('corefunctions.php'); 
-// categories query
-$result12 = sqlite_query($handle, "SELECT * FROM categories ORDER BY id DESC") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
-?>
+<?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');?>
 <!--	LightBlog v0.9.0
 		Copyright 2008 soren121. Some Rights Reserved.
 		Licensed under the General Public License v3.
@@ -63,7 +60,7 @@ $result12 = sqlite_query($handle, "SELECT * FROM categories ORDER BY id DESC") o
   <form action="" method="post">
     <table>
       <tr><td>Title</td><td><input name="title" type="text" maxlength="39" /></td></tr>
-	  <tr><td>Category:</td><td><select name="category">'.if (sqlite_num_rows($result12) > 0) { while($cat = sqlite_fetch_object($result12)) { echo '<option value="'.$cat->id.'">'.$cat->title.'</option>'; } }.'</select></td></tr>
+	  <tr><td>Category:</td><td><select name="category">'.if(sqlite_num_rows($result07) > 0) { while($cat = sqlite_fetch_object($result07)) { echo '<option value="'.$cat->id.'">'.$cat->title.'</option>'; } }.'</select></td></tr>
       <tr><td>Message:</td><td><script type="text/javascript">Init(\'text\',30,10,\'\',\'in\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>
       <tr><td colspan="2"><input name="publish" type="submit" value="Publish"/></td></tr>
     </table>
