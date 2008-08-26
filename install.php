@@ -4,8 +4,9 @@ if(isset($_POST['step0'])) {
 }
 if(isset($_POST['step1'])) { 
 	$dbrand = mt_rand(1000000,10000000);
-	$dbstr = "admin/".$dbrand.".db";
-	$cdb = fopen($dbstr, 'w') or die("Unable to create database."); 
+	$dbstr = $_POST['dbpath'].$dbrand.".db";
+	if(is_writable($_POST['dbpath'])) {
+	$cdb = fopen($dbstr, 'w') or die('Unable to create database because directory was not writable. Fix it and <a href="javascript:history.go(-1)">go back</a>.'); 
 	fclose($cdb);
 	$site_url = explode('/', $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
 	unset($site_url[count($site_url)-1]);
@@ -26,11 +27,13 @@ if(isset($_POST['step1'])) {
 	$config = '<?php // DO NOT TOUCH THIS FILE IF YOU DON\'T KNOW WHAT YOU\'RE DOING!
 	/* let\'s stop them hackers =) */ if(!defined("Light")) { die("DIE!"); }
 	// open database file
-	$handle = sqlite_open(dirname(__FILE__)."/'.$dbstr.'") or die("Database error: code 01");';
+	$handle = sqlite_open("'.$dbstr.'") or die("Database error: code 01");';
 	fwrite($ccp, $config);
 	fclose($ccp);
 	$_SESSION['465650ad50650760ab'] = $dbstr;
 	$step0 = "0"; $step1 = "0"; $step2 = "1"; 
+	}
+	else { die('Unable to create database because directory was not writable. Fix it and <a href="javascript:history.go(-1)">go back</a>.'; }
 }
 if(isset($_POST['step2'])) {
 	$password = md5($_POST['password']);
@@ -144,6 +147,8 @@ img.headerimg {
 	#content,#sidebar { margin-top: -2px; !important } 
 	#sidebar { width: 167px; !important }
 	</style><![endif]-->
+	<script type="text/javascript" src="admin/includes/jquery.js"></script>
+	<script type="text/javascript">$("a.show").click(function () { $("p.adv").show("slow"); });</script>
 </head>
 
 <body>
@@ -196,7 +201,15 @@ img.headerimg {
 	<br />
 	<p>Please CHMOD the admin directory and root directory to 777 before continuing.\nDon\'t worry, you\'ll be able to change it back later.</p>
 	<br />
+	<a class="show" href="#">Show Advanced Settings</a>
+	<br />
+	<p class="adv" style="display: none">
+	If you\'d like, you can have LightBlog put your database in a different place.<br />
+	Please type the COMPLETE path to the folder with trailing slash please.
+	<em>If you don\'t know what you\'re doing, don\'t touch this!</em>
 	<form action="" method="post">
+	<input name="dbpath" type="text" value="'.dirname(__FILE__).'/admin/" size="80" />
+	</p>	
 	<p><input name="step1" type="submit" value="Create database"/></p>
 	</form>
 	<br />'; }
