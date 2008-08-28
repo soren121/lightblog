@@ -199,7 +199,7 @@ img.headerimg {
 	echo '
 	<h3>Create database</h3>
 	<br />
-	<p>Please CHMOD the admin directory and root directory to 777 before continuing.\nDon\'t worry, you\'ll be able to change it back later.</p>
+	<p>Please CHMOD the admin directory and root directory to 777 before continuing.Don\'t worry, you\'ll be able to change it back later.</p>
 	<br />
 	<a class="show" href="#">Show Advanced Settings</a>
 	<br />
@@ -208,7 +208,7 @@ img.headerimg {
 	Please type the COMPLETE path to the folder with trailing slash please.
 	<em>If you don\'t know what you\'re doing, don\'t touch this!</em>
 	<form action="" method="post">
-	<input name="dbpath" type="text" value="'.dirname(__FILE__).'/admin/" size="80" />
+	<input name="dbpath" type="text" value="'.dirname(__FILE__).'\admin\" size="80" />
 	</p>	
 	<p><input name="step1" type="submit" value="Create database"/></p>
 	</form>
