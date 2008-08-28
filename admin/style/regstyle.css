@@ -24,3 +24,13 @@ body {
 }
 
 .ui-tabs-hide { display: none; }
+
+li {
+	float: (left|right);
+	border-bottom: 0;
+	list-style-type: none;
+	padding: 3px;
+	background: float: (left|right);
+	color: #fff;
+}
+	
