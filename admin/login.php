@@ -129,35 +129,29 @@ if(isset($_GET['logout'])) {
 <div id="registerbox">
 <h2 style="padding-top: 5px;"><?php echo $site_name; ?></h2>
 <h3 style="padding-bottom: 5px;">Login</h3>
-        <div id="example">
-            <ul>
-                <li><a href="#fragment-1"><span>One</span></a></li>
-                <li><a href="#fragment-2"><span>Two</span></a></li>
-            </ul>
-            <div id="fragment-1">
-                <p>First tab is active by default:</p>
-                <pre><code>$('#example > ul').tabs();</code></pre>
-            </div>
-            <div id="fragment-2">
-				It's an Open world.
-            </div>
-        </div>
-
-	<form action="" method="post">
-    <table style="margin-left: auto; margin-right: auto;">
-    <tr><td>Username:</td><td><input name="username" type="text" size="16" value="<?php echo $_GET['username']; ?>" /></td></tr>
-    <tr><td>Password:</td><td><input name="password" type="password" size="16" /></td></tr>
-    <tr><td colspan="2"><input name="proclogin" type="submit" value="Login"/></td></tr>
-    <tr><td colspan="2">[<a href="register.php">Register</a>]</td></tr>
-    <tr><td colspan="2">[<a href="forgotpass.php">Forgot password?</a>]</td></tr>
-    </table>
-    </form>
-	<br /><br />
-	<form action="" method="post">
-    <table style="margin-left: auto; margin-right: auto;">
-    <tr><td>OpenID:</td><td><input name="openid_url" type="text" /></td></tr>
-    <tr><td colspan="2"><input name="openid_submit" type="submit" value="Login"/></td></tr>	
-    </table>
-    </form>
-	
+<div id="example">
+	<ul>
+        <li><a href="#fragment-1"><span>Normal</span></a></li>
+        <li><a href="#fragment-2"><span>OpenID</span></a></li>
+    </ul>
+    <div id="fragment-1">
+        <form action="" method="post">
+		<table style="margin-left: auto; margin-right: auto;">
+		<tr><td>Username:</td><td><input name="username" type="text" size="16" value="<?php echo $_GET['username']; ?>" /></td></tr>
+		<tr><td>Password:</td><td><input name="password" type="password" size="16" /></td></tr>
+		<tr><td colspan="2"><input name="proclogin" type="submit" value="Login"/></td></tr>
+		<tr><td colspan="2">[<a href="register.php">Register</a>]</td></tr>
+		<tr><td colspan="2">[<a href="forgotpass.php">Forgot password?</a>]</td></tr>
+		</table>
+		</form>
+    </div>
+    <div id="fragment-2">
+		<form action="" method="post">
+		<table style="margin-left: auto; margin-right: auto;">
+		<tr><td>OpenID:</td><td><input name="openid_url" type="text" /></td></tr>
+		<tr><td colspan="2"><input name="openid_submit" type="submit" value="Login"/></td></tr>	
+		</table>
+		</form>    
+	</div>
+</div>	
 </div></body></html>
