@@ -9,7 +9,7 @@ if(isset($_POST['proclogin'])) {
 	$username = $_POST['username'];
 	$password = md5($_POST['password']);
 	// fetch user info from database
-	$result15 = sqlite_query($handle, "SELECT * FROM users WHERE username='".$username."'") or die("Incorrect username or password!");
+	$result11 = sqlite_query($handle, "SELECT * FROM users WHERE username='".$username."'") or die("Incorrect username or password!");
 	while($logindata = sqlite_fetch_object($result15)) {
 		// check if username and password are correct
 		if($logindata->username == $username and $logindata->password == $password) {
@@ -68,10 +68,10 @@ if($_GET['openid_mode'] == "id_res") {
 	if($openid_validation == "true") {
 		// find OpenID in database
 		$openid_db_safe = $openid->OpenID_Standarize($_SESSION['openid_url']);
-		$result15 = sqlite_query($handle, "SELECT openid FROM users WHERE openid='".$openid_db_safe."'");
-		if($result15 == $openid_db_safe) {
-			$result16 = sqlite_query($handle, "SELECT * FROM users WHERE openid='".$openid_db_safe."'");
-			while($user = sqlite_fetch_object($result16)) {
+		$result12= sqlite_query($handle, "SELECT openid FROM users WHERE openid='".$openid_db_safe."'");
+		if($result12 == $openid_db_safe) {
+			$result13 = sqlite_query($handle, "SELECT * FROM users WHERE openid='".$openid_db_safe."'");
+			while($user = sqlite_fetch_object($result13)) {
 				// send name and email to session
 				$_SESSION['username'] = $user->username;
 				$_SESSION['email'] = $user->email;

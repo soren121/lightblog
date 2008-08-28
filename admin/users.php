@@ -1,4 +1,5 @@
 <?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
+$result10 = sqlite_query($handle, "SELECT * FROM users ORDER BY id desc") or die("SQLite query error: code 10<br>".sqlite_error_string(sqlite_last_error($handle)));
 if(isset($_POST['promote'])) {
 	sqlite_query($handle, "UPDATE users SET vip=1 WHERE id='".$_POST['p']."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
 }

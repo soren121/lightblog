@@ -1,5 +1,5 @@
 <?php session_start();define("Light", true);require('config.php');require('admin/corefunctions.php');
-
+$result06 = sqlite_query($handle,"SELECT title, id, post, date FROM posts ORDER BY id desc LIMIT 15") or die("SQLite query error: code 06<br>".sqlite_error_string(sqlite_last_error($handle)));
 // LightBlog 0.9
 // Written by soren121 <soren121@northsalemcrew.net>
 // Released under the GNU GPL v3
@@ -22,8 +22,6 @@ $output = "<?xml version=\"1.0\"?>
                     <lastBuildDate>$now</lastBuildDate>
                     <docs>http://cyber.law.harvard.edu/rss/rss.html</docs>
                     <generator>LightBlog 0.9</generator>
-                    <managingEditor>soren121@northsalemcrew.net (soren121)</managingEditor>
-                    <webMaster>soren121@northsalemcrew.net (soren121)</webMaster>
                     <atom:link href=\"".$site_url."rss.php\" rel=\"self\" type=\"application/rss+xml\" />
             ";
             

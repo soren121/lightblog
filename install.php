@@ -12,7 +12,7 @@ if(isset($_POST['step1'])) {
 	unset($site_url[count($site_url)-1]);
 	$site_url = implode('/', $site_url);
 	$site_url = 'http://'.$site_url.'/';
-	$dbhle = sqlite_open(dirname(__FILE__)."/".$dbstr) or die("Could not open database");
+	$dbhle = sqlite_open($dbstr) or die("Could not open database");
 	sqlite_query($dbhle, "CREATE TABLE categories(id INTEGER NOT NULL PRIMARY KEY,title text NOT NULL,description text NOT NULL)");
 	sqlite_query($dbhle, "INSERT INTO categories VALUES(1,'Uncategorized','Posts with no specific category go here')");
 	sqlite_query($dbhle, "CREATE TABLE coreinfo(variable text NOT NULL,value text NOT NULL)");
@@ -41,7 +41,7 @@ if(isset($_POST['step2'])) {
     $email = addslashes(sqlite_escape_string($_POST['email']));
     $realname = addslashes(sqlite_escape_string($_POST['realname']));
 	$ip = addslashes(sqlite_escape_string($_SERVER['REMOTE_ADDR']));
-	$dbhle2 = sqlite_open(dirname(__FILE__)."/".$_SESSION['465650ad50650760ab']) or die("Could not open database");
+	$dbhle2 = sqlite_open($_SESSION['465650ad50650760ab']) or die("Could not open database");
 	sqlite_query($dbhle2, "INSERT INTO users (username,password,email,realname,vip,ip) VALUES('".$username."','".$password."','".$email."','".$realname."',1,'".$ip."')");
 	sqlite_close($dbhle2);
 	$ccp2 = fopen("config.php", 'a') or die("Unable to write to configuration file.");
