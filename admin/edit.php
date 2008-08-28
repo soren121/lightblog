@@ -1,5 +1,5 @@
 <?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
-// grab the post/page from the database so the user can edit it
+$result08 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$_GET['id']."") or die("SQLite query error: code 08<br>".sqlite_error_string(sqlite_last_error($handle)));// grab the post/page from the database so the user can edit it
 	while($past = sqlite_fetch_object($result08)) {
 		$pasttitle = $past->title;
 		$pastpost = $past->post;

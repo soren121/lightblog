@@ -1,4 +1,7 @@
-<?php session_start();define("Light", true);require('config.php');require('admin/corefunctions.php');?>
+<?php session_start();define("Light", true);require('config.php');require('admin/corefunctions.php');
+$result03 = sqlite_query($handle, "SELECT * FROM posts WHERE id=".$_GET['id']." ORDER BY id desc") or die("SQLite query error: code 03<br>".sqlite_error_string(sqlite_last_error($handle)));
+$result04 = sqlite_query($handle, "SELECT * FROM comments WHERE post_id=".$_GET['id']." ORDER BY id desc") or die("SQLite query error: code 04<br>".sqlite_error_string(sqlite_last_error($handle)));
+?>
 <!--	LightBlog v0.9.0
 		Copyright 2008 soren121. Some Rights Reserved.
 		Licensed under the General Public License v3.
