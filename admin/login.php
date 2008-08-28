@@ -115,12 +115,33 @@ if(isset($_GET['logout'])) {
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title><?php echo $site_name; ?> - Login</title>
 <link rel="stylesheet" type="text/css" href="style/regstyle.css" />
+<script type="text/javascript" src="includes/jquery.js"></script>
+<script type="text/javascript" src="includes/jquery-ui.js"></script>
+  <script>
+  $(document).ready(function(){
+    $("#example > ul").tabs();
+  });
+  </script>
+
 </head>
 
 <body>
 <div id="registerbox">
 <h2 style="padding-top: 5px;"><?php echo $site_name; ?></h2>
 <h3 style="padding-bottom: 5px;">Login</h3>
+        <div id="example">
+            <ul>
+                <li><a href="#fragment-1"><span>One</span></a></li>
+                <li><a href="#fragment-2"><span>Two</span></a></li>
+            </ul>
+            <div id="fragment-1">
+                <p>First tab is active by default:</p>
+                <pre><code>$('#example > ul').tabs();</code></pre>
+            </div>
+            <div id="fragment-2">
+				It's an Open world.
+            </div>
+        </div>
 
 	<form action="" method="post">
     <table style="margin-left: auto; margin-right: auto;">
