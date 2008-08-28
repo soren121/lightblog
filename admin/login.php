@@ -117,12 +117,7 @@ if(isset($_GET['logout'])) {
 <link rel="stylesheet" type="text/css" href="style/regstyle.css" />
 <script type="text/javascript" src="includes/jquery.js"></script>
 <script type="text/javascript" src="includes/jquery-ui.js"></script>
-  <script>
-  $(document).ready(function(){
-    $("#tabs > ul").tabs();
-  });
-  </script>
-
+<script type="text/javascript">$(document).ready(function(){$("#tabs > ul").tabs();});</script>
 </head>
 
 <body>
