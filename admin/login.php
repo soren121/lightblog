@@ -119,7 +119,7 @@ if(isset($_GET['logout'])) {
 <script type="text/javascript" src="includes/jquery-ui.js"></script>
   <script>
   $(document).ready(function(){
-    $("#example > ul").tabs();
+    $("#tabs > ul").tabs();
   });
   </script>
 
@@ -129,11 +129,12 @@ if(isset($_GET['logout'])) {
 <div id="registerbox">
 <h2 style="padding-top: 5px;"><?php echo $site_name; ?></h2>
 <h3 style="padding-bottom: 5px;">Login</h3>
-<div id="example">
+<div id="tabs">
 	<ul>
         <li><a href="#fragment-1"><span>Normal</span></a></li>
         <li><a href="#fragment-2"><span>OpenID</span></a></li>
     </ul>
+	<br />
     <div id="fragment-1">
         <form action="" method="post">
 		<table style="margin-left: auto; margin-right: auto;">
