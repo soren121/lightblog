@@ -33,7 +33,7 @@ if(isset($_POST['step1'])) {
 	$_SESSION['465650ad50650760ab'] = $dbstr;
 	$step0 = "0"; $step1 = "0"; $step2 = "1"; 
 	}
-	else { die('Unable to create database because directory was not writable. Fix it and <a href="javascript:history.go(-1)">go back</a>.'; }
+	else { die('Unable to create database because directory was not writable. Fix it and <a href="javascript:history.go(-1)">go back</a>.'); }
 }
 if(isset($_POST['step2'])) {
 	$password = md5($_POST['password']);
