@@ -14,7 +14,7 @@
   
 *************************************************/
 
-require('../config.php');
+require('../Config.php');
 
 // We don't want this file to be accessed directly!
 if(!defined('Lighty')) {
@@ -29,7 +29,10 @@ if($lighty_installed == "false") {
 
 // This function compiles and loads themes
 function loadTemplate($page) {
-	
+	// First, we want to check if a template for this page exists
+	if(file_exists($theme_dir.$current_theme.'/'.$page.'.template.php')) {
+		require($sources_dir.'TemplateCompiler.php');
+	}
 }
 
 ?>
