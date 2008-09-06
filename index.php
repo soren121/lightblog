@@ -15,7 +15,8 @@
 *************************************************/
 
 define('Lighty', true);
-require($sources_dir.'Core.php');
+require_once('../Config.php');
+require_once($sources_dir.'Core.php');
 
 // Load page if specified
 if(isset($_GET['page'])) {

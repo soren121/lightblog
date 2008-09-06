@@ -17,6 +17,7 @@
   
 *************************************************/
 
+require_once('../Config.php');
 require($sources_dir.'Core.php');
 
 // We don't want this file to be accessed directly!
