@@ -14,7 +14,7 @@
   
 *************************************************/
 
-// We can't let you access it directly :)
+// We don't want this file to be accessed directly!
 if(!defined('Lighty')) {
 	die("Hacking Attempt...");
 }
