@@ -17,8 +17,8 @@
 require('../config.php');
 
 // We don't want this file to be accessed directly!
-if(!defined("Lighty")) {
-  die("Hacking Attempt...");
+if(!defined('Lighty')) {
+	die("Hacking Attempt...");
 }
 
 // Check if LightBlog is installed
