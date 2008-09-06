@@ -38,17 +38,18 @@ class Page
 
   function replace_tags($tags = array()) {
     if (sizeof($tags) > 0)
-      foreach ($tags as $tag =&gt; $data) {
-        $data = (file_exists($data)) ? $this-&gt;parse($data) : $data;
-        $this-&gt;page = eregi_replace("{" . $tag . "}", $data,
-                      $this-&gt;page);
+      foreach ($tags as $tag => $data) {
+        $data = (file_exists($data)) ? $this->parse($data) : $data;
+        $this->page = eregi_replace("{" . $tag . "}", $data,
+                      $this->page);
         }
     else
       die("No tags designated for replacement.");
   }
 
   function output() {
-    echo $this-&gt;page;
+    echo $this->page;
   }
 }
+
 ?>
