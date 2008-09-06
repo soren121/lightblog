@@ -17,12 +17,19 @@
   
 *************************************************/
 
+require($sources_dir.'Core.php');
+
+// We don't want this file to be accessed directly!
+if(!defined('Lighty')) {
+	die("Hacking Attempt...");
+}
+
 class Page
 {
   var $page;
 
-  function Page($template = "template.html") {
-    if (file_exists($template))
+  function Page($template) {
+    if (file_exists($theme_dir.$template.'.template.php'))
       $this->page = join("", file($template));
     else
       die("Template file $template not found.");

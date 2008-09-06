@@ -17,10 +17,12 @@
 define('Lighty', true);
 require($sources_dir.'Core.php');
 
+// Load page if specified
 if(isset($_GET['page'])) {
 	loadTemplate($_GET['page']);
 }
 
+// If no page is specified, load the index
 if(!(isset($_GET['page'])) {
 	loadTemplate('main');
 }
