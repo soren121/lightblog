@@ -1,3 +1,4 @@
+/* jQuery WYSIWYG Plugin 0.4 */
 
 (function($)
 {$.fn.document=function()
