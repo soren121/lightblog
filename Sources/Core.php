@@ -34,10 +34,10 @@ function loadLanguage(strtolower(ucwords($input))) {
 // the header of the theme
 function lighty_head() {
 	$output =  echo '
-	<script type="text/javascript" src="'.$sources_dir.'jquery.js"></script>
-	<script type="text/javascript" src="'.$sources_dir.'jquery.ui.js"></script>
-	<script type="text/javascript" src="'.$sources_dir.'jquery.form.js"></script>
-	<script type="text/javascript" src="'.$sources_dir.'jquery.wysiwyg.js"></script>
+	<script type="text/javascript" src="'.$site_url.'sources/jquery.js"></script>
+	<script type="text/javascript" src="'.$site_url.'sources/jquery.ui.js"></script>
+	<script type="text/javascript" src="'.$site_url.'sources/jquery.form.js"></script>
+	<script type="text/javascript" src="'.$site_url.'sources/jquery.wysiwyg.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() { $(\'#ajaxform\').ajaxForm(function() { alert("The form has been submitted. Thanks!");});});</script>
 	<script type="text/javascript">$(function() { $(\'#wysiwyg\').wysiwyg(); });</script>';
