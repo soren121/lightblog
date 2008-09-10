@@ -8,7 +8,7 @@ echo '
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>'.$s['title'].'</title>
-<link rel="stylesheet" type="text/css" href="style.css" />
+<link rel="stylesheet" type="text/css" href="'.$site_url.'Themes/default/style.css" />
 '.lighty_head().'
 </head>
 <body>
