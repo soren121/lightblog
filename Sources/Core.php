@@ -33,7 +33,7 @@ function loadLanguage(strtolower(ucwords($input))) {
 // This function adds the proper jQuery scripts to 
 // the header of the theme
 function lighty_head() {
-	$output =  echo '
+	$output = '
 	<script type="text/javascript" src="'.$site_url.'sources/jquery.js"></script>
 	<script type="text/javascript" src="'.$site_url.'sources/jquery.ui.js"></script>
 	<script type="text/javascript" src="'.$site_url.'sources/jquery.form.js"></script>
@@ -44,19 +44,19 @@ function lighty_head() {
 	return $output;
 }
 
+
 // This function compiles and loads themes
 function loadTemplate(strtolower(ucwords($input))) {
-	// Make the template path easier to read and write ;)
-	$current_theme_dir = $theme_dir.$current_theme.'/';
-	// First, we want to check if a template for this page exists
-	if(file_exists($current_theme_dir.$input.'.template.php')) {
-		// Open up the template
-		require_once($current_theme_dir.$input.'.template.php');
-		// Load the required variables and send it out!
-		loadLanguage($current_language);
-		$output = include($current_theme_dir.$input.'.template.php');
-		return $output;
-	}
+	// Start up the template compiler!
+	require_once('TemplateCompiler.php');
+	$page = new Page($input);
+	// Replace the tags and send it out!
+	loadLanguage($current_language);
+	$page->replace_tags(array(
+		"l=$lparameter" => $language[$lparameter],
+		"headscripts" => lighty_head()
+	));
+	return $output;
 }
 
 ?>
