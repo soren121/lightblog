@@ -34,10 +34,10 @@ function loadLanguage(strtolower(ucwords($input))) {
 // the header of the theme
 function lighty_head() {
 	$output = '
-	<script type="text/javascript" src="'.$site_url.'sources/jquery.js"></script>
-	<script type="text/javascript" src="'.$site_url.'sources/jquery.ui.js"></script>
-	<script type="text/javascript" src="'.$site_url.'sources/jquery.form.js"></script>
-	<script type="text/javascript" src="'.$site_url.'sources/jquery.wysiwyg.js"></script>
+	<script type="text/javascript" src="'.$site_url.'Sources/jquery.js"></script>
+	<script type="text/javascript" src="'.$site_url.'Sources/jquery.ui.js"></script>
+	<script type="text/javascript" src="'.$site_url.'Sources/jquery.form.js"></script>
+	<script type="text/javascript" src="'.$site_url.'Sources/jquery.wysiwyg.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() { $(\'#ajaxform\').ajaxForm(function() { alert("The form has been submitted. Thanks!");});});</script>
 	<script type="text/javascript">$(function() { $(\'#wysiwyg\').wysiwyg(); });</script>';
@@ -47,16 +47,19 @@ function lighty_head() {
 
 // This function compiles and loads themes
 function loadTemplate(strtolower(ucwords($input))) {
-	// Start up the template compiler!
-	require_once('TemplateCompiler.php');
-	$page = new Page($input);
-	// Replace the tags and send it out!
-	loadLanguage($current_language);
-	$page->replace_tags(array(
-		"l=$lparameter" => $language[$lparameter],
-		"headscripts" => lighty_head()
-	));
-	return $output;
+	// Open up the Smarty class
+	require_once($sources_dir.'Smarty.class.php');
+	// Startup the class!
+	$smarty = new Smarty();
+	// Set all the paths...
+	$smarty->template_dir = $theme_dir;
+	$smarty->compile_dir = $sources_dir.'Smarty/compiled_templates';
+	$smarty->cache_dir = $sources_dir.'Smarty/cache';
+	$smarty->config_dir = $sources_dir.'Smarty/config';
+	// Assign all required variables and functions
+	
+	// Output the template!
+	return $smarty->display($lighty['current_theme'].$input);
 }
 
 ?>
