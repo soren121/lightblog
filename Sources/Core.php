@@ -25,6 +25,14 @@ if($lighty_installed == "false") {
 	header('Location: install.php');
 }
 
+// Set database handle
+$database = sqlite_open($dbpath) or die(fatalError('DB','NotFound'));
+
+// Grab the main options from the "core" table
+while($row = sqlite_fetch_array(sqlite_query($database, "SELECT * FROM core") or die(fatalError('DB','QueryFailed')))) {
+	$lighty[$row['variable']] = stripslashes(stripslashes($row['value']));
+}
+
 // This function loads a language (obviously :P) for Smarty
 function loadLanguage($params, &$smarty) {
 	include_once($language_dir.strtolower(ucwords($lighty['current_language'])).'.language.php';
