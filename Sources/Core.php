@@ -62,10 +62,15 @@ function loadTemplate(strtolower(ucwords($input))) {
 	$smarty = new Smarty();
 	// Set all the paths...
 	$smarty->template_dir = $theme_dir;
-	$smarty->compile_dir = $sources_dir.'Smarty/compiled_templates';
+	$smarty->compile_dir = $sources_dir.'Smarty/compiled_templates/'.$lighty['current_theme'];
 	$smarty->cache_dir = $sources_dir.'Smarty/cache';
 	$smarty->config_dir = $sources_dir.'Smarty/config';
 	$smarty->plugins_dir = $sources_dir.'Smarty/plugins';
+	// Check if current theme has a compile directory
+	// If not, make one
+	if(!file_exists($smarty->compile_dir)) {
+		mkdir($smarty->compile_dir, 0755);
+	}
 	// Assign all required variables and functions
 	$smarty->register_function('l', 'loadLanguage');
 	$smarty->register_function('info', 'loadSettings');
