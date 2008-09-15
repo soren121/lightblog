@@ -25,14 +25,15 @@ if($lighty_installed == "false") {
 	header('Location: install.php');
 }
 
-// This function loads a language (obviously :P)
-function loadLanguage(strtolower(ucwords($input))) {
-	return include($language_dir.$input.'.language.php');
+// This function loads a language (obviously :P) for Smarty
+function loadLanguage($params, &$smarty) {
+	include_once($language_dir.strtolower(ucwords($lighty['current_language'])).'.language.php';
+	return $l[$params['name']];
 }
 
 // This function adds the proper jQuery scripts to 
 // the header of the theme
-function lighty_head() {
+function loadJS() {
 	$output = '
 	<script type="text/javascript" src="'.$site_url.'Sources/jquery.js"></script>
 	<script type="text/javascript" src="'.$site_url.'Sources/jquery.ui.js"></script>
@@ -56,10 +57,13 @@ function loadTemplate(strtolower(ucwords($input))) {
 	$smarty->compile_dir = $sources_dir.'Smarty/compiled_templates';
 	$smarty->cache_dir = $sources_dir.'Smarty/cache';
 	$smarty->config_dir = $sources_dir.'Smarty/config';
+	$smarty->plugins_dir = $sources_dir.'Smarty/plugins';
 	// Assign all required variables and functions
-	
+	$smarty->register_function('l', 'loadLanguage');
+	$smarty->register_function('info', 'loadSettings');
+	$smarty->register_function('loadjs', 'loadJS');
 	// Output the template!
-	return $smarty->display($lighty['current_theme'].$input);
+	return $smarty->display($lighty['current_theme'].$input.'.tpl');
 }
 
 ?>
