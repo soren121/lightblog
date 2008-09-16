@@ -53,6 +53,12 @@ function loadJS() {
 	return $output;
 }
 
+// This function will load a specific part of
+// a post from the database
+function loadPost($params, &$smarty) {
+	return sqlite_query($database, "SELECT ".$params['name']." from posts ORDER BY id desc") or die(fatalError('DB', 'NotFound'));
+}
+
 
 // This function compiles and loads themes
 function loadTemplate(strtolower(ucwords($input))) {
@@ -75,6 +81,10 @@ function loadTemplate(strtolower(ucwords($input))) {
 	$smarty->register_function('l', 'loadLanguage');
 	$smarty->register_function('info', 'loadSettings');
 	$smarty->register_function('loadjs', 'loadJS');
+	$smarty->register_function('loadpost', 'loadPost');
+	$smarty->assign('postcount_main', sqlite_num_rows(sqlite_query($database, "SELECT * FROM posts ORDER BY id desc") or die(fatalError('DB', 'NotFound'));
+	$smarty->assign('site_url', $site_url);
+	$smarty->assign('theme_dir', $theme_dir);
 	// Output the template!
 	return $smarty->display($input.'.tpl');
 }

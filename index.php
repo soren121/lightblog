@@ -25,7 +25,7 @@ if(isset($_GET['page'])) {
 
 // If no page is specified, load the index
 if(!(isset($_GET['page'])) {
-	loadTemplate('main');
+	loadTemplate('loop');
 }
 	
 ?>
