@@ -17,4 +17,7 @@
 // This is an example, as you can see
 $l['example'] = 'Example Entry';
 
+// Posts
+$l['NoPosts'] = 'Sorry, there are no posts to display.';
+
 ?>

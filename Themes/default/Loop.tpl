@@ -10,7 +10,7 @@
 		</div>
 	{/while}
 {else}
-Sorry, there are no posts to display.
+{l v="NoPosts"}
 {/if}
 </div>
 {include file='Footer.tpl'}
