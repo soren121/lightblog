@@ -59,6 +59,11 @@ function loadPost($params, &$smarty) {
 	return sqlite_query($database, "SELECT ".$params['name']." from posts ORDER BY id desc") or die(fatalError('DB', 'NotFound'));
 }
 
+// This function simply takes the $lighty variable
+// and gives it to Smarty in an easier way
+function loadSettings($params, &$smarty) {
+	return $lighty[$params['v']];
+}
 
 // This function compiles and loads themes
 function loadTemplate(strtolower(ucwords($input))) {
