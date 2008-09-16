@@ -61,7 +61,7 @@ function loadTemplate(strtolower(ucwords($input))) {
 	// Startup the class!
 	$smarty = new Smarty();
 	// Set all the paths...
-	$smarty->template_dir = $theme_dir;
+	$smarty->template_dir = $theme_dir.$lighty['current_theme'];
 	$smarty->compile_dir = $sources_dir.'Smarty/compiled_templates/'.$lighty['current_theme'];
 	$smarty->cache_dir = $sources_dir.'Smarty/cache';
 	$smarty->config_dir = $sources_dir.'Smarty/config';
@@ -76,7 +76,7 @@ function loadTemplate(strtolower(ucwords($input))) {
 	$smarty->register_function('info', 'loadSettings');
 	$smarty->register_function('loadjs', 'loadJS');
 	// Output the template!
-	return $smarty->display($lighty['current_theme'].$input.'.tpl');
+	return $smarty->display($input.'.tpl');
 }
 
 ?>
