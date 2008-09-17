@@ -20,7 +20,7 @@ if(!defined('Lighty')) {
 }
 
 // Database settings
-$dbpath = sqlite_open(""); // Path to your SQLite database
+$database = sqlite_open(""); // Path to your SQLite database
 
 // Path settings for LightBlog folders
 // These should have been setup during installation

@@ -14,6 +14,9 @@
   
 *************************************************/
 
+error_reporting(E_ALL);
+require_once(getcwd().'\Config.php');
+
 // We don't want this file to be accessed directly!
 if(!defined('Lighty')) {
 	die("Hacking Attempt...");
@@ -21,21 +24,24 @@ if(!defined('Lighty')) {
 
 // Check if LightBlog is installed
 // We wouldn't want PHP producing fatal errors ;)
-if($lighty_installed == "false") {
+if($lighty_installed == false) {
 	header('Location: install.php');
 }
 
-// Set database handle
-$database = sqlite_open($dbpath) or die(fatalError('DB','NotFound'));
+function fatalError($type, $message) {
+	echo $type.$message;
+}
 
 // Grab the main options from the "core" table
-while($row = sqlite_fetch_array(sqlite_query($database, "SELECT * FROM core") or die(fatalError('DB','QueryFailed')))) {
+$query = sqlite_query($database, "SELECT * FROM core") or die(fatalError('DB','QueryFailed'));
+while($row = sqlite_fetch_array($query)) {
 	$lighty[$row['variable']] = stripslashes(stripslashes($row['value']));
 }
+unset($query);
 
 // This function loads a language (obviously :P) for Smarty
 function loadLanguage($params, &$smarty) {
-	include_once($language_dir.strtolower(ucwords($lighty['current_language'])).'.language.php';
+	include_once($language_dir.strtolower(ucwords($lighty['current_language'])).'.language.php');
 	return $l[$params['name']];
 }
 
@@ -56,7 +62,7 @@ function loadJS() {
 // This function will load a specific part of
 // a post from the database
 function loadPost($params, &$smarty) {
-	return sqlite_query($database, "SELECT ".$params['name']." from posts ORDER BY id desc") or die(fatalError('DB', 'NotFound'));
+	return sqlite_query($database, "SELECT ".$params['name']." from posts ORDER BY id desc") or die(fatalError('DB', 'QueryFailed'));
 }
 
 // This function simply takes the $lighty variable
@@ -66,7 +72,9 @@ function loadSettings($params, &$smarty) {
 }
 
 // This function compiles and loads themes
-function loadTemplate(strtolower(ucwords($input))) {
+function loadTemplate($input) {
+	// Lowercase and capitalize the input; can't be too careful!
+	$input = strtolower(ucwords($input));
 	// Open up the Smarty class
 	require_once($sources_dir.'Smarty.class.php');
 	// Startup the class!
@@ -87,7 +95,9 @@ function loadTemplate(strtolower(ucwords($input))) {
 	$smarty->register_function('info', 'loadSettings');
 	$smarty->register_function('loadjs', 'loadJS');
 	$smarty->register_function('loadpost', 'loadPost');
-	$smarty->assign('postcount_main', sqlite_num_rows(sqlite_query($database, "SELECT * FROM posts ORDER BY id desc") or die(fatalError('DB', 'NotFound'));
+	$query = sqlite_query($database, "SELECT * FROM posts ORDER BY id desc") or die(fatalError('DB', 'QueryFailed'));
+	$smarty->assign('postcount_main', sqlite_num_rows($query));
+	unset($query);
 	$smarty->assign('site_url', $site_url);
 	$smarty->assign('theme_dir', $theme_dir);
 	// Output the template!
