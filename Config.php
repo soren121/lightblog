@@ -19,15 +19,16 @@ if(!defined('Lighty')) {
 	die("Hacking Attempt...");
 }
 
-// Database settings
-$database = sqlite_open(""); // Path to your SQLite database
+// Path to your database...
+$db_path = '';
+$db_prefix = 'lightblog_';
 
 // Path settings for LightBlog folders
 // These should have been setup during installation
-$lighty['sources_dir'] = ''; // Path to your Sources directory with trailing /
-$lighty['theme_dir'] = ''; // Path to your Themes directory with trailing /
-$lighty['language_dir'] = ''; // Path to your Languages directory with trailing /
-$lighty['site_url'] = ''; // URL to your LightBlog installation with trailing /
+$sources_dir = '';  // Path to your Sources directory with trailing /
+$theme_dir = '';    // Path to your Themes directory with trailing /
+$language_dir = ''; // Path to your Languages directory with trailing /
+$site_url = '';     // URL to your LightBlog installation with trailing /
 
 // Don't touch this!
 $lighty_installed = false;
