@@ -65,6 +65,8 @@ class Core {
     $smarty->cache_dir = $sources_dir. 'Smarty/cache';
 	$smarty->config_dir = $sources_dir. 'Smarty/config';
 	$smarty->plugins_dir = $sources_dir. 'Smarty/plugins';
+	$smarty->caching = 1;
+	$smarty->cache_lifetime = 1440;
 	if(!file_exists($smarty->compile_dir)) {
 		mkdir($smarty->compile_dir, 0755);
 	}
@@ -72,7 +74,7 @@ class Core {
 	$smarty->register_function('l', 'loadLanguage');
 	$smarty->register_function('info', 'loadSettings');
 	$smarty->register_function('loadJS', $this->loadJS);
-	$smarty->register_function('loadpost', 'loadPost');
+	// $smarty->register_function('loadpost', 'loadPost');
 	$smarty->assign('site_url', $site_url);
 	$smarty->assign('theme_dir', $theme_dir);
 	$vars = array(
@@ -81,7 +83,7 @@ class Core {
 	  'site_url' => $site_url
 	);
 	// Output the template!
-	return $smarty->display($template.'.tpl');
+	return $smarty->display($smarty->template_dir .$template.'.tpl');
   }
 }
 ?>
