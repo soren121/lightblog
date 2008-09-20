@@ -2,7 +2,7 @@
 /*************************************************
 
   LightBlog - PHP SQLite blogging platform
-  Copyright 2008 soren121.
+  Copyright 2008 soren121 and aldo.
   
   This software is released under the GNU
   General Public License version 3. For more

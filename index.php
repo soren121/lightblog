@@ -14,12 +14,14 @@ session_start();
   index.php
   
 *************************************************/
-// Define something, and get some files and such
+
+// Define Lighty to show that this file can be accessed directly
 define('Lighty', true);
+// Open up the config and startup files
 require_once('./config.php');
 require_once($sources_dir. '/Startup.php');
 
-// Are we doing an ?act, ?page etc?
+// Are we doing an ?act, ?page, or what?
 if(isset($_GET['act']) && $core->isAction($_GET['act'])) {
   $core->loadAction($_GET['page']);
 }

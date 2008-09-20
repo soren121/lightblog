@@ -13,14 +13,19 @@
   Core.php
   
 *************************************************/
-if(!defined('Lighty'))
+
+// We wouldn't want this file
+// to be accessed directly!
+if(!defined('Lighty')) {
   die("Hacking Attempt...");
+}
   
 class Core {
   var $acts = array();
   var $l = array();
   var $lighty = array();
   
+  // Load index :P
   public function loadIndex() {    
     $this->loadTemplate('index');
   }
@@ -34,10 +39,13 @@ class Core {
     );
   }
   
+  // This function produces a nice fatal error message
+  // that even a casual user could read
   public function fatalError($message, $type = E_USER_ERROR) {
     trigger_error($message, $type);
   }
   
+  // This function loads a setting from the database
   public function loadSettings() {
   global $db, $lighty;
     $result = $db->query("SELECT * FROM '{$db_prefix}core'");
@@ -48,18 +56,25 @@ class Core {
     $this->lighty = $lighty;
   }
   
+  // This function loads a specific entry from the language file
   public function loadLanguage() {
   global $language_dir, $lighty, $l;  
     require_once($language_dir. strtolower(ucwords($lighty['current_language'])). '.language.php');
     $this->l = $l;
   }
   
+  // This function...well, I shouldn't need to explain this one.
   public function loadTemplate($template, $data = array()) {
   global $sources_dir, $theme_dir; 
+    // Define the Smarty internals directory
     define('SMARTY_CORE_DIR', $sources_dir.'Smarty/internals'.DIRECTORY_SEPARATOR);
+	// Lowercase and capitalize the template name
 	$template = ucwords(strtolower($template));
+	// Open up the Smarty class!
     require_once($sources_dir. '/Smarty.class.php');
+	// Startup the class
     $smarty = new Smarty();
+	// Set all the required paths and other settings needed by Smarty
     $smarty->template_dir = $theme_dir. $this->lighty['current_theme'];
     $smarty->compile_dir = $sources_dir. 'Smarty/compiled_templates/'. $this->lighty['current_theme'];
     $smarty->cache_dir = $sources_dir. 'Smarty/cache';
@@ -67,6 +82,7 @@ class Core {
 	$smarty->plugins_dir = $sources_dir. 'Smarty/plugins';
 	$smarty->caching = 1;
 	$smarty->cache_lifetime = 1440;
+	// If a compile directory for the theme doesn't exist, make it
 	if(!file_exists($smarty->compile_dir)) {
 		mkdir($smarty->compile_dir, 0755);
 	}
