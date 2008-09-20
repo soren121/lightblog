@@ -2,9 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>{info v=site_title}</title>
-<link rel="stylesheet" type="text/css" href="{info v=site_url}Themes/default/style.css" />
-{loadjs}
+  <title>{$main_title}{if !empty($title)}- {$title}{/if}</title>
+  <link rel="stylesheet" type="text/css" href="{$site_url}Themes/default/style.css" />
+  {loadJS}
 </head>
 <body>
 

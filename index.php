@@ -1,8 +1,9 @@
 <?php
+session_start();
 /*************************************************
 
   LightBlog - PHP SQLite blogging platform
-  Copyright 2008 soren121.
+  Copyright 2008 soren121 and aldo.
   
   This software is released under the GNU
   General Public License version 3. For more
@@ -13,19 +14,19 @@
   index.php
   
 *************************************************/
-
+// Define something, and get some files and such
 define('Lighty', true);
-require_once('Config.php');
-require_once($sources_dir.'Core.php');
+require_once('./config.php');
+require_once($sources_dir. '/Startup.php');
 
-// Load page if specified
-if(isset($_GET['page'])) {
-	loadTemplate($_GET['page']);
+// Are we doing an ?act, ?page etc?
+if(isset($_GET['act']) && $core->isAction($_GET['act'])) {
+  $core->loadAction($_GET['page']);
 }
-
-// If no page is specified, load the index
-if(!(isset($_GET['page']))) {
-	loadTemplate('loop');
+elseif(!empty($_GET['page'])) {
+  $core->loadPage($_GET['page']);
 }
-	
+else {
+  $core->loadIndex();
+}
 ?>
