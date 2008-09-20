@@ -15,7 +15,6 @@
 *************************************************/
 
 error_reporting(E_ALL);
-require_once(getcwd().'\Config.php');
 
 // We don't want this file to be accessed directly!
 if(!defined('Lighty')) {
@@ -41,7 +40,7 @@ unset($query);
 
 // This function loads a language (obviously :P) for Smarty
 function loadLanguage($params, &$smarty) {
-	include_once($language_dir.strtolower(ucwords($lighty['current_language'])).'.language.php');
+	include_once($lighty['language_dir'].strtolower(ucwords($lighty['current_language'])).'.language.php');
 	return $l[$params['name']];
 }
 
@@ -71,20 +70,23 @@ function loadSettings($params, &$smarty) {
 	return $lighty[$params['v']];
 }
 
+// Globalize the important stuff so we can access it
+global $lighty, $database, $l, $smarty;
+
 // This function compiles and loads themes
 function loadTemplate($input) {
 	// Lowercase and capitalize the input; can't be too careful!
 	$input = strtolower(ucwords($input));
 	// Open up the Smarty class
-	require_once($sources_dir.'Smarty.class.php');
+	require_once($lighty['sources_dir'].'Smarty.class.php');
 	// Startup the class!
 	$smarty = new Smarty();
 	// Set all the paths...
-	$smarty->template_dir = $theme_dir.$lighty['current_theme'];
-	$smarty->compile_dir = $sources_dir.'Smarty/compiled_templates/'.$lighty['current_theme'];
-	$smarty->cache_dir = $sources_dir.'Smarty/cache';
-	$smarty->config_dir = $sources_dir.'Smarty/config';
-	$smarty->plugins_dir = $sources_dir.'Smarty/plugins';
+	$smarty->template_dir = $lighty['theme_dir'].$lighty['current_theme'];
+	$smarty->compile_dir = $lighty['sources_dir'].'Smarty/compiled_templates/'.$lighty['current_theme'];
+	$smarty->cache_dir = $lighty['sources_dir'].'Smarty/cache';
+	$smarty->config_dir = $lighty['sources_dir'].'Smarty/config';
+	$smarty->plugins_dir = $lighty['sources_dir'].'Smarty/plugins';
 	// Check if current theme has a compile directory
 	// If not, make one
 	if(!file_exists($smarty->compile_dir)) {
@@ -99,7 +101,7 @@ function loadTemplate($input) {
 	$smarty->assign('postcount_main', sqlite_num_rows($query));
 	unset($query);
 	$smarty->assign('site_url', $site_url);
-	$smarty->assign('theme_dir', $theme_dir);
+	$smarty->assign('theme_dir', $lighty['theme_dir']);
 	// Output the template!
 	return $smarty->display($input.'.tpl');
 }
