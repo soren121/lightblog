@@ -19,9 +19,10 @@ if(!defined('Lighty')) {
 	die("Hacking Attempt...");
 }
 
-// Path to your database...
-$db_path = '';
-$db_prefix = 'lightblog_';
+// Database settings
+// These should have been setup during installation
+$db_path = ''; // Absolute server path to your SQLite database file
+$db_prefix = 'lightblog_'; // Prefix for all your tables, just in case!
 
 // Path settings for LightBlog folders
 // These should have been setup during installation
@@ -31,5 +32,5 @@ $language_dir = ''; // Path to your Languages directory with trailing /
 $site_url = '';     // URL to your LightBlog installation with trailing /
 
 // Don't touch this!
-$lighty_installed = false;
+$lighty_installed = false; // Installation indicator
 ?>

@@ -13,18 +13,21 @@
   Startup.php
   
 *************************************************/
-if(!defined('Lighty'))
+
+if(!defined('Lighty')) {
   die("Hacking Attempt...");
+}
 
 // Get some needed files...
-require_once($sources_dir. 'Core.php');
+require_once($sources_dir.'Core.php');
 
-// Define these vars as class handles
+// Define these variables as class handles
 $core = new Core;
 
 // And now connect to the database...
 $db = new SQLiteDatabase($db_path, $db_mode, $con_error);
-// Connection Error?
+
+// Is there a connection error?
 if(!empty($con_error)) {
   $core->fatalError($con_error);
 }
