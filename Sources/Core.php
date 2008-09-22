@@ -59,7 +59,7 @@ class Core {
   // This function loads a specific entry from the language file
   public function loadLanguage() {
   global $language_dir, $lighty, $l;  
-    require_once($language_dir. strtolower(ucwords($lighty['current_language'])). '.language.php');
+    require_once($language_dir. ucwords(strtolower($lighty['current_language'])). '.language.php');
     $this->l = $l;
   }
   
