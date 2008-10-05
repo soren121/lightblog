@@ -56,6 +56,13 @@ class Core {
     $this->lighty = $lighty;
   }
   
+  // This is the almighty POST GRABBER. Respect it! :P
+  public function loadPost($params, &$smarty) {
+  global $db;
+	$result = $db->query("SELECT ".$params['column']." FROM '{$db_prefix}posts' WHERE id='".$params['id']."'");
+	return $result;
+  }
+  
   // This function loads a specific entry from the language file
   public function loadLanguage() {
   global $language_dir, $lighty, $l;  
@@ -65,7 +72,7 @@ class Core {
   
   // This function...well, I shouldn't need to explain this one.
   public function loadTemplate($template, $data = array()) {
-  global $sources_dir, $theme_dir; 
+  global $sources_dir, $theme_dir, $this, $db; 
     // Define the Smarty internals directory
     define('SMARTY_CORE_DIR', $sources_dir.'Smarty/internals'.DIRECTORY_SEPARATOR);
 	// Lowercase and capitalize the template name
@@ -89,12 +96,13 @@ class Core {
 	// Assign all required variables and functions
 	$smarty->register_function('l', 'loadLanguage');
 	$smarty->register_function('info', 'loadSettings');
-	$smarty->register_function('loadJS', $this->loadJS);
-	// $smarty->register_function('loadpost', 'loadPost');
+	$smarty->register_function('loadpost', 'loadPost');
 	$smarty->assign('site_url', $site_url);
-	$smarty->assign('theme_dir', $theme_dir);
+	$smarty->assign('themedir', $site_url.'Themes/'.$this->lighty['current_theme']);
+	$result = $db->query("SELECT id FROM {$db_prefix}posts ORDER BY desc");
+	$smarty->assign('postcount', $result->numRows());
 	$vars = array(
-	  'main_title' => $this->lighty['site_title'],
+	  'site_title' => $this->lighty['site_title'],
 	  'title' => !empty($data['title']) ? $data['title'] : null,
 	  'site_url' => $site_url
 	);
