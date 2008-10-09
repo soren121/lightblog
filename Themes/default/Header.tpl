@@ -3,8 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <title>{$main_title}{if !empty($title)}- {$title}{/if}</title>
-  <link rel="stylesheet" type="text/css" href="{$site_url}Themes/default/style.css" />
-  {loadJS}
+  <link rel="stylesheet" type="text/css" href="{$theme_dir)style.css" />
 </head>
 <body>
 
