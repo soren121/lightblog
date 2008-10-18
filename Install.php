@@ -75,7 +75,7 @@ class queryExtractor {
 /**
  * EXAMPLE
  * 
- * $qe = new queryExtractor("C:\Program Files\Apache Software Foundation\Apache2.2\htdocs\Tserkanos\classes\sqlFileReader\DatabaseStructure.sql");
+ * $qe = new queryExtractor("Install.sql");
  * $qe->extractQueries();
  * 
  * foreach ($qe->SqlQueries as $value)
