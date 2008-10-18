@@ -72,6 +72,8 @@ class queryExtractor {
 	}
 }
  
+// Database name generator
+// Based on code from www.webtoolkit.info
 function generateDatabaseName($length=9, $strength=0) {
     $vowels = 'aeuy';
     $consonants = 'bdghjmnpqrstvz';
