@@ -1,23 +1,14 @@
-----
--- {$db_prefix}core table
-----
-CREATE TABLE '{$db_prefix}core' (
+CREATE TABLE 'lighty_core' (
   'variable' VARCHAR(255) NOT NULL,
   'value' TEXT NOT NULL
 );
-----
--- Index for {$db_prefix}core
-----
-CREATE UNIQUE INDEX '{$db_prefix}core_index' ON '{$db_prefix}core' ('variable');
-----
--- Data for {$db_prefix}core
-----
-INSERT INTO '{$db_prefix}core' ('variable','value') VALUES('current_theme','default');
-INSERT INTO '{$db_prefix}core' ('variable','value') VALUES('current_language','English');
-----
--- {$db_prefix}posts table
-----
-CREATE TABLE '{$db_prefix}posts' (
+
+CREATE UNIQUE INDEX 'lighty_core_index' ON 'lighty_core' ('variable');
+
+INSERT INTO 'lighty_core' ('variable','value') VALUES('current_theme','default');
+INSERT INTO 'lighty_core' ('variable','value') VALUES('current_language','English');
+
+CREATE TABLE 'lighty_posts' (
   'postID' INTEGER NOT NULL PRIMARY KEY,
   'title' TEXT NOT NULL,
   'time' INT(10) NOT NULL,
@@ -28,7 +19,5 @@ CREATE TABLE '{$db_prefix}posts' (
   'numComments' INT NOT NULL default '0',
   'isViewable' INT(1) NOT NULL default '1'
 );
-----
--- Index for {$db_prefix}posts
-----
-CREATE INDEX '{$db_prefix}posts_index' ON '{$db_prefix}posts' ('postID');
+
+CREATE INDEX 'lighty_posts_index' ON 'lighty_posts' ('postID');
