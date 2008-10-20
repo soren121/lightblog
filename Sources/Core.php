@@ -72,7 +72,7 @@ class Core {
   
   // This function...well, I shouldn't need to explain this one.
   public function loadTemplate($template, $data = array()) {
-  global $sources_dir, $theme_dir, $this, $db; 
+  global $sources_dir, $theme_dir, $db; 
     // Define the Smarty internals directory
     define('SMARTY_CORE_DIR', $sources_dir.'Smarty/internals'.DIRECTORY_SEPARATOR);
 	// Lowercase and capitalize the template name

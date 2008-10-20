@@ -104,6 +104,15 @@ function generateDatabaseName($length=9, $strength=0) {
     return $password;
 }
 
+// Function to get current URL in PHP
+function fullURL() {
+    $iurl = explode('/', $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
+    unset($iurl[count($iurl)-1]);
+    $iurl = implode('/', $iurl);
+    $installpath = 'http://'.$iurl.'/';
+	return $installpath;
+}
+
 // The exciting part! :P 
 if(isset($_POST['install'])) {
 	// Generate database name
@@ -115,8 +124,31 @@ if(isset($_POST['install'])) {
 	// Inject SQL into database
 	$sqle = new queryExtractor("Install.sql");
 	sqlite_query($handler, $sqle->extractQueries()) or die('Could not write to the database. Please check your permissions.';
+	// Begin Config.php creation process
+	// Read start of example and store in variable
+	$cstart = fclose(fread(fopen('Config.example.php', 'r'), 557));
+	// Create new Config.php
+	fclose(fopen('Config.php', 'w')) or die('Could not create Config.php. Please check your permissions.';
+	// Write start of Config.php
+	fwrite(fopen('Config.php', 'w'), $cstart) or die('Could not write to Config.php. Please check your permissions.';
+	// End of Config.php
+	$cend = "$db_path = '".$dbname."'; // Absolute server path to your SQLite database file
+$db_prefix = 'lightblog_'; // Prefix for all your tables, just in case!
+
+// Path settings for LightBlog folders
+// These should have been setup during installation
+$sources_dir = '".dirname(__FILE__)."/Sources/';  // Path to your Sources directory with trailing /
+$theme_dir = '".dirname(__FILE__)."/Themes/';    // Path to your Themes directory with trailing /
+$language_dir = '".dirname(__FILE__)."/Languages/'; // Path to your Languages directory with trailing /
+$site_url = '".fullURL()."';     // URL to your LightBlog installation with trailing /
+
+// Don't touch this!
+$lighty_installed = true; // Installation indicator
+?>";
+	// Append variables to Config.php
+	fclose(fwrite(fopen('Config.php', 'a'), $cend));
 	// Close and unset all variables
-	unset($dbname, $sqle);
+	unset($dbname, $sqle, $cstart, $cend);
 	sqlite_close($handler);
 }
 ?>
