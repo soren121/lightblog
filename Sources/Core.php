@@ -99,7 +99,7 @@ class Core {
 	$smarty->assign('info', $this->lighty);
 	$smarty->assign('site_url', $site_url);
 	$smarty->assign('theme_dir', $site_url.'Themes/'.$this->lighty['current_theme'].'/');
-	$result = $db->query("SELECT id FROM {$db_prefix}posts ORDER BY desc");
+	$result = $db->query("SELECT id FROM ".$db_prefix."posts ORDER BY desc");
 	$smarty->assign('postcount', $result->numRows());
 	$vars = array(
 	  'site_title' => $this->lighty['site_title'],

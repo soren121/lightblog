@@ -14,74 +14,21 @@
   
 *************************************************/
 
-// SQL query extractor class
-// Written by Merianos Nikos of phpclasses.com
-// Released into the public domain
+// Automatically set $success to 1 (default)
+$success = 1;
 
-class queryExtractor {
-	private $fileName;	
-	private $fileContent;
-	public $SqlQueries;
-	public function __construct($fileLocation = '') {
-		if(strlen($fileLocation) < 1) {
-			$this->fileName = '';
-		}
-		
-		else {
-			$this->fileName = $fileLocation;
-		}
-	}
-
-	public function extractQueries() {
-		// set defaults
-		$fileSize = 0;
-		$query = '';
-		
-		// return nothing if SQL file is empty
-		if(strlen($this->fileName) < 1) {
-			return '';
-		}
-		
-		else {
-			// open file for reading
-    		$file = @fopen("$this->fileName", "r");
-			// read 32K of file
-    		$rf = fread($file, 32000);
-			// close file
-    		fclose($file);
-
-    		if(strlen($rf) > 0) {
-    			$fileSize = strlen($rf);
-    			
-    			for($i = 0; $i <= $fileSize; $i++) {
-    				if(substr($rf, $i, 1) == ';') {
-    					$this->SqlQueries[] = $query . substr($rf, $i, 1);
-    				}
-					
-    				else {
-    					$query .= substr($rf, $i, 1);
-    				}
-    			}
-    		}
-			
-    		else {
-    			$this->SqlQueries = '';
-    			return $this->SqlQueries;
-    		}
-		}
-	}
-}
- 
 // Database name generator
 // Based on code from www.webtoolkit.info
 function generateDatabaseName($length=9, $strength=0) {
-    $vowels = 'aeuy';
+    // Default vowels and consonants for name
+	$vowels = 'aeuy';
     $consonants = 'bdghjmnpqrstvz';
+	// Controls strength levels
     if ($strength & 1) {
         $consonants .= 'BDGHJLMNPQRSTVWXZ';
     }
     if ($strength & 2) {
-        $vowels .= "AEUY";
+        $vowels .= 'AEUY';
     }
     if ($strength & 4) {
         $consonants .= '23456789';
@@ -90,18 +37,21 @@ function generateDatabaseName($length=9, $strength=0) {
         $consonants .= '@#$%';
     }
 
-    $password = '';
+	// Blank variable
+    $grname = '';
+	// Set salt
     $alt = time() % 2;
     for ($i = 0; $i < $length; $i++) {
         if ($alt == 1) {
-            $password .= $consonants[(rand() % strlen($consonants))];
+            $grname .= $consonants[(rand() % strlen($consonants))];
             $alt = 0;
         } else {
-            $password .= $vowels[(rand() % strlen($vowels))];
+            $grname .= $vowels[(rand() % strlen($vowels))];
             $alt = 1;
         }
     }
-    return $password;
+	// Return generated name
+    return $grname;
 }
 
 // Function to get current URL in PHP
@@ -113,7 +63,19 @@ function fullURL() {
 	return $installpath;
 }
 
-// The exciting part! :P 
+// Function to get full path with forward-slashes!
+function fullPath() {
+	$path = str_replace('\\', '/', dirname(__FILE__));
+	return $path;
+	unset($path);
+}
+
+// Redirect home if installation was successful!
+if(array_key_exists('_redirecthome', $_POST)) {
+	header('Location: index.php');
+}
+
+// The exciting part! (a.k.a. the actual installer) :P 
 if(array_key_exists('_install', $_POST)) {
 	// Generate database name
 	$dbname = generateDatabaseName(10, 4).'.db';
@@ -121,35 +83,46 @@ if(array_key_exists('_install', $_POST)) {
 	fclose(fopen($dbname, 'w')) or die('Could not create the database. Please check your permissions.');
 	// Open database for writing
 	$handler = sqlite_open($dbname) or die('WTF? Could not open the database. Please check your permissions.');
+	// Read SQL
+	$sqlopener = fopen('Install.sql', 'r');
+	$sql = fread($sqlopener, filesize('Install.sql'));
+	fclose($sqlopener);
 	// Inject SQL into database
-	$sqle = new queryExtractor("Install.sql");
-	sqlite_query($handler, $sqle->extractQueries()) or die('Could not write to the database. Please check your permissions.');
+	sqlite_query($handler, $sql) or die('Could not write to the database. Please check your permissions.');
 	// Begin Config.php creation process
 	// Read start of example and store in variable
-	$cstart = fclose(fread(fopen('Config.example.php', 'r'), 557));
+	$copener = fopen('Config.example.php', 'r');
+	$cstart = fread($copener, 601);
+	fclose($copener);
 	// Create new Config.php
 	fclose(fopen('Config.php', 'w')) or die('Could not create Config.php. Please check your permissions.');
 	// Write start of Config.php
-	fwrite(fopen('Config.php', 'w'), $cstart) or die('Could not write to Config.php. Please check your permissions.');
-	// End of Config.php
-	$cend = "$db_path = '".$dbname."'; // Absolute server path to your SQLite database file
-$db_prefix = 'lightblog_'; // Prefix for all your tables, just in case!
+	unset($copener);
+	$copener = fopen('Config.php', 'w');
+	fwrite($copener, $cstart) or die('Could not write to Config.php. Please check your permissions.');
+	fclose($copener);
+	// Create end of Config.php
+	$cend = "
+\$db_path = '".fullPath().'/'.$dbname."'; // Absolute server path to your SQLite database file
+\$db_prefix = 'lightblog_'; // Prefix for all your tables, just in case!
 
 // Path settings for LightBlog folders
 // These should have been setup during installation
-$sources_dir = '".dirname(__FILE__)."/Sources/';  // Path to your Sources directory with trailing /
-$theme_dir = '".dirname(__FILE__)."/Themes/';    // Path to your Themes directory with trailing /
-$language_dir = '".dirname(__FILE__)."/Languages/'; // Path to your Languages directory with trailing /
-$site_url = '".fullURL()."';     // URL to your LightBlog installation with trailing /
+\$sources_dir = '".fullPath()."/Sources/';  // Path to your Sources directory with trailing /
+\$theme_dir = '".fullPath()."/Themes/';    // Path to your Themes directory with trailing /
+\$language_dir = '".fullPath()."/Languages/'; // Path to your Languages directory with trailing /
+\$site_url = '".fullURL()."';     // URL to your LightBlog installation with trailing /
 ?>";
-	// Append variables to Config.php
-	fclose(fwrite(fopen('Config.php', 'a'), $cend)) or die('Could not append to Config.php. Please check your permissions.');
+	// Write the end of Config.php
+	unset($copener);
+	$copener = fopen('Config.php', 'a');
+	fwrite($copener, $cend) or die('Could not append to Config.php. Please check your permissions.');
+	fclose($copener);
 	// Close and unset all variables
-	unset($dbname, $sqle, $cstart, $cend);
+	unset($dbname, $sql, $sqlopener, $copener, $cstart, $cend);
 	sqlite_close($handler);
-	// Send info along to user
-	// Will be refined later
-	echo 'Install finished!';	
+	// Send success message to user
+	$success = 2;
 }
 ?>
 
@@ -157,7 +130,7 @@ $site_url = '".fullURL()."';     // URL to your LightBlog installation with trai
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<title>LightBlog 1.0 Installer</title>
+	<title>LightBlog SVN Installer</title>
 	<style type="text/css">
 	body {
 		background: #eeeeec;
@@ -168,17 +141,17 @@ $site_url = '".fullURL()."';     // URL to your LightBlog installation with trai
 		background: #204A87;
 		width: 340px;
 		height: 400px;
-		margin: 0 auto;
-		
+		margin: 20px auto;
+		padding-top: 5px;
 	}
 	.contentbox {
-		margin: 3px;
+		margin: 4px 4px 4px 4px !important;
 		background: #8FB7CF;
 		color: #000000;
-		border: 1px solid #eee;
-		margin: 0 auto;
+		border: 1px solid #fff;
+		text-align: center;
 	}
-	form {
+	form, strong, p {
 		margin-left: auto;
 		margin-right: auto;
 	}
@@ -186,15 +159,24 @@ $site_url = '".fullURL()."';     // URL to your LightBlog installation with trai
 </head>
 <body>
 	<div id="container">
-		<div id="contentbox">
+		<div class="contentbox">
 			<strong>LightBlog SVN Installer</strong>
 		</div>
+		<?php if($success == 1) : ?>
 		<div class="contentbox">
 			<p>Welcome to the quick 'n dirty installer for LightBlog SVN. Click Install to create the database.</p>
 			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 				<p><input type="submit" name="_install" value="Install" /></p>
 			</form>
 		</div>
+		<?php endif; if($success == 2) : ?>
+		<div class="contentbox">
+			<p>LightBlog was successfully installed! Click Next to continue to your new blog's front page.</p>
+			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<p><input type="submit" name="_redirecthome" value="Next" /></p>
+			</form>
+		</div>
+		<?php endif; ?>
 	</div>
 </body>
 </html>

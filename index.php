@@ -18,7 +18,7 @@ session_start();
 // Define Lighty to show that this file can be accessed directly
 define('Lighty', true);
 // Check if Lighty is installed
-if(!((file_exists('Config.php')) and (filesize('Config.php') < 1)) {
+if(!file_exists('Config.php')) {
 		header('Location: Install.php');
 }
 // Open up the config and startup files
