@@ -30,7 +30,4 @@ $sources_dir = '';  // Path to your Sources directory with trailing /
 $theme_dir = '';    // Path to your Themes directory with trailing /
 $language_dir = ''; // Path to your Languages directory with trailing /
 $site_url = '';     // URL to your LightBlog installation with trailing /
-
-// Don't touch this!
-$lighty_installed = false; // Installation indicator
 ?>

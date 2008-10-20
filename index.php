@@ -17,6 +17,10 @@ session_start();
 
 // Define Lighty to show that this file can be accessed directly
 define('Lighty', true);
+// Check if Lighty is installed
+if(!((file_exists('Config.php')) and (filesize('Config.php') < 1)) {
+		header('Location: Install.php');
+}
 // Open up the config and startup files
 require_once('./Config.php');
 require_once($sources_dir. '/Startup.php');
@@ -28,9 +32,6 @@ if(isset($_GET['act']) && $core->isAction($_GET['act'])) {
 }
 elseif(!empty($_GET['page'])) {
   $core->loadPage($_GET['page']);
-}
-elseif($lighty_installed == false) {
-  header('Location: Install.php');
 }
 else {
   $core->loadIndex();

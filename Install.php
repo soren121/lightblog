@@ -141,9 +141,6 @@ $sources_dir = '".dirname(__FILE__)."/Sources/';  // Path to your Sources direct
 $theme_dir = '".dirname(__FILE__)."/Themes/';    // Path to your Themes directory with trailing /
 $language_dir = '".dirname(__FILE__)."/Languages/'; // Path to your Languages directory with trailing /
 $site_url = '".fullURL()."';     // URL to your LightBlog installation with trailing /
-
-// Don't touch this!
-$lighty_installed = true; // Installation indicator
 ?>";
 	// Append variables to Config.php
 	fclose(fwrite(fopen('Config.php', 'a'), $cend)) or die('Could not append to Config.php. Please check your permissions.');
@@ -169,31 +166,23 @@ $lighty_installed = true; // Installation indicator
 		width: 340px;
 		height: 400px;
 	}
-	#title {
-		color: #fff;
-	}
 	#contentbox {
 		margin: 3px;
 		background: #B8EB85;
 		color: #000000;
-	}
-	.button {
-		background: #eeeeec;
-		border: 3px solid #d3d7cf;
-		padding: 5px;
-		text-align: center;
+		border: 1px solid #eee;
 	}
   </style>
 </head>
 <body>
 	<div id="container">
-		<div id="title">
-			<p>LightBlog SVN Installer</p>
+		<div id="contentbox">
+			<strong>LightBlog SVN Installer</strong>
 		</div>
 		<div class="contentbox">
 			<p>Welcome to the quick 'n dirty installer for LightBlog SVN. Click Install to create the database.</p>
 			<form action="" method="get">
-				<input class="button" type="button" name="install" value="Install" />
+				<input type="button" name="install" value="Install" />
 			</form>
 		</div>
 	</div>
