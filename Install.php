@@ -114,9 +114,9 @@ function fullURL() {
 }
 
 // The exciting part! :P 
-if(isset($_POST['install'])) {
+if(array_key_exists('_install', $_POST)) {
 	// Generate database name
-	$dbname = generateDatabaaseName(10, 4).'.db';
+	$dbname = generateDatabaseName(10, 4).'.db';
 	// Create database
 	fclose(fopen($dbname, 'w')) or die('Could not create the database. Please check your permissions.');
 	// Open database for writing
@@ -147,6 +147,9 @@ $site_url = '".fullURL()."';     // URL to your LightBlog installation with trai
 	// Close and unset all variables
 	unset($dbname, $sqle, $cstart, $cend);
 	sqlite_close($handler);
+	// Send info along to user
+	// Will be refined later
+	echo 'Install finished!';	
 }
 ?>
 
@@ -162,15 +165,22 @@ $site_url = '".fullURL()."';     // URL to your LightBlog installation with trai
 	}
 	#container {
 		text-align: left;
-		background: #8AE234;
+		background: #204A87;
 		width: 340px;
 		height: 400px;
+		margin: 0 auto;
+		
 	}
-	#contentbox {
+	.contentbox {
 		margin: 3px;
-		background: #B8EB85;
+		background: #8FB7CF;
 		color: #000000;
 		border: 1px solid #eee;
+		margin: 0 auto;
+	}
+	form {
+		margin-left: auto;
+		margin-right: auto;
 	}
   </style>
 </head>
@@ -181,8 +191,8 @@ $site_url = '".fullURL()."';     // URL to your LightBlog installation with trai
 		</div>
 		<div class="contentbox">
 			<p>Welcome to the quick 'n dirty installer for LightBlog SVN. Click Install to create the database.</p>
-			<form action="" method="get">
-				<input type="button" name="install" value="Install" />
+			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<p><input type="submit" name="_install" value="Install" /></p>
 			</form>
 		</div>
 	</div>
