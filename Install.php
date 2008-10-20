@@ -118,19 +118,19 @@ if(isset($_POST['install'])) {
 	// Generate database name
 	$dbname = generateDatabaaseName(10, 4).'.db';
 	// Create database
-	fclose(fopen($dbname, 'w')) or die('Could not create the database. Please check your permissions.';
+	fclose(fopen($dbname, 'w')) or die('Could not create the database. Please check your permissions.');
 	// Open database for writing
-	$handler = sqlite_open($dbname) or die('WTF? Could not open the database. Please check your permissions.';
+	$handler = sqlite_open($dbname) or die('WTF? Could not open the database. Please check your permissions.');
 	// Inject SQL into database
 	$sqle = new queryExtractor("Install.sql");
-	sqlite_query($handler, $sqle->extractQueries()) or die('Could not write to the database. Please check your permissions.';
+	sqlite_query($handler, $sqle->extractQueries()) or die('Could not write to the database. Please check your permissions.');
 	// Begin Config.php creation process
 	// Read start of example and store in variable
 	$cstart = fclose(fread(fopen('Config.example.php', 'r'), 557));
 	// Create new Config.php
-	fclose(fopen('Config.php', 'w')) or die('Could not create Config.php. Please check your permissions.';
+	fclose(fopen('Config.php', 'w')) or die('Could not create Config.php. Please check your permissions.');
 	// Write start of Config.php
-	fwrite(fopen('Config.php', 'w'), $cstart) or die('Could not write to Config.php. Please check your permissions.';
+	fwrite(fopen('Config.php', 'w'), $cstart) or die('Could not write to Config.php. Please check your permissions.');
 	// End of Config.php
 	$cend = "$db_path = '".$dbname."'; // Absolute server path to your SQLite database file
 $db_prefix = 'lightblog_'; // Prefix for all your tables, just in case!
@@ -146,7 +146,7 @@ $site_url = '".fullURL()."';     // URL to your LightBlog installation with trai
 $lighty_installed = true; // Installation indicator
 ?>";
 	// Append variables to Config.php
-	fclose(fwrite(fopen('Config.php', 'a'), $cend));
+	fclose(fwrite(fopen('Config.php', 'a'), $cend)) or die('Could not append to Config.php. Please check your permissions.');
 	// Close and unset all variables
 	unset($dbname, $sqle, $cstart, $cend);
 	sqlite_close($handler);
