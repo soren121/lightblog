@@ -26,7 +26,6 @@ require_once('./Config.php');
 require_once($sources_dir. '/Startup.php');
 
 // Are we doing an ?act, ?page, or what?
-// And is LightBlog even installed?
 if(isset($_GET['act']) && $core->isAction($_GET['act'])) {
   $core->loadAction($_GET['page']);
 }
