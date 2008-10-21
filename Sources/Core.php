@@ -63,7 +63,7 @@ class Core {
 	return $result;
   }
   
-  // This function loads a specific entry from the language file
+  // This is the -other- almighty grabber, the PHRASE GRABBER. Respect it less! :P
   public function loadLanguage() {
   global $language_dir, $lighty, $l;  
     require_once($language_dir. ucwords(strtolower($lighty['current_language'])). '.language.php');
@@ -99,7 +99,7 @@ class Core {
 	$smarty->assign('info', $this->lighty);
 	$smarty->assign('site_url', $site_url);
 	$smarty->assign('theme_dir', $site_url.'Themes/'.$this->lighty['current_theme'].'/');
-	$result = $db->query("SELECT id FROM ".$db_prefix."posts ORDER BY desc");
+	$result = $db->query("SELECT id FROM lighty_posts ORDER BY desc");
 	$smarty->assign('postcount', $result->numRows());
 	$vars = array(
 	  'site_title' => $this->lighty['site_title'],

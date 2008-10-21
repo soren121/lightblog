@@ -14,8 +14,15 @@
   
 *************************************************/
 
-// Automatically set $success to 1 (default)
-$success = 1;
+// First, check to see if Lighty has already been installed
+if(file_exists('Config.php')) {
+	$success = 3;
+}
+
+// It hasn't, so set the page to default
+elseif(!file_exists('Config.php')) {
+	$success = 1;
+}
 
 // Database name generator
 // Based on code from www.webtoolkit.info
@@ -87,6 +94,8 @@ if(array_key_exists('_install', $_POST)) {
 	$sqlopener = fopen('Install.sql', 'r');
 	$sql = fread($sqlopener, filesize('Install.sql'));
 	fclose($sqlopener);
+	// Replace prefix, admin data, etc.
+	str_replace('{dbprefix}', $_POST['_dbprefix'], $sql);
 	// Inject SQL into database
 	sqlite_query($handler, $sql) or die('Could not write to the database. Please check your permissions.');
 	// Begin Config.php creation process
@@ -104,7 +113,7 @@ if(array_key_exists('_install', $_POST)) {
 	// Create end of Config.php
 	$cend = "
 \$db_path = '".fullPath().'/'.$dbname."'; // Absolute server path to your SQLite database file
-\$db_prefix = 'lightblog_'; // Prefix for all your tables, just in case!
+\$db_prefix = 'lighty_'; // Prefix for all your tables, just in case!
 
 // Path settings for LightBlog folders
 // These should have been setup during installation
@@ -113,6 +122,8 @@ if(array_key_exists('_install', $_POST)) {
 \$language_dir = '".fullPath()."/Languages/'; // Path to your Languages directory with trailing /
 \$site_url = '".fullURL()."';     // URL to your LightBlog installation with trailing /
 ?>";
+	// Replace DB prefix
+	str_replace('lighty_', $_POST['_dbprefix'], $cend);
 	// Write the end of Config.php
 	unset($copener);
 	$copener = fopen('Config.php', 'a');
@@ -155,6 +166,9 @@ if(array_key_exists('_install', $_POST)) {
 		margin-left: auto;
 		margin-right: auto;
 	}
+	.text {
+		width: 100px;
+	}
   </style>
 </head>
 <body>
@@ -166,12 +180,20 @@ if(array_key_exists('_install', $_POST)) {
 		<div class="contentbox">
 			<p>Welcome to the quick 'n dirty installer for LightBlog SVN. Click Install to create the database.</p>
 			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<p>DB Prefix: <input class="text" type="text" name="_dbprefix" value="lighty_" /></p>
 				<p><input type="submit" name="_install" value="Install" /></p>
 			</form>
 		</div>
 		<?php endif; if($success == 2) : ?>
 		<div class="contentbox">
 			<p>LightBlog was successfully installed! Click Next to continue to your new blog's front page.</p>
+			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+				<p><input type="submit" name="_redirecthome" value="Next" /></p>
+			</form>
+		</div>
+		<?php endif; if($success = 3) : ?>
+		<div class="contentbox">
+			<p>LightBlog is already installed! Delete Config.php if you REALLY want to reinstall.</p>
 			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 				<p><input type="submit" name="_redirecthome" value="Next" /></p>
 			</form>

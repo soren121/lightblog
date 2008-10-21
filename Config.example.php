@@ -22,7 +22,7 @@ if(!defined('Lighty')) {
 // Database settings
 // These should have been setup during installation
 $db_path = ''; // Absolute server path to your SQLite database file
-$db_prefix = 'lightblog_'; // Prefix for all your tables, just in case!
+$db_prefix = 'lighty_'; // Prefix for all your tables, just in case!
 
 // Path settings for LightBlog folders
 // These should have been setup during installation
