@@ -117,7 +117,7 @@ if(array_key_exists('_install', $_POST)) {
 
 // Path settings for LightBlog folders
 // These should have been setup during installation
-\$main_dir = '".fullPath()."';     // Path to your base directory with trailing /
+\$main_dir = '".fullPath()."/';     // Path to your base directory with trailing /
 \$sources_dir = '".fullPath()."/Sources/';  // Path to your Sources directory with trailing /
 \$theme_dir = '".fullPath()."/Themes/';    // Path to your Themes directory with trailing /
 \$language_dir = '".fullPath()."/Languages/'; // Path to your Languages directory with trailing /
