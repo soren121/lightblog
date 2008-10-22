@@ -45,14 +45,16 @@ class Core {
     trigger_error($message, $type);
   }
   
-  // This function loads a setting from the database
-  public function loadSettings() {
+  // This function loads settings
+  public function init($main_dir) {
   global $db, $lighty;
+    include($main_dir.'Config.php');
     $result = $db->query("SELECT * FROM '{$db_prefix}core'");
     $lighty = array();
     while($row = $db->fetchObject($result)) {
       $lighty[$row->variable] = stripslashes($row->value);
     }
+	$lighty['dbprefix'] = $db_prefix;
     $this->lighty = $lighty;
   }
   

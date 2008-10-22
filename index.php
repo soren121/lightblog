@@ -25,6 +25,12 @@ if(!file_exists('Config.php')) {
 require_once('./Config.php');
 require_once($sources_dir. '/Startup.php');
 
+// Open Core class
+$core = new Core;
+
+// Initialize the wicked hard Core :P
+$core->init($main_dir);
+
 // Are we doing an ?act, ?page, or what?
 if(isset($_GET['act']) && $core->isAction($_GET['act'])) {
   $core->loadAction($_GET['page']);

@@ -113,17 +113,16 @@ if(array_key_exists('_install', $_POST)) {
 	// Create end of Config.php
 	$cend = "
 \$db_path = '".fullPath().'/'.$dbname."'; // Absolute server path to your SQLite database file
-\$db_prefix = 'lighty_'; // Prefix for all your tables, just in case!
+\$db_prefix = '".$_POST['_dbprefix']."'; // Prefix for all your tables, just in case!
 
 // Path settings for LightBlog folders
 // These should have been setup during installation
+\$main_dir = '".fullPath()."';     // Path to your base directory with trailing /
 \$sources_dir = '".fullPath()."/Sources/';  // Path to your Sources directory with trailing /
 \$theme_dir = '".fullPath()."/Themes/';    // Path to your Themes directory with trailing /
 \$language_dir = '".fullPath()."/Languages/'; // Path to your Languages directory with trailing /
 \$site_url = '".fullURL()."';     // URL to your LightBlog installation with trailing /
 ?>";
-	// Replace DB prefix
-	str_replace('lighty_', $_POST['_dbprefix'], $cend);
 	// Write the end of Config.php
 	unset($copener);
 	$copener = fopen('Config.php', 'a');
