@@ -14,10 +14,9 @@
   
 *************************************************/
 
-// We wouldn't want this file
-// to be accessed directly!
+// We don't want this file to be accessed directly!
 if(!defined('Lighty')) {
-  die("Hacking Attempt...");
+  die(header("HTTP/1.1 404 Not Found"));
 }
   
 class Core {
