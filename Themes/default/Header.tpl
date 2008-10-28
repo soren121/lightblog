@@ -3,7 +3,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <title>{$main_title}{if !empty($title)}- {$title}{/if}</title>
-  <link rel="stylesheet" type="text/css" href="{$theme_dir)style.css" />
+  <link rel="stylesheet" type="text/css" href="{$theme_dir}style.css" />
+  <script type="text/javascript" src="{$sources_dir}jquery.js"></script>
+  <script type="text/javascript" src="{$sources_dir}jquery.form.js"></script>
+  <script type="text/javascript" src="{$sources_dir}jquery.wysiwyg.js"></script>
+  <script type="text/javascript" src="{$sources_dir}vx.js"></script>
 </head>
 <body>
 

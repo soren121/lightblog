@@ -99,6 +99,7 @@ class Core {
 	$smarty->register_function('loadpost', 'loadPost');
 	$smarty->assign('info', $this->lighty);
 	$smarty->assign('site_url', $site_url);
+	$smarty->assign('script_dir', $sources_dir);
 	$smarty->assign('theme_dir', $site_url.'Themes/'.$this->lighty['current_theme'].'/');
 	$result = $db->query("SELECT id FROM lighty_posts ORDER BY desc");
 	$smarty->assign('postcount', $result->numRows());
