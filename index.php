@@ -28,7 +28,7 @@ require_once($sources_dir. '/Startup.php');
 // Open Core class
 $core = new Core;
 
-// Initialize the wicked hard Core :P
+// Initialize the wicked hard Qore :P
 $core->init($main_dir);
 
 // Are we doing an ?act, ?page, or what?
