@@ -193,9 +193,6 @@ if(array_key_exists('_install', $_POST)) {
 		<?php endif; if($success = 3) : ?>
 		<div class="contentbox">
 			<p>LightBlog is already installed! Delete Config.php if you REALLY want to reinstall.</p>
-			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-				<p><input type="submit" name="_redirecthome" value="Next" /></p>
-			</form>
 		</div>
 		<?php endif; ?>
 	</div>
