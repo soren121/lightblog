@@ -60,7 +60,7 @@ class Core {
   // This is the almighty POST GRABBER. Respect it! :P
   public function loadPost($params, &$smarty) {
   global $db;
-	$result = $db->query("SELECT ".$params['column']." FROM '{$db_prefix}posts' WHERE id='".$params['id']."'");
+	$result = $db->query("SELECT ".$params['column']." FROM '".$this->lighty['dbprefix']."posts' WHERE id='".$params['id']."'");
 	return $result;
   }
   
@@ -105,8 +105,7 @@ class Core {
 	$smarty->assign('postcount', $result->numRows());
 	$vars = array(
 	  'site_title' => $this->lighty['site_title'],
-	  'title' => !empty($data['title']) ? $data['title'] : null,
-	  'site_url' => $site_url
+	  'title' => !empty($data['title']) ? $data['title'] : null
 	);
 	// Output the template!
 	return $smarty->display($smarty->template_dir .$template.'.tpl');

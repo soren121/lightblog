@@ -4,18 +4,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<title>{$main_title}{if !empty($title)}- {$title}{/if}</title>
 	<link rel="stylesheet" type="text/css" href="{$theme_dir}style.css" />
-	<script type="text/javascript" src="{$sources_dir}jquery.js"></script>
-	<script type="text/javascript" src="{$sources_dir}jquery.form.js"></script>
-	<script type="text/javascript" src="{$sources_dir}jquery.wysiwyg.js"></script>
+	<script type="text/javascript" src="{$sources_dir}nicedit.js"></script>
 	<script type="text/javascript" src="{$sources_dir}vx.js"></script>
 	<script type="text/javascript"> 
-	$(document).ready(function() { 
-		$('.ajaxform').ajaxForm(function() { 
-            alert("Thank you!"); 
-        }); 
-		$('.wysiwyg').wysiwyg();
-	});
-  </script> 
+	_.R(function(){
+		// AJAX form submitter coming soon
+		nicEditor({ fullPanel:true, xhtml:true }).panelInstance('wysiwyg');
+	})
+	</script> 
 </head>
 <body>
 
