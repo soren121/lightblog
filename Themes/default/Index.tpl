@@ -1,7 +1,5 @@
 {include file='Header.tpl'}
 {include file='Sidebar.tpl'}
-<!-- Begin Right Column -->
-<div id="main">
 {if $postcount > 0}
 	{while ($postcount > 0)}
 		<div id="postbox">
@@ -13,5 +11,4 @@
 {else}
 {l v="NoPosts"}
 {/if}
-</div>
 {include file='Footer.tpl'}

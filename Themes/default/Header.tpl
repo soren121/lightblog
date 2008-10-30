@@ -27,3 +27,5 @@
 		 <!-- End Header -->
 		 <!-- Begin Faux Columns -->
 		 <div id="faux">
+		 <!-- Begin Right Column -->
+		<div id="main">

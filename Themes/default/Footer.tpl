@@ -1,3 +1,5 @@
+</div>
+<!-- End Main Column -->
 </div>	   
 <!-- End Faux Columns --> 
 <!-- Begin Footer -->
