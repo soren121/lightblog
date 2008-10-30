@@ -1,5 +1,4 @@
-/* vX super-lightweight JavaScript library by antimatter15 and inportb */
-
+/* vX JS library by antimatter15 and inportb */
 var _=_?_:{}
 _.X=function(u,f,p,x){x=new(this.ActiveXObject?ActiveXObject:XMLHttpRequest)('Microsoft.XMLHTTP');x.open(p?'POST':'GET',u,!0);p?x.setRequestHeader('Content-type','application/x-www-form-urlencoded'):0;x.onreadystatechange=function(){x.readyState==4&&f?f(x.responseText,x):f};x.send(p)}
 _.O=function(v,n,c,u,y){u=0;return y=setInterval(function(){c(u/v);++u>v?clearInterval(y):0},n)}

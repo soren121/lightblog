@@ -6,9 +6,9 @@
 	<link rel="stylesheet" type="text/css" href="{$theme_dir}style.css" />
 	<script type="text/javascript" src="{$sources_dir}nicedit.js"></script>
 	<script type="text/javascript" src="{$sources_dir}vx.js"></script>
+	<script type="text/javascript" src="{$sources_dir}vx.ajaxform.js"></script>
 	<script type="text/javascript"> 
 	_.R(function(){
-		// AJAX form submitter coming soon
 		nicEditor({ fullPanel:true, xhtml:true }).panelInstance('wysiwyg');
 	})
 	</script> 
