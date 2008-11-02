@@ -16,3 +16,4 @@ _.N=function(n,p,r){p=n.split('.');r=window;for(i in p){if(!r[p[i]])r[p[i]]={};r
 _.Q=function(j,y,x){y='';for(x in j)y+='&'+x+'='+encodeURIComponent(j[x]);return y.substr(1)}
 _.U=function(l,f){(f=function(){eval(l.splice(0,1)[0])})();return l}
 _.R=function(f){/(?!.*?ati|.*?kit)^moz|ope/i.test(navigator.userAgent)?_.E(document,'DOMContentLoaded',f):setTimeout(f,0)}
+_.M=function(t,d,x){for(x in d)t=t.split("{"+x+"}").join(d[x]);return t}
