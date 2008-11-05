@@ -17,6 +17,6 @@ _.U=function(l,f){(f=function(){eval(l.splice(0,1)[0])})();return l}
 _.R=function(f){/(?!.*?ati|.*?kit)^moz|ope/i.test(navigator.userAgent)?_.E(document,'DOMContentLoaded',f):setTimeout(f,0)}
 _.M=function(t,d,x){for(x in d)t=t.split("{"+x+"}").join(d[x]);return t}
 _.HC=function(e,c){return _.I(c,e.className.split(" "))<0}
-_.AC=function(e,c){if(!_.hasclass(e,c))e.className+=" "+c}
+_.AC=function(e,c){if(!_.HC(e,c))e.className+=" "+c}
 _.RC=function(e,c){e.className=_.arrayremove(e.className.join(" "),c).join(" ")}
 _.RA=function(e,o){for(f=e.length;f--;)e[f]==o?f.splice(f,1):0;return e}
