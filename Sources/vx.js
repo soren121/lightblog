@@ -13,10 +13,9 @@ _.G=function(e){return e.style?e:document.getElementById(e)}
 _.H=function(s,d,t){t=document.createElement('textarea');t.innerHTML=s;return d?t.value:t.innerHTML}
 _.N=function(n,p,r){p=n.split('.');r=window;for(i in p){if(!r[p[i]])r[p[i]]={};r=r[p[i]]}return r}
 _.Q=function(j,y,x){y='';for(x in j)y+='&'+x+'='+encodeURIComponent(j[x]);return y.substr(1)}
-_.U=function(l,f){(f=function(){eval(l.splice(0,1)[0])})();return l}
 _.R=function(f){/(?!.*?ati|.*?kit)^moz|ope/i.test(navigator.userAgent)?_.E(document,'DOMContentLoaded',f):setTimeout(f,0)}
 _.M=function(t,d,x){for(x in d)t=t.split("{"+x+"}").join(d[x]);return t}
-_.HC=function(e,c){return _.I(c,e.className.split(" "))<0}
+_.HC=function(e,c){return _.I(c,e.className.split(" "))>0}
 _.AC=function(e,c){if(!_.HC(e,c))e.className+=" "+c}
-_.RC=function(e,c){e.className=_.arrayremove(e.className.join(" "),c).join(" ")}
-_.RA=function(e,o){for(f=e.length;f--;)e[f]==o?f.splice(f,1):0;return e}
+_.RC=function(e,c){e.className=_.arrayremove(e.className.split(" "),c).join(" ")}
+_.RA=function(e,o){return (','+e.join(",")+',').split(','+o+',').join(',').split(',')}
