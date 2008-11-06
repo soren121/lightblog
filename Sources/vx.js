@@ -15,7 +15,11 @@ _.N=function(n,p,r){p=n.split('.');r=window;for(i in p){if(!r[p[i]])r[p[i]]={};r
 _.Q=function(j,y,x){y='';for(x in j)y+='&'+x+'='+encodeURIComponent(j[x]);return y.substr(1)}
 _.R=function(f){/(?!.*?ati|.*?kit)^moz|ope/i.test(navigator.userAgent)?_.E(document,'DOMContentLoaded',f):setTimeout(f,0)}
 _.M=function(t,d,x){for(x in d)t=t.split("{"+x+"}").join(d[x]);return t}
+/* vx.utils plugin by antimatter15 */
 _.HC=function(e,c){return _.I(c,e.className.split(" "))>0}
 _.AC=function(e,c){if(!_.HC(e,c))e.className+=" "+c}
 _.RC=function(e,c){e.className=_.arrayremove(e.className.split(" "),c).join(" ")}
 _.RA=function(e,o){return (','+e.join(",")+',').split(','+o+',').join(',').split(',')}
+/* vx.ajaxform plugin by soren121 and antimatter15 */
+_.XS=function(c,r){var t=_.G(c),z={},y=t.getElementsByTagName("*");for(var i=y.length;i--;) z[y[i].name]=y[i].value;_.X(t.action,r,'?'+_.Q(z),t.method=="post")}
+_.XF=function(f,r){_.E(_.G(f),"submit",function(e){e.preventDefault();_.XS(f,r)})}
