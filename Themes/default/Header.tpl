@@ -4,8 +4,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<title>{$main_title}{if !empty($title)}- {$title}{/if}</title>
 	<link rel="stylesheet" type="text/css" href="{$theme_dir}style.css" />
-	<script type="text/javascript" src="{$sources_dir}nicedit.js"></script>
-	<script type="text/javascript" src="{$sources_dir}vx.js"></script>
+	<script type="text/javascript" src="{$script_dir}nicedit.js"></script>
+	<script type="text/javascript" src="{$script_dir}vx.js"></script>
 	<script type="text/javascript"> 
 	_.R(function(){
 		nicEditor({ fullPanel:true, xhtml:true }).panelInstance('wysiwyg');

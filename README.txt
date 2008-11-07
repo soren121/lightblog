@@ -36,6 +36,26 @@ If that file was not included, please visit
 http://www.gnu.org/copyleft/gpl.html
 for a copy.
 
+	-Components-
+	
+	vX JavaScript library
+		http://vxjs.googlecode.com/
+	
+	Licensed under the MIT/Expat License:
+	http://www.opensource.org/licenses/mit-license.php
+	------------------------------------------------------	
+	Smarty Template Engine
+		http://www.smarty.net/
+		
+	Licensed under the GNU Lesser General Public License:
+	http://www.gnu.org/licenses/lgpl.html
+	------------------------------------------------------
+	NicEdit JavaScript WYSIWYG editor
+		http://www.nicedit.com/
+		
+	Licensed under the MIT/Expat License:
+	http://www.opensource.org/licenses/mit-license.php
+	
 ==================================================
 
 Support:
@@ -49,4 +69,4 @@ http://lightblog.northsalemcrew.net/forum
 Thanks again,
 soren121 & aldo
 
-Last updated: 10/28/08
+Last updated: 11/06/08

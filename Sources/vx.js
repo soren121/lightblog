@@ -23,3 +23,5 @@ _.RA=function(e,o){return (','+e.join(",")+',').split(','+o+',').join(',').split
 /* vx.ajaxform plugin by soren121 and antimatter15 */
 _.XS=function(c,r){var t=_.G(c),z={},y=t.getElementsByTagName("*");for(var i=y.length;i--;) z[y[i].name]=y[i].value;_.X(t.action,r,'?'+_.Q(z),t.method=="post")}
 _.XF=function(f,r){_.E(_.G(f),"submit",function(e){e.preventDefault();_.XS(f,r)})}
+/* vx.load plugin by antimatter15 */
+_.XL(u,h){_.X(u,function(e){h.innerHTML=e})}
