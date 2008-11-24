@@ -24,7 +24,8 @@ class Core {
   var $l = array();
   var $lighty = array();
   
-  // Load index :P
+  // We were told to load the index, sir!
+  // So we must load the index, sir!
   public function loadIndex() {    
     $this->loadTemplate('index');
   }
@@ -103,10 +104,6 @@ class Core {
 	$smarty->assign('theme_dir', $site_url.'Themes/'.$this->lighty['current_theme'].'/');
 	$result = $db->query("SELECT id FROM lighty_posts ORDER BY desc");
 	$smarty->assign('postcount', $result->numRows());
-	$vars = array(
-	  'site_title' => $this->lighty['site_title'],
-	  'title' => !empty($data['title']) ? $data['title'] : null
-	);
 	// Output the template!
 	return $smarty->display($smarty->template_dir .$template.'.tpl');
   }

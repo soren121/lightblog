@@ -19,26 +19,30 @@ session_start();
 define('Lighty', true);
 // Check if Lighty is installed
 if(!file_exists('Config.php')) {
+		// It isn't, so redirect to the installer
 		header('Location: Install.php');
 }
 // Open up the config and startup files
 require_once('./Config.php');
-require_once($sources_dir. '/Startup.php');
+require_once(SOURCESDIR . 'Startup.php');
 
 // Open Core class
 $core = new Core;
 
 // Initialize the wicked hard Qore :P
-$core->init($main_dir);
+$core->init( MAINDIR );
 
 // Are we doing an ?act, ?page, or what?
 if(isset($_GET['act']) && $core->isAction($_GET['act'])) {
-  $core->loadAction($_GET['page']);
+	// Load the selected action
+	$core->loadAction($_GET['page']);
 }
 elseif(!empty($_GET['page'])) {
-  $core->loadPage($_GET['page']);
+	// Load the selected page
+	$core->loadPage($_GET['page']);
 }
 else {
-  $core->loadIndex();
+	// Load the index
+	$core->loadIndex();
 }
 ?>

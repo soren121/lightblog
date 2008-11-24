@@ -20,7 +20,7 @@ if(file_exists('Config.php')) {
 }
 
 // It hasn't, so set the page to default
-elseif(!file_exists('Config.php')) {
+if(!file_exists('Config.php')) {
 	$success = 1;
 }
 
@@ -112,16 +112,16 @@ if(array_key_exists('_install', $_POST)) {
 	fclose($copener);
 	// Create end of Config.php
 	$cend = "
-\$db_path = '".fullPath().'/'.$dbname."'; // Absolute server path to your SQLite database file
-\$db_prefix = '".$_POST['_dbprefix']."'; // Prefix for all your tables, just in case!
+define('DBPATH', '".fullPath().'/'.$dbname."'); // Absolute server path to your SQLite database file
+define('DBPREFIX', '".$_POST['_dbprefix']."'); // Prefix for all your tables, just in case!
 
 // Path settings for LightBlog folders
 // These should have been setup during installation
-\$main_dir = '".fullPath()."/';     // Path to your base directory with trailing /
-\$sources_dir = '".fullPath()."/Sources/';  // Path to your Sources directory with trailing /
-\$theme_dir = '".fullPath()."/Themes/';    // Path to your Themes directory with trailing /
-\$language_dir = '".fullPath()."/Languages/'; // Path to your Languages directory with trailing /
-\$site_url = '".fullURL()."';     // URL to your LightBlog installation with trailing /
+define('MAINDIR', '".fullPath()."/');     // Path to your base directory with trailing /
+define('SOURCESDIR', '".fullPath()."/Sources/');  // Path to your Sources directory with trailing /
+define('THEMEDIR', '".fullPath()."/Themes/');    // Path to your Themes directory with trailing /
+define('LANGDIR', '".fullPath()."/Languages/'); // Path to your Languages directory with trailing /
+define('MAINURL', '".fullURL()."');     // URL to your LightBlog installation with trailing /
 ?>";
 	// Write the end of Config.php
 	unset($copener);
@@ -130,6 +130,7 @@ if(array_key_exists('_install', $_POST)) {
 	fclose($copener);
 	// Close and unset all variables
 	unset($dbname, $sql, $sqlopener, $copener, $cstart, $cend);
+	// Close connection to SQLite database
 	sqlite_close($handler);
 	// Send success message to user
 	$success = 2;
