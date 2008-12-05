@@ -49,9 +49,10 @@ class Core {
   public function init($main_dir) {
   global $db, $lighty;
     include($main_dir.'Config.php');
-    $result = $db->query("SELECT * FROM '{$db_prefix}core'");
+	$db = new SQLiteDatabase(DBPATH);
+    $result = $db->query("SELECT * FROM ". DBPREFIX ."core'");
     $lighty = array();
-    while($row = $db->fetchObject($result)) {
+    while($row = $result->fetchObject()) {
       $lighty[$row->variable] = stripslashes($row->value);
     }
 	$lighty['dbprefix'] = $db_prefix;
@@ -67,28 +68,28 @@ class Core {
   
   // This is the -other- almighty grabber, the PHRASE GRABBER. Respect it less! :P
   public function loadLanguage() {
-  global $language_dir, $lighty, $l;  
-    require_once($language_dir. ucwords(strtolower($lighty['current_language'])). '.language.php');
+  global $lighty, $l;  
+    require_once( LANGUAGEDIR . ucwords(strtolower($lighty['current_language'])). '.language.php');
     $this->l = $l;
   }
   
   // This function...well, I shouldn't need to explain this one.
   public function loadTemplate($template, $data = array()) {
-  global $sources_dir, $theme_dir, $db; 
+  global $db; 
     // Define the Smarty internals directory
-    define('SMARTY_CORE_DIR', $sources_dir.'Smarty/internals'.DIRECTORY_SEPARATOR);
+    define('SMARTY_CORE_DIR',  SOURCESDIR .'Smarty/internals'.DIRECTORY_SEPARATOR);
 	// Lowercase and capitalize the template name
 	$template = ucwords(strtolower($template));
 	// Open up the Smarty class!
-    require_once($sources_dir. '/Smarty.class.php');
+    require_once( SOURCESDIR . '/Smarty.class.php');
 	// Startup the class
     $smarty = new Smarty();
 	// Set all the required paths and other settings needed by Smarty
-    $smarty->template_dir = $theme_dir. $this->lighty['current_theme'];
-    $smarty->compile_dir = $sources_dir. 'Smarty/compiled_templates/'. $this->lighty['current_theme'];
-    $smarty->cache_dir = $sources_dir. 'Smarty/cache';
-	$smarty->config_dir = $sources_dir. 'Smarty/config';
-	$smarty->plugins_dir = $sources_dir. 'Smarty/plugins';
+    $smarty->template_dir =  THEMEDIR . $this->lighty['current_theme'];
+    $smarty->compile_dir =  SOURCESDIR . 'Smarty/compiled_templates/'. $this->lighty['current_theme'];
+    $smarty->cache_dir =  SOURCESDIR . 'Smarty/cache';
+	$smarty->config_dir =  SOURCESDIR . 'Smarty/config';
+	$smarty->plugins_dir =  SOURCESDIR . 'Smarty/plugins';
 	$smarty->caching = 1;
 	$smarty->cache_lifetime = 1440;
 	// If a compile directory for the theme doesn't exist, make it
@@ -99,9 +100,9 @@ class Core {
 	$smarty->register_function('l', 'loadLanguage');
 	$smarty->register_function('loadpost', 'loadPost');
 	$smarty->assign('info', $this->lighty);
-	$smarty->assign('site_url', $site_url);
-	$smarty->assign('script_dir', $site_url.'Sources/');
-	$smarty->assign('theme_dir', $site_url.'Themes/'.$this->lighty['current_theme'].'/');
+	$smarty->assign('site_url',  MAINURL );
+	$smarty->assign('script_dir',  MAINURL .'Sources/');
+	$smarty->assign('theme_dir',  MAINURL .'Themes/'.$this->lighty['current_theme'].'/');
 	$result = $db->query("SELECT id FROM lighty_posts ORDER BY desc");
 	$smarty->assign('postcount', $result->numRows());
 	// Output the template!
