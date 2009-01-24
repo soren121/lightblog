@@ -10,7 +10,7 @@ if(isset($_POST['proclogin'])) {
 	$password = md5($_POST['password']);
 	// fetch user info from database
 	$result11 = sqlite_query($handle, "SELECT * FROM users WHERE username='".$username."'") or die("Incorrect username or password!");
-	while($logindata = sqlite_fetch_object($result15)) {
+	while($logindata = sqlite_fetch_object($result11)) {
 		// check if username and password are correct
 		if($logindata->username == $username and $logindata->password == $password) {
 			// send username, email, and first name to session

@@ -1,0 +1,146 @@
+/* 
+		LightBlog
+		Stylesheet - April 28, 2008
+		Copyright 2008 soren121.
+*/
+
+body {
+	background: #EDEDED;
+	font-family: Verdana,Arial,Sans;
+}
+
+#container {
+	width: 670px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+}
+
+#header {
+	background: #2877B3;
+	width: 670px;
+	height: 30px;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+	float: center;
+}
+
+img.headerimg {
+	margin-left: 46px;
+	margin-top: 3px;
+	margin-bottom: 1px;
+}
+
+#content {
+	float: right;
+	background: #fff;
+	color: #252525;
+	margin: 0 0 0 0;
+	padding-top: 10px;
+	padding-left: 7px;
+	width: 503px;
+	display: inline;
+}
+
+#content .post-title {
+	color: #252525;
+	text-decoration: none;
+	font-size: 1.2em;
+	font-family: "Trebutchet MS",Verdana,Sans;
+}
+
+#content a:hover .post-title {
+	text-decoration: none;
+}
+
+#content span.date {
+	font-size: 0.8em;
+	margin-right: 15px;
+}
+
+#content span.author {
+	font-size: 0.8em;
+	margin-right: 15px;
+}
+
+#content span.commentnum {
+	font-size: 0.8em;
+}
+
+#content p.post {
+	padding: 5px;
+	margin-right: 10px;
+	border: 1px solid #F0A21B;
+}
+
+#postlist table {
+	margin-right: 5px;
+	margin-bottom: 5px;
+}
+
+#postlist td {
+    margin: 0;
+    padding: 4px;
+	background: #414141;
+	color: #fff;
+	font-size: 0.8em;
+}
+
+#postlist a {
+	color: #fff;
+}
+
+#content td.profileinfo {
+	font-size: 0.9em;
+}
+	
+#sidebar {
+	background: #fff;
+	color: #000;
+	margin: 0 0 0 0;
+	padding-top: 0px;
+	border-right: 1px solid #ededed;
+	width: 159px;
+	float: left;
+}
+
+#sidebar li {
+	color: #000;
+	padding-top: 3px;
+	font-size: 0.9em;
+	list-style-type: square;
+}
+
+#sidebar a {
+	color: #000;
+	font-size: 0.9em;
+	text-decoration: none;
+}
+
+#sidebar img.rssi {
+	border: 0;
+	vertical-align: middle;
+	padding-left: 3px;
+}
+
+#sidebar a:hover {
+	color: #2877B3;
+} 
+
+span.username {
+	font-size: 0.8em;
+	color: #000;
+}
+
+span.admin {
+	color: #E49397;
+	font-size: 0.7em;
+}
+
+span.normal {
+	color: #fff;
+	font-size: 0.7em;
+}
+	
+	
+	

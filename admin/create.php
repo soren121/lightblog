@@ -56,17 +56,20 @@ $result07 = sqlite_query($handle, "SELECT * FROM categories ORDER BY id DESC") o
       }
 	 // check if user is logged in and stop loading the page
 	 if($_SESSION['uservip'] == "0" or !(isset($_SESSION['uservip']))) { echo'Hey, you shouldn\'t even be in here! <a href="javascript:history.go(-2)">Go back to where you came from.</a>'; }
-	 if($_SESSION['uservip'] == "1") {	 	
-	 echo '
-	 	 <h2>Create a '.$_GET['type'].'</h2><br />
-  <form action="" method="post">
-    <table>
-      <tr><td>Title</td><td><input name="title" type="text" maxlength="39" /></td></tr>
-	  <tr><td>Category:</td><td><select name="category">'.if(sqlite_num_rows($result07) > 0) { while($cat = sqlite_fetch_object($result07)) { echo '<option value="'.$cat->id.'">'.$cat->title.'</option>'; } }.'</select></td></tr>
-      <tr><td>Message:</td><td><script type="text/javascript">Init(\'text\',30,10,\'\',\'in\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>
-      <tr><td colspan="2"><input name="publish" type="submit" value="Publish"/></td></tr>
-    </table>
-  </form>'; } ?>
+	if($_SESSION['uservip'] == "1") {	
+		while($cat = sqlite_fetch_object($result07)) {
+			echo '<h2>Create a '.$_GET['type'].'</h2><br />
+				  <form action="" method="post">
+						<table>
+							<tr><td>Title</td><td><input name="title" type="text" maxlength="39" /></td></tr>
+							<tr><td>Category:</td><td><select name="category"><option value="'.$cat->id.'">'.$cat->title.'</option></select></td></tr>
+							<tr><td>Message:</td><td><script type="text/javascript">Init(\'text\',30,10,\'\',\'in\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>
+							<tr><td colspan="2"><input name="publish" type="submit" value="Publish"/></td></tr>
+						</table>
+				  </form>'; 
+		}
+	}
+  ?>
 	</div>
 </div>
 </body>

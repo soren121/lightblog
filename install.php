@@ -17,6 +17,7 @@ if(isset($_POST['step1'])) {
 	sqlite_query($dbhle, "INSERT INTO categories VALUES(1,'Uncategorized','Posts with no specific category go here')");
 	sqlite_query($dbhle, "CREATE TABLE coreinfo(variable text NOT NULL,value text NOT NULL)");
 	sqlite_query($dbhle, "INSERT INTO coreinfo VALUES('site_url','".$site_url."')");
+	sqlite_query($dbhle, "INSERT INTO coreinfo VALUES('theme','default')");
 	sqlite_query($dbhle, "CREATE TABLE comments(id integer primary key,post_id int(11) NOT NULL default '0',username text NOT NULL,email text NOT NULL,website text NOT NULL,text text NOT NULL)");
 	sqlite_query($dbhle, "CREATE TABLE pages(id INTEGER NOT NULL PRIMARY KEY DEFAULT '0',title TEXT NOT NULL,page TEXT NOT NULL)");
 	sqlite_query($dbhle, "CREATE TABLE posts(id INTEGER NOT NULL PRIMARY KEY DEFAULT '0',title TEXT NOT NULL,post TEXT NOT NULL,date TEXT NOT NULL,author TEXT NOT NULL,catid INTEGER NOT NULL default '1')");

@@ -1,0 +1,7 @@
+#content,#sidebar {
+	margin-top: -2px; !important
+}
+
+#sidebar {
+	width: 167px; !important
+}
