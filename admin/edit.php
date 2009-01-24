@@ -6,7 +6,7 @@ $result08 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
 	}
 ?>
 <!--	LightBlog v0.9.0
-		Copyright 2008 soren121. Some Rights Reserved.
+		Copyright 2009 soren121. Some Rights Reserved.
 		Licensed under the General Public License v3.
 		For more info, see the LICENSE.txt file included.
 -->

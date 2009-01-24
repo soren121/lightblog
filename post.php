@@ -4,7 +4,7 @@ $result04 = sqlite_query($handle, "SELECT * FROM comments WHERE post_id=".$_GET[
 $result12 = sqlite_query($handle, "SELECT value FROM coreinfo WHERE variable='theme'") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($handle)));
 ?>
 <!--	LightBlog v0.9.0
-		Copyright 2008 soren121. Some Rights Reserved.
+		Copyright 2009 soren121. Some Rights Reserved.
 		Licensed under the General Public License v3.
 		For more info, see the LICENSE.txt file included.
 -->
