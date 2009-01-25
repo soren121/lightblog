@@ -9,7 +9,7 @@
 	else { 
 		echo '<li><a href="admin/login.php">Login</a></li>
 	<li><a href="admin/register.php">Register</a></li>'; } ?>
-	<li><a class="rss" href="<?php echo $site_url; ?>rss.php">RSS Feed<img class="rssi" src="style/rss.png" alt="" /></a></li>
+	<li><a class="rss" href="<?php echo $site_url; ?>rss.php">RSS Feed<img class="rssi" src="themes/<?php echo $themeName; ?>/style/rss.png" alt="" /></a></li>
 	</ul>
 	<?php
 	

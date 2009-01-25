@@ -146,6 +146,7 @@ if(isset($_GET['logout'])) {
 		<table style="margin-left: auto; margin-right: auto;">
 		<tr><td>OpenID:</td><td><input name="openid_url" type="text" /></td></tr>
 		<tr><td colspan="2"><input name="openid_submit" type="submit" value="Login"/></td></tr>	
+		<tr><td colspan="2">[<a href="http://openid.net/get/">Want an OpenID?</a>]</td></tr>
 		</table>
 		</form>    
 	</div>
