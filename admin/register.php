@@ -11,13 +11,14 @@ if(isset($_POST['register'])) {
     while($row = sqlite_fetch_array($result06)) {
       $check['user'] = $row['username'];
     }
-	if(!$check['user'] == $username) { $error1 = false; }
-	if(isset($username{6})) { $error2 = false; }
-	if(isset($password{4})) { $error3 = false; }
-	if($password == $vpassword) { $error4 = false; }
-	if(preg_match("/^([a-z0-9._-](\+[a-z0-9])*)+@[a-z0-9.-]+\.[a-z]{2,6}$/i",$email)) { $error5 = false; }
-	if($_SESSION['string'] == $captchacode) { $error6 = false; }
-	if($error1 == false && $error2 == false && $error3 == false && $error4 == false && $error5 == false && $error6 == false) {
+	if(!$check['user'] == $username) { $error = false; } else { $error = true; }
+	if(isset($username{6})) { $error = false; } else { $error = true; }
+	if(isset($password{4})) { $error = false; } else { $error = true; }
+	if($password == $vpassword) { $error = false; } else { $error = true; }
+	if(preg_match("/^([a-z0-9._-](\+[a-z0-9])*)+@[a-z0-9.-]+\.[a-z]{2,6}$/i",$email)) { $error = false; } else { $error = true; }
+	require('securimage.php');
+	if($securimage->check($_POST['captcha_code']) == true) { $error = false; } else { $error = true; }
+	if($error == false) {
 		$username = addslashes(sqlite_escape_string($username));
 		$password = md5($password);
 		$email = addslashes(sqlite_escape_string($email));
@@ -62,8 +63,6 @@ font-size : 10px;
 <div id="registerbox">
 <h2 style="padding-top: 5px;"><?php echo $cmsinfo['site_title'] ?></h2><br />
 <h3 style="padding-bottom: 10px;">Registration</h3>
-<?php if($error1 == true){echo'Username is already taken!';}if($error2 == true){echo'Your username is too short! Please make it 4 characters or longer.';}if($error2 == true){echo'Your password is too short! Please make it at least 6 characters long.';}
-if($error4 == true){echo'Your passwords don\'t match!';}if($error5 == true){echo'Your email address is invalid. Please fix it.';}if($error6 = true && isset($_POST['register'])){echo'You entered the CAPTCHA wrong. Try again.';} ?>
   <?php if($wnotice == true) { echo '<p>Thanks for registering, '.stripslashes(stripslashes($username)).'. You may now login.</p><br /><form action="" method="post">
       	<p><input name="login" type="submit" value="Login"/></p>'; } else { echo '
   <form action="" method="post" class="registerform">
@@ -73,8 +72,9 @@ if($error4 == true){echo'Your passwords don\'t match!';}if($error5 == true){echo
       <tr><td>Verify Password:</td><td><input name="vpassword" type="password"/></td></tr>
       <tr><td>Email:</td><td><input name="email" type="text" value="'.$_POST['email'].'"/></td></tr>
       <tr><td>First Name:</td><td><input name="realname" type="text" maxlength="16"/></td></tr> 
-	  <tr><td>CAPTCHA:</td><td><img src="captchalibsettings.php" alt="CAPTCHA" /></td></tr>
-	  <tr><td>CAPTCHA Code:</td><td><input type="text" name="code" size="8" /></td></tr>
+	  <tr><td>CAPTCHA:</td><td><img src="securimage_show.php?sid=<?php echo md5(uniqid(time())); ?>" id="image" alt="Failed to load CAPTCHA" />
+	  <a href="#" onclick="document.getElementById(\'image\').src=\'securimage_show.php?sid=\'+ Math.random();return false"><img src="style/refresh.gif" style="border: 1px solid #ccc;" alt="Reload" /></a></td></tr>
+	  <tr><td>CAPTCHA Code:</td><td><input type="text" name="captcha_code" size="4" /></td></tr>
       <tr><td colspan="2"><input name="register" type="submit" value="Register"/></td></tr>
     </table>
   </form>'; } ?>

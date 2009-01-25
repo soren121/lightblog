@@ -6,9 +6,9 @@
 	<title><?php echo $site_name; ?></title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<meta name="generator" content="Geany 0.13/soren121" />
-	<link rel="stylesheet" href="style/style.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="themes/<?php echo $themeName; ?>/style/style.css" type="text/css" media="screen" />
 	<!--[if IE]>
-	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="style/<?php echo $themeName; ?>/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
 	<script type="text/javascript" src="admin/includes/bbcode-editor.js"></script>
     <script type="text/javascript" src="admin/includes/jquery.js"></script>
@@ -19,6 +19,6 @@
 <div id="container">
 	<div id="header">
 		<div id="headerimg">
-			<img class="headerimg" src="style/title.png" alt="<?php echo $site_name; ?>" />
+			<img class="headerimg" src="themes/<?php echo $themeName; ?>/style/title.png" alt="<?php echo $site_name; ?>" />
 		</div>
 	</div>

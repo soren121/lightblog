@@ -18,9 +18,10 @@ $result07 = sqlite_query($handle, "SELECT * FROM categories ORDER BY id DESC") o
 	<!--[if IE]>
 	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
-	<script type="text/javascript" src="includes/jquery.js"></script>
-	<script type="text/javascript" src="includes/jquery-ui.js"></script>
-	<script type="text/javascript" src="includes/bbcode-editor.js"></script> 
+	<script type="text/javascript" src="includes/nicEdit.js"></script> 
+	<script type="text/javascript">
+	bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
+	</script>
 </head>
 
 <body>
@@ -34,12 +35,10 @@ $result07 = sqlite_query($handle, "SELECT * FROM categories ORDER BY id DESC") o
 	<div id="content">
 	 <?php 
 	 if(isset($_POST['publish'])) {
-	 	// grab data from form, translate the BBCode, and escape the text
+	 	// grab data from form and escape the text
 		require_once('bbcodelib.php');
 	 	$title = sqlite_escape_string($_POST['title']);
 	 	$text = sqlite_escape_string($_POST['text']);
-		$parser = new parser;
-		$text = $parser->parse($text);
 	 	$date = time();
 	 	$author = $_SESSION['realname'];
 		$category = $_POST['category'];
@@ -63,7 +62,7 @@ $result07 = sqlite_query($handle, "SELECT * FROM categories ORDER BY id DESC") o
 						<table>
 							<tr><td>Title</td><td><input name="title" type="text" maxlength="39" /></td></tr>
 							<tr><td>Category:</td><td><select name="category"><option value="'.$cat->id.'">'.$cat->title.'</option></select></td></tr>
-							<tr><td>Message:</td><td><script type="text/javascript">Init(\'text\',30,10,\'\',\'in\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>
+							<tr><td>Message:</td><td><textarea rows="10" cols="45" name="text"></textarea></td></tr>
 							<tr><td colspan="2"><input name="publish" type="submit" value="Publish"/></td></tr>
 						</table>
 				  </form>'; 
