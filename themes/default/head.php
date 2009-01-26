@@ -10,7 +10,6 @@
 	<!--[if IE]>
 	<link rel="stylesheet" href="style/<?php echo $themeName; ?>/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
-	<script type="text/javascript" src="admin/includes/bbcode-editor.js"></script>
     <script type="text/javascript" src="admin/includes/jquery.js"></script>
     <script type="text/javascript" src="admin/includes/jquery-ui.js"></script>
 </head>

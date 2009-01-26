@@ -9,6 +9,13 @@ $result12 = sqlite_query($handle, "SELECT value FROM coreinfo WHERE variable='th
 -->
 
 <?php 
+
+// check for installation
+if(!file_exists('config.php')) {
+	// Lighty isn't installed yet; redirect
+	header('Location: install.php');
+}
+
 @list($themeName) = sqlite_fetch_array($result12);
 include('themes/'.$themeName.'/head.php');
 include('themes/'.$themeName.'/sidebar.php');

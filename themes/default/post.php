@@ -53,7 +53,7 @@
       				<tr><td>Name:</td><td><input name="username" type="text" maxlength="28" /></td></tr>
       				<tr><td>Email:</td><td><input name="email" type="text"/></td></tr>
       				<tr><td>Website:</td><td><input name="website" type="text"/></td></tr>
-      				<tr><td>Post:</td><td><script type="text/javascript">Init(\'text\',30,10,\'\',\'out\'); $(document).ready(function(){ $("#text").resizable(); });</script></td></tr>';
+      				<tr><td>Post:</td><td><textarea cols="30" rows="10" name="text"></textarea></td></tr>';
       				echo '<tr><td colspan="2"><input name="comment_submit" type="submit" value="Submit"/></td></tr>
     			</table>
   				</form>';
