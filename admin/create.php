@@ -18,10 +18,8 @@ $result07 = sqlite_query($handle, "SELECT * FROM categories ORDER BY id DESC") o
 	<!--[if IE]>
 	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
-	<script type="text/javascript" src="includes/nicEdit.js"></script> 
-	<script type="text/javascript">
-	bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
-	</script>
+	<script type="text/javascript" src="nicedit.js"></script> 
+	<script type="text/javascript">bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'style/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});</script>
 </head>
 
 <body>
@@ -36,7 +34,6 @@ $result07 = sqlite_query($handle, "SELECT * FROM categories ORDER BY id DESC") o
 	 <?php 
 	 if(isset($_POST['publish'])) {
 	 	// grab data from form and escape the text
-		require_once('bbcodelib.php');
 	 	$title = sqlite_escape_string($_POST['title']);
 	 	$text = sqlite_escape_string($_POST['text']);
 	 	$date = time();
@@ -62,7 +59,7 @@ $result07 = sqlite_query($handle, "SELECT * FROM categories ORDER BY id DESC") o
 						<table>
 							<tr><td>Title</td><td><input name="title" type="text" maxlength="39" /></td></tr>
 							<tr><td>Category:</td><td><select name="category"><option value="'.$cat->id.'">'.$cat->title.'</option></select></td></tr>
-							<tr><td>Message:</td><td><textarea rows="10" cols="45" name="text"></textarea></td></tr>
+							<tr><td>Message:</td><td><textarea rows="10" cols="45" name="text" id="wysiwyg"></textarea></td></tr>
 							<tr><td colspan="2"><input name="publish" type="submit" value="Publish"/></td></tr>
 						</table>
 				  </form>'; 

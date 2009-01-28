@@ -47,13 +47,15 @@
       
     // get comment FORM
 	echo '
+	<script type="text/javascript" src="admin/nicedit.js"></script>
+	<script type="text/javascript">bkLib.onDomLoaded(function(){new nicEditor({iconsPath:\'admin/style/nicEditorIcons.gif\',xhtml:true}).panelInstance(\'wysiwyg\');});</script>
 	<h4 class="commentform-title">Post a comment</h4><br />
 	<form action="" method="post">
     			<table>
-      				<tr><td>Name:</td><td><input name="username" type="text" maxlength="28" /></td></tr>
+      				<tr><td>Name:</td><td><input name="username" type="text" /></td></tr>
       				<tr><td>Email:</td><td><input name="email" type="text"/></td></tr>
       				<tr><td>Website:</td><td><input name="website" type="text"/></td></tr>
-      				<tr><td>Post:</td><td><textarea cols="30" rows="10" name="text"></textarea></td></tr>';
+      				<tr><td>Post:</td><td><textarea cols="41" rows="10" name="text" id="wysiwyg"></textarea></td></tr>';
       				echo '<tr><td colspan="2"><input name="comment_submit" type="submit" value="Submit"/></td></tr>
     			</table>
   				</form>';

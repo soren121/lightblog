@@ -23,10 +23,8 @@ $result08 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
 	<!--[if IE]>
 	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
-	<script type="text/javascript" src="includes/nicEdit.js"></script> 
-	<script type="text/javascript">
-	bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
-	</script>
+	<script type="text/javascript" src="nicedit.js"></script> 
+	<script type="text/javascript">bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'style/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});</script>
 </head>
 
 <body>
@@ -41,7 +39,6 @@ $result08 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
 	 <?php 
 	 if(isset($_POST['publish'])) {	 	
 	 	// give the POSTed text variables and clean 'em!
-		require_once('bbcodelib.php');
 	 	$title = sqlite_escape_string($_POST['title']);
 	 	$text = sqlite_escape_string($_POST['text']);
 	 	// submit the changes to the database
@@ -58,7 +55,7 @@ $result08 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$
   <form action="" method="post">
     <table>
       <tr><td>Title</td><td><input name="title" type="text" maxlength="39" value="'.$pasttitle.'" /></td></tr>
-      <tr><td>Message:</td><td><textarea rows="10" cols="45" name="text">'.$pastpost.'</textarea></td></tr>
+      <tr><td>Message:</td><td><textarea rows="10" cols="45" name="text" id="wysiwyg">'.$pastpost.'</textarea></td></tr>
 	  <tr><td colspan="2"><input name="publish" type="submit" value="Save"/></td></tr>
     </table>
   </form>'; } ?>
