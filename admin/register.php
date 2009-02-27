@@ -11,14 +11,23 @@ if(isset($_POST['register'])) {
     while($row = sqlite_fetch_array($result06)) {
       $check['user'] = $row['username'];
     }
-	if(!$check['user'] == $username) { $error = false; } else { $error = true; }
-	if(isset($username{6})) { $error = false; } else { $error = true; }
-	if(isset($password{4})) { $error = false; } else { $error = true; }
-	if($password == $vpassword) { $error = false; } else { $error = true; }
-	if(preg_match("/^([a-z0-9._-](\+[a-z0-9])*)+@[a-z0-9.-]+\.[a-z]{2,6}$/i",$email)) { $error = false; } else { $error = true; }
-	require('securimage.php');
-	if($securimage->check($_POST['captcha_code']) == true) { $error = false; } else { $error = true; }
-	if($error == false) {
+	if($check['user'] == $username) { $error = true; }
+	if(!isset($username{6})) { $error = true; }
+	if(!isset($password{4})) { $error = true; }
+	if(!$password == $vpassword) { $error = true; }
+	if(!preg_match("/^([a-z0-9._-](\+[a-z0-9])*)+@[a-z0-9.-]+\.[a-z]{2,6}$/i",$email)) { $error = true; }
+	if(!empty($_SESSION['freecap_word_hash']) && !empty($_POST['word'])) {
+		if($_SESSION['hash_func'](strtolower($_POST['word']))==$_SESSION['freecap_word_hash']) {
+			$_SESSION['freecap_attempts'] = 0; $_SESSION['freecap_word_hash'] = false;
+		}
+		else {
+			$error = true;
+		}
+	}
+	else {
+		$error = true;
+	}
+	if(!isset($error)) {
 		$username = addslashes(sqlite_escape_string($username));
 		$password = md5($password);
 		$email = addslashes(sqlite_escape_string($email));
@@ -47,6 +56,24 @@ if(isset($_POST['login'])) {
 <script type="text/javascript" src="includes/jquery.js"></script>
 <script type="text/javascript" src="includes/jquery-pstrength.js"></script>
 <script type="text/javascript">$(function() {$('.password').pstrength();});</script>
+<script language="javascript">
+<!--
+function new_freecap()
+{
+	// loads new freeCap image
+	if(document.getElementById)
+	{
+		// extract image name from image source (i.e. cut off ?randomness)
+		thesrc = document.getElementById("freecap").src;
+		thesrc = thesrc.substring(0,thesrc.lastIndexOf(".")+4);
+		// add ?(random) to prevent browser/isp caching
+		document.getElementById("freecap").src = thesrc+"?"+Math.round(Math.random()*100000);
+	} else {
+		alert("Sorry, cannot autoreload freeCap image\nManually reload the page and a new freeCap will be loaded");
+	}
+}
+//-->
+</script>
 <style type="text/css">
 .password {
 font-size : 12px;
@@ -72,9 +99,9 @@ font-size : 10px;
       <tr><td>Verify Password:</td><td><input name="vpassword" type="password"/></td></tr>
       <tr><td>Email:</td><td><input name="email" type="text" value="'.$_POST['email'].'"/></td></tr>
       <tr><td>First Name:</td><td><input name="realname" type="text" maxlength="16"/></td></tr> 
-	  <tr><td>CAPTCHA:</td><td><img src="securimage_show.php?sid=<?php echo md5(uniqid(time())); ?>" id="image" alt="Failed to load CAPTCHA" />
-	  <a href="#" onclick="document.getElementById(\'image\').src=\'securimage_show.php?sid=\'+ Math.random();return false"><img src="style/refresh.gif" style="border: 1px solid #ccc;" alt="Reload" /></a></td></tr>
-	  <tr><td>CAPTCHA Code:</td><td><input type="text" name="captcha_code" size="4" /></td></tr>
+	  <tr><td>CAPTCHA:</td><td><img src="freecap.php" id="freecap" alt="Failed to load CAPTCHA" />
+	  <a href="#" onclick="this.blur();new_freecap();return false;"><img src="style/refresh.gif" style="border: 1px solid #ccc;" alt="Reload" /></a></td></tr>
+	  <tr><td>CAPTCHA Code:</td><td><input type="text" name="word" size="6" /></td></tr>
       <tr><td colspan="2"><input name="register" type="submit" value="Register"/></td></tr>
     </table>
   </form>'; } ?>

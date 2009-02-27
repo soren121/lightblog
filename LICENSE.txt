@@ -3,11 +3,11 @@ License version 3. The license file is not included in
 this distribution for size reasons. You can view the full
 license file at http://www.gnu.org/licenses/gpl-3.0.txt
 
-The jQuery JavaScript library and the jQuery UI extension
-are also licensed under the GNU General Public License, 
-though specific version is not stated. 
-You can find the latest version of the license
-here: http://www.gnu.org/licenses/gpl-3.0.txt
+The jQuery JavaScript library and the FreeCap CAPTCHA
+library are both licensed under the GNU General Public
+License, version 2 or later. Version 3 was chosen, and
+the full text can be found at:
+http://www.gnu.org/licenses/gpl-3.0.txt
 
 The jQuery password strength meter is licensed under the
 MIT/Expat License, the full text of which can be found here:
@@ -17,11 +17,6 @@ The OpenID library seems to be under the public domain,
 as no license is given. The library states that it is
 "FREE TO USE", implying that the script IS released under
 the public domain.
-
-The CAPTCHA library is licensed under the GNU General
-Public License version 2, the full text of which can
-be found here: 
-http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 
 The Silk icon set is licensed under the Creative Commons
 Attribution 2.5 License. You can find the full text of
