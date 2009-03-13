@@ -1,18 +1,12 @@
 <?php
 
-// let's stop them hackers =)
-if(!defined("Light")) {
-	die("DIE!");
-}
+require_once('..\config.php');
 
-// Settings grabber
-$stselect = sqlite_query($handle, "SELECT * FROM coreinfo") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
-	while($row = sqlite_fetch_array($stselect)) {
-		$cmsinfo[$row['variable']] = stripslashes(stripslashes($row['value']));
-	}
-	
-// Site URL grabber
-$site_url = $cmsinfo['site_url'];
+// Bloginfo grabber
+function bloginfo($var) {
+	$result = sqlite_query($handle, "SELECT value FROM coreinfo WHERE variable='".$var."'") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($handle)));
+	return sqlite_fetch_array($result);
+}
 
 // Gravatar retrieval	
 $grav_default=$site_url."admin/style/gravatar.gif";
