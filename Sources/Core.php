@@ -1,6 +1,6 @@
 <?php
 
-/**************************************
+/***********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
@@ -14,7 +14,7 @@
 	LICENSE.txt document included in this
 	distribution.
 
-**************************************/
+***********************************************/
 
 function bloginfo($var) {
 	$result = sqlite_query( DBH , "SELECT value FROM coreinfo WHERE variable='".$var."'") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($handle)));
