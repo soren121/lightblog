@@ -55,9 +55,9 @@ if(isset($_POST['login'])) {
 <link rel="stylesheet" type="text/css" href="style/regstyle.css" />
 <script type="text/javascript" src="includes/jquery.js"></script>
 <script type="text/javascript" src="includes/jquery-pstrength.js"></script>
-<script type="text/javascript">$(function() {$('.password').pstrength();});</script>
-<script language="javascript">
-<!--
+<script type="text/javascript">
+$(function() {$('.password').pstrength();});
+
 function new_freecap()
 {
 	// loads new freeCap image
@@ -72,23 +72,22 @@ function new_freecap()
 		alert("Sorry, cannot autoreload freeCap image\nManually reload the page and a new freeCap will be loaded");
 	}
 }
-//-->
 </script>
 <style type="text/css">
 .password {
-font-size : 12px;
-border : 1px solid #cc9933;
-width : 145px;
-font-family : arial, sans-serif;
+font-size: 12px;
+border: 1px solid #cc9933;
+width: 145px;
+font-family: arial, sans-serif;
 }
 .pstrength-minchar {
-font-size : 10px;
+font-size: 10px;
 }</style>
 </head>
 
 <body>
 <div id="registerbox">
-<h2 style="padding-top: 5px;"><?php echo $cmsinfo['site_title'] ?></h2><br />
+<h2 style="padding-top: 5px;"><?php echo bloginfo('title'); ?></h2><br />
 <h3 style="padding-bottom: 10px;">Registration</h3>
   <?php if($wnotice == true) { echo '<p>Thanks for registering, '.stripslashes(stripslashes($username)).'. You may now login.</p><br /><form action="" method="post">
       	<p><input name="login" type="submit" value="Login"/></p>'; } else { echo '
@@ -100,7 +99,7 @@ font-size : 10px;
       <tr><td>Email:</td><td><input name="email" type="text" value="'.$_POST['email'].'"/></td></tr>
       <tr><td>First Name:</td><td><input name="realname" type="text" maxlength="16"/></td></tr> 
 	  <tr><td>CAPTCHA:</td><td><img src="freecap.php" id="freecap" alt="Failed to load CAPTCHA" />
-	  <a href="#" onclick="this.blur();new_freecap();return false;"><img src="style/refresh.gif" style="border: 1px solid #ccc;" alt="Reload" /></a></td></tr>
+	  <a href="#" onclick="this.blur();new_freecap();return false;"><img src="style/refresh.png" style="border: 1px solid #ccc;" alt="Reload" /></a></td></tr>
 	  <tr><td>CAPTCHA Code:</td><td><input type="text" name="word" size="6" /></td></tr>
       <tr><td colspan="2"><input name="register" type="submit" value="Register"/></td></tr>
     </table>
