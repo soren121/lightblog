@@ -1,6 +1,6 @@
 <?php session_start();
 
-/**************************************
+/*********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
@@ -14,7 +14,7 @@
 	LICENSE.txt document included in this
 	distribution.
 
-**************************************/
+*********************************************/
 
 // Include config and FeedWriter library
 require('config.php');
@@ -24,7 +24,6 @@ include(ABSPATH .'/Sources/feedwriter.php');
 if(!isset($_GET['type'])) :
 	// Default to RSS
 	$type = 'rss';
-
 else:
 $type = strtolower($_GET['type']);
 endif;
@@ -51,8 +50,8 @@ endif;
 
 $TestFeed->setChannelElement('author', bloginfo('owner'));
 
-// Adding items to feed. Genarally this protion will be in a loop and add all feeds.
-$result = sqlite_query($handle, "SELECT * FROM posts ORDER BY id desc") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($handle)));
+// Adding items to feed. Generally this protion will be in a loop and add all feeds.
+$result = sqlite_query( DBH , "SELECT * FROM posts ORDER BY id desc") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error( DBH )));
 while($row = sqlite_fetch_array($result, SQLITE_ASSOC)) {
 		//Create a FeedItem
 		$newItem = $TestFeed->createNewItem();
@@ -66,7 +65,7 @@ while($row = sqlite_fetch_array($result, SQLITE_ASSOC)) {
 		//Now add the feed item
 		$TestFeed->addItem($newItem);
 }
-	
+
 // OK. Everything is done. Now generate the feed.
 $TestFeed->genarateFeed();
 
