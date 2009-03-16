@@ -217,7 +217,7 @@ if(isset($_REQUEST['isubmit'])) {
 						$(':input', this).each(function() {
 							inputs.push(this.name + '=' + escape(this.value));
 						})
-						$('#form-tab2').empty().html('<i' + 'mg src="admin/style/loading.gif" alt="" />');
+						$('#form-tab2').empty().html('<' + 'img src="admin/style/loading.gif" alt="" />');
 						jQuery.ajax({
 							data: inputs.join('&'),
 							url: this.action,
@@ -250,7 +250,7 @@ if(isset($_REQUEST['isubmit'])) {
 						$(':input', this).each(function() {
 							inputs.push(this.name + '=' + escape(this.value));
 						})
-						$('#form-tab3').empty().html('<i' + 'mg src="admin/style/loading.gif" alt="" />');
+						$('#form-tab3').empty().html('<' + 'img src="admin/style/loading.gif" alt="" />');
 						jQuery.ajax({
 							data: inputs.join('&'),
 							url: this.action,
