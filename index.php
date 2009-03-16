@@ -1,6 +1,6 @@
 <?php session_start();
 
-/**************************************
+/*********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
@@ -14,7 +14,7 @@
 	LICENSE.txt document included in this
 	distribution.
 
-**************************************/
+*********************************************/
 
 // Check if LightBlog is installed
 if(!file_exists('config.php')){ 
@@ -25,8 +25,11 @@ if(!file_exists('config.php')){
 // Require config file
 require('config.php');
 
+// Open database
+$dbh = sqlite_popen( DBH );
+
 // Request posts from database
-$result01 = sqlite_query($handle, "SELECT * FROM posts ORDER BY id desc") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($handle)));
+$result01 = sqlite_query($dbh, "SELECT * FROM posts ORDER BY id desc") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error( DBH )));
 
 // Include theme files
 $themeName = bloginfo('theme');

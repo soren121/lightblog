@@ -16,8 +16,11 @@
 
 ***********************************************/
 
+// Open database if not open
+$dbh = sqlite_popen( DBH );
+
 function bloginfo($var) {
-	$result = sqlite_query( DBH , "SELECT value FROM coreinfo WHERE variable='".$var."'") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($handle)));
+	$result = sqlite_query($dbh, "SELECT value FROM coreinfo WHERE variable='".$var."'") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($dbh)));
 	return sqlite_fetch_array($result);
 }
 
