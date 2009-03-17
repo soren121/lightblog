@@ -11,9 +11,6 @@
 		echo "</div>";
 		// this code is repeated for every post in your database
 	}
-
-	// SQLite queries done, closing database
-	sqlite_close($handle);
 	
 	?>
 	</div>

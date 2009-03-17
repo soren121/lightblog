@@ -44,9 +44,7 @@
 	 	sqlite_query($handle, "INSERT INTO comments (post_id,username,email,website,text) VALUES('".$_GET['id']."','".$com_name."','".$com_email."','".$com_website."','".$com_text."')") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
 		echo "<p>Your comment has been submitted. Thank you.</p>";
     }
-	  
-	// SQLite queries done, closing database
-	sqlite_close($handle);  
+  
 	?>
 	
 	<script type="text/javascript" src="admin/nicEdit.js"></script>

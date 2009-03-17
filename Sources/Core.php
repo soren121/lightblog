@@ -28,4 +28,7 @@ function fetchGravatar($email, $size) {
 	return "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size;
 }
 
+// Queries done, close database
+sqlite_close($dbh);
+
 ?>
