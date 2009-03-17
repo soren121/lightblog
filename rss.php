@@ -20,6 +20,9 @@
 require('config.php');
 include(ABSPATH .'/Sources/feedwriter.php');
 
+// Open database if not open
+$dbh = sqlite_popen( DBH );
+
 // Check requested feed type
 if(!isset($_GET['type'])) :
 	// Default to RSS
@@ -51,7 +54,7 @@ endif;
 $TestFeed->setChannelElement('author', bloginfo('owner'));
 
 // Adding items to feed. Generally this protion will be in a loop and add all feeds.
-$result = sqlite_query( DBH , "SELECT * FROM posts ORDER BY id desc") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error( DBH )));
+$result = sqlite_query($dbh, "SELECT * FROM posts ORDER BY id desc") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($dbh)));
 while($row = sqlite_fetch_array($result, SQLITE_ASSOC)) {
 		//Create a FeedItem
 		$newItem = $TestFeed->createNewItem();
@@ -68,5 +71,8 @@ while($row = sqlite_fetch_array($result, SQLITE_ASSOC)) {
 
 // OK. Everything is done. Now generate the feed.
 $TestFeed->genarateFeed();
+
+// Queries done, close database
+sqlite_close($dbh);
 
 ?>

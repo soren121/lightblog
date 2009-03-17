@@ -24,8 +24,5 @@
 	}
 	else { echo "No posts, sorry."; }
 	
-	// SQLite queries done, closing database
-	sqlite_close($handle);
-	
 	?>
 	</div>

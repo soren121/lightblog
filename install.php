@@ -220,14 +220,15 @@ if(isset($_REQUEST['isubmit'])) {
 						$('#form-tab2').empty().html('<' + 'img src="admin/style/loading.gif" alt="" />');
 						jQuery.ajax({
 							data: inputs.join('&'),
-							url: this.action,
+							url: this.getAttribute('action'),
 							timeout: 2000,
 							error: function() {
-							console.log("Failed to submit");
-							$('#waitingblock').empty(); 
+								$('#form-tab2').empty(); 
+								console.log("Failed to submit");
+								alert("Failed to submit.");
 							},
 							success: function(r) {
-								$('#waitingblock').empty(); 
+								$('#form-tab2').empty(); 
 								tabber1.show(3); return false;
 							}
 						})
@@ -253,13 +254,15 @@ if(isset($_REQUEST['isubmit'])) {
 						$('#form-tab3').empty().html('<' + 'img src="admin/style/loading.gif" alt="" />');
 						jQuery.ajax({
 							data: inputs.join('&'),
-							url: this.action,
+							url: this.getAttribute('action'),
 							timeout: 2000,
 							error: function() {
-							console.log("Failed to submit.");
-							alert("Failed to submit.");
+								$('#form-tab2').empty(); 
+								console.log("Failed to submit.");
+								alert("Failed to submit.");
 							},
 							success: function(r) {
+								$('#form-tab2').empty(); 
 								tabber1.show(4); return false;
 							}
 						})

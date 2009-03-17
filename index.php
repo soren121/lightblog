@@ -25,11 +25,11 @@ if(!file_exists('config.php')){
 // Require config file
 require('config.php');
 
-// Open database
+// Open database if not open
 $dbh = sqlite_popen( DBH );
 
 // Request posts from database
-$result01 = sqlite_query($dbh, "SELECT * FROM posts ORDER BY id desc") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error( DBH )));
+$result01 = sqlite_query($dbh, "SELECT * FROM posts ORDER BY id desc") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($dbh)));
 
 // Include theme files
 $themeName = bloginfo('theme');
@@ -37,5 +37,8 @@ include('themes/'.$themeName.'/head.php');
 include('themes/'.$themeName.'/sidebar.php');
 include('themes/'.$themeName.'/main.php');
 include('themes/'.$themeName.'/footer.php');
+
+// Queries done, close database
+sqlite_close($dbh);
 
 ?>
