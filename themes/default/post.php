@@ -16,7 +16,24 @@
 		}
 	}
 	
-	// check if comment has been POSTed
+	// get comments
+	// if there are no comments:
+	if($result04->numRows() == 0) {
+		echo "<p>No comments have been made on this post yet.</p>";
+	}
+	
+	// if comments exist, display them
+	else { 
+		while($comments = $result04->fetch(SQLITE_ASSOC)) {
+		echo "<div class=\"comment\">
+			  <img src=\"".fetchGravatar($comments['email'], 30, 'r')."\" style=\"float:right;margin-right: 20px;\" alt=\"Gravatar\" />
+		      <b><i>".$comments['username']."</i></b> says:<br />
+		      <p class=\"com-content\">".$comments['text']."</p>
+		      </div>";
+		}
+	}
+	
+		// check if comment has been POSTed
 	if(isset($_POST['comment_submit'])) {					 	
 	 	$com_name = sqlite_escape_string($_POST['username']);
 	 	$com_email = sqlite_escape_string($_POST['email']);
@@ -25,28 +42,11 @@
 	 	$dbh->query("INSERT INTO comments (post_id,username,email,website,text) VALUES('".(int)$_GET['id']."','".$com_name."','".$com_email."','".$com_website."','".$com_text."')")  or die(sqlite_error_string($dbh->lastError));
 		echo'
 		<div class="comment">
-		<img src="'.fetchGravatar(md5($com_email), 30, 'r');.'" style="float:right;margin-right:20px;" alt="Gravatar" />
+		<img src="'.fetchGravatar($com_email, 30, 'r').'" style="float:right;margin-right:20px;" alt="Gravatar" />
 		<b><i>'.$com_name.'</i></b> says:<br/>
 		<p class="com-content">'.$com_text.'</p>
 		</div>';
     }
-	
-	// get comments
-	// if there are no comments:
-	if($result04->numRows() == 0 or !isset($_POST['comment_submit'])) {
-		echo "<p>No comments have been made on this post yet.</p>";
-	}
-	
-	// if comments exist, display them
-	else { 
-		while($comments = $result04->fetch(SQLITE_ASSOC)) {
-		echo "<div class=\"comment\">
-			  <img src=\"".fetchGravatar(md5($comments['email']), 30, 'r')."\" style=\"float:right;margin-right: 20px;\" alt=\"Gravatar\" />
-		      <b><i>".$comments['username']."</i></b> says:<br />
-		      <p class=\"com-content\">".$comments['text']."</p>
-		      </div>";
-		}
-	}
   
 	?>
 	

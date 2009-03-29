@@ -26,16 +26,16 @@ function bloginfo($var, $output = 'e') {
 	if($bloginfo == null) {
 		$result = $dbh->query('SELECT * FROM core') or die(sqlite_error_string($dbh->lastError));
 		$bloginfo = array();
-		while($row = $result->fetchObject())
+		while($row = $result->fetchObject()) {
 			$bloginfo[$row->variable] = $row->value;
 		}
-		if($output == 'e') {
-			return !empty($bloginfo[$var]) ? $bloginfo[$var] : false;
-		}
-		else {
-			echo !empty($bloginfo[$var]) ? $bloginfo[$var] : false;
-		}
 	}
+	if($output == 'e') {
+		return !empty($bloginfo[$var]) ? $bloginfo[$var] : false;
+	}
+	else {
+		echo !empty($bloginfo[$var]) ? $bloginfo[$var] : false;
+	}	
 }
 
 function fetchGravatar($email, $size = 30, $output = 'e') {
