@@ -41,7 +41,7 @@ while($past = $result08->fetch_object) {
 	<!--[if IE]>
 	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
-	<script type="text/javascript" src="<?php echo bloginfo('url') ?>Sources/nicedit.js"></script> 
+	<script type="text/javascript" src="<?php echo bloginfo('url') ?>Sources/nicEdit.js"></script> 
 	<script type="text/javascript">bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'<?php echo bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});</script>
 </head>
 
