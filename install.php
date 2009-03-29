@@ -52,7 +52,7 @@ function curDirURL() {
 
 if(isset($_REQUEST['dbsubmit'])) {
 	// Create full database path
-	$dbpath = $_REQUEST['dblocation']."\\".randomString(mt_rand(9, 16)).".db"; }
+	$dbpath = $_REQUEST['dblocation']."\\".randomString(mt_rand(9, 16)).".db";
 	// Create database file
 	fclose(fopen($dbpath, 'w')) or die("Cannot create database. Check your permissions.");
 	// Open database
@@ -192,17 +192,13 @@ if(isset($_REQUEST['isubmit'])) {
 					<td><?php if(extension_loaded('sqlite') == false){ echo 'Disabled';$error2 = true; } else {echo sqlite_libversion(); }?></td>
 					<?php if(floatval(sqlite_libversion()) >= "2.8"){ echo '<td style="background:#6CCC0D;">OK</td>'; } else {echo '<td style="background:#CC2626;">Unsatisfactory</td>'; }?>
 				</tr>
-				<tr><td>cURL</td>
-					<td><?php if(extension_loaded('curl') == false){ echo 'Disabled';$error3 = true; } else {echo 'Enabled'; }?></td>
-					<?php if(extension_loaded('curl') == false){ echo '<td style="background:#CC2626;">Unsatisfactory</td>'; } else {echo '<td style="background:#6CCC0D;">OK</td>'; }?>
-				</tr>
 				<?php $GDArray = gd_info(); $gdver = ereg_replace('[[:alpha:][:space:]()]+', '', $GDArray['GD Version']); ?>
 				<tr><td>GD</td>
-					<td><?php if(extension_loaded('gd') == false){ echo 'Disabled';$error4 = true; } else { echo $gdver; }?></td>
+					<td><?php if(extension_loaded('gd') == false){ echo 'Disabled';$error3 = true; } else { echo $gdver; }?></td>
 					<?php if(floatval($gdver) >= "2.0") { echo '<td style="background:#6CCC0D;">OK</td>'; } else { echo '<td style="background:#CC2626;">Unsatisfactory</td>'; }?>
 				</tr>
 				</table>
-				<?php if($error1 or $error2 or $error3 or $error4 == true): ?>
+				<?php if($error1 or $error2 or $error3 == true): ?>
 					<h4 style="color:red;">Your server does not meet the minimum requirements. Please rectify the issues listed above and try again.</h4>
 					<button disabled="disabled" class="continue" onclick="tabber1.show(2); return false;">Continue</button>	
 				<?php else: ?>
