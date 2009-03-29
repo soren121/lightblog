@@ -16,34 +16,37 @@
 		}
 	}
 	
+	// check if comment has been POSTed
+	if(isset($_POST['comment_submit'])) {					 	
+	 	$com_name = sqlite_escape_string($_POST['username']);
+	 	$com_email = sqlite_escape_string($_POST['email']);
+	 	$com_website = sqlite_escape_string($_POST['website']);
+	 	$com_text = sqlite_escape_string($_POST['text']);
+	 	$dbh->query("INSERT INTO comments (post_id,username,email,website,text) VALUES('".(int)$_GET['id']."','".$com_name."','".$com_email."','".$com_website."','".$com_text."')")  or die(sqlite_error_string($dbh->lastError));
+		echo'
+		<div class="comment">
+		<img src="'.fetchGravatar(md5($com_email), 30, 'r');.'" style="float:right;margin-right:20px;" alt="Gravatar" />
+		<b><i>'.$com_name.'</i></b> says:<br/>
+		<p class="com-content">'.$com_text.'</p>
+		</div>';
+    }
+	
 	// get comments
 	// if there are no comments:
-	if($result04->numRows() == 0) {
+	if($result04->numRows() == 0 or !isset($_POST['comment_submit'])) {
 		echo "<p>No comments have been made on this post yet.</p>";
 	}
 	
 	// if comments exist, display them
 	else { 
 		while($comments = $result04->fetch(SQLITE_ASSOC)) {
-	    $grav_default="http://use.perl.org/images/pix.gif";
-	    $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5($comments['email'])."&amp;default=".urlencode($grav_default)."&amp;size=30";
 		echo "<div class=\"comment\">
-			  <img src=\"".$grav_url."\" style=\"float:right;margin-right: 20px;\" alt=\"Gravatar\" />
+			  <img src=\"".fetchGravatar(md5($comments['email']), 30, 'r')."\" style=\"float:right;margin-right: 20px;\" alt=\"Gravatar\" />
 		      <b><i>".$comments['username']."</i></b> says:<br />
 		      <p class=\"com-content\">".$comments['text']."</p>
 		      </div>";
 		}
 	}
-	
-	// check if comment has been POSTed
-	if(isset($_POST['comment_submit'])) {					 	
-	 	$com_name = $_POST['username'];
-	 	$com_email = $_POST['email'];
-	 	$com_website = $_POST['website'];
-	 	$com_text = $_POST['text'];
-	 	$dbh->query("INSERT INTO comments (post_id,username,email,website,text) VALUES('".$_GET['id']."','".$com_name."','".$com_email."','".$com_website."','".$com_text."')")  or die(sqlite_error_string($dbh->lastError));
-		echo "<p>Your comment has been submitted. Thank you.</p>";
-    }
   
 	?>
 	
