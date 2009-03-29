@@ -33,32 +33,33 @@
 		}
 	}
 	
-		// check if comment has been POSTed
-	if(isset($_POST['comment_submit'])) {					 	
-	 	$com_name = sqlite_escape_string($_POST['username']);
-	 	$com_email = sqlite_escape_string($_POST['email']);
-	 	$com_website = sqlite_escape_string($_POST['website']);
-	 	$com_text = sqlite_escape_string($_POST['text']);
-	 	$dbh->query("INSERT INTO comments (post_id,username,email,website,text) VALUES('".(int)$_GET['id']."','".$com_name."','".$com_email."','".$com_website."','".$com_text."')")  or die(sqlite_error_string($dbh->lastError));
-		echo'
-		<div class="comment">
-		<img src="'.fetchGravatar($com_email, 30, 'r').'" style="float:right;margin-right:20px;" alt="Gravatar" />
-		<b><i>'.$com_name.'</i></b> says:<br/>
-		<p class="com-content">'.$com_text.'</p>
-		</div>';
+	// check if comment has been POSTed
+	if(isset($_POST['comment_submit'])) {
+		// check if all fields are formed
+		if(strlength($com_name) and strlength($com_email) and strlength($com_text) > 0) {
+			$com_name = sqlite_escape_string($_POST['username']);
+			$com_email = sqlite_escape_string($_POST['email']);
+			$com_website = sqlite_escape_string($_POST['website']);
+			$com_text = sqlite_escape_string(removeXSS($_POST['text']));
+			$dbh->query("INSERT INTO comments (post_id,username,email,website,text) VALUES('".(int)$_GET['id']."','".$com_name."','".$com_email."','".$com_website."','".$com_text."')")  or die(sqlite_error_string($dbh->lastError));
+			echo'
+			<div class="comment">
+			<img src="'.fetchGravatar($com_email, 30, 'r').'" style="float:right;margin-right:20px;" alt="Gravatar" />
+			<b><i>'.$com_name.'</i></b> says:<br/>
+			<p class="com-content">'.$com_text.'</p>
+			</div>';
+		}
     }
   
 	?>
 	
-	<script type="text/javascript" src="<?php echo bloginfo('url') ?>Sources/nicEdit.js"></script>
-	<script type="text/javascript">bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'<?php echo bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});</script>
 	<h4 class="commentform-title">Post a comment</h4><br />
 	<form action="" method="post">
     	<table>
       		<tr><td>Name:</td><td><input name="username" type="text" /></td></tr>
       		<tr><td>Email:</td><td><input name="email" type="text"/></td></tr>
       		<tr><td>Website:</td><td><input name="website" type="text"/></td></tr>
-      		<tr><td>Post:</td><td><textarea cols="41" rows="10" name="text" id="wysiwyg"></textarea></td></tr>
+      		<tr><td>Post:</td><td><textarea cols="41" rows="10" name="text"></textarea></td></tr>
       		<tr><td colspan="2"><input name="comment_submit" type="submit" value="Submit"/></td></tr>
     	</table>
   	</form>
