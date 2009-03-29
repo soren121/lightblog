@@ -36,7 +36,7 @@
 	// check if comment has been POSTed
 	if(isset($_POST['comment_submit'])) {
 		// check if all fields are formed
-		if(strlength($com_name) and strlength($com_email) and strlength($com_text) > 0) {
+		if(strlen($com_name) and strlen($com_email) and strlen($com_text) > 0) {
 			$com_name = sqlite_escape_string($_POST['username']);
 			$com_email = sqlite_escape_string($_POST['email']);
 			$com_website = sqlite_escape_string($_POST['website']);
@@ -49,6 +49,7 @@
 			<p class="com-content">'.$com_text.'</p>
 			</div>';
 		}
+		else { echo '<p style="color:red">You forgot to fill in a field. Please fill in all the fields and try again.</p>'; }
     }
   
 	?>
