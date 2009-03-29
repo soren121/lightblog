@@ -19,14 +19,32 @@
 // Open database if not open
 $dbh = new SQLiteDatabase( DBH );
 
-function bloginfo($var) {
-	$dbh = new SQLiteDatabase( DBH );
-	$result = $dbh->query("SELECT value FROM core WHERE variable='".$var."'") or die(sqlite_error_string($dbh->lastError));
-	return $result->fetchSingle();
+function bloginfo($var, $output = 'e') {
+	global $dbh;
+	static $bloginfo = null;
+
+	if($bloginfo == null) {
+		$result = $dbh->query('SELECT * FROM core') or die(sqlite_error_string($dbh->lastError));
+		$bloginfo = array();
+		while($row = $result->fetchObject())
+			$bloginfo[$row->variable] = $row->value;
+		}
+		if($output == 'e') {
+			return !empty($bloginfo[$var]) ? $bloginfo[$var] : false;
+		}
+		else {
+			echo !empty($bloginfo[$var]) ? $bloginfo[$var] : false;
+		}
+	}
 }
 
-function fetchGravatar($email, $size = 30) {
-	echo "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size;
+function fetchGravatar($email, $size = 30, $output = 'e') {
+	if($output == 'e') {
+		echo "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size;
+	}
+	else {
+		return "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size;
+	}
 }
 
 ?>
