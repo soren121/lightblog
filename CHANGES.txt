@@ -9,10 +9,10 @@
 	* Included FeedWriter library for RSS2/Atom feeds
 	* Included Yetii library for JavaScript tabs
 	* Removed jQuery UI in favor of Yetii
+        * Removed OpenID library due to bad implementation
 	* Componentized installer
 	* Included actual license
 	* Seperated presentational theme from business
 	* New feed system
 	* Renamed rss.php to feed.php
 	* Added CHANGES.txt
-	* Moved admin form processing to Sources/ajax.php

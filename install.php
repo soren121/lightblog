@@ -16,6 +16,9 @@
 
 *********************************************/
 
+// Check directory permissions
+
+
 // Generate a random string of specified length
 function randomString($length) {
 	// start with a blank password
@@ -47,17 +50,9 @@ function curDirURL() {
 	return $site_url;
 }
 
-// Generate salted, secure password md5
-function generatePassHash($text, $saltlength, $salt) {
-	$salt = substr($salt, 0, $saltlength);
-	return $salt.md5($salt.$text);
-}
-
 if(isset($_REQUEST['dbsubmit'])) {
 	// Create full database path
-	if(strpos($_REQUEST['dblocation'], '\\\\') !== false) {
-	$dbpath = stripslashes($_REQUEST['dblocation'])."\\".randomString(mt_rand(9, 16)).".db";
-	} else { $dbpath = $_REQUEST['dblocation']."\\".randomString(mt_rand(9, 16)).".db"; }
+	$dbpath = $_REQUEST['dblocation']."\\".randomString(mt_rand(9, 16)).".db"; }
 	// Create database file
 	fclose(fopen($dbpath, 'w')) or die("Cannot create database. Check your permissions.");
 	// Open database
@@ -90,10 +85,10 @@ if(isset($_REQUEST['isubmit'])) {
 	// Generate salt
 	$salt = substr(md5(uniqid(rand(), true)), 0, 9);
 	// Set variables for easy manipulation
-	$username = $_REQUEST['iusername'];
-	$password = $salt.md5($salt.$_REQUEST['ipassword']);
-	$email = $_REQUEST['iemail'];
-	$displayname = $_REQUEST['iname'];
+	$username = sqlite_escape_string($_REQUEST['iusername']);
+	$password = sqlite_escape_string(md5($salt.$_REQUEST['ipassword']));
+	$email = sqlite_escape_string($_REQUEST['iemail']);
+	$displayname = sqlite_escape_string($_REQUEST['iname']);
 	// Get the user's real IP, if possible
 	if (getenv(HTTP_X_FORWARDED_FOR)) { $ip = getenv(HTTP_X_FORWARDED_FOR); } 
 	else { $ip = getenv(REMOTE_ADDR); }
@@ -104,9 +99,7 @@ if(isset($_REQUEST['isubmit'])) {
 	// Add blog directory URL to database
 	$dbh->query("INSERT INTO core VALUES('url', '".curDirURL()."');");
 	// Add user to database
-	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip) VALUES('".$username."', '".$password."', '".$email."', '".$displayname."', 1, '".$ip."');");	
-	// Add salt to database
-	$dbh->query("INSERT INTO salt (username,salt,etime) VALUES('".$username."', '".$salt."', '".time()."')");
+	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('".$username."', '".$password."', '".$email."', '".$displayname."', 1, '".$ip."', '".$salt."');");
 	// Unset variables
 	unset($username, $password, $email, $displayname, $ip, $dbh);
 	// Prevent the rest of the page from loading
