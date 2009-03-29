@@ -1,5 +1,26 @@
-<?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
-$result01 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s ORDER BY id desc") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($handle)));
+<?php session_start();
+
+/*********************************************
+
+	LightBlog 0.9
+	SQLite blogging platform
+	
+	admin/manage.php
+	
+	©2009 soren121. All rights reserved.
+	Released under the GNU General
+	Public License. For all licensing
+	information, please see the
+	LICENSE.txt document included in this
+	distribution.
+
+*********************************************/
+
+// Require config file
+require('../config.php');
+require(ABSPATH .'/Sources/Core.php');
+
+$result01 = $dbh->query("SELECT * FROM ".$_GET['type']."s ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
 ?>
 <!--	LightBlog v0.9.0
 		Copyright 2009 soren121. Some Rights Reserved.
@@ -11,7 +32,7 @@ $result01 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s ORDER BY id 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	<title><?php echo $site_name; ?></title>
+	<title><?php echo bloginfo('title'); ?></title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<meta name="generator" content="Geany 0.13/soren121" />
 	<link rel="stylesheet" href="style/style.css" type="text/css" media="screen" />
@@ -29,15 +50,15 @@ $result01 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s ORDER BY id 
 	</div>
 	<?php include('admside.php'); ?>
 	<div id="content">
-	<h2>Manage <?php echo $_GET['type']; ?>s</h2><br />
+	<h2>Manage <?php echo $_GET['type'] ?>s</h2><br />
 	<div id="postlist">
-	 <?php if($_SESSION['uservip'] == "0" or !(isset($_SESSION['uservip']))) { echo'Hey, you shouldn\'t even be in here! <a href="javascript:history.go(-2)">Go back to where you came from.</a>'; }
-	 if($_SESSION['uservip'] == "1") {	 	
-	// run blog post query
-	if (sqlite_num_rows($result01) > 0) {
+	<?php if($_SESSION['role'] <= 0 or !(isset($_SESSION['role']))): ?>
+	Hey, you shouldn't even be in here! <a href="javascript:history.go(-2)">Go back to where you came from.</a>
+	<?php else:
+	if ($result01->numRows() > 0) {
 		echo'<table class="postlist">'; 
 		// start post loop
-		while($post = sqlite_fetch_object($result01)) {
+		while($post = $result01->fetchObject()) {
 			// timestamp for date
 			$timestamp = $post->date;
 			// start row
@@ -56,11 +77,10 @@ $result01 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s ORDER BY id 
 			echo '</tr>';
 			// this code is repeated for every post in your database
 		}
-	echo '</table>';
+		echo '</table>';
 	}
-	else { echo "No ".$_GET['type']."s, sorry."; }
- 
-	 } ?>
+	else { echo "No ".$_GET['type']."s, sorry."; } 
+	endif; ?>
 	</div>
 	</div>
 </div>

@@ -1,0 +1,18 @@
+[03.28.09] Changes in 0.9.1
+	* Basic theme support
+	* New AJAX installer
+	* Absolute path system
+	* New config file
+	* New Core file
+	* Included FreeCap library for CAPTCHAs
+	* Included Akismet library for spam protection
+	* Included FeedWriter library for RSS2/Atom feeds
+	* Included Yetii library for JavaScript tabs
+	* Removed jQuery UI in favor of Yetii
+	* Componentized installer
+	* Included actual license
+	* Seperated presentational theme from business
+	* New feed system
+	* Renamed rss.php to feed.php
+	* Added CHANGES.txt
+	* Moved admin form processing to Sources/ajax.php

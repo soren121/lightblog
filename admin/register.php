@@ -1,4 +1,26 @@
-<?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
+<?php session_start();
+
+/*********************************************
+
+	LightBlog 0.9
+	SQLite blogging platform
+	
+	admin/login.php
+	
+	©2009 soren121. All rights reserved.
+	Released under the GNU General
+	Public License. For all licensing
+	information, please see the
+	LICENSE.txt document included in this
+	distribution.
+
+*********************************************/
+
+// Open config if not open
+require('../config.php');
+require(ABSPATH .'/Sources/Core.php');
+
+// Process registration
 if(isset($_POST['register'])) {
 	$username = strtolower($_POST['username']);
 	$password = $_POST['password'];
@@ -7,8 +29,8 @@ if(isset($_POST['register'])) {
 	$realname = $_POST['realname'];
 	$captchacode = $_POST['captchacode'];
    
-	$result06 = sqlite_query($handle, "SELECT * FROM users WHERE username = '".addslashes(sqlite_escape_string($r['user']))."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
-    while($row = sqlite_fetch_array($result06)) {
+	$result06 = $dbh->query("SELECT * FROM users WHERE username = '".addslashes(sqlite_escape_string($r['user']))."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+    while($row = $result06->fetch(SQLITE_ASSOC)) {
       $check['user'] = $row['username'];
     }
 	if($check['user'] == $username) { $error = true; }
@@ -33,7 +55,7 @@ if(isset($_POST['register'])) {
 		$email = addslashes(sqlite_escape_string($email));
 		$realname = addslashes(sqlite_escape_string($realname));
 		$ip = addslashes(sqlite_escape_string($_SERVER['REMOTE_ADDR']));
-		sqlite_query($handle, "INSERT INTO users (username,password,email,realname,vip,ip) VALUES('$username','$password','$email','$realname',0,'$ip')") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+		$dbh->query("INSERT INTO users (username,password,email,realname,vip,ip) VALUES('$username','$password','$email','$realname',0,'$ip')") or die(sqlite_error_string($dbh->lastError));
 		$wnotice = true;
 	}
 }
@@ -51,9 +73,9 @@ if(isset($_POST['login'])) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title><?php echo $site_name; ?> - Registration</title>
+<title><?php echo bloginfo('title'); ?> - Registration</title>
 <link rel="stylesheet" type="text/css" href="style/regstyle.css" />
-<script type="text/javascript" src="includes/jquery.js"></script>
+<script type="text/javascript" src="<?php echo bloginfo('url') ?>Sources/jquery.js"></script>
 <script type="text/javascript" src="includes/jquery-pstrength.js"></script>
 <script type="text/javascript">
 $(function() {$('.password').pstrength();});
@@ -97,8 +119,8 @@ font-size: 10px;
       <tr><td>Password:</td><td><input class="password" name="password" type="password"/></td></tr>
       <tr><td>Verify Password:</td><td><input name="vpassword" type="password"/></td></tr>
       <tr><td>Email:</td><td><input name="email" type="text" value="'.$_POST['email'].'"/></td></tr>
-      <tr><td>First Name:</td><td><input name="realname" type="text" maxlength="16"/></td></tr> 
-	  <tr><td>CAPTCHA:</td><td><img src="freecap.php" id="freecap" alt="Failed to load CAPTCHA" />
+      <tr><td>Display Name:</td><td><input name="realname" type="text" maxlength="16"/></td></tr> 
+	  <tr><td>CAPTCHA:</td><td><img src="'.bloginfo('url').'Sources/freecap.php" id="freecap" alt="Failed to load CAPTCHA" />
 	  <a href="#" onclick="this.blur();new_freecap();return false;"><img src="style/refresh.png" style="border: 1px solid #ccc;" alt="Reload" /></a></td></tr>
 	  <tr><td>CAPTCHA Code:</td><td><input type="text" name="word" size="6" /></td></tr>
       <tr><td colspan="2"><input name="register" type="submit" value="Register"/></td></tr>

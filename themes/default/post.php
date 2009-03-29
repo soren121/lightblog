@@ -1,9 +1,9 @@
 	<div id="content">
 	<?php
 	// run blog post query
-	if (sqlite_num_rows($result03) > 0) {
+	if ($result03->numRows() > 0) {
 		// start post loop
-		while($post = sqlite_fetch_object($result03)) {
+		while($post = $result03->fetchObject()) {
 			// start post structure
 			echo "<div class=\"postbox\">";
 			// output title
@@ -18,13 +18,13 @@
 	
 	// get comments
 	// if there are no comments:
-	if(sqlite_num_rows($result04) == 0) {
+	if($result04->numRows() == 0) {
 		echo "<p>No comments have been made on this post yet.</p>";
 	}
 	
 	// if comments exist, display them
 	else { 
-		while($comments = sqlite_fetch_array($result04)) {
+		while($comments = $result04->fetch(SQLITE_ASSOC)) {
 	    $grav_default="http://use.perl.org/images/pix.gif";
 	    $grav_url = "http://www.gravatar.com/avatar.php?gravatar_id=".md5($comments['email'])."&amp;default=".urlencode($grav_default)."&amp;size=30";
 		echo "<div class=\"comment\">
@@ -47,8 +47,8 @@
   
 	?>
 	
-	<script type="text/javascript" src="admin/nicEdit.js"></script>
-	<script type="text/javascript">bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'admin/style/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});</script>
+	<script type="text/javascript" src="Sources/nicEdit.js"></script>
+	<script type="text/javascript">bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});</script>
 	<h4 class="commentform-title">Post a comment</h4><br />
 	<form action="" method="post">
     	<table>

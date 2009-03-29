@@ -1,14 +1,38 @@
-<?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
-$result08 = sqlite_query($handle, "SELECT * FROM ".$_GET['type']."s WHERE id=".$_GET['id']."") or die("SQLite query error: code 08<br>".sqlite_error_string(sqlite_last_error($handle)));
-	while($past = sqlite_fetch_object($result08)) {
+<?php session_start();
+
+/*********************************************
+
+	LightBlog 0.9
+	SQLite blogging platform
+	
+	admin/delete.php
+	
+	©2009 soren121. All rights reserved.
+	Released under the GNU General
+	Public License. For all licensing
+	information, please see the
+	LICENSE.txt document included in this
+	distribution.
+
+*********************************************/
+
+// Open config if not open
+require('../config.php');
+require(ABSPATH .'/Sources/Core.php');
+
+// Open database if not open
+$dbh = new SQLiteDatabase( DBH );
+
+$result08 = $dbh->query("SELECT * FROM ".$_GET['type']."s WHERE id=".$_GET['id']."") or die(sqlite_error_string($dbh->lastError));
+	while($past = $result08->fetch_object) {
 		$pasttitle = $past->title;
 		$pastpost = $past->post;
 	}
 	
 	if(isset($_POST['delete'])) {
-		sqlite_query($handle, "DELETE FROM ".$_GET['type']."s WHERE id='".$_GET['id']."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+		$dbh->query("DELETE FROM ".$_GET['type']."s WHERE id='".$_GET['id']."'") or die(sqlite_error_string($dbh->lastError));
 		if($_GET['type'] == "post") {
-		sqlite_query($handle, "DELETE FROM comments WHERE post_id='".$_GET['id']."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
+		$dbh->query("DELETE FROM comments WHERE post_id='".$_GET['id']."'") or die(sqlite_error_string($dbh->lastError));
 		}
 		header('Location: manage.php?type='.$_GET['type'].'');
 	}
