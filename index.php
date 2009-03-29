@@ -32,9 +32,9 @@ $result10 = $dbh->query("SELECT * FROM pages ORDER BY id desc") or die(sqlite_er
 
 // Include theme files
 $themeName = bloginfo('theme');
-include(ABSPATH .'\themes\\'.$themeName.'\head.php');
-include(ABSPATH .'\themes\\'.$themeName.'\sidebar.php');
-include(ABSPATH .'\themes\\'.$themeName.'\main.php');
-include(ABSPATH .'\themes\\'.$themeName.'\footer.php');
+include('themes/'.$themeName.'/head.php');
+include('themes/'.$themeName.'/sidebar.php');
+include('themes/'.$themeName.'/main.php');
+include('themes/'.$themeName.'/footer.php');
 
 ?>
