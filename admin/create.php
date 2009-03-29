@@ -20,9 +20,6 @@
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
-// Open database if not open
-$dbh = new SQLiteDatabase( DBH );
-
 // Request categories from database
 $result07 = $dbh->query("SELECT * FROM categories ORDER BY id DESC") or die(sqlite_error_string($dbh->lastError));
 
@@ -58,7 +55,7 @@ if(isset($_POST['publish'])) {
 	<!--[if IE]>
 	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
-	<script type="text/javascript" src="<?php echo bloginfo('url') ?>Sources/nicedit.js"></script> 
+	<script type="text/javascript" src="<?php echo bloginfo('url') ?>Sources/nicEdit.js"></script> 
 	<script type="text/javascript">
 	bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'<?php echo bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});			
 	</script>

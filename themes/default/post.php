@@ -47,8 +47,8 @@
   
 	?>
 	
-	<script type="text/javascript" src="Sources/nicEdit.js"></script>
-	<script type="text/javascript">bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});</script>
+	<script type="text/javascript" src="<?php echo bloginfo('url') ?>Sources/nicEdit.js"></script>
+	<script type="text/javascript">bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'<?php echo bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});</script>
 	<h4 class="commentform-title">Post a comment</h4><br />
 	<form action="" method="post">
     	<table>
