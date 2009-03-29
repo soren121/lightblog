@@ -19,7 +19,7 @@
 // Include config and FeedWriter library
 require('config.php');
 require(ABSPATH .'/Sources/Core.php');
-require(ABSPATH .'/Sources/feedwriter.php');
+require(ABSPATH .'/Sources/FeedWriter.php');
 
 // Check requested feed type
 if(!isset($_GET['type'])):
