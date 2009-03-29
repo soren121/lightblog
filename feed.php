@@ -45,24 +45,28 @@ $TestFeed->setLink(bloginfo('url').'rss.php');
 // For other channel elements, use setChannelElement() function
 if($type == 'atom'):
 	$TestFeed->setChannelElement('updated', date(DATE_ATOM , time()));
+	$TestFeed->setChannelElement('author', array('name'=>'Anis uddin Ahmad'));
 elseif($type == 'rss'):
-	$TestFeed->setChannelElement('pubDate', date(DATE_RSS, time()));
+	$TestFeed->setChannelElement('pubDate', date(RFC822, time()));
 endif;
 
 // Adding items to feed. Generally this protion will be in a loop and add all feeds.
 $result = $dbh->query("SELECT * FROM posts ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
+
 while($row = $result->fetch(SQLITE_ASSOC)) {
-		//Create a FeedItem
-		$newItem = $TestFeed->createNewItem();
+	// Create a FeedItem
+	$newItem = $TestFeed->createNewItem();
 		
-		//Add elements to the feed item    
-		$newItem->setTitle($row['title']);
-		$newItem->setLink(bloginfo('url').'post.php?id='.$row['id']);
-		$newItem->setDate($row['date']);
-		$newItem->setDescription($row['post']);
+	// Add elements to the feed item    
+	$newItem->setTitle($row['title']);
+	$newItem->setLink(bloginfo('url', 'r').'post.php?id='.$row['id']);
+	$newItem->setDescription($row['post']);
+	$newItem->setDate(date(RFC822, $row['date']));
+	$newItem->addElement('author', $row['author']);
+	$newItem->addElement('guid', bloginfo('url', 'r').'post.php?id='.$row['id'], array('isPermaLink'=>'true'));
 		
-		//Now add the feed item
-		$TestFeed->addItem($newItem);
+	// Now add the feed item
+	$TestFeed->addItem($newItem);
 }
 
 // OK. Everything is done. Now generate the feed.
