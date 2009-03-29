@@ -26,7 +26,4 @@ if(!defined('ABSPATH')) {
 	define('ABSPATH', dirname(__FILE__));
 }
 
-// Include Core functions and vars
-require_once(ABSPATH .'/Sources/Core.php');
-
 ?>

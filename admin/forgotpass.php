@@ -1,9 +1,29 @@
-<?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
-/* SQLite PHP Login System
- * Created and written by soren121 for LightBlog
- * Licensed under the GNU GPL v3 
- * 
- * DO NOT TOUCH ANYTHING BELOW UNLESS YOU KNOW WHAT YOU'RE DOING! */
+<?php session_start();
+
+/*********************************************
+
+	LightBlog 0.9
+	SQLite blogging platform
+	
+	admin/forgotpass.php
+	
+	©2009 soren121. All rights reserved.
+	Released under the GNU General
+	Public License. For all licensing
+	information, please see the
+	LICENSE.txt document included in this
+	distribution.
+
+*********************************************/
+
+// Open config if not open
+require('../config.php');
+require(ABSPATH .'/Sources/Core.php');
+
+// Open database if not open
+$dbh = sqlite_popen( DBH );
+
+// Random password function
 function createRandomPassword() {
     $chars = "abcdefghijkmnopqrstuvwxyz023456789";
     srand((double)microtime()*1000000);
@@ -17,6 +37,8 @@ function createRandomPassword() {
     }
     return $pass;
 }
+
+// Create random password
 $p4a7s2s8 = createRandomPassword();
 
 if(isset($_POST['forgotpass'])) {

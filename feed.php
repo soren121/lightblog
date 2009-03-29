@@ -5,7 +5,7 @@
 	LightBlog 0.9
 	SQLite blogging platform
 	
-	rss.php
+	feed.php
 	
 	©2009 soren121. All rights reserved.
 	Released under the GNU General
@@ -18,13 +18,11 @@
 
 // Include config and FeedWriter library
 require('config.php');
-include(ABSPATH .'/Sources/feedwriter.php');
-
-// Open database if not open
-$dbh = sqlite_popen( DBH );
+require(ABSPATH .'/Sources/Core.php');
+require(ABSPATH .'/Sources/feedwriter.php');
 
 // Check requested feed type
-if(!isset($_GET['type'])) :
+if(!isset($_GET['type'])):
 	// Default to RSS
 	$type = 'rss';
 else:
@@ -41,8 +39,8 @@ endif;
 
 // Setting the channel elements
 // Use wrapper functions for common elements
-$TestFeed->setTitle('Syndication feed for '.$site_name);
-$TestFeed->setLink(bloginfo('site_url').'rss.php');
+$TestFeed->setTitle('Syndication feed for '.bloginfo('title'));
+$TestFeed->setLink(bloginfo('url').'rss.php');
 	
 // For other channel elements, use setChannelElement() function
 if($type == 'atom'):
@@ -51,17 +49,15 @@ elseif($type == 'rss'):
 	$TestFeed->setChannelElement('pubDate', date(DATE_RSS, time()));
 endif;
 
-$TestFeed->setChannelElement('author', bloginfo('owner'));
-
 // Adding items to feed. Generally this protion will be in a loop and add all feeds.
-$result = sqlite_query($dbh, "SELECT * FROM posts ORDER BY id desc") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($dbh)));
-while($row = sqlite_fetch_array($result, SQLITE_ASSOC)) {
+$result = $dbh->query("SELECT * FROM posts ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
+while($row = $result->fetch(SQLITE_ASSOC)) {
 		//Create a FeedItem
 		$newItem = $TestFeed->createNewItem();
 		
 		//Add elements to the feed item    
 		$newItem->setTitle($row['title']);
-		$newItem->setLink($site_url.'post.php?id='.$row['id']);
+		$newItem->setLink(bloginfo('url').'post.php?id='.$row['id']);
 		$newItem->setDate($row['date']);
 		$newItem->setDescription($row['post']);
 		
@@ -70,9 +66,6 @@ while($row = sqlite_fetch_array($result, SQLITE_ASSOC)) {
 }
 
 // OK. Everything is done. Now generate the feed.
-$TestFeed->genarateFeed();
-
-// Queries done, close database
-sqlite_close($dbh);
+$TestFeed->generateFeed();
 
 ?>

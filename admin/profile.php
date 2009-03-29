@@ -1,37 +1,56 @@
-<?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
+<?php session_start();
+
+/*********************************************
+
+	LightBlog 0.9
+	SQLite blogging platform
 	
-	if(isset($_POST['updpass'])) {
-		$newpass = $_POST['newpass'];
-		$cnfpass = $_POST['cnfpass'];
-		if($newpass == $cnfpass) {
-			$crtpass = md5($cnfpass);
-			sqlite_query($handle, "UPDATE users SET password='".$crtpass."' WHERE username='".$_SESSION['username']."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));		
-			echo '<p style="color: #fff; text-align: center;">Password updated.</p>';		
-		}
-		else { echo'Passwords don\'t match!'; }
+	admin/profile.php
+	
+	©2009 soren121. All rights reserved.
+	Released under the GNU General
+	Public License. For all licensing
+	information, please see the
+	LICENSE.txt document included in this
+	distribution.
+
+*********************************************/
+
+// Open config if not open
+require('../config.php');
+require(ABSPATH .'/Sources/Core.php');
+	
+if(isset($_POST['updpass'])) {
+	$newpass = $_POST['newpass'];
+	$cnfpass = $_POST['cnfpass'];
+	if($newpass == $cnfpass) {
+		$crtpass = md5($cnfpass);
+		$dbh->query("UPDATE users SET password='".$crtpass."' WHERE username='".$_SESSION['username']."'") or die(sqlite_error_string($dbh->lastError));		
+		echo '<p style="color: #fff; text-align: center;">Password updated.</p>';		
 	}
-	if(isset($_POST['updemail'])) {
-		$newemail = $_POST['newemail'];
-		$cnfemail = $_POST['cnfemail'];
-		if($newemail == $cnfemail) {
-			$crtemail = $cnfemail;
-			sqlite_query($handle, "UPDATE users SET email='".$crtemail."' WHERE username='".$_SESSION['username']."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
-			echo '<p style="color: #fff; text-align: center;">Email updated.</p>';
-		}
-		else { echo'Emails don\'t match!'; }
+	else { echo'Passwords don\'t match!'; }
+}
+	
+if(isset($_POST['updemail'])) {
+	$newemail = $_POST['newemail'];
+	$cnfemail = $_POST['cnfemail'];
+	if($newemail == $cnfemail) {
+		$crtemail = $cnfemail;
+		$dbh->query("UPDATE users SET email='".$crtemail."' WHERE username='".$_SESSION['username']."'") or die(sqlite_error_string($dbh->lastError));
+		$_SESSION['email'] = $newemail;
+		echo '<p style="color: #000; text-align: center;">Email updated.</p>';
 	}
-	if(isset($_POST['linkopenid'])) {
-		require('openidlib.php');
-		$openid = new SimpleOpenID;
-		$openid = $openid->OpenID_Standarize($_SESSION['openid_url']);
-		sqlite_query($handle, "UPDATE users SET openid='".$openid."' WHERE username='".$_POST['username']."' AND password='".md5($_POST['password'])."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
-	}
+	else { echo'Emails don\'t match!'; }
+}
+	
+if(isset($_POST['linkopenid'])) {
+	require('openidlib.php');
+	$openid = new SimpleOpenID;
+	$openid = $openid->OpenID_Standarize($_SESSION['openid_url']);
+	$dbh->query("UPDATE users SET openid='".$openid."' WHERE username='".$_POST['username']."' AND password='".md5($_POST['password'])."'") or die(sqlite_error_string($dbh->lastError));
+}
+
 ?>
-<!--	LightBlog v0.9.0
-		Copyright 2009 soren121. Some Rights Reserved.
-		Licensed under the General Public License v3.
-		For more info, see the LICENSE.txt file included.
--->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -57,12 +76,12 @@
 	<div id="content">
 	<h2>Profile</h2><br />
 	<table><tr>
-	<td><img src="<?php echo $gravatar; ?>" alt="Gravatar" /></td>
-	<td class="profileinfo">Username: <?php echo $_SESSION['username']; ?><br />
-	Email: <?php echo $_SESSION['email']; ?><br />
-	Real Name: <?php echo $_SESSION['realname']; ?><br />
-	Rank: <?php if($_SESSION['uservip'] == 1) { echo'Admin'; } else { echo 'Normal'; } ?></td></tr></table><br />
-		<?php if(isset($_SESSION['openid_url'])) { echo '		
+	<td><img src="<?php fetchGravatar($_SESSION['email'], 60) ?>" alt="Gravatar" /></td>
+	<td class="profileinfo">Username: <?php echo $_SESSION['username'] ?><br />
+	Email: <?php echo $_SESSION['email'] ?><br />
+	Real Name: <?php echo $_SESSION['realname'] ?><br />
+	Rank: <?php if($_SESSION['uservip'] >= 1) { echo'Admin'; } else { echo 'Normal'; } ?></td></tr></table><br />
+		<?php if(isset($_SESSION['openid_url'])): ?>		
 		<h3>Link your OpenID</h3><br />
 			<p>You can link your OpenID to your regular account for easier login.</p><br />
 			<form action="" method="post">
@@ -70,8 +89,8 @@
       		<tr><td>Username: </td><td colspan="2"><input name="username" type="text" /></td></tr>
       		<tr><td>Password: </td><td colspan="2"><input name="password" type="password" /></td></tr>
       		<tr><td>&nbsp;</td><td colspan="2"><input name="linkopenid" type="submit" value="Link!"/></td></tr>
-    		</table></form><br />'; } 
-			else { echo '
+    		</table></form><br />
+		<?php else: ?>
 		<h3>Update password</h3><br />
 			<form action="" method="post">
       		<table>
@@ -86,7 +105,7 @@
       		<tr><td>Confirm email: </td><td colspan="2"><input name="cnfemail" type="text" /></td></tr>
       		<tr><td>&nbsp;</td><td colspan="2"><input name="updemail" type="submit" value="Update"/></td></tr>
     		</table></form>
-			'; } ?>
+		<?php endif; ?>
 	</div>
 </div>
 </body>

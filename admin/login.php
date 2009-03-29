@@ -1,30 +1,51 @@
-<?php session_start();define("Light", true);require('../config.php');require('corefunctions.php');
-/* SQLite PHP Login System
- * Created and written by soren121 for LightBlog
- * Licensed under the GNU GPL v3 
- * 
- * DO NOT TOUCH ANYTHING BELOW UNLESS YOU KNOW WHAT YOU'RE DOING! */
+<?php session_start();
+
+/*********************************************
+
+	LightBlog 0.9
+	SQLite blogging platform
+	
+	admin/login.php
+	
+	©2009 soren121. All rights reserved.
+	Released under the GNU General
+	Public License. For all licensing
+	information, please see the
+	LICENSE.txt document included in this
+	distribution.
+
+*********************************************/
+
+// Open config if not open
+require('../config.php');
+require(ABSPATH .'/Sources/Core.php');
+
+// Process normal login
 if(isset($_POST['proclogin'])) {
-	// get username and password from form
+	// get username from form
 	$username = $_POST['username'];
-	$password = md5($_POST['password']);
+	// fetch salt from database
+	$result10 = $dbh->query("SELECT salt FROM salt WHERE username='".$username."'");
+	$salt = $result10->fetchSingle();
+	// recreate password hash
+	$password = $salt.md5($salt . $_POST['password']);
 	// fetch user info from database
-	$result11 = sqlite_query($handle, "SELECT * FROM users WHERE username='".$username."'") or die("Incorrect username or password!");
-	while($logindata = sqlite_fetch_object($result11)) {
+	$result11 = $dbh->query("SELECT * FROM users WHERE username='".$username."'") or die("Incorrect username or password!");
+	while($user = $result11->fetchObject()) {
 		// check if username and password are correct
-		if($logindata->username == $username and $logindata->password == $password) {
-			// send username, email, and first name to session
-			$_SESSION['username'] = $username;
-			$_SESSION['email'] = $logindata->email;
-			$_SESSION['realname'] = $logindata->realname;
-			// send user rank to session
-			if($logindata->vip == "1") {
-				$_SESSION['uservip'] = "1";
-				$_SESSION['usernormal'] = "0";
-			}
-			else { $_SESSION['usernormal'] = "1";
-				$_SESSION['uservip'] = "0"; }
-				
+		if($user->username == $username and $user->password == $password) {
+			// send username, email, display name, and role to session
+			$_SESSION['username'] = $user->username;
+			$_SESSION['email'] = $user->email;
+			$_SESSION['realname'] = $user->realname;
+			$_SESSION['role'] = $user->role;
+			// create new salt
+			$salt = substr(md5(uniqid(rand(), true)), 0, 9);
+			$hash = $salt.md5($salt . $_POST['password']);
+			// submit hash to database
+			$dbh->query("UPDATE salt SET salt='".$salt."', etime='".time()."';");
+			// update password
+			$dbh->query("UPDATE users SET password='".$hash."';");
 			// send user to the dashboard	    
 			header('Location: dashboard.php');
 		}
@@ -68,21 +89,21 @@ if($_GET['openid_mode'] == "id_res") {
 	if($openid_validation == "true") {
 		// find OpenID in database
 		$openid_db_safe = $openid->OpenID_Standarize($_SESSION['openid_url']);
-		$result12= sqlite_query($handle, "SELECT openid FROM users WHERE openid='".$openid_db_safe."'");
+		$result12 = $dbh->query("SELECT openid FROM users WHERE openid='".$openid_db_safe."'");
 		if($result12 == $openid_db_safe) {
-			$result13 = sqlite_query($handle, "SELECT * FROM users WHERE openid='".$openid_db_safe."'");
-			while($user = sqlite_fetch_object($result13)) {
+			$result13 = $dbh->query("SELECT * FROM users WHERE openid='".$openid_db_safe."'");
+			while($user = $result13->fetchObject()) {
 				// send name and email to session
 				$_SESSION['username'] = $user->username;
 				$_SESSION['email'] = $user->email;
 				$_SESSION['realname'] = $user->realname;
-				$_SESSION['uservip'] = $user->vip;
+				$_SESSION['role'] = $user->role;
 				// redirect to the dashboard
 				header('Location: dashboard.php');
 			}
 		}
 		else {
-		$result17 = sqlite_query($handle, "SELECT * FROM users WHERE openid='".$openid_db_safe."'");
+		$result17 = $dbh->query("SELECT * FROM users WHERE openid='".$openid_db_safe."'");
 		// send name and email to session
 		$_SESSION['username'] = $openid->GetAttribute('fullname');
 		$_SESSION['email'] = $openid->GetAttribute('email');
@@ -100,36 +121,22 @@ if($_GET['openid_mode'] == "id_res") {
 // Logout the user
 if(isset($_GET['logout'])) {
 	// destroy their session and send them to the main page
-	session_destroy(); header('Location: ../index.php');
+	session_destroy(); header('Location: '. ABSPATH .'\index.php');
 }
  ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<!--	LightBlog v0.9.0
-		Copyright 2009 soren121. Some Rights Reserved.
-		Licensed under the General Public License v3.
-		For more info, see the LICENSE.txt file included.
--->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title><?php echo $site_name; ?> - Login</title>
+<title><?php echo bloginfo('title') ?> - Login</title>
 <link rel="stylesheet" type="text/css" href="style/regstyle.css" />
-<script type="text/javascript" src="includes/jquery.js"></script>
-<script type="text/javascript" src="includes/jquery-ui.js"></script>
-<script type="text/javascript">$(document).ready(function(){$("#tabs > ul").tabs();});</script>
 </head>
 
 <body>
 <div id="registerbox">
-<h2 style="padding-top: 5px;"><?php echo $site_name; ?></h2>
+<h2 style="padding-top: 5px;"><?php echo bloginfo('title') ?></h2>
 <h3 style="padding-bottom: 5px;">Login</h3>
 <div id="tabs">
-	<ul>
-        <li><a href="#fragment-1"><span>Normal</span></a></li>
-        <li><a href="#fragment-2"><span>OpenID</span></a></li>
-    </ul>
-	<br />
     <div id="fragment-1">
         <form action="" method="post">
 		<table style="margin-left: auto; margin-right: auto;">

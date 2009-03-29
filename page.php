@@ -18,12 +18,11 @@
 
 // Require config file
 require('config.php');
-
-// Open database if not open
-$dbh = sqlite_popen( DBH );
+require(ABSPATH .'/Sources/Core.php');
 
 // Request page from database
-$result05 = sqlite_query($dbh, "SELECT * FROM pages WHERE id=".$_GET['id']." ORDER BY id desc") or die("SQLite query error: code 05<br>".sqlite_error_string(sqlite_last_error($dbh)));
+$result05 = $dbh->query("SELECT * FROM pages WHERE id=".$_GET['id']." ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
+$result10 = $dbh->query("SELECT * FROM pages ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
 
 // Include theme files 
 $themeName = bloginfo('theme');
@@ -31,8 +30,5 @@ include('themes/'.$themeName.'/head.php');
 include('themes/'.$themeName.'/sidebar.php');
 include('themes/'.$themeName.'/page.php');
 include('themes/'.$themeName.'/footer.php'); 
-
-// Queries done, close database
-sqlite_close($dbh);
 
 ?>

@@ -17,18 +17,16 @@
 ***********************************************/
 
 // Open database if not open
-$dbh = sqlite_popen( DBH );
+$dbh = new SQLiteDatabase( DBH );
 
 function bloginfo($var) {
-	$result = sqlite_query($dbh, "SELECT value FROM coreinfo WHERE variable='".$var."'") or die("SQLite query error: code 01<br>".sqlite_error_string(sqlite_last_error($dbh)));
-	return sqlite_fetch_array($result);
+	$dbh = new SQLiteDatabase( DBH );
+	$result = $dbh->query("SELECT value FROM core WHERE variable='".$var."'") or die(sqlite_error_string($dbh->lastError));
+	return $result->fetchSingle();
 }
 
-function fetchGravatar($email, $size) {
-	return "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size;
+function fetchGravatar($email, $size = 30) {
+	echo "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size;
 }
-
-// Queries done, close database
-sqlite_close($dbh);
 
 ?>

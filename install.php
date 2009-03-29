@@ -16,6 +16,7 @@
 
 *********************************************/
 
+// Generate a random string of specified length
 function randomString($length) {
 	// start with a blank password
 	$password = "";
@@ -37,12 +38,19 @@ function randomString($length) {
 	return $password;
 }
 
+// Find and return current URL
 function curDirURL() {
 	$site_url = explode('/', $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
 	unset($site_url[count($site_url)-1]);
 	$site_url = implode('/', $site_url);
 	$site_url = 'http://'.$site_url.'/';
 	return $site_url;
+}
+
+// Generate salted, secure password md5
+function generatePassHash($text, $saltlength, $salt) {
+	$salt = substr($salt, 0, $saltlength);
+	return $salt.md5($salt.$text);
 }
 
 if(isset($_REQUEST['dbsubmit'])) {
@@ -53,12 +61,12 @@ if(isset($_REQUEST['dbsubmit'])) {
 	// Create database file
 	fclose(fopen($dbpath, 'w')) or die("Cannot create database. Check your permissions.");
 	// Open database
-	$dbh = sqlite_popen($dbpath);
+	$dbh = new SQLiteDatabase($dbpath);
 	// Write data to database
 	$sqlh = fopen("install.sql", 'r');
 	$sql = fread($sqlh, filesize("install.sql"));
 	fclose($sqlh);
-	sqlite_exec($dbh, $sql) or die("Cannot write to database. Check your permissions.");
+	$dbh->queryExec($sql) or die("Cannot write to database. Check your permissions.");
 	// Create config file
 	fclose(fopen(dirname(__FILE__)."\config.php", 'w')) or die("Cannot create configuration file. Check your permissions.");
 	// Read example file
@@ -68,8 +76,7 @@ if(isset($_REQUEST['dbsubmit'])) {
 	$configdata = str_replace("absolute path to database here", $dbpath, $exconfig);
 	$config = fopen("config.php", 'w') or die("Cannot write to configuration file. Check your permissions.");
 	fwrite($config, $configdata);
-	// Close database and files
-	sqlite_close($dbh);
+	// Close file handles
 	fclose($config);
 	// Unset variables
 	unset($dbpath, $dbh, $sqlfile, $sql, $sqlh, $exconfig, $exconfigfile, $config, $configdata);
@@ -80,27 +87,28 @@ if(isset($_REQUEST['dbsubmit'])) {
 if(isset($_REQUEST['isubmit'])) {
 	// Open configuration file
 	require('config.php');
+	// Generate salt
+	$salt = substr(md5(uniqid(rand(), true)), 0, 9);
 	// Set variables for easy manipulation
-	$username = $_REQUEST['username'];
-	$password = md5($_REQUEST['password']);
-	$email = $_REQUEST['email'];
-	$displayname = $_REQUEST['name'];
+	$username = $_REQUEST['iusername'];
+	$password = $salt.md5($salt.$_REQUEST['ipassword']);
+	$email = $_REQUEST['iemail'];
+	$displayname = $_REQUEST['iname'];
 	// Get the user's real IP, if possible
 	if (getenv(HTTP_X_FORWARDED_FOR)) { $ip = getenv(HTTP_X_FORWARDED_FOR); } 
 	else { $ip = getenv(REMOTE_ADDR); }
 	// Open connection to database
-	$dbh = sqlite_popen( DBH );
-	sqlite_query($dbh, "INSERT INTO categories (title, description) VALUES('Uncategorized','Posts with no specific category go here');");
+	$dbh = new SQLiteDatabase( DBH );
 	// Add blog title to database
-	sqlite_query($dbh, "INSERT INTO coreinfo VALUES('title', '".$_REQUEST['ititle']."');");
+	$dbh->query("INSERT INTO core VALUES('title', '".$_REQUEST['ititle']."');");
 	// Add blog directory URL to database
-	sqlite_query($dbh, "INSERT INTO coreinfo VALUES('url', '".curDirURL()."');");
+	$dbh->query("INSERT INTO core VALUES('url', '".curDirURL()."');");
 	// Add user to database
-	sqlite_query($dbh, "INSERT INTO users (username,password,email,displayname,vip,ip) VALUES('".$username."', '".$password."', '".$email."', '".$display."', 1, '".$ip."');");
-	// Close database connection
-	sqlite_close($dbh);
+	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip) VALUES('".$username."', '".$password."', '".$email."', '".$displayname."', 1, '".$ip."');");	
+	// Add salt to database
+	$dbh->query("INSERT INTO salt (username,salt,etime) VALUES('".$username."', '".$salt."', '".time()."')");
 	// Unset variables
-	unset($username, $password, $email, $displayname, $ip);
+	unset($username, $password, $email, $displayname, $ip, $dbh);
 	// Prevent the rest of the page from loading
 	die();
 }
@@ -257,7 +265,7 @@ if(isset($_REQUEST['isubmit'])) {
 							url: this.getAttribute('action'),
 							timeout: 2000,
 							error: function() {
-								$('#form-tab2').empty(); 
+								$('#form-tab3').empty(); 
 								console.log("Failed to submit.");
 								alert("Failed to submit.");
 							},
