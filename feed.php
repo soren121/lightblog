@@ -22,25 +22,23 @@ require(ABSPATH .'/Sources/Core.php');
 require(ABSPATH .'/Sources/FeedWriter.php');
 
 // Check requested feed type
-if(!isset($_GET['type'])):
-	// Default to RSS
+if(!isset($_GET['type']) or $_GET['type'] == 'rss'):
 	$type = 'rss';
-else:
-$type = strtolower($_GET['type']);
+elseif($_GET['type'] == 'atom'):
+	$type = 'atom';
 endif;
 
 // Creating an instance of FeedWriter class. 
 if($type == 'atom'):
 	$TestFeed = new FeedWriter(ATOM);
-	
 elseif($type == 'rss'):
 	$TestFeed = new FeedWriter(RSS2);	
 endif;
 
 // Setting the channel elements
 // Use wrapper functions for common elements
-$TestFeed->setTitle('Syndication feed for '.bloginfo('title'));
-$TestFeed->setLink(bloginfo('url').'rss.php');
+$TestFeed->setTitle('Syndication feed for '.bloginfo('title', 'r'));
+$TestFeed->setLink(bloginfo('url', 'r').'rss.php?type='.$type);
 	
 // For other channel elements, use setChannelElement() function
 if($type == 'atom'):
@@ -58,9 +56,9 @@ while($row = $result->fetch(SQLITE_ASSOC)) {
 	$newItem = $TestFeed->createNewItem();
 		
 	// Add elements to the feed item    
-	$newItem->setTitle($row['title']);
+	$newItem->setTitle(stripslashes($row['title']));
 	$newItem->setLink(bloginfo('url', 'r').'post.php?id='.$row['id']);
-	$newItem->setDescription($row['post']);
+	$newItem->setDescription(stripslashes($row['post']));
 	$newItem->setDate(date(RFC822, $row['date']));
 	$newItem->addElement('author', $row['author']);
 	$newItem->addElement('guid', bloginfo('url', 'r').'post.php?id='.$row['id'], array('isPermaLink'=>'true'));
