@@ -25,7 +25,7 @@ if(isset($_POST['proclogin'])) {
 	// get username from form
 	$username = $_POST['username'];
 	// fetch salt from database
-	$result10 = $dbh->query("SELECT salt FROM salt WHERE username='".$username."'");
+	$result10 = $dbh->query("SELECT salt FROM users WHERE username='".$username."'");
 	$salt = $result10->fetchSingle();
 	// recreate password hash
 	$password = md5($salt.$_POST['password']);

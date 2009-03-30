@@ -26,7 +26,7 @@ $result04 = $dbh->query("SELECT * FROM comments WHERE post_id=".$_GET['id']." OR
 $result10 = $dbh->query("SELECT * FROM pages ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
 
 // Include theme files
-$themeName = bloginfo('theme');
+$themeName = bloginfo('theme', 'r');
 include('themes/'.$themeName.'/head.php');
 include('themes/'.$themeName.'/sidebar.php');
 include('themes/'.$themeName.'/post.php');

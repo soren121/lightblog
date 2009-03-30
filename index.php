@@ -31,7 +31,7 @@ $result01 = $dbh->query("SELECT * FROM posts ORDER BY id desc") or die(sqlite_er
 $result10 = $dbh->query("SELECT * FROM pages ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
 
 // Include theme files
-$themeName = bloginfo('theme');
+$themeName = bloginfo('theme', 'r');
 include('themes/'.$themeName.'/head.php');
 include('themes/'.$themeName.'/sidebar.php');
 include('themes/'.$themeName.'/main.php');

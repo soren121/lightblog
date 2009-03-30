@@ -7,9 +7,9 @@
 			// start post structure
 			echo "<div class=\"postbox\">";
 			// output title
-			echo "<h2 class=\"post-title\">".$post->title."</h2>";
+			echo "<h2 class=\"post-title\">".stripslashes($post->title)."</h2>";
 			// output content
-			echo "<p class=\"post\">".$post->post."</p><br />";
+			echo "<p class=\"post\">".stripslashes($post->post)."</p><br />";
 			// end post structure
 			echo "</div>";
 			// this code is repeated for every post in your database
