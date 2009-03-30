@@ -13,7 +13,6 @@
 	#sidebar { padding-top: 10px; !important }
 	</style>
 	<![endif]-->
-    <script type="text/javascript" src="Sources/jquery.js"></script>
 </head>
 
 <body>
