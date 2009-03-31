@@ -24,15 +24,10 @@ require(ABSPATH .'/Sources/FeedWriter.php');
 // Check requested feed type
 if(!isset($_GET['type']) or $_GET['type'] == 'rss'):
 	$type = 'rss';
+	$TestFeed = new FeedWriter(RSS2);	
 elseif($_GET['type'] == 'atom'):
 	$type = 'atom';
-endif;
-
-// Creating an instance of FeedWriter class. 
-if($type == 'atom'):
 	$TestFeed = new FeedWriter(ATOM);
-elseif($type == 'rss'):
-	$TestFeed = new FeedWriter(RSS2);	
 endif;
 
 // Setting the channel elements
@@ -42,10 +37,11 @@ $TestFeed->setLink(bloginfo('url', 'r').'rss.php?type='.$type);
 	
 // For other channel elements, use setChannelElement() function
 if($type == 'atom'):
-	$TestFeed->setChannelElement('updated', date(DATE_ATOM , time()));
-	$TestFeed->setChannelElement('author', array('name'=>'Anis uddin Ahmad'));
+	$TestFeed->setChannelElement('updated', date(DATE_ATOM, time()));
+	$TestFeed->setChannelElement('author', array('name'=>'LightBlog')); // temporary
 elseif($type == 'rss'):
-	$TestFeed->setChannelElement('pubDate', date(RFC822, time()));
+	$TestFeed->setChannelElement('pubDate', date('D, d M Y H:i:s T', time()));
+	$TestFeed->setChannelElement('description', 'RSS2 syndication feed for '.bloginfo('title', 'r'));
 endif;
 
 // Adding items to feed. Generally this protion will be in a loop and add all feeds.
@@ -59,10 +55,15 @@ while($row = $result->fetch(SQLITE_ASSOC)) {
 	$newItem->setTitle(stripslashes($row['title']));
 	$newItem->setLink(bloginfo('url', 'r').'post.php?id='.$row['id']);
 	$newItem->setDescription(stripslashes($row['post']));
-	$newItem->setDate(date(RFC822, $row['date']));
-	$newItem->addElement('author', $row['author']);
-	$newItem->addElement('guid', bloginfo('url', 'r').'post.php?id='.$row['id'], array('isPermaLink'=>'true'));
-		
+	// Add RSS-unique elements
+	if($type == 'rss'):
+		$newItem->addElement('guid', bloginfo('url', 'r').'post.php?id='.$row['id'], array('isPermaLink'=>'true'));
+		$newItem->setDate(date('D, d M Y H:i:s T', $row['date']));
+	// Add Atom-unique elements
+	elseif($type == 'atom'):
+		$newItem->addElement('id', bloginfo('url', 'r').'post.php?id='.$row['id']);
+		$newItem->setDate(date(DATE_ATOM, $row['date']));
+	endif;	
 	// Now add the feed item
 	$TestFeed->addItem($newItem);
 }

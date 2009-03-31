@@ -16,9 +16,6 @@
 
 *********************************************/
 
-// Check directory permissions
-
-
 // Generate a random string of specified length
 function randomString($length) {
 	// start with a blank password
@@ -52,24 +49,29 @@ function curDirURL() {
 
 if(isset($_REQUEST['dbsubmit'])) {
 	// Create full database path
-	$dbpath = $_REQUEST['dblocation']."\\".randomString(mt_rand(9, 16)).".db";
+	$dbpath = $_REQUEST['dblocation']."/".randomString(mt_rand(9, 16)).".db";
 	// Create database file
 	fclose(fopen($dbpath, 'w')) or die("Cannot create database. Check your permissions.");
 	// Open database
 	$dbh = new SQLiteDatabase($dbpath);
+	// Check database permissions
+	if(fileperms($dbpath) < 0770) { chmod($dbpath, 0770); }
 	// Write data to database
 	$sqlh = fopen("install.sql", 'r');
 	$sql = fread($sqlh, filesize("install.sql"));
 	fclose($sqlh);
 	$dbh->queryExec($sql) or die("Cannot write to database. Check your permissions.");
 	// Create config file
-	fclose(fopen(dirname(__FILE__)."\config.php", 'w')) or die("Cannot create configuration file. Check your permissions.");
+	fclose(fopen(dirname(__FILE__)."/"."config.php", 'w')) or die("Cannot create configuration file. Check your permissions.");
 	// Read example file
 	$exconfigfile = "config-example.php";
 	$exconfig = fread(fopen($exconfigfile, 'r'), filesize($exconfigfile));
 	// Create config file
 	$configdata = str_replace("absolute path to database here", $dbpath, $exconfig);
 	$config = fopen("config.php", 'w') or die("Cannot write to configuration file. Check your permissions.");
+	// Check config write permissions
+	if(fileperms("config.php") < 0770) { chmod($dbpath, 0770); }
+	// Write config file
 	fwrite($config, $configdata);
 	// Close file handles
 	fclose($config);
@@ -95,11 +97,11 @@ if(isset($_REQUEST['isubmit'])) {
 	// Open connection to database
 	$dbh = new SQLiteDatabase( DBH );
 	// Add blog title to database
-	$dbh->query("INSERT INTO core VALUES('title', '".$_REQUEST['ititle']."');");
+	$dbh->query("INSERT INTO core VALUES('title', '".$_REQUEST['ititle']."');") or die("Cannot write to database. Check your permissions.");
 	// Add blog directory URL to database
-	$dbh->query("INSERT INTO core VALUES('url', '".curDirURL()."');");
+	$dbh->query("INSERT INTO core VALUES('url', '".curDirURL()."');") or die("Cannot write to database. Check your permissions.");
 	// Add user to database
-	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('".$username."', '".$password."', '".$email."', '".$displayname."', 1, '".$ip."', '".$salt."');");
+	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('".$username."', '".$password."', '".$email."', '".$displayname."', 1, '".$ip."', '".$salt."');") or die("Cannot write to database. Check your permissions.");
 	// Unset variables
 	unset($username, $password, $email, $displayname, $ip, $dbh);
 	// Prevent the rest of the page from loading
@@ -186,16 +188,16 @@ if(isset($_REQUEST['isubmit'])) {
 				<table class="vercheck">
 				<tr><td>PHP Version</td>
 					<td><?php echo phpversion(); ?></td>
-					<?php if(floatval(phpversion()) >= "5.1") { echo '<td style="background:#6CCC0D;">OK</td>'; } else { echo '<td style="background:#CC2626;">Unsatisfactory</td>';$error1 = true; } ?>
+					<?php if(floatval(phpversion()) >= "5.1") { echo '<td style="background:#6CCC0D;color:#fff;">OK</td>'; } else { echo '<td style="background:#CC2626;color:#fff;">Unsatisfactory</td>';$error1 = true; } ?>
 				</tr>
 				<tr><td>SQLite</td>
 					<td><?php if(extension_loaded('sqlite') == false){ echo 'Disabled';$error2 = true; } else {echo sqlite_libversion(); }?></td>
-					<?php if(floatval(sqlite_libversion()) >= "2.8"){ echo '<td style="background:#6CCC0D;">OK</td>'; } else {echo '<td style="background:#CC2626;">Unsatisfactory</td>'; }?>
+					<?php if(floatval(sqlite_libversion()) >= "2.8"){ echo '<td style="background:#6CCC0D;color:#fff;">OK</td>'; } else {echo '<td style="background:#CC2626;color:#fff;">Unsatisfactory</td>'; }?>
 				</tr>
 				<?php $GDArray = gd_info(); $gdver = ereg_replace('[[:alpha:][:space:]()]+', '', $GDArray['GD Version']); ?>
 				<tr><td>GD</td>
 					<td><?php if(extension_loaded('gd') == false){ echo 'Disabled';$error3 = true; } else { echo $gdver; }?></td>
-					<?php if(floatval($gdver) >= "2.0") { echo '<td style="background:#6CCC0D;">OK</td>'; } else { echo '<td style="background:#CC2626;">Unsatisfactory</td>'; }?>
+					<?php if(floatval($gdver) >= "2.0") { echo '<td style="background:#6CCC0D;color:#fff;">OK</td>'; } else { echo '<td style="background:#CC2626;color:#fff;">Unsatisfactory</td>'; }?>
 				</tr>
 				</table>
 				<?php if($error1 or $error2 or $error3 == true): ?>
@@ -234,8 +236,10 @@ if(isset($_REQUEST['isubmit'])) {
 				})
 				</script>
 				<h4>Choose a location to place your SQLite database in.</h4>
+				<p>Be sure that the directory you are placing in the database in has the correct permissions.<br />
+				If you are unsure if it's correct, <strong>chmod the directory to 755 or higher</strong>, or rwxr-xr-x.</p>
 				<form action="<?php echo basename(__FILE__); ?>" method="get" id="form-tab2">
-					<p><input type="text" name="dblocation" value="<?php echo dirname(__FILE__); ?>" style="width:400px;" /></p>
+					<p><input type="text" class="dbl" name="dblocation" value="<?php echo dirname(__FILE__); ?>" style="width:400px;" /></p>
 					<p><input type="submit" name="dbsubmit" value="Create Database" /></p>
 					<p class="loading"></p>
 				</form>
