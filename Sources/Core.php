@@ -5,7 +5,7 @@
 	LightBlog 0.9
 	SQLite blogging platform
 	
-	Core.php
+	Sources/Core.php
 	
 	©2009 soren121. All rights reserved.
 	Released under the GNU General
