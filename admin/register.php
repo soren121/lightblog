@@ -19,6 +19,7 @@
 // Open config if not open
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
+require(ABSPATH .'/Sources/MathValidator.php');
 
 // Process registration
 if(isset($_POST['register'])) {
@@ -38,17 +39,7 @@ if(isset($_POST['register'])) {
 	if(!isset($password{4})) { $error = true; }
 	if(!$password == $vpassword) { $error = true; }
 	if(!preg_match("/^([a-z0-9._-](\+[a-z0-9])*)+@[a-z0-9.-]+\.[a-z]{2,6}$/i",$email)) { $error = true; }
-	if(!empty($_SESSION['freecap_word_hash']) && !empty($_POST['word'])) {
-		if($_SESSION['hash_func'](strtolower($_POST['word']))==$_SESSION['freecap_word_hash']) {
-			$_SESSION['freecap_attempts'] = 0; $_SESSION['freecap_word_hash'] = false;
-		}
-		else {
-			$error = true;
-		}
-	}
-	else {
-		$error = true;
-	}
+	if (!MathValidator->checkResult($captchacode, $_SESSION['mathvalidator_c'])) { $error = true; }
 	if(!isset($error)) {
 		$username = addslashes(sqlite_escape_string($username));
 		$password = md5($password);
@@ -73,57 +64,40 @@ if(isset($_POST['login'])) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title><?php echo bloginfo('title'); ?> - Registration</title>
+<title><?php bloginfo('title') ?> - Registration</title>
 <link rel="stylesheet" type="text/css" href="style/regstyle.css" />
-<script type="text/javascript" src="<?php echo bloginfo('url') ?>Sources/jquery.js"></script>
-<script type="text/javascript" src="includes/jquery-pstrength.js"></script>
-<script type="text/javascript">
-$(function() {$('.password').pstrength();});
-
-function new_freecap()
-{
-	// loads new freeCap image
-	if(document.getElementById)
-	{
-		// extract image name from image source (i.e. cut off ?randomness)
-		thesrc = document.getElementById("freecap").src;
-		thesrc = thesrc.substring(0,thesrc.lastIndexOf(".")+4);
-		// add ?(random) to prevent browser/isp caching
-		document.getElementById("freecap").src = thesrc+"?"+Math.round(Math.random()*100000);
-	} else {
-		alert("Sorry, cannot autoreload freeCap image\nManually reload the page and a new freeCap will be loaded");
-	}
-}
-</script>
+<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jquery.js"></script>
+<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jquery-pstrength.js"></script>
+<script type="text/javascript">$(function() {$('.password').pstrength();});</script>
 <style type="text/css">
 .password {
-font-size: 12px;
-border: 1px solid #cc9933;
-width: 145px;
-font-family: arial, sans-serif;
+	font-size: 12px;
+	border: 1px solid #cc9933;
+	width: 145px;
+	font-family: arial, sans-serif;
 }
-.pstrength-minchar {
-font-size: 10px;
-}</style>
+.pstrength-minchar { font-size: 10px; }
+</style>
 </head>
 
 <body>
 <div id="registerbox">
-<h2 style="padding-top: 5px;"><?php echo bloginfo('title'); ?></h2><br />
+<h2 style="padding-top: 5px;"><?php bloginfo('title') ?></h2><br />
 <h3 style="padding-bottom: 10px;">Registration</h3>
-  <?php if($wnotice == true) { echo '<p>Thanks for registering, '.stripslashes(stripslashes($username)).'. You may now login.</p><br /><form action="" method="post">
-      	<p><input name="login" type="submit" value="Login"/></p>'; } else { echo '
+  <?php if($wnotice == true): 
+			echo '<p>Thanks for registering, '.stripslashes(stripslashes($username)).'. You may now login.</p><br /><form action="" method="post">
+			<p><input name="login" type="submit" value="Login"/></p>';
+		else: ?>
   <form action="" method="post" class="registerform">
     <table>
-      <tr><td>Username:</td><td><input name="username" type="text" maxlength="28" value="'.$_POST['username'].'"/></td></tr>
+      <tr><td>Username:</td><td><input name="username" type="text" maxlength="28" value="<?php echo $_POST['username'] ?>"/></td></tr>
       <tr><td>Password:</td><td><input class="password" name="password" type="password"/></td></tr>
       <tr><td>Verify Password:</td><td><input name="vpassword" type="password"/></td></tr>
-      <tr><td>Email:</td><td><input name="email" type="text" value="'.$_POST['email'].'"/></td></tr>
+      <tr><td>Email:</td><td><input name="email" type="text" value="<?php echo $_POST['email'] ?>"/></td></tr>
       <tr><td>Display Name:</td><td><input name="realname" type="text" maxlength="16"/></td></tr> 
-	  <tr><td>CAPTCHA:</td><td><img src="'.bloginfo('url').'Sources/freecap.php" id="freecap" alt="Failed to load CAPTCHA" />
-	  <a href="#" onclick="this.blur();new_freecap();return false;"><img src="style/refresh.png" style="border: 1px solid #ccc;" alt="Reload" /></a></td></tr>
-	  <tr><td>CAPTCHA Code:</td><td><input type="text" name="word" size="6" /></td></tr>
+	  <tr><td>What is <?php MathValidator->insertQuestion() ?>?</td><td><input type="text" name="ans" size="2" /></td></tr>
       <tr><td colspan="2"><input name="register" type="submit" value="Register"/></td></tr>
     </table>
-  </form>'; } ?>
+  </form>
+  <?php endif; ?>
 </div></body></html>
