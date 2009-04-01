@@ -51,7 +51,7 @@ $result08 = $dbh->query("SELECT * FROM ".$_GET['type']."s WHERE id=".$_GET['id']
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	<title><?php echo $site_name; ?></title>
+	<title><?php bloginfo('title') ?></title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<meta name="generator" content="Geany 0.13/soren121" />
 	<link rel="stylesheet" href="style/style.css" type="text/css" media="screen" />
@@ -70,15 +70,16 @@ $result08 = $dbh->query("SELECT * FROM ".$_GET['type']."s WHERE id=".$_GET['id']
 	<?php include('admside.php'); ?>
 	<div id="content">
 	<h2>Delete <?php echo $_GET['type']." \"".$pasttitle."\"?"; ?></h2><br />
-	 <?php if($_SESSION['uservip'] == "0" or !(isset($_SESSION['uservip']))) { echo'Hey, you shouldn\'t even be in here! <a href="javascript:history.go(-2)">Go back to where you came from.</a>'; }
-	 if($_SESSION['uservip'] == "1") {	 	
-		echo'<p>Are you sure you want to delete this '.$_GET['type'].'?</p><br />
+	<?php if($_SESSION['role'] <= 0 or !(isset($_SESSION['uservip']))) { echo'Hey, you shouldn\'t even be in here! <a href="javascript:history.go(-2)">Go back to where you came from.</a>'; }
+	if($_SESSION['uservip'] == "1"): ?>	
+		echo'<p>Are you sure you want to delete this <?php echo $_GET['type'] ?>?</p><br />
 		  <form action="" method="post">
       		<tr><td colspan="2"><input name="delete" type="submit" value="Delete it!"/></td>
       		<td colspan="2"><input name="goback" type="submit" value="No!"/></td>
       		</tr>
     		</table>
-  		  </form><br />'; } ?>
+  		  </form><br />
+	<?php endif; ?>
 	</div>
 </div>
 </body>

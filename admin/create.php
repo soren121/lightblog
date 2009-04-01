@@ -29,7 +29,7 @@ if(isset($_POST['publish'])) {
 	$title = sqlite_escape_string($_POST['title']);
 	$text = sqlite_escape_string($_POST['text']);
 	$date = time();
-	$author = $_SESSION['realname'];
+	$author = sqlite_escape_string($_SESSION['realname']);
 	$category = $_POST['category'];
 	// insert post data
 	if($_GET['type'] == "post") {
@@ -48,16 +48,16 @@ if(isset($_POST['publish'])) {
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	<title><?php echo bloginfo('title'); ?></title>
+	<title><?php bloginfo('title') ?></title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<meta name="generator" content="Geany 0.13/soren121" />
 	<link rel="stylesheet" href="style/style.css" type="text/css" media="screen" />
 	<!--[if IE]>
 	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
-	<script type="text/javascript" src="<?php echo bloginfo('url') ?>Sources/nicEdit.js"></script> 
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
 	<script type="text/javascript">
-	bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'<?php echo bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});			
+	bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});			
 	</script>
 </head>
 
@@ -68,7 +68,7 @@ if(isset($_POST['publish'])) {
 			<img class="headerimg" src="style/title.png" alt="LightBlog" />
 		</div>
 	</div>
-	<?php include('admside.php'); ?>
+	<?php include('admside.php') ?>
 	<div id="content">
 	<?php if($_SESSION['role'] <= 0 or !(isset($_SESSION['role']))): ?>
 	Hey, you shouldn't even be in here! <a href="javascript:history.go(-2)">Go back to where you came from.</a>

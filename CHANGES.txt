@@ -4,12 +4,14 @@
 	* Absolute path system
 	* New config file
 	* New Core file
-	* Included FreeCap library for CAPTCHAs
-	* Included Akismet library for spam protection
-	* Included FeedWriter library for RSS2/Atom feeds
-	* Included Yetii library for JavaScript tabs
+	* Included MathValidator class for human validation
+	* Included Akismet class for spam protection
+	* Included FeedWriter class for RSS2/Atom feeds
+	* Included Yetii script for JavaScript tabs
 	* Removed jQuery UI in favor of Yetii
         * Removed OpenID library due to bad implementation
+	* Patched cross-site-scripting vulnerabilities
+	* Patched SQL injection vulnerabilities
 	* Componentized installer
 	* Included actual license
 	* Seperated presentational theme from business

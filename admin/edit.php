@@ -34,15 +34,15 @@ while($past = $result08->fetch_object) {
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	<title><?php echo bloginfo('title') ?></title>
+	<title><?php bloginfo('title') ?></title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<meta name="generator" content="Geany 0.13/soren121" />
 	<link rel="stylesheet" href="style/style.css" type="text/css" media="screen" />
 	<!--[if IE]>
 	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
 	<![endif]-->
-	<script type="text/javascript" src="<?php echo bloginfo('url') ?>Sources/nicEdit.js"></script> 
-	<script type="text/javascript">bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'<?php echo bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});</script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
+	<script type="text/javascript">bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});</script>
 </head>
 
 <body>
@@ -60,7 +60,7 @@ while($past = $result08->fetch_object) {
 			$title = sqlite_escape_string($_POST['title']);
 			$text = sqlite_escape_string($_POST['text']);
 			// submit the changes to the database
-			$dbh->query("UPDATE ".$_GET['type']."s SET title=\"".$title."\" , ".$_GET['type']."=\"".$text."\" WHERE id='".$_GET['id']."'") or die(sqlite_error_string($dbh->lastError));
+			$dbh->query("UPDATE ".sqlite_escape_string($_GET['type'])."s SET title=\"".$title."\" , ".sqlite_escape_string($_GET['type'])."=\"".$text."\" WHERE id='".sqlite_escape_string($_GET['id'])."'") or die(sqlite_error_string($dbh->lastError));
 			// update the textarea with the new changes
 			$pasttitle = $title;
 			$pastpost = $text;
