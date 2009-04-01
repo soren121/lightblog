@@ -4,9 +4,9 @@
 		// start page structure
 		echo "<div class=\"pagebox\">";
 		// output title
-		echo "<h2 class=\"post-title\">".$page2->title."</h2><br />";
+		echo "<h2 class=\"post-title\">".undoMagicString($page2->title)."</h2><br />";
 		// output content
-		echo "<p class=\"post\">".$page2->page."</p><br /><br />";
+		echo "<p class=\"post\">".undoMagicString($page2->page)."</p><br /><br />";
 		// end post structure
 		echo "</div>";
 	}	
