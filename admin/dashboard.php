@@ -43,25 +43,25 @@ require(ABSPATH .'/Sources/Core.php');
 <body>
 	<div id="wrapper">
 		<div id="header" class="roundedt">
-			<?php bloginfo('title') ?>	 
+			<a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>	 
 		</div>
         <div id="navigation" class="jqueryslidemenu">
 			<ul>
-				<li><a href="#">Dashboard</a></li>
-				<li><a href="#">Create</a>
+				<li><a href="dashboard.php">Dashboard</a></li>
+				<li><a href="javascript:void(0)">Create</a>
 					<ul>
 						<li><a href="create.php?type=1">Post</a></li>
 						<li><a href="create.php?type=2">Page</a></li>
 					</ul>
 				</li>
-				<li><a href="#">Manage</a>
+				<li><a href="javascript:void(0)">Manage</a>
 					<ul>
 						<li><a href="manage.php?type=1">Post</a></li>
 						<li><a href="manage.php?type=2">Page</a></li>
 					</ul>
 				</li>
 				<li><a href="design.php">Design</a></li>
-				<li><a href="profile.php">Users</a>
+				<li><a href="javascript:void(0)">Users</a>
 					<ul>
 						<li><a href="users.php">Manage Users</a></li>
 						<li><a href="profile.php">Your Profile</a></li>

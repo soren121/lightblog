@@ -25,6 +25,15 @@ body {
 	font: normal 2.1em Times,Verdana,Arial,Sans;
 }
 
+#header a:visited, a:link {
+	color: #fff;
+	text-decoration: none;
+}
+
+#header a:hover {
+	text-decoration: underline;
+}
+
 #navigation {
 	width: 700px;
 	color: #fff;
@@ -49,6 +58,16 @@ body {
 	font: italic 2.1em Times,Verdana,Arial,Sans;
 }
 
+#content div.notifybox {
+	background: #CFEBF7;
+	width: 455px;
+	border: 1px solid #2580B2;
+	padding: 5px;
+	height: 15px;
+	color: #000;
+	display: none;
+}
+
 #content img.textmid {
 	vertical-align: text-bottom;
 	margin: 3px 8px 3px 3px;
@@ -70,7 +89,6 @@ body {
 #wysiwyg {
 	width: 466px;
 	height: 190px;
-	margin-bottom: 5px;
 }
 
 #footer { 

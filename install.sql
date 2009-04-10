@@ -1,10 +1,3 @@
-CREATE TABLE categories(
-'id' INTEGER NOT NULL PRIMARY KEY,
-'title' VARCHAR(255) NOT NULL,
-'description' VARCHAR(255) NOT NULL);
-
-INSERT INTO categories (title, description) VALUES('Uncategorized','Posts with no specific category go here');
-
 CREATE TABLE core(
 'variable' text NOT NULL,
 'value' text NOT NULL);
@@ -31,10 +24,9 @@ CREATE TABLE 'posts'(
 'title' VARCHAR(100) NOT NULL,
 'post' TEXT NOT NULL,
 'date' INT(10) NOT NULL,
-'author' VARCHAR(20) NOT NULL,
-'catid' INTEGER NOT NULL DEFAULT '1');
+'author' VARCHAR(20) NOT NULL);
 
-INSERT INTO 'posts' VALUES(1,'Welcome to LightBlog!','Welcome to LightBlog! We hope you enjoy it!<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1238288401,'LightBlog Devs',1);
+INSERT INTO 'posts' VALUES(1,'Welcome to LightBlog!','Welcome to LightBlog! We hope you enjoy it!<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1239321600,'LightBlog Devs');
 
 CREATE TABLE 'users'(
 'id' INTEGER NOT NULL PRIMARY KEY DEFAULT '0',
