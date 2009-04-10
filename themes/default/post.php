@@ -7,9 +7,9 @@
 			// start post structure
 			echo "<div class=\"postbox\">";
 			// output title
-			echo "<h2 class=\"post-title\">".undoMagicString($post->title)."</h2>";
+			echo "<h2 class=\"post-title\">".unescapeString($post->title)."</h2>";
 			// output content
-			echo "<p class=\"post\">".undoMagicString($post->post)."</p><br />";
+			echo "<p class=\"post\">".unescapeString($post->post)."</p><br />";
 			// end post structure
 			echo "</div>";
 			// this code is repeated for every post in your database
@@ -36,7 +36,7 @@
 	// check if comment has been POSTed
 	if(isset($_POST['comment_submit'])) {
 		// check if all fields are formed
-		if(strlen($com_name) and strlen($com_email) and strlen($com_text) > 0) {
+		if(strlen($_POST['username']) and strlen($_POST['email']) and strlen($_POST['text']) > 0) {
 			$com_name = sqlite_escape_string($_POST['username']);
 			$com_email = sqlite_escape_string($_POST['email']);
 			$com_website = sqlite_escape_string($_POST['website']);
