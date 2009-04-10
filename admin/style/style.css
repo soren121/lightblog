@@ -91,6 +91,17 @@ body {
 	height: 190px;
 }
 
+#content tr.managelist {
+	border-bottom: 1px dashed #ddd;
+	height: 10px;
+}
+
+#content table.managelist {
+	background: #E7E7E7;
+	border: 1px solid #ddd;
+	width: 550px;
+}
+
 #footer { 
  	width: 700px;
  	color: #dddfdc;
