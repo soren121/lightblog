@@ -24,24 +24,6 @@ require(ABSPATH .'/Sources/MathValidator.php');
 # Initiate MathVaildator
 $mv = new MathValidator;
 
-# Process registration
-if(isset($_REQUEST['processregistration'])) {
-	# Generate and set salt
-	$salt = substr(md5(uniqid(rand(), true)), 0, 9);
-	# Set and escape all variables for easy access
-	$username = sqlite_escape_string($_REQUEST['username']);
-	$password = md5($salt.$_REQUEST['password']);
-	$email = sqlite_escape_string($_REQUEST['email']);
-	$dname = sqlite_escape_string($_REQUEST['dname']);
-	$ip = sqlite_escape_string($_SERVER['REMOTE_ADDR']);
-	$arians = (int)$_REQUEST['arians'];
-	# Check math answer
-	if($mv->checkResult($arians, $_SESSION['mathvalidator_c']) == false) { /* Tell user somehow that the answer was wrong */ }
-	# Insert into database
-	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('".$username."', '".$password."', '".$email."', '".$displayname."', 0, '".$ip."', '".$salt."')");	
-	die();
-}
-
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -67,6 +49,7 @@ if(isset($_REQUEST['processregistration'])) {
 			$('#register').empty().html('<' + 'img src="style/loading.gif" alt="" />');
 			jQuery.ajax({
 				data: inputs.join('&'),
+				type: post,
 				url: this.getAttribute('action'),
 				timeout: 2000,
 				error: function() {
@@ -101,22 +84,6 @@ if(isset($_REQUEST['processregistration'])) {
 		padding-bottom: 20px;
 		position: relative;
 	}
-	#tab1 table {
-		margin-left: auto;
-		margin-right: auto;
-		width: 420px;
-		border-color: #ccc;
-		border-width: 0 0 1px 1px;
-		border-style: solid;
-		border-collapse: collapse;
-	}
-	#tab1 td {
-		padding: 3px;
-		border-color: #ccc;
-		border-width: 1px 1px 0 0;
-		border-style: solid;
-		border-collapse: collapse;
-	}
 	</style>
 </head>
 
@@ -127,7 +94,7 @@ if(isset($_REQUEST['processregistration'])) {
 		<label for="password" class="error"></label>
 		<label for="email" class="error"></label>
 		<label for="dname" class="error"></label>
-		<form action="<?php echo basename(__FILE__); ?>" method="get" id="register">
+		<form action="<?php echo basename(__FILE__); ?>" method="post" id="register">
 			<p><label for="username">Username</label>
 			<input type="text" name="username" id="username" /></p>
 			<br />
