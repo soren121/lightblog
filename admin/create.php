@@ -35,7 +35,6 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.InputHint.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Fade.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
 	<script type="text/javascript">			
 		$(document).ready(function(){ 
@@ -48,8 +47,12 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 		$(function() {
 			$('#create').submit(function() {
 				var inputs = [];
-				$(':input', this).each(function() {
+				var wysiwygtext = nicEditors.findEditor('wysiwyg').getContent();
+				$('.cf', this).each(function() {
 					inputs.push(this.name + '=' + escape(this.value));
+				})
+				$('#wysiwyg', this).each(function() {
+					inputs.push(this.name + '=' + wysiwygtext);
 				})
 				jQuery.ajax({
 					data: inputs.join('&'),
@@ -112,10 +115,10 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 			<h2 class="title"><img class="textmid" src="style/create.png" alt="" />Add New <?php echo ucwords($type) ?></h2>
 			<div class="notifybox"></div>
 			<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="create">
-				<p><input class="hint textfield" name="title" type="text" title="Title" /></p>
+				<p><input class="hint textfield cf" name="title" type="text" title="Title" /></p>
 				<p><textarea rows="12" cols="36" name="text" id="wysiwyg"></textarea></p>
-				<p><input type="hidden" name="type" value="<?php echo $type ?>" /></p>
-				<p><input name="publish" type="submit" value="Publish" class="submit" /></p>
+				<p><input class="cf" type="hidden" name="type" value="<?php echo $type ?>" /></p>
+				<p><input class="cf submit" name="publish" type="submit" value="Publish" /></p>
 			</form>
 			<?php endif; ?>
 		</div>
