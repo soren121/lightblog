@@ -21,7 +21,7 @@ require('config.php');
 require(ABSPATH .'/Sources/Core.php');
 
 // Request page from database
-$result05 = $dbh->query("SELECT * FROM pages WHERE id=".$_GET['id']." ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
+$result05 = $dbh->query("SELECT * FROM pages WHERE id=".(int)$_GET['id']." ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
 $result10 = $dbh->query("SELECT * FROM pages ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
 
 // Include theme files 
