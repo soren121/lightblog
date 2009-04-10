@@ -16,73 +16,117 @@
 
 *********************************************/
 
-// Open config if not open
+// Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
-// Request categories from database
-$result07 = $dbh->query("SELECT * FROM categories ORDER BY id DESC") or die(sqlite_error_string($dbh->lastError));
-
-// Create post or page
-if(isset($_POST['publish'])) {
-	// grab data from form and escape the text
-	$title = sqlite_escape_string($_POST['title']);
-	$text = sqlite_escape_string($_POST['text']);
-	$date = time();
-	$author = sqlite_escape_string($_SESSION['realname']);
-	$category = $_POST['category'];
-	// insert post data
-	if($_GET['type'] == "post") {
-	 	$dbh->query("INSERT INTO posts (title,post,date,author,catid) VALUES('".$title."','".$text."','".$date."','".$author."','".$category."')") or die(sqlite_error_string($dbh->lastError));
-      	echo "Your post has been submitted. Thank you.";
-	}
-	// insert page data
-	elseif($_GET['type'] == "page") {
-		$dbh->query("INSERT INTO pages (title,page) VALUES('".$title."','".$text."')") or die(sqlite_error_string($dbh->lastError));
-      	echo "Your page has been submitted. Thank you.";
-	}
+if((int)$_GET['type'] == 1) {
+	$type = 'post';
 }
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+elseif((int)$_GET['type'] == 2) {
+	$type = 'page';
+}
 
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title><?php bloginfo('title') ?></title>
-	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-	<meta name="generator" content="Geany 0.13/soren121" />
-	<link rel="stylesheet" href="style/style.css" type="text/css" media="screen" />
-	<!--[if IE]>
-	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
-	<![endif]-->
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>Create <?php echo ucwords($type) ?> - <?php bloginfo('title') ?></title>
+	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
+	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.InputHint.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
-	<script type="text/javascript">
-	bkLib.onDomLoaded(function(){new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');});			
+	<script type="text/javascript">			
+		$(document).ready(function(){ 
+			$('.rounded').corner(); 
+			$('.roundedt').corner("round top 10px"); 
+			$('.roundedb').corner("round bottom 10px");
+			$('.hint').hint();
+			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');
+		});
+		$(function() {
+			$('#create').submit(function() {
+				var inputs = [];
+				$(':input', this).each(function() {
+					inputs.push(this.name + '=' + escape(this.value));
+				})
+				$('#create').empty().html('<' + 'img src="<?php bloginfo('url') ?>admin/style/loading.gif" alt="" />');
+				jQuery.ajax({
+					data: inputs.join('&'),
+					type: "POST",
+					url: this.getAttribute('action'),
+					timeout: 2000,
+					error: function() {
+						$('#create').empty(); 
+						console.log("Failed to submit");
+						alert("Failed to submit.");
+					},
+					success: function(r) {
+						$('#create').empty().append('Post/page created.');
+					}
+				})
+				return false;
+			})
+		});
 	</script>
 </head>
 
 <body>
-<div id="container">
-	<div id="header">
-		<div id="headerimg">
-			<img class="headerimg" src="style/title.png" alt="LightBlog" />
+	<div id="wrapper">
+		<div id="header" class="roundedt">
+			<?php bloginfo('title') ?>	 
 		</div>
+        <div id="navigation" class="jqueryslidemenu">
+			<ul>
+				<li><a href="#">Dashboard</a></li>
+				<li><a href="#">Create</a>
+					<ul>
+						<li><a href="create.php?type=1">Post</a></li>
+						<li><a href="create.php?type=2">Page</a></li>
+					</ul>
+				</li>
+				<li><a href="#">Manage</a>
+					<ul>
+						<li><a href="manage.php?type=1">Post</a></li>
+						<li><a href="manage.php?type=2">Page</a></li>
+					</ul>
+				</li>
+				<li><a href="design.php">Design</a></li>
+				<li><a href="profile.php">Users</a>
+					<ul>
+						<li><a href="users.php">Manage Users</a></li>
+						<li><a href="profile.php">Your Profile</a></li>
+					</ul>
+				</li>
+				<?php if(userFetch('role', 'r') >= 1): ?>
+				<li><a href="settings.php">Settings</a></li>
+				<?php endif; ?>
+				<li><a href="login.php?logout=yes">Logout</a></li>
+			</ul>
+		</div>
+		<div id="content">
+			<?php if(!isset($type)): ?>
+			<p>The type of content to add was not specified. You must have taken a bad link. Please
+			use the navigation bar above to choose the correct type.</p>
+			<?php else: ?>
+			<h2 class="title">
+				<img class="textmid" src="style/create.png" alt="" />Add New <?php echo ucwords($type) ?>
+			</h2> 
+			<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="create">
+				<p><input class="hint textfield" name="title" type="text" title="Title" /></p>
+				<textarea name="text" id="wysiwyg"></textarea>
+				<p><input type="hidden" name="type" value="<?php echo $type ?>" /></p>
+				<p><input name="publish" type="submit" value="Publish"/></p>
+			</form>
+			<?php endif; ?>
+		</div>
+		<div id="footer" class="roundedb">		
+			Powered by LightBlog <?php LightyVersion() ?>    
+	    </div>
 	</div>
-	<?php include('admside.php') ?>
-	<div id="content">
-	<?php if($_SESSION['role'] <= 0 or !(isset($_SESSION['role']))): ?>
-	Hey, you shouldn't even be in here! <a href="javascript:history.go(-2)">Go back to where you came from.</a>
-	<?php else: ?>
-	<h2>Create a <?php echo $_GET['type'] ?></h2><br />
-	<form action="" method="post" id="create">
-		<table>
-			<tr><td>Title</td><td><input name="title" type="text" maxlength="39" /></td></tr>
-			<tr><td>Message:</td><td><textarea rows="10" cols="45" name="text" id="wysiwyg"></textarea></td></tr>
-			<tr><td colspan="2"><input name="publish" type="submit" value="Publish"/></td></tr>
-		</table>
-	</form>
-	<?php endif; ?>
-	</div>
-</div>
 </body>
 </html>

@@ -19,34 +19,76 @@
 // Open database if not open
 $dbh = new SQLiteDatabase( DBH );
 
+// Function to output the current version of LightBlog
+function LightyVersion($output = 'e') {
+	# DON'T TOUCH!
+	$version = 'SVN';
+	# Are we echoing or returning?
+	if($output == 'e') { echo $version; }
+	# Returning!
+	else { return $version; }
+}
+
 // Bloginfo function
 // Retrieves general info stored in core
 function bloginfo($var, $output = 'e') {
+	# Global the database handle
 	global $dbh;
+	# Static $bloginfo and null the value
 	static $bloginfo = null;
 
 	if($bloginfo == null) {
 		$result = $dbh->query('SELECT * FROM core') or die(sqlite_error_string($dbh->lastError));
+		# Let's make an array!
 		$bloginfo = array();
+		# For each row, set a key with the value
 		while($row = $result->fetchObject()) {
 			$bloginfo[$row->variable] = $row->value;
 		}
 	}
-	if($output == 'e') {
-		echo !empty($bloginfo[$var]) ? $bloginfo[$var] : false;
-	}
-	else {
-		return !empty($bloginfo[$var]) ? $bloginfo[$var] : false;
-	}	
+	# Are we echoing or returning?
+	if($output == 'e') { echo !empty($bloginfo[$var]) ? $bloginfo[$var] : false; }
+	else { return !empty($bloginfo[$var]) ? $bloginfo[$var] : false; }	
 }
 
 // Function to fetch Gravatars
 function fetchGravatar($email, $size = 30, $output = 'e') {
+	# Is the Gravatar being echoed?
 	if($output == 'e') {
+		# Yep, so echo the URL
 		echo "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size;
 	}
 	else {
+		# It's not being echoed, so return the URL
 		return "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size;
+	}
+}
+
+// Function to fetch user data
+function userFetch($var, $output = 'e') {
+	# Is this being echoed?
+	if($output == 'e') {
+		# Does that value exist?
+		if(!isset($_SESSION[$var])) { 
+			# Nope, so return nothing
+			return null;
+		}
+		else {
+			# It exists, so echo it
+			echo $_SESSION[$var];
+		}
+	}
+	# It's not echoing, so we'll return it
+	else { 
+		# Does the value exist?
+		if(!isset($_SESSION[$var])) { 
+			# Nope, so return nothing
+			return null;
+		}
+		else {
+			# Return it like they asked
+			return $_SESSION[$var];
+		}
 	}
 }
 
@@ -122,7 +164,7 @@ function removeXSS($str) {
 		# Lets get going shall we?
 		foreach($matches['1'] as $key => $match) {
 			# We need to get the href out
-			if(preg_match('~href=(?:&quot;|')(.*?)(?:&quot;|')~is', $match, $sub_match)) {
+			if(preg_match('~href=(?:&quot;|&rsquo;)(.*?)(?:&quot;|&rsquo;)~is', $match, $sub_match)) {
 				# Sweet! We found it!
 				$url = $sub_match['1'];
 				# Get the protocol...
@@ -150,7 +192,7 @@ function removeXSS($str) {
 		$replacements = array();
 		foreach($matches['1'] as $key => $match) {
 			# Get out the src!
-			if(preg_match('~src=(?:&quot;|')(.*?)(?:&quot;|')~is', $str, $sub_match)) {
+			if(preg_match('~src=(?:&quot;|&rsquo;)(.*?)(?:&quot;|&rsquo;)~is', $str, $sub_match)) {
 				# So we got something!
 				$url = $sub_match['1'];
 				# Get the protocol
@@ -212,10 +254,13 @@ function removeXSS($str) {
 
 // Function to undo Magic Quotes in strings
 function undoMagicString($str) {
+	# Is Magic Quotes on?
 	if(function_exists('magic_quotes_gpc') && magic_quotes_gpc() == 1) {
+		# It is, so undo its filthy mess
 		return stripslashes($str);
 	}
 	else {
+		# Magic Quotes is off, so leave it as is
 		return $str;
 	}
 }

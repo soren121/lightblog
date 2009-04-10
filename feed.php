@@ -61,7 +61,7 @@ while($row = $result->fetch(SQLITE_ASSOC)) {
 		$newItem->setDate(date('D, d M Y H:i:s T', $row['date']));
 	// Add Atom-unique elements
 	elseif($type == 'atom'):
-		$newItem->addElement('id', $row['id']);
+		$newItem->addElement('id', bloginfo('url', 'r').'post.php?id='.$row['id']);
 		$newItem->setDate(date(DATE_ATOM, $row['date']));
 	endif;	
 	// Now add the feed item

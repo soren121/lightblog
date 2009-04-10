@@ -25,19 +25,19 @@ if(isset($_POST['proclogin'])) {
 	// get username from form
 	$username = $_POST['username'];
 	// fetch salt from database
-	$result10 = $dbh->query("SELECT salt FROM users WHERE username='".$username."'");
+	$result10 = $dbh->query("SELECT salt FROM users WHERE username='".sqlite_escape_string($username)."'");
 	$salt = $result10->fetchSingle();
 	// recreate password hash
 	$password = md5($salt.$_POST['password']);
 	// fetch user info from database
-	$result11 = $dbh->query("SELECT * FROM users WHERE username='".$username."'") or die("Incorrect username or password!");
+	$result11 = $dbh->query("SELECT * FROM users WHERE username='".sqlite_escape_string($username)."'") or die("Incorrect username or password!");
 	while($user = $result11->fetchObject()) {
 		// check if username and password are correct
 		if($user->username == $username and $user->password == $password) {
 			// send username, email, display name, and role to session
 			$_SESSION['username'] = $user->username;
 			$_SESSION['email'] = $user->email;
-			$_SESSION['realname'] = $user->realname;
+			$_SESSION['realname'] = $user->displayname;
 			$_SESSION['role'] = $user->role;
 			// create new salt
 			$salt = substr(md5(uniqid(rand(), true)), 0, 9);
@@ -56,7 +56,8 @@ if(isset($_GET['logout'])) {
 	// destroy their session and send them to the main page
 	session_destroy(); header('Location: '.bloginfo('url', 'r').'index.php');
 }
- ?>
+
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
