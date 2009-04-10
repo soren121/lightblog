@@ -22,7 +22,7 @@ $dbh = new SQLiteDatabase( DBH );
 // Function to output the current version of LightBlog
 function LightyVersion($output = 'e') {
 	# DON'T TOUCH!
-	$version = 'SVN';
+	$version = '0.9.2 SVN';
 	# Are we echoing or returning?
 	if($output == 'e') { echo $version; }
 	# Returning!
@@ -253,15 +253,15 @@ function removeXSS($str) {
 }
 
 // Function to undo Magic Quotes in strings
-function undoMagicString($str) {
+function unescapeString($str) {
 	# Is Magic Quotes on?
 	if(function_exists('magic_quotes_gpc') && magic_quotes_gpc() == 1) {
 		# It is, so undo its filthy mess
-		return stripslashes($str);
+		return stripslashes(stripslashes($str));
 	}
 	else {
 		# Magic Quotes is off, so leave it as is
-		return $str;
+		return stripslashes($str);
 	}
 }
 
