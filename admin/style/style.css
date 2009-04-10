@@ -1,140 +1,173 @@
-/* 
-		A Chung Story
-		Stylesheet - April 28, 2008
-		Copyright 2008 soren121.
-*/
+* { padding: 0; margin: 0; }
 
-body {
-	background: #EDEDED;
-	font-family: Verdana,Arial,Sans;
+html {
+	overflow: auto;
 }
 
-#container {
-	width: 670px;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 20px;
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	background: #efefef;
+}
+
+#wrapper { 
+	margin: 0 auto;
+	width: 722px;
 }
 
 #header {
-	background: #2877B3;
-	width: 670px;
-	height: 30px;
-	margin-bottom: 0px;
-	padding-bottom: 0px;
-	float: center;
+	width: 695px;
+	color: #fff;
+	padding: 10px 10px 10px 15px;
+	height: 35px;
+	margin: 10px 0 0 0;
+	background: #0E5789;
+	font: normal 2.1em Times,Verdana,Arial,Sans;
 }
 
-img.headerimg {
-	margin-left: 46px;
-	margin-top: 3px;
-	margin-bottom: 1px;
+#navigation {
+	width: 700px;
+	color: #fff;
+	padding: 4px 10px 0 10px;
+	margin: 0;
+	background: #3E8BBF;
+	height: 28px;
+	border-bottom: 4px solid #81B4D9;
 }
 
-#content {
-	float: right;
-	background: #fff;
-	color: #252525;
-	margin: 0 0 0 0;
-	padding-top: 10px;
-	padding-left: 7px;
-	width: 503px;
-	display: inline;
+#content { 
+	width: 690px;
+ 	color: #000;
+ 	background: #fff;
+ 	margin: 0px 0px 0px 0px;
+ 	padding: 10px 10px 10px 20px;
+ 	min-height: 350px;
 }
 
-#content .post-title {
-	color: #252525;
-	text-decoration: none;
-	font-size: 1.2em;
-	font-family: "Trebutchet MS",Verdana,Sans;
+#content h2.title {
+	color: #000;
+	font: italic 2.1em Times,Verdana,Arial,Sans;
 }
 
-#content a:hover .post-title {
-	text-decoration: none;
+#content img.textmid {
+	vertical-align: text-bottom;
+	margin: 3px 8px 3px 3px;
 }
 
-#content span.date {
-	font-size: 0.8em;
-	margin-right: 15px;
+#content input.textfield {
+	margin: 8px 0 8px 0;
+	padding: 3px;
+	width: 460px;
+	height: 25px;
+	border: 1px solid #ccc;
+	font-size: 1.5em;
 }
 
-#content span.author {
-	font-size: 0.8em;
-	margin-right: 15px;
+#content .blur {
+	color: #666;
 }
 
-#content span.commentnum {
-	font-size: 0.8em;
-}
-
-#content p.post {
-	padding: 5px;
-	margin-right: 10px;
-	border: 1px solid #F0A21B;
-}
-
-#postlist table {
-	margin-right: 5px;
+#wysiwyg {
+	width: 466px;
+	height: 190px;
 	margin-bottom: 5px;
 }
 
-#postlist td {
-    margin: 0;
-    padding: 4px;
+#footer { 
+ 	width: 700px;
+ 	color: #dddfdc;
+ 	background: #454744;
+ 	margin: 0px 0px 10px 0px;
+ 	padding: 10px;
+	text-align: right;
+	font-weight: bold;
+}
+
+.jqueryslidemenu {
+	font: bold 12px Verdana;
 	background: #414141;
-	color: #fff;
-	font-size: 0.8em;
+	width: 100%;
+	vertical-align: bottom;
 }
 
-#postlist a {
-	color: #fff;
+.jqueryslidemenu ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
 }
 
-#content td.profileinfo {
-	font-size: 0.9em;
-}
-	
-#sidebar {
-	background: #fff;
-	color: #000;
-	margin: 0 0 0 0;
-	padding-top: 0px;
-	border-right: 1px solid #ededed;
-	width: 159px;
+/* Top level list items */
+.jqueryslidemenu ul li {
+	position: relative;
+	display: inline;
 	float: left;
 }
 
-#sidebar li {
-	color: #000;
-	padding-top: 3px;
-	font-size: 0.9em;
-	list-style-type: square;
-}
-
-#sidebar a {
-	color: #000;
-	font-size: 0.9em;
+/* Top level menu link items style */
+.jqueryslidemenu ul li a {
+	display: block;
+	background: transparent;
+	color: #fff;
+	padding: 6px 10px 6px 10px;
+	margin-right: 1px;
+	color: #2d2b2b;
 	text-decoration: none;
 }
 
-#sidebar a:hover {
-	color: #2877B3;
-} 
+/* IE6 hack to get sub menu links to behave correctly */
+* html .jqueryslidemenu ul li a { display: inline-block; }
 
-span.username {
-	font-size: 0.8em;
-	color: #000;
+.jqueryslidemenu ul li a:link, .jqueryslidemenu ul li a:visited {
+	background: transparent;
+	color: #fff;
 }
 
-span.admin {
-	color: #E49397;
-	font-size: 0.7em;
+/* tab link background during hover state */
+.jqueryslidemenu ul li a:hover {
+	background: #81B4D9;
+	color: #fff;
+	padding-bottom: 8px;
 }
 
-span.normal {
-	color: #36AF3B;
-	font-size: 0.7em;
+/* tab link background during selected state */
+.selected {
+	background: #81B4D9;
+	color: #fff;
+	padding-bottom: 8px;
 }
 	
-	
-	
+/* 1st sub level menu */
+.jqueryslidemenu ul li ul {
+	position: absolute;
+	left: 0;
+	display: block;
+	visibility: hidden;
+	background: #3E8BBF;
+	border-top: 1px solid #0E5789;
+	border-left: 1px solid #0E5789;
+	border-right: 1px solid #0E5789;
+}
+
+/* Sub level menu list items (undo style from Top level List Items) */
+.jqueryslidemenu ul li ul li {
+	display: list-item;
+	float: none;
+}
+
+/* All subsequent sub menu levels vertical offset after 1st level sub menu */
+.jqueryslidemenu ul li ul li ul { top: 0; }
+
+/* Sub level menu links style */
+.jqueryslidemenu ul li ul li a {
+	font: normal 13px Verdana;
+	width: 160px;
+	padding: 5px;
+	margin: 0;
+	border-top-width: 0;
+	border-bottom: 1px solid #0E5789;
+	background: #3E8BBF;
+	color: #fff;
+}
+
+/* sub menus hover style */
+.jqueryslidemenuz ul li ul li a:hover { background: #81B4D9; }

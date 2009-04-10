@@ -5,7 +5,7 @@
 	LightBlog 0.9
 	SQLite blogging platform
 	
-	admin/login.php
+	admin/register.php
 	
 	©2009 soren121. All rights reserved.
 	Released under the GNU General
@@ -16,88 +16,138 @@
 
 *********************************************/
 
-// Open config if not open
+# Open config if not open
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 require(ABSPATH .'/Sources/MathValidator.php');
 
-// Process registration
-if(isset($_POST['register'])) {
-	$username = strtolower($_POST['username']);
-	$password = $_POST['password'];
-	$vpassword = $_POST['vpassword'];
-	$email = $_POST['email'];
-	$realname = $_POST['realname'];
-	$captchacode = $_POST['captchacode'];
-   
-	$result06 = $dbh->query("SELECT * FROM users WHERE username = '".addslashes(sqlite_escape_string($r['user']))."'") or die("SQLite query error: code 02<br>".sqlite_error_string(sqlite_last_error($handle)));
-    while($row = $result06->fetch(SQLITE_ASSOC)) {
-      $check['user'] = $row['username'];
-    }
-	if($check['user'] == $username) { $error = true; }
-	if(!isset($username{6})) { $error = true; }
-	if(!isset($password{4})) { $error = true; }
-	if(!$password == $vpassword) { $error = true; }
-	if(!preg_match("/^([a-z0-9._-](\+[a-z0-9])*)+@[a-z0-9.-]+\.[a-z]{2,6}$/i",$email)) { $error = true; }
-	if (!MathValidator->checkResult($captchacode, $_SESSION['mathvalidator_c'])) { $error = true; }
-	if(!isset($error)) {
-		$username = addslashes(sqlite_escape_string($username));
-		$password = md5($password);
-		$email = addslashes(sqlite_escape_string($email));
-		$realname = addslashes(sqlite_escape_string($realname));
-		$ip = addslashes(sqlite_escape_string($_SERVER['REMOTE_ADDR']));
-		$dbh->query("INSERT INTO users (username,password,email,realname,vip,ip) VALUES('$username','$password','$email','$realname',0,'$ip')") or die(sqlite_error_string($dbh->lastError));
-		$wnotice = true;
-	}
-}
-if(isset($_POST['login'])) {
-	header('Location: login.php');
-}
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+# Initiate MathVaildator
+$mv = new MathValidator;
 
-<!--	LightBlog v0.9.0
-		Copyright 2009 soren121. Some Rights Reserved.
-		Licensed under the General Public License v3.
-		For more info, see the LICENSE.txt file included.
--->
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title><?php bloginfo('title') ?> - Registration</title>
-<link rel="stylesheet" type="text/css" href="style/regstyle.css" />
-<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jquery.js"></script>
-<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jquery-pstrength.js"></script>
-<script type="text/javascript">$(function() {$('.password').pstrength();});</script>
-<style type="text/css">
-.password {
-	font-size: 12px;
-	border: 1px solid #cc9933;
-	width: 145px;
-	font-family: arial, sans-serif;
+# Process registration
+if(isset($_REQUEST['processregistration'])) {
+	# Generate and set salt
+	$salt = substr(md5(uniqid(rand(), true)), 0, 9);
+	# Set and escape all variables for easy access
+	$username = sqlite_escape_string($_REQUEST['username']);
+	$password = md5($salt.$_REQUEST['password']);
+	$email = sqlite_escape_string($_REQUEST['email']);
+	$dname = sqlite_escape_string($_REQUEST['dname']);
+	$ip = sqlite_escape_string($_SERVER['REMOTE_ADDR']);
+	$arians = (int)$_REQUEST['arians'];
+	# Check math answer
+	if($mv->checkResult($arians, $_SESSION['mathvalidator_c']) == false) { /* Tell user somehow that the answer was wrong */ }
+	# Insert into database
+	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('".$username."', '".$password."', '".$email."', '".$displayname."', 0, '".$ip."', '".$salt."')");	
+	die();
 }
-.pstrength-minchar { font-size: 10px; }
-</style>
+
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title><?php bloginfo('title') ?> - Registration</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 0.13/soren121" />
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Validation.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.ValidateRegistration.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
+	<script type="text/javascript" charset="utf-8">
+	$(document).ready(function(){ $('.rounded').corners(); });
+	$(function() {
+		$('#register').submit(function() {
+			var inputs = [];
+			$(':input', this).each(function() {
+				inputs.push(this.name + '=' + escape(this.value));
+			})
+			$('#register').empty().html('<' + 'img src="style/loading.gif" alt="" />');
+			jQuery.ajax({
+				data: inputs.join('&'),
+				url: this.getAttribute('action'),
+				timeout: 2000,
+				error: function() {
+					$('#register').empty(); 
+					console.log("Failed to submit");
+					alert("Failed to submit.");
+				},
+				success: function(r) {
+					$('#register').empty(); 
+					tabber1.show(2); return false;
+				}
+			})
+			return false;
+		})
+	})
+	</script>
+	<style type="text/css">
+	body {
+		text-align: center;
+		background: #eee;
+	}
+	#content {
+		margin: 0 auto;
+		height: 95%;
+		width: 400px;
+		margin-top: 2.5%;
+		margin-bottom: 2.5%;
+		background: #fff;
+		color: #777;
+		font-family: Sans;
+		padding: 5px;
+		padding-bottom: 20px;
+		position: relative;
+	}
+	#tab1 table {
+		margin-left: auto;
+		margin-right: auto;
+		width: 420px;
+		border-color: #ccc;
+		border-width: 0 0 1px 1px;
+		border-style: solid;
+		border-collapse: collapse;
+	}
+	#tab1 td {
+		padding: 3px;
+		border-color: #ccc;
+		border-width: 1px 1px 0 0;
+		border-style: solid;
+		border-collapse: collapse;
+	}
+	</style>
 </head>
 
 <body>
-<div id="registerbox">
-<h2 style="padding-top: 5px;"><?php bloginfo('title') ?></h2><br />
-<h3 style="padding-bottom: 10px;">Registration</h3>
-  <?php if($wnotice == true): 
-			echo '<p>Thanks for registering, '.stripslashes(stripslashes($username)).'. You may now login.</p><br /><form action="" method="post">
-			<p><input name="login" type="submit" value="Login"/></p>';
-		else: ?>
-  <form action="" method="post" class="registerform">
-    <table>
-      <tr><td>Username:</td><td><input name="username" type="text" maxlength="28" value="<?php echo $_POST['username'] ?>"/></td></tr>
-      <tr><td>Password:</td><td><input class="password" name="password" type="password"/></td></tr>
-      <tr><td>Verify Password:</td><td><input name="vpassword" type="password"/></td></tr>
-      <tr><td>Email:</td><td><input name="email" type="text" value="<?php echo $_POST['email'] ?>"/></td></tr>
-      <tr><td>Display Name:</td><td><input name="realname" type="text" maxlength="16"/></td></tr> 
-	  <tr><td>What is <?php MathValidator->insertQuestion() ?>?</td><td><input type="text" name="ans" size="2" /></td></tr>
-      <tr><td colspan="2"><input name="register" type="submit" value="Register"/></td></tr>
-    </table>
-  </form>
-  <?php endif; ?>
-</div></body></html>
+	<div id="content">
+		<h2><?php bloginfo('title') ?> Registration</h2>
+		<label for="username" class="error"></label>
+		<label for="password" class="error"></label>
+		<label for="email" class="error"></label>
+		<label for="dname" class="error"></label>
+		<form action="<?php echo basename(__FILE__); ?>" method="get" id="register">
+			<p><label for="username">Username</label>
+			<input type="text" name="username" id="username" /></p>
+			<br />
+			<p><label for="password">Password</label>
+			<input type="password" name="password" id="password" /></p>
+			<br />
+			<p><label for="cpassword">Confirm Password</label>
+			<input type="password" name="cpassword" id="cpassword" /></p>
+			<br />
+			<p><label for="email">Email</label>
+			<input type="text" name="email" id="email" /></p>
+			<br />
+			<p><label for="dname">Display Name</label>
+			<input type="text" name="dname" id="dname" /></p>
+			<br />
+			<p><label for="arians">What is <?php $mv->insertQuestion() ?>?</label>
+			<input type="text" name="arians" id="arians" maxlength="2" /></p>
+			<br />
+			<p><input type="submit" name="processregistration" /></p>
+		</form>
+	</div>
+</body>
+</html>

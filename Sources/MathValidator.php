@@ -28,12 +28,12 @@ class MathValidator {
 
 	# Calls encode and returns hash
 	function generateCode($a, $b, $prime) {
-		return hashEncode($a + $b, $prime);
+		return MathValidator :: hashEncode($a + $b, $prime);
 	}
 
 	# Check result of form
 	function checkResult($mathvalidator_answer, $mathvalidator_code, $prime = 37) {
-		$result_encoded = hashEncode($mathvalidator_answer, $prime);		
+		$result_encoded = MathValidator :: hashEncode($mathvalidator_answer, $prime);		
 		if ($result_encoded == $mathvalidator_code)
 			return true;
 		else
@@ -46,7 +46,8 @@ class MathValidator {
 		$b = rand() % 10;
 		if($output == 'e') { echo $a." + ".$b; }
 		elseif($output == 'r') { return $a." + ".$b; }
-		$_SESSION['mathvalidator_c'] = generateCode($a, $b, $prime);
+		$_SESSION['mathvalidator_c'] = MathValidator :: generateCode($a, $b, $prime);
 	}
 }
+
 ?>
