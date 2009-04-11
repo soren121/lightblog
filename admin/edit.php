@@ -24,13 +24,13 @@ if((int)$_GET['type'] == 1) { $type = 'post'; }
 elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 
 # Query for post
-$result08 = $dbh->query("SELECT * FROM ".$type."s WHERE id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
+$result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
 
 # Get post data and set it
-while($past = $result08->fetch_object) {
+while($past = $result->fetchObject()) {
 	$title = $past->title;
 	if($type == 'post') { $text = $past->post; }
-	if($type == 'page') { $text = $past->page; }
+	elseif($type == 'page') { $text = $past->page; }
 }
 
 ?>
@@ -51,6 +51,7 @@ while($past = $result08->fetch_object) {
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
+			$('.hint').hint();
 			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');
 		});
 		$(function() {
@@ -121,13 +122,13 @@ while($past = $result08->fetch_object) {
 			<p>The type of content to add was not specified. You must have taken a bad link. Please
 			use the navigation bar above to choose the correct type.</p>
 			<?php else: ?>
-			<h2 class="title"><img class="textmid" src="style/edit.png" alt="" />Edit <?php echo ucwords($type) ?></h2>
+			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Edit <?php echo ucwords($type) ?></h2>
 			<div id="notifybox"></div>
 			<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="edit">
 				<p><input class="hint textfield ef" name="title" type="text" title="Title" value="<?php echo unescapeString($title) ?>" /></p>
 				<p><textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo unescapeString($text) ?></textarea></p>
 				<p><input class="ef" type="hidden" name="type" value="<?php echo $type ?>" /></p>
-				<p><input class="ef submit" name="publish" type="submit" value="Publish" /></p>
+				<p><input class="ef submit" name="publish" type="submit" value="Save" /></p>
 			</form>
 			<?php endif; ?>
 		</div>

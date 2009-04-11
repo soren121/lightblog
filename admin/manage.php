@@ -85,7 +85,7 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 			use the navigation bar above to choose the correct type.</p>
 			<!-- They were, so continue -->
 			<?php else: ?>
-			<h2 class="title"><img class="textmid" src="style/edit.png" alt="" />Manage <?php echo ucwords($type) ?>s</h2>
+			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Manage <?php echo ucwords($type) ?>s</h2>
 			<!-- Check if any posts/pages exist -->
 			<?php if($result->numRows() > 0): ?>
 			<table class="managelist">
@@ -95,6 +95,8 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 					<th class="managelist">Title</th>
 					<th class="managelist">Author</th>
 					<th class="managelist">Date</th>
+					<th class="managelist">Edit</th>
+					<th class="managelist">Delete</th>
 				</tr>
 				<!-- Start row loop -->
 				<?php while($post = $result->fetchObject()): ?>
@@ -103,6 +105,8 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 					<td class="managelist"><?php echo $post->title ?></td>
 					<td class="managelist"><?php echo $post->author ?></td>
 					<td class="managelist"><?php echo date('n/j/Y', $post->date) ?></td>
+					<td class="managelist c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $post->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
+					<td class="managelist c"><img src="style/delete.png" alt="Delete" /></td>
 				</tr>
 				<?php endwhile; ?>
 				<!-- End row loop -->
