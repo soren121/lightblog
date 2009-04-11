@@ -73,7 +73,7 @@ if(isset($_POST['edit'])) {
 	if($title == $ptitle) { str_replace("title='".$title."'", "", $update); }
 	if($text == $ptext) { str_replace($type."='".$text."'", "", $update); }
 	if($title == $ptitle and $text == $ptext) {
-		echo bloginfo('url', 'r')."page.php?id=".$id;
+		echo bloginfo('url', 'r').$type.".php?id=".$id;
 		die();
 	}
 	else {
