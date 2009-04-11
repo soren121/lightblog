@@ -21,7 +21,7 @@ require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
 # Process post/page creation
-if(isset($_POST['publish'])) {
+if(isset($_POST['create'])) {
 	# Grab data from form and escape the text
 	$title = sqlite_escape_string($_POST['title']);
 	$text = sqlite_escape_string($_POST['text']);
@@ -51,6 +51,38 @@ if(isset($_POST['publish'])) {
 	}
 	# Prevent the rest of the page from loading
 	die();
+}
+
+# Process post/page editing
+if(isset($_POST['edit'])) {
+	# Grab data from form and escape the text
+	$title = sqlite_escape_string($_POST['title']);
+	$text = sqlite_escape_string($_POST['text']);
+	$type = $_POST['type'];
+	$id = (int)$_POST['id'];
+	# Query for previous data
+	$result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".$id) or die(sqlite_error_string($dbh->lastError));
+	# Fetch previous data
+	while($past = $result->fetchObject()) {
+		$ptitle = $past->title;
+		if($type == 'post') { $ptext = $past->post; }
+		elseif($type == 'page') { $ptext = $past->page; }
+	}
+	$update = "UPDATE ".$type."s SET title='".$title."', ".$type."='".$text."' WHERE id=".$id;
+	if($title == $ptitle and $text !== $ptext) { str_replace("title='".$title."',", "title='".$title."'", $update); }
+	if($title == $ptitle) { str_replace("title='".$title."'", "", $update); }
+	if($text == $ptext) { str_replace($type."='".$text."'", "", $update); }
+	if($title == $ptitle and $text == $ptext) {
+		echo bloginfo('url', 'r')."page.php?id=".$id;
+		die();
+	}
+	else {
+		$dbh->query($update) or die(sqlite_error_string($dbh->lastError));		
+		# Return full url to page to jQuery
+		echo bloginfo('url', 'r').$type.".php?id=".$id;
+		# Prevent the rest of the page from loading
+		die();
+	}
 }
 
 # Process registration

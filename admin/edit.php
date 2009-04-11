@@ -128,7 +128,8 @@ while($past = $result->fetchObject()) {
 				<p><input class="hint textfield ef" name="title" type="text" title="Title" value="<?php echo unescapeString($title) ?>" /></p>
 				<p><textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo unescapeString($text) ?></textarea></p>
 				<p><input class="ef" type="hidden" name="type" value="<?php echo $type ?>" /></p>
-				<p><input class="ef submit" name="publish" type="submit" value="Save" /></p>
+				<p><input class="ef" type="hidden" name="id" value="<?php echo (int)$_GET['id'] ?>" /></p>
+				<p><input class="ef submit" name="edit" type="submit" value="Save" /></p>
 			</form>
 			<?php endif; ?>
 		</div>
