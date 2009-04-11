@@ -27,28 +27,16 @@ if(isset($_POST['create'])) {
 	$text = sqlite_escape_string($_POST['text']);
 	$date = time();
 	$author = sqlite_escape_string(userFetch('realname', 'r'));
-	# Insert post data
-	if($_POST['type'] == 'post') {
-	 	$dbh->query("INSERT INTO posts (title,post,date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die(sqlite_error_string($dbh->lastError));
-		# Fetch post ID from database
-		$result = $dbh->query("SELECT id FROM posts WHERE date='".$date."'");
-		$id = $result->fetchSingle();
-		# Return full url to post to jQuery
-		echo bloginfo('url', 'r')."post.php?id=".$id;
-		# Unset variables
-		unset($result, $id);
-	}
-	# insert page data
-	elseif($_POST['type'] == 'page') {
-		$dbh->query("INSERT INTO pages (title,page,date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die(sqlite_error_string($dbh->lastError));
-		# Fetch page ID from database
-		$result = $dbh->query("SELECT id FROM pages WHERE date='".$date."'");
-		$id = $result->fetchSingle();
-		# Return full url to page to jQuery
-		echo bloginfo('url', 'r')."page.php?id=".$id;
-		# Unset variables
-		unset($result, $id);
-	}
+	$type = $_POST['type'];
+	# Insert post/page into database
+	$dbh->query("INSERT INTO ".$type."s (title,".$type.",date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die(sqlite_error_string($dbh->lastError));
+	# Fetch post ID from database
+	$result = $dbh->query("SELECT id FROM ".$type."s WHERE date='".$date."'");
+	$id = $result->fetchSingle();
+	# Return full url to post to jQuery
+	echo bloginfo('url', 'r').$type.".php?id=".$id;
+	# Unset variables
+	unset($result, $id);
 	# Prevent the rest of the page from loading
 	die();
 }
