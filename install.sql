@@ -17,7 +17,9 @@ CREATE INDEX 'comments_post_id_index' ON 'comments' ('post_id');
 CREATE TABLE 'pages'(
 'id' INTEGER NOT NULL PRIMARY KEY DEFAULT '0',
 'title' VARCHAR(100) NOT NULL,
-'page' TEXT NOT NULL);
+'page' TEXT NOT NULL,
+'date' INT(10) NOT NULL,
+'author' VARCHAR(20) NOT NULL);
 
 CREATE TABLE 'posts'(
 'id' INTEGER NOT NULL PRIMARY KEY DEFAULT '0',
@@ -26,7 +28,7 @@ CREATE TABLE 'posts'(
 'date' INT(10) NOT NULL,
 'author' VARCHAR(20) NOT NULL);
 
-INSERT INTO 'posts' VALUES(1,'Welcome to LightBlog!','Welcome to LightBlog! We hope you enjoy it!<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1239321600,'LightBlog Devs');
+INSERT INTO 'posts' VALUES(1,'Welcome to LightBlog!','Welcome to LightBlog! We hope you enjoy it!<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1239321795,'LightBlog Devs');
 
 CREATE TABLE 'users'(
 'id' INTEGER NOT NULL PRIMARY KEY DEFAULT '0',
