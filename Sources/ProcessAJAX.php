@@ -40,9 +40,9 @@ if(isset($_POST['publish'])) {
 	}
 	# insert page data
 	elseif($_POST['type'] == 'page') {
-		$dbh->query("INSERT INTO pages (title,page) VALUES('".$title."','".$text."')") or die(sqlite_error_string($dbh->lastError));
+		$dbh->query("INSERT INTO pages (title,page,date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die(sqlite_error_string($dbh->lastError));
 		# Fetch page ID from database
-		$result = $dbh->query("SELECT id FROM pages WHERE page='".$text."'");
+		$result = $dbh->query("SELECT id FROM pages WHERE date='".$date."'");
 		$id = $result->fetchSingle();
 		# Return full url to page to jQuery
 		echo bloginfo('url', 'r')."page.php?id=".$id;

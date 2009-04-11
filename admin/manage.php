@@ -89,18 +89,23 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 			<!-- Check if any posts/pages exist -->
 			<?php if($result->numRows() > 0): ?>
 			<table class="managelist">
+				<!-- Add table headings -->
+				<tr class="managelist">
+					<th class="managelist">ID</th>
+					<th class="managelist">Title</th>
+					<th class="managelist">Author</th>
+					<th class="managelist">Date</th>
+				</tr>
 				<!-- Start row loop -->
 				<?php while($post = $result->fetchObject()): ?>
-				<tr>
-					<td><?php echo $post->id ?></td>
-					<td><?php echo $post->title ?></td>
-					<?php if($type == 'post'): ?>
-						<td><?php echo $post->author ?></td>
-						<td><?php echo date('n/j/Y', $post->date) ?></td>
-					<?php endif; ?>
+				<tr class="managelist">
+					<td class="managelist"><?php echo $post->id ?></td>
+					<td class="managelist"><?php echo $post->title ?></td>
+					<td class="managelist"><?php echo $post->author ?></td>
+					<td class="managelist"><?php echo date('n/j/Y', $post->date) ?></td>
 				</tr>
-				<!-- End row loop -->
 				<?php endwhile; ?>
+				<!-- End row loop -->
 			</table>
 			<!-- None exist error message -->
 			<?php else: ?>

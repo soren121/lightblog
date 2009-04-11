@@ -37,7 +37,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.InputHint.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
 	<script type="text/javascript">	
-		$(document).ready(function(){ 
+		$(document).ready(function(){
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
