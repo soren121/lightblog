@@ -118,7 +118,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 				<p><input class="hint textfield cf" name="title" type="text" title="Title" /></p>
 				<p><textarea rows="12" cols="36" name="text" id="wysiwyg"></textarea></p>
 				<p><input class="cf" type="hidden" name="type" value="<?php echo $type ?>" /></p>
-				<p><input class="cf submit" name="publish" type="submit" value="Publish" /></p>
+				<p><input class="cf submit" name="create" type="submit" value="Publish" /></p>
 			</form>
 			<?php endif; ?>
 		</div>
