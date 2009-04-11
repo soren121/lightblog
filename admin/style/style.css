@@ -111,6 +111,10 @@ body {
 	text-align: left;
 }
 
+#content .c {
+	text-align: center;
+}
+
 #footer { 
  	width: 700px;
  	color: #dddfdc;
