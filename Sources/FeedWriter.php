@@ -53,7 +53,7 @@
 	*/
 	public function setChannelElement($elementName, $content)
 	{
-		$this->channels[$elementName] = $content ;
+		$this->channels[$elementName] = $content;
 	}
 	
 	/**
@@ -66,7 +66,7 @@
 	*/
 	public function setChannelElementsFromArray($elementArray)
 	{
-		if(! is_array($elementArray)) return;
+		if(!is_array($elementArray)) return;
 		foreach ($elementArray as $elementName => $content) 
 		{
 			$this->setChannelElement($elementName, $content);
@@ -84,6 +84,7 @@
 		header("Content-type: text/xml");
 		
 		$this->printHead();
+		
 		$this->printChannels();
 		$this->printItems();
 		$this->printTale();
@@ -150,6 +151,7 @@
 	public function setLink($link)
 	{
 		$this->setChannelElement('link', $link);
+		$this->AtomLink = "<atom:link href=\"".htmlentities($link)."\" rel=\"self\" type=\"application/rss+xml\" />";
 	}
 	
 	/**
@@ -215,6 +217,7 @@
 			$out .= '<rss version="2.0"
 					xmlns:content="http://purl.org/rss/1.0/modules/content/"
 					xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+					xmlns:atom="http://www.w3.org/2005/Atom"
 				  >' . PHP_EOL;
 		}    
 		elseif($this->version == RSS1)
@@ -310,18 +313,21 @@
 	*/
 	private function printChannels()
 	{
-		//Start channel tag
+		// Start channel tag
 		switch ($this->version) 
 		{
 		   case RSS2: 
-				echo '<channel>' . PHP_EOL;        
+				echo '<channel>' . PHP_EOL;
 				break;
 		   case RSS1: 
 				echo (isset($this->data['ChannelAbout']))? "<channel rdf:about=\"{$this->data['ChannelAbout']}\">" : "<channel rdf:about=\"{$this->channels['link']}\">";
 				break;
 		}
 		
-		//Print Items of channel
+		// Add Atom ref link
+		echo $this->AtomLink . PHP_EOL;
+			
+		// Print Items of channel
 		foreach ($this->channels as $key => $value) 
 		{
 			if($this->version == ATOM && $key == 'link') 
@@ -334,11 +340,10 @@
 			else
 			{
 				echo $this->makeNode($key, $value);
-			}    
-			
+			}	
 		}
 		
-		//RSS 1.0 have special tag <rdf:Seq> with channel 
+		// RSS 1.0 have special tag <rdf:Seq> with channel 
 		if($this->version == RSS1)
 		{
 			echo "<items>" . PHP_EOL . "<rdf:Seq>" . PHP_EOL;
@@ -363,7 +368,7 @@
 		{
 			$thisItems = $item->getElements();
 			
-			//the argument is printed as rdf:about attribute of item in rss 1.0 
+			// the argument is printed as rdf:about attribute of item in rss 1.0 
 			echo $this->startItem($thisItems['link']['content']);
 			
 			foreach ($thisItems as $feedItem ) 
