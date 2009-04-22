@@ -1,146 +1,153 @@
-/* 
-		LightBlog
-		Stylesheet - April 28, 2008
-		Copyright 2008 soren121.
-*/
+
+/***********************************************
+
+	SimpleBlue theme for LightBlog 0.9.2
+	©2009 soren121.
+	
+	style.css
+	[CSS Stylesheet]
+	
+***********************************************/
+
+
+* { padding: 0; margin: 0; }
 
 body {
-	background: #EDEDED;
-	font-family: Verdana,Arial,Sans;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	background: #eee;
 }
 
-#container {
-	width: 670px;
-	margin-left: auto;
-	margin-right: auto;
+#wrapper { 
+	background: #fff url('faux.png') repeat-y;
+	margin: auto;
+	width: 740px;
 	margin-top: 20px;
+	padding-top: 4px;
+	border: 1px solid #a1a1a1;
+}
+
+#faux {
+	margin-bottom: 5px;
+	overflow: auto;
+	width: 100%;
 }
 
 #header {
-	background: #2877B3;
-	width: 670px;
-	height: 30px;
-	margin-bottom: 0px;
-	padding-bottom: 0px;
-	float: center;
+	color: #fff;
+	width: 700px;
+	padding: 10px;
+	height: 35px;
+	margin: 10px;
+	background: #5AA5CF;
 }
 
-img.headerimg {
-	margin-left: 46px;
-	margin-top: 3px;
-	margin-bottom: 1px;
+#header h3 {
+	font-size: 2.1em;
+	font-family: Georgia,Times,serif,sans-serif;
+	font-weight: normal;
 }
 
-#content {
-	float: right;
-	background: #fff;
-	color: #252525;
-	margin: 0 0 0 0;
-	padding-top: 10px;
-	padding-left: 7px;
-	width: 503px;
+#navigation {
+	height: 20px;
+	margin: auto 0 auto 0;
+	position: absolute;
+	left: 400px;
+	top: 20px;
+}
+
+#navigation ul {
+	margin-left: 0;
+	padding-left: 0;
+	white-space: nowrap;
+}
+
+#navigation ul li {
 	display: inline;
+	list-style-type: none;
 }
 
-#content .post-title {
-	color: #252525;
+#navigation ul li a, #navigation ul li a:link, #navigation ul li a:visited {
+	color: #fff;
 	text-decoration: none;
-	font-size: 1.2em;
-	font-family: "Trebutchet MS",Verdana,Sans;
+	font-size: 1.1em;
 }
 
-#content a:hover .post-title {
+#navigation ul li a:hover {
+	text-decoration: underline;
+	color: #fff;
+}
+	
+#sidebar { 
+	display: inline;
+	color: #333;
+	margin: 10px;
+	padding: 0px;
+	width: 220px;
+	float: right;
+}
+
+#content { 
+	float: left;
+	color: #333;
+	margin: 0 10px 0 10px;
+	padding: 0 20px 0 20px;
+	width: 460px;
+	display: inline;
+	position: relative;
+}
+
+#content div.postbox {
+	margin-bottom: 30px;
+}
+
+#content h4.postname {
+	font-size: 2.0em;
+	font-family: Georgia,Times,serif,sans-serif;
+	margin-bottom: 12px;
+	font-weight: normal;
+	color: #333;
 	text-decoration: none;
 }
 
-#content span.date {
-	font-size: 0.8em;
-	margin-right: 15px;
-}
-
-#content span.author {
-	font-size: 0.8em;
-	margin-right: 15px;
-}
-
-#content span.commentnum {
-	font-size: 0.8em;
+#content a.postname:hover {
+	text-decoration: underline;
 }
 
 #content p.post {
-	padding: 5px;
-	margin-right: 10px;
-	border: 1px solid #F0A21B;
-}
-
-#postlist table {
-	margin-right: 5px;
-	margin-bottom: 5px;
-}
-
-#postlist td {
-    margin: 0;
-    padding: 4px;
-	background: #414141;
-	color: #fff;
-	font-size: 0.8em;
-}
-
-#postlist a {
-	color: #fff;
-}
-
-#content td.profileinfo {
-	font-size: 0.9em;
-}
-	
-#sidebar {
-	background: #fff;
-	color: #000;
-	margin: 0 0 0 0;
-	padding-top: 0px;
-	border-right: 1px solid #ededed;
-	width: 159px;
-	float: left;
-}
-
-#sidebar li {
-	color: #000;
-	padding-top: 3px;
-	font-size: 0.9em;
-	list-style-type: square;
-}
-
-#sidebar a {
-	color: #000;
-	font-size: 0.9em;
-	text-decoration: none;
-}
-
-#sidebar img.rssi {
-	border: 0;
-	vertical-align: middle;
 	padding-left: 3px;
+	font-family: Georgia,Times,serif,sans-serif;
+	font-size: 1.0em;
+	font-weight: normal;
 }
 
-#sidebar a:hover {
-	color: #2877B3;
-} 
-
-span.username {
-	font-size: 0.8em;
+#content div.postdata {
+	padding: 5px;
+	margin: 8px 0 8px 0;
+	background: #f9f9f9;
+	border: 1px solid #dfdfdf;
 	color: #000;
+	width: 450px;
 }
 
-span.admin {
-	color: #E49397;
-	font-size: 0.7em;
+#content span.postdata {
+	margin-right: 8px;
 }
 
-span.normal {
-	color: #fff;
-	font-size: 0.7em;
+#content span.postdata img {
+	margin: 0;
+	padding: 0;
+	vertical-align: bottom;
 }
 	
-	
-	
+#footer { 
+	width: 700px;
+	clear: both;
+	color: #333;
+	margin: 0px 0px 10px 0px;
+	padding: 10px;
+	text-align: center;
+	font-size: 0.85em;
+}
+
+.clear { clear: both; background: none; }
