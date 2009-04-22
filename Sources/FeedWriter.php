@@ -81,10 +81,8 @@
 	*/ 
 	public function generateFeed()
 	{
-		header("Content-type: text/xml");
-		
-		$this->printHead();
-		
+		header("Content-type: text/xml");		
+		$this->printHead();		
 		$this->printChannels();
 		$this->printItems();
 		$this->printTale();
@@ -230,7 +228,7 @@
 		}
 		else if($this->version == ATOM)
 		{
-			$out .= '<feed xmlns="http://www.w3.org/2005/Atom">' . PHP_EOL;;
+			$out .= '<feed xmlns="http://www.w3.org/2005/Atom">' . PHP_EOL;
 		}
 		echo $out;
 	}
@@ -318,14 +316,13 @@
 		{
 		   case RSS2: 
 				echo '<channel>' . PHP_EOL;
+				// Add Atom ref link
+				echo $this->AtomLink . PHP_EOL;
 				break;
 		   case RSS1: 
 				echo (isset($this->data['ChannelAbout']))? "<channel rdf:about=\"{$this->data['ChannelAbout']}\">" : "<channel rdf:about=\"{$this->channels['link']}\">";
 				break;
 		}
-		
-		// Add Atom ref link
-		echo $this->AtomLink . PHP_EOL;
 			
 		// Print Items of channel
 		foreach ($this->channels as $key => $value) 

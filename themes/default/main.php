@@ -1,26 +1,33 @@
-	<div id="content">
-	<?php
-	// run blog post query
-	if($result01->numRows() > 0) {
-		// start post loop
-		while($post = $result01->fetchObject()) {
-			// query to pull comment number
-			$result02 = $dbh->query("SELECT * FROM comments WHERE post_id=".$post->id."") or die(sqlite_error_string($dbh->lastError));
-			// start post structure
-			echo "<div class=\"postbox\">";
-			// output title
-			echo "<h2 class=\"post-title\"><a class=\"post-title\" href=\"post.php?id=".$post->id."\">".unescapeString($post->title)."</a></h2>";
-			// output comment link, author name & date
-			echo "<img src=\"themes/".$themeName."/style/date.png\" alt=\"Date\" /><span class=\"date\">".date("F j, Y", $post->date)."</span>";
-			echo "<img src=\"themes/".$themeName."/style/user.png\" alt=\"Written by\" /><span class=\"author\">".$post->author."</span>";
-			echo "<img src=\"themes/".$themeName."/style/comment.png\" alt=\"Comments\" /><a href=\"post.php?id=".$post->id."\" title=\"Post a comment or read them!\"><span class=\"commentnum\">".$result02->numRows()." Comments</span></a>";
-			// output content
-			echo "<p class=\"post\">".unescapeString($post->post)."</p><br />";
-			// end post structure
-			echo "</div>";
-			// this code is repeated for every post in your database
-		}
-	}
-	else { echo "No posts, sorry."; }	
-	?>
-	</div>
+			<div id="content">
+				<!-- Start the loop -->
+				<?php if($result01->numRows() > 0): while($post = $result01->fetchObject()): $comments = $dbh->query("SELECT * FROM comments WHERE post_id=".(int)$post->id."") or die(sqlite_error_string($dbh->lastError)); ?>
+				<div class="postbox">
+					<a class="postname" href="<?php bloginfo('url') ?>post.php?id=<?php echo (int)$post->id; ?>">
+						<h4 class="postname"><?php echo unescapeString($post->title); ?></h4>
+					</a>
+					<p class="post"><?php echo unescapeString($post->post); ?></p>
+					<div class="postdata">
+						<span class="postdata">
+							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/date.png" alt="" />
+							<?php echo date('F j, Y', $post->date); ?>
+						</span>
+						<span class="postdata">
+							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/user.png" alt="" />
+							<?php echo $post->author; ?>
+						</span>
+						<span class="postdata">
+							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/comment.png" alt="" />
+							<a href="<?php bloginfo('url') ?>post.php?id=<?php echo (int)$post->id; ?>">
+							<?php if($comments->numRows() == 1):
+								  echo $comments->numRows(); ?> Comment</a>
+							<?php else:
+								  echo $comments->numRows(); ?> Comments</a>
+							<?php endif; ?>							
+						</span>
+					</div>
+				</div>
+				<!-- End the loop -->
+				<?php endwhile; endif; ?>
+		      
+			   <div class="clear"></div>
+			</div>
