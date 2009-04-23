@@ -11,13 +11,7 @@
 <body>
 	<div id="wrapper">
         <div id="header" class="rounded">
-			<h3><?php bloginfo('title') ?></h3>
-			
-			<div id="navigation">
-				<ul>
-					<li><a href="index.html">Home</a></li>
-				</ul>
-			</div>
+			<h3><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a></h3>
 		</div>
 		
 		<div id="faux">
