@@ -7,9 +7,10 @@ INSERT INTO core VALUES('theme','default');
 CREATE TABLE 'comments'(
 'id' INTEGER NOT NULL PRIMARY KEY,
 'post_id' INTEGER NOT NULL,
-'username' VARCHAR(20) NOT NULL,
+'name' VARCHAR(35) NOT NULL,
 'email' VARCHAR(255) NOT NULL,
-'website' VARCHAR(255) NOT NULL,
+'website' VARCHAR(255),
+'date' INT(10) NOT NULL,
 'text' TEXT NOT NULL);
 
 CREATE INDEX 'comments_post_id_index' ON 'comments' ('post_id');

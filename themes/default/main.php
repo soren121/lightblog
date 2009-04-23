@@ -2,9 +2,9 @@
 				<!-- Start the loop -->
 				<?php if($result01->numRows() > 0): while($post = $result01->fetchObject()): $comments = $dbh->query("SELECT * FROM comments WHERE post_id=".(int)$post->id."") or die(sqlite_error_string($dbh->lastError)); ?>
 				<div class="postbox">
-					<a class="postname" href="<?php bloginfo('url') ?>post.php?id=<?php echo (int)$post->id; ?>">
-						<h4 class="postname"><?php echo unescapeString($post->title); ?></h4>
-					</a>
+					<h4 class="postname">
+						<a class="postname" href="<?php bloginfo('url') ?>post.php?id=<?php echo (int)$post->id; ?>"><?php echo unescapeString($post->title); ?></a>
+					</h4>
 					<p class="post"><?php echo unescapeString($post->post); ?></p>
 					<div class="postdata">
 						<span class="postdata">

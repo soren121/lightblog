@@ -42,49 +42,16 @@ body {
 	background: #5AA5CF;
 }
 
-#header h3 {
-	font-size: 2.1em;
+#header h3, #header a, #header a:link, #header a:visited {
+	font-size: 1.5em;
 	font-family: Georgia,Times,serif,sans-serif;
 	font-weight: normal;
-}
-
-#navigation {
-	height: 20px;
-	margin: auto 0 auto 0;
-	position: absolute;
-	left: 400px;
-	top: 20px;
-}
-
-#navigation ul {
-	margin-left: 0;
-	padding-left: 0;
-	white-space: nowrap;
-}
-
-#navigation ul li {
-	display: inline;
-	list-style-type: none;
-}
-
-#navigation ul li a, #navigation ul li a:link, #navigation ul li a:visited {
 	color: #fff;
 	text-decoration: none;
-	font-size: 1.1em;
 }
 
-#navigation ul li a:hover {
-	text-decoration: underline;
-	color: #fff;
-}
-	
-#sidebar { 
-	display: inline;
-	color: #333;
-	margin: 10px;
-	padding: 0px;
-	width: 220px;
-	float: right;
+#header a:hover {
+	text-decoration: none;
 }
 
 #content { 
@@ -101,8 +68,8 @@ body {
 	margin-bottom: 30px;
 }
 
-#content h4.postname {
-	font-size: 2.0em;
+#content h4.postname, #content a.postname {
+	font-size: 1.3em;
 	font-family: Georgia,Times,serif,sans-serif;
 	margin-bottom: 12px;
 	font-weight: normal;
@@ -112,6 +79,15 @@ body {
 
 #content a.postname:hover {
 	text-decoration: underline;
+}
+
+#content h4.postnamealt {
+	font-size: 1.7em;
+	font-family: Georgia,Times,serif,sans-serif;
+	margin-bottom: 12px;
+	font-weight: normal;
+	color: #333;
+	text-decoration: none;
 }
 
 #content p.post {
@@ -138,6 +114,30 @@ body {
 	margin: 0;
 	padding: 0;
 	vertical-align: bottom;
+}
+
+#content div.comment {
+	width: 450px;
+	border: 1px solid #ddd;
+	background: #fff;
+	color: #000;
+	padding: 5px;
+}
+
+#content img.comment_gravatar {
+	float: right;
+	padding: 2px;
+	margin: 0;
+	border: 1px solid #eee;
+}
+
+#sidebar { 
+	display: inline;
+	color: #333;
+	margin: 10px;
+	padding: 0px;
+	width: 220px;
+	float: right;
 }
 	
 #footer { 

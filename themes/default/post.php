@@ -1,67 +1,85 @@
-	<div id="content">
-	<?php
-	// run blog post query
-	if ($result03->numRows() > 0) {
-		// start post loop
-		while($post = $result03->fetchObject()) {
-			// start post structure
-			echo "<div class=\"postbox\">";
-			// output title
-			echo "<h2 class=\"post-title\">".unescapeString($post->title)."</h2>";
-			// output content
-			echo "<p class=\"post\">".unescapeString($post->post)."</p><br />";
-			// end post structure
-			echo "</div>";
-			// this code is repeated for every post in your database
-		}
-	}
-	
-	// get comments
-	// if there are no comments:
-	if($result04->numRows() == 0) {
-		echo "<p>No comments have been made on this post yet.</p>";
-	}
-	
-	// if comments exist, display them
-	else { 
-		while($comments = $result04->fetch(SQLITE_ASSOC)) {
-		echo "<div class=\"comment\">
-			  <img src=\"".fetchGravatar($comments['email'], 30, 'r')."\" style=\"float:right;margin-right: 20px;\" alt=\"Gravatar\" />
-		      <b><i>".$comments['username']."</i></b> says:<br />
-		      <p class=\"com-content\">".$comments['text']."</p>
-		      </div>";
-		}
-	}
-	
-	// check if comment has been POSTed
-	if(isset($_POST['comment_submit'])) {
-		// check if all fields are formed
-		if(strlen($_POST['username']) and strlen($_POST['email']) and strlen($_POST['text']) > 0) {
-			$com_name = sqlite_escape_string($_POST['username']);
-			$com_email = sqlite_escape_string($_POST['email']);
-			$com_website = sqlite_escape_string($_POST['website']);
-			$com_text = sqlite_escape_string(removeXSS($_POST['text']));
-			$dbh->query("INSERT INTO comments (post_id,username,email,website,text) VALUES('".(int)$_GET['id']."','".$com_name."','".$com_email."','".$com_website."','".$com_text."')")  or die(sqlite_error_string($dbh->lastError));
-			echo'
-			<div class="comment">
-			<img src="'.fetchGravatar($com_email, 30, 'r').'" style="float:right;margin-right:20px;" alt="Gravatar" />
-			<b><i>'.$com_name.'</i></b> says:<br/>
-			<p class="com-content">'.$com_text.'</p>
-			</div>';
-		}
-		else { echo '<p style="color:red">You forgot to fill in a field. Please fill in all the fields and try again.</p>'; }
-    }
-  
-	?>
-	
-	<h4 class="commentform-title">Post a comment</h4><br />
-	<form action="" method="post">
-    	<table>
-      		<tr><td>Name:</td><td><input name="username" type="text" /></td></tr>
-      		<tr><td>Email:</td><td><input name="email" type="text"/></td></tr>
-      		<tr><td>Website:</td><td><input name="website" type="text"/></td></tr>
-      		<tr><td>Post:</td><td><textarea cols="41" rows="10" name="text"></textarea></td></tr>
-      		<tr><td colspan="2"><input name="comment_submit" type="submit" value="Submit"/></td></tr>
-    	</table>
-  	</form>
-	</div>
+			<div id="content">
+				<!-- Start the loop -->
+				<?php if($result03->numRows() > 0): while($post = $result03->fetchObject()): $comments = $dbh->query("SELECT * FROM comments WHERE post_id=".(int)$post->id."") or die(sqlite_error_string($dbh->lastError)); ?>
+				<div class="postbox">
+					<h4 class="postnamealt">
+						<?php echo unescapeString($post->title); ?>
+					</h4>
+					<p class="post"><?php echo unescapeString($post->post); ?></p>
+					<div class="postdata">
+						<span class="postdata">
+							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/date.png" alt="" />
+							<?php echo date('F j, Y', $post->date); ?>
+						</span>
+						<span class="postdata">
+							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/user.png" alt="" />
+							<?php echo $post->author; ?>
+						</span>
+						<span class="postdata">
+							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/comment.png" alt="" />
+							<?php if($comments->numRows() == 1):
+								  echo $comments->numRows(); ?> Comment
+							<?php else:
+								  echo $comments->numRows(); ?> Comments
+							<?php endif; ?>							
+						</span>
+					</div>
+				</div>
+				<!-- End the loop -->			
+				<?php endwhile; endif; ?>
+				
+				<!-- Start comment loop -->
+				<?php if($result04->numRows() > 0): while($com = $result04->fetchObject()): ?>
+				<div class="comment">
+					<img class="comment_gravatar" src="<?php fetchGravatar($com->email,30) ?>" alt="" />
+					<?php if($com->website !== null) : ?>
+					<a class="comment_name" href="<?php echo $com->website ?>"><?php echo $com->name ?></a>
+					<?php else: ?>
+					<span class="comment_name"><?php echo $com->name ?></span>
+					<?php endif; ?>
+					<span class="comment_says"> says</span><br />
+					<span class="comment_date"><?php echo date('F j, Y at g:i A', $com->date) ?></span><br />
+					<p class="comment_text"><?php echo unescapeString($com->text) ?></p>
+				</div>
+				<!-- End commend loop -->
+				<?php endwhile; else: ?>
+				<span class="nocomments">No comments exist for this post.</span>
+				<?php endif; ?>
+				
+				<script type="text/javascript">
+				$(function() {
+					$('#commentform').submit(function() {
+						var inputs = [];
+						$(':input', this).each(function() {
+							inputs.push(this.name + '=' + escape(this.value));
+						})
+						jQuery.ajax({
+							data: inputs.join('&'),
+							type: "POST",
+							url: this.getAttribute('action'),
+							timeout: 2000,
+							error: function() {
+								$('#notifybox').text('Failed to submit <?php echo ucwords($type) ?>.').css("background","#b20000").slideDown("normal");
+								console.log("Failed to submit");
+								alert("Failed to submit.");
+							},
+							success: function(r) {
+								$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
+							}
+						})
+						return false;
+					})
+				});
+				</script>	
+				<h4 class="commentform-title">Post a comment</h4><br />
+				<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="commentform">
+					<table>
+						<tr><td>Name:</td><td><input name="username" type="text" /></td></tr>
+						<tr><td>Email:</td><td><input name="email" type="text"/></td></tr>
+						<tr><td>Website:</td><td><input name="website" type="text"/></td></tr>
+						<tr><td>Post:</td><td><textarea cols="41" rows="10" name="text"></textarea></td></tr>
+						<tr><td colspan="2"><input name="comment_submit" type="submit" value="Submit"/></td></tr>
+					</table>
+				</form>
+				<div class="clear"></div>
+			</div>

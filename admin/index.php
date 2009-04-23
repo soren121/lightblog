@@ -16,6 +16,10 @@
 
 ***********************************************/
 
+// Require config file
+require('../config.php');
+require(ABSPATH .'/Sources/Core.php');
+
 # check user status
 if(userFetch('username', 'r') !== null) {
 	header('Location: dashboard.php');
