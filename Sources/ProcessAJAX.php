@@ -95,4 +95,24 @@ if(isset($_POST['processregistration'])) {
 	die();
 }
 
+# Process comment submission
+if(isset($_POST['comment_submit'])) {
+	# Check if the required fields have been filled
+	if(strlen($_POST['name']) and strlen($_POST['email']) and strlen($_POST['text']) > 0) {
+		# Escape and format input
+		$name = sqlite_escape_string($_POST['name']);
+		$email = sqlite_escape_string($_POST['email']);
+		$website = sqlite_escape_string(htmlentities($_POST['website']));
+		$text = sqlite_escape_string(removeXSS($_POST['text']));
+		$post_id = (int)$_POST['post_id'];
+		$date = time();
+		# Insert comment into database
+		if(strlen($_POST['website']) > 0) {
+			$dbh->query("INSERT INTO comments (post_id,name,email,website,date,text) VALUES('$post_id','$name','$email','$website','$date','$text')");
+		} else {
+			$dbh->query("INSERT INTO comments (post_id,name,email,date,text) VALUES('$post_id','$name','$email','$date','$text')");
+		}
+	}
+}
+
 ?>

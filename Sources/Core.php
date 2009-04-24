@@ -34,7 +34,7 @@ function LightyVersion($output = 'e') {
 function bloginfo($var, $output = 'e') {
 	# Global the database handle
 	global $dbh;
-	# Static $bloginfo and null the value
+	# Make PHP remember $bloginfo next time
 	static $bloginfo = null;
 
 	if($bloginfo == null) {
