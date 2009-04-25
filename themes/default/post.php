@@ -20,6 +20,7 @@
 				<!-- End the loop -->			
 				<?php endwhile; endif; ?>
 				
+				<h4 class="commenthead"><?php echo $result04->numRows() ?> Comments</h5><br />
 				<!-- Start comment loop -->
 				<?php if($result04->numRows() > 0): while($com = $result04->fetchObject()): ?>
 				<div class="comment <?php alternateColor('c1','c2') ?>">
@@ -29,7 +30,7 @@
 					<?php else: ?>
 					<span class="comment_name"><?php echo $com->name ?></span>
 					<?php endif; ?>
-					<span class="comment_says"> says</span><br />
+					<span class="comment_says"> says:</span><br />
 					<span class="comment_date"><?php echo date('F j, Y \a\t g:i A', $com->date) ?></span><br />
 					<p class="comment_text"><?php echo unescapeString($com->text) ?></p>
 				</div>

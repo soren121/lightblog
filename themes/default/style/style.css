@@ -99,7 +99,7 @@ body {
 
 #content div.postdata {
 	padding: 5px;
-	margin: 8px 0 8px 0;
+	margin: 12px 0 8px 0;
 	background: #f9f9f9;
 	border: 1px solid #dfdfdf;
 	color: #000;
@@ -114,6 +114,15 @@ body {
 	margin: 0;
 	padding: 0;
 	vertical-align: bottom;
+}
+
+#content h4.commenthead {
+	font-size: 1.5em;
+	color: #333;
+	font-family:Georgia,Times,serif,sans-serif;
+	font-weight: normal;
+	margin: -10px 0 -10px 0;
+	padding: 0;
 }
 
 #content div.comment {
@@ -184,6 +193,7 @@ body {
 	height: 15px;
 	color: #000;
 	display: none;
+	margin: -10px 0 10px 0;
 }
 
 #sidebar { 
@@ -191,8 +201,9 @@ body {
 	color: #333;
 	margin: 10px;
 	padding: 0px;
-	width: 220px;
+	width: 150px;
 	float: right;
+	position: relative;
 }
 	
 #footer { 
