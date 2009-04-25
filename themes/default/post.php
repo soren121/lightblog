@@ -15,14 +15,6 @@
 							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/user.png" alt="" />
 							<?php echo $post->author; ?>
 						</span>
-						<span class="postdata">
-							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/comment.png" alt="" />
-							<?php if($comments->numRows() == 1):
-								  echo $comments->numRows(); ?> Comment
-							<?php else:
-								  echo $comments->numRows(); ?> Comments
-							<?php endif; ?>							
-						</span>
 					</div>
 				</div>
 				<!-- End the loop -->			
@@ -30,15 +22,15 @@
 				
 				<!-- Start comment loop -->
 				<?php if($result04->numRows() > 0): while($com = $result04->fetchObject()): ?>
-				<div class="comment">
-					<img class="comment_gravatar" src="<?php fetchGravatar($com->email,30) ?>" alt="" />
+				<div class="comment <?php alternateColor('c1','c2') ?>">
+					<img class="comment_gravatar" src="<?php fetchGravatar($com->email) ?>" alt="" />
 					<?php if($com->website !== null) : ?>
 					<a class="comment_name" href="<?php echo $com->website ?>"><?php echo $com->name ?></a>
 					<?php else: ?>
 					<span class="comment_name"><?php echo $com->name ?></span>
 					<?php endif; ?>
 					<span class="comment_says"> says</span><br />
-					<span class="comment_date"><?php echo date('F j, Y at g:i A', $com->date) ?></span><br />
+					<span class="comment_date"><?php echo date('F j, Y \a\t g:i A', $com->date) ?></span><br />
 					<p class="comment_text"><?php echo unescapeString($com->text) ?></p>
 				</div>
 				<!-- End commend loop -->
@@ -59,19 +51,20 @@
 							url: this.getAttribute('action'),
 							timeout: 2000,
 							error: function() {
-								$('#notifybox').text('Failed to submit <?php echo ucwords($type) ?>.').css("background","#b20000").slideDown("normal");
-								console.log("Failed to submit");
+								$('#notifybox').text('Failed to post comment.').css("background","#b20000").slideDown("normal");
+								console.log("Failed to submit.");
 								alert("Failed to submit.");
 							},
 							success: function(r) {
-								$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
+								$('#notifybox').html('Comment posted.').slideDown("normal");
 							}
 						})
 						return false;
 					})
 				});
-				</script>	
+				</script>
 				<h4 class="commentform-title">Post a comment</h4><br />
+				<div id="notifybox"></div>
 				<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="commentform">
 					<table>
 						<tr><td>Name:</td><td><input name="name" type="text" /></td></tr>

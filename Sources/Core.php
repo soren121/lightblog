@@ -52,15 +52,15 @@ function bloginfo($var, $output = 'e') {
 }
 
 // Function to fetch Gravatars
-function fetchGravatar($email, $size = 30, $output = 'e') {
+function fetchGravatar($email, $size = 32, $output = 'e') {
 	# Is the Gravatar being echoed?
 	if($output == 'e') {
 		# Yep, so echo the URL
-		echo "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size;
+		echo "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size."&amp;default=http://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=32";
 	}
 	else {
 		# It's not being echoed, so return the URL
-		return "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size;
+		return "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size."&amp;default=http://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=32";
 	}
 }
 
@@ -90,6 +90,25 @@ function userFetch($var, $output = 'e') {
 			return $_SESSION[$var];
 		}
 	}
+}
+
+// Function to alternate row colors
+function alternateColor($class1, $class2) {
+	# If $count isn't set, set it as 1
+	if(!isset($count)) { $count = 1; }
+	# Make it remember $count
+	static $count;
+	# Is it odd or even?
+	if($count % 2 == 0) {
+		# It's even!
+		echo $class1;
+	}
+	else {
+		# It's odd...
+		echo $class2;
+	}
+	# Increase $count by 1 for next time
+	$count++;
 }
 
 // Function to reduce the risk of a cross-site scripting attack (XSS)
