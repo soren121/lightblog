@@ -22,6 +22,8 @@ CREATE TABLE 'pages'(
 'date' INT(10) NOT NULL,
 'author' VARCHAR(20) NOT NULL);
 
+INSERT INTO pages VALUES('1','About','This is a page. It works like a post, but it lives outside of the hierachel world of posts. You can edit and delete it in the admin panel.','1240703031','LightBlog Devs');
+
 CREATE TABLE 'posts'(
 'id' INTEGER NOT NULL PRIMARY KEY DEFAULT '0',
 'title' VARCHAR(100) NOT NULL,
