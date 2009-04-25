@@ -35,9 +35,7 @@
 					<p class="comment_text"><?php echo unescapeString($com->text) ?></p>
 				</div>
 				<!-- End commend loop -->
-				<?php endwhile; else: ?>
-				<span class="nocomments">No comments exist for this post.</span>
-				<?php endif; ?>
+				<?php endwhile; endif; ?>
 				
 				<script type="text/javascript">
 				$(function() {
