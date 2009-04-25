@@ -185,7 +185,41 @@ body {
 	background: #f8f8f8 !important;
 }
 
-#notifybox {
+#content h4.commentform-title {
+	font-size: 1.3em;
+	color: #333;
+	font-family:Georgia,Times,serif,sans-serif;
+	font-weight: normal;
+	margin-bottom: -10px;
+	margin-top: 30px;
+}
+	
+#content #commentform {
+	margin: 5px 10px 0 0;
+}
+
+#content #commentform input {
+	width: 170px;
+	padding: 2px;
+	margin: 5px 5px 1px 0;
+}
+
+#content #commentform textarea {
+	width: 100%;
+	padding: 2px;
+	margin-top: 3px;
+}
+
+#content #commentform #cfsubmit {
+	margin: 5px -5px 5px auto;
+	float: right;
+}
+
+#content #commentform small {
+	line-height: 1.5em;
+}
+
+#content #notifybox {
 	background: #CFEBF7;
 	width: 455px;
 	border: 1px solid #2580B2;
@@ -193,7 +227,7 @@ body {
 	height: 15px;
 	color: #000;
 	display: none;
-	margin: -10px 0 10px 0;
+	margin: 0px 0 10px 0;
 }
 
 #sidebar { 

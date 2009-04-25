@@ -52,7 +52,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 					inputs.push(this.name + '=' + escape(this.value));
 				})
 				$('#wysiwyg', this).each(function() {
-					inputs.push(this.name + '=' + unescape(wysiwygtext));
+					inputs.push(this.name + '=' + escape(wysiwygtext));
 				})
 				jQuery.ajax({
 					data: inputs.join('&'),

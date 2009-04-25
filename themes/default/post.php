@@ -20,7 +20,7 @@
 				<!-- End the loop -->			
 				<?php endwhile; endif; ?>
 				
-				<h4 class="commenthead"><?php echo $result04->numRows() ?> Comments</h5><br />
+				<h4 class="commenthead"><?php echo $result04->numRows() ?> Comments</h4><br />
 				<!-- Start comment loop -->
 				<?php if($result04->numRows() > 0): while($com = $result04->fetchObject()): ?>
 				<div class="comment <?php alternateColor('c1','c2') ?>">
@@ -34,7 +34,7 @@
 					<span class="comment_date"><?php echo date('F j, Y \a\t g:i A', $com->date) ?></span><br />
 					<p class="comment_text"><?php echo unescapeString($com->text) ?></p>
 				</div>
-				<!-- End commend loop -->
+				<!-- End comment loop -->
 				<?php endwhile; endif; ?>
 				
 				<script type="text/javascript">
@@ -65,14 +65,15 @@
 				<h4 class="commentform-title">Post a comment</h4><br />
 				<div id="notifybox"></div>
 				<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="commentform">
-					<table>
-						<tr><td>Name:</td><td><input name="name" type="text" /></td></tr>
-						<tr><td>Email:</td><td><input name="email" type="text"/></td></tr>
-						<tr><td>Website:</td><td><input name="website" type="text"/></td></tr>
-						<tr><td>Post:</td><td><textarea cols="41" rows="10" name="text"></textarea></td></tr>
-						<tr><td colspan="2"><input name="comment_submit" type="submit" value="Submit"/></td></tr>
-						<tr><td colspan="2"><input name="post_id" type="hidden" value="<?php echo (int)$_GET['id'] ?>"/></td></tr>
-					</table>
+					<p><input name="name" type="text" id="cfname" />
+					<label for="cfname"><small>Name (required)</small></label></p>
+					<p><input name="email" type="text" id="cfemail" />
+					<label for="cfemail"><small>Email (required)</small></label></p>
+					<p><input name="website" type="text" id="cfwebsite" />
+					<label for="cfwebsite"><small>Website</small></label></p>
+					<p><textarea cols="41" rows="10" name="text" id="wysiwyg"></textarea></p>
+					<p><input name="comment_submit" type="submit" value="Submit" id="cfsubmit" /></p>
+					<p><input name="post_id" type="hidden" value="<?php echo (int)$_GET['id'] ?>" /></p>
 				</form>
 				<div class="clear"></div>
 			</div>
