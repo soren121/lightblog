@@ -51,13 +51,13 @@ body {
 }
 
 #header a:hover {
-	text-decoration: none;
+	text-decoration: underline;
 }
 
 #content { 
 	float: left;
 	color: #333;
-	margin: 0 10px 0 10px;
+	margin: 10px 10px 0 10px;
 	padding: 0 20px 0 20px;
 	width: 460px;
 	display: inline;
@@ -200,10 +200,42 @@ body {
 	display: inline;
 	color: #333;
 	margin: 10px;
-	padding: 0px;
-	width: 150px;
+	padding: 10px;
+	width: 180px;
 	float: right;
 	position: relative;
+}
+
+#sidebar div {
+	margin-bottom: 10px;
+}
+
+#sidebar div h4 {
+	font-size: 1.1em;
+	margin-bottom: 5px;
+}
+
+#sidebar div ul {
+	margin-left: 0px;
+	padding: 0 0 0 30px;
+	list-style: none;
+	padding-left: 10px;
+	text-indent: -10px;
+}
+
+#sidebar div ul li {
+	font-size: 0.9em;
+	list-style-type: none;
+	margin: 7px 0 8px 10px;
+}
+
+#sidebar div ul li:before {
+	content: "\00BB \0020";
+}
+
+#sidebar div ul li img.feed {
+	vertical-align: middle;
+	margin-right: 3px;
 }
 	
 #footer { 
