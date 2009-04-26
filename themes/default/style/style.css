@@ -20,9 +20,8 @@ body {
 
 #wrapper { 
 	background: #fff url('faux.png') repeat-y;
-	margin: auto;
+	margin: 20px auto 10px auto;
 	width: 740px;
-	margin-top: 20px;
 	padding-top: 4px;
 	border: 1px solid #a1a1a1;
 }

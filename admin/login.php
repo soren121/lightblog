@@ -20,6 +20,13 @@
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
+// Check for cookies
+if(isset($_COOKIE[bloginfo('title','r').'user']) && isset($_COOKIE[bloginfo('title','r').'pass'])) {
+	// set cookie info
+	$c_username = $_COOKIE[bloginfo('title','r').'user'];
+	$c_password = $_COOKIE[bloginfo('title','r').'pass'];
+}
+
 // Process normal login
 if(isset($_POST['proclogin'])) {
 	// get username from form
@@ -44,6 +51,11 @@ if(isset($_POST['proclogin'])) {
 			$hash = md5($salt.$_POST['password']);
 			// update password and salt
 			$dbh->query("UPDATE users SET password='".$hash."', salt='".$salt."';");
+			// if 'Remember me' was checked:
+			if(isset($_POST['remember'])) {
+				setcookie(bloginfo('title','r').'user', $user->username, time()+60*60*24*100, "/");
+				setcookie(bloginfo('title','r').'pass', $_POST['password'], time()+60*60*24*100, "/");
+			}
 			// send user to the dashboard	    
 			header('Location: dashboard.php');
 		}
@@ -61,26 +73,22 @@ if(isset($_GET['logout'])) {
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title><?php bloginfo('title') ?> - Login</title>
-<link rel="stylesheet" type="text/css" href="style/regstyle.css" />
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title><?php bloginfo('title') ?> - Login</title>
+	<link rel="stylesheet" type="text/css" href="style/regstyle.css" />
 </head>
 
 <body>
 <div id="registerbox">
-<h2 style="padding-top: 5px;"><?php bloginfo('title') ?></h2>
-<h3 style="padding-bottom: 5px;">Login</h3>
-<div id="tabs">
-    <div id="fragment-1">
-        <form action="" method="post">
-		<table style="margin-left: auto; margin-right: auto;">
-		<tr><td>Username:</td><td><input name="username" type="text" size="16" value="<?php echo $_GET['username']; ?>" /></td></tr>
-		<tr><td>Password:</td><td><input name="password" type="password" size="16" /></td></tr>
-		<tr><td colspan="2"><input name="proclogin" type="submit" value="Login"/></td></tr>
-		<tr><td colspan="2">[<a href="register.php">Register</a>]</td></tr>
-		<tr><td colspan="2">[<a href="forgotpass.php">Forgot password?</a>]</td></tr>
-		</table>
-		</form>
-    </div>
-</div>	
-</div></body></html>
+    <form action="" method="post">
+		<label for="username">Username</label>
+		<p><input name="username" type="text" size="16" value="<?php echo $c_username ?>" id="username" /></p>
+		<label for="password">Password</label>
+		<p><input name="password" type="password" size="16" id="password" value="<?php echo $c_password ?>" /></p>
+		<p class="remember"><input name="remember" type="checkbox" id="rememberme" />
+		<label for="rememberme">Remember Me</label></p>
+		<p><input name="proclogin" type="submit" value="Login" id="submit" /></p>
+	</form>	
+</div>
+</body>
+</html>
