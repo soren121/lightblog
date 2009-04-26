@@ -65,11 +65,11 @@
 				<h4 class="commentform-title">Post a comment</h4><br />
 				<div id="notifybox"></div>
 				<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="commentform">
-					<p><input name="name" type="text" id="cfname" />
+					<p><input name="name" type="text" id="cfname" maxlength="35" />
 					<label for="cfname"><small>Name (required)</small></label></p>
-					<p><input name="email" type="text" id="cfemail" />
+					<p><input name="email" type="text" id="cfemail" maxlength="255" />
 					<label for="cfemail"><small>Email (required)</small></label></p>
-					<p><input name="website" type="text" id="cfwebsite" />
+					<p><input name="website" type="text" id="cfwebsite" maxlength="255" />
 					<label for="cfwebsite"><small>Website</small></label></p>
 					<p><textarea cols="41" rows="10" name="text" id="wysiwyg"></textarea></p>
 					<p><input name="comment_submit" type="submit" value="Submit" id="cfsubmit" /></p>
