@@ -52,11 +52,11 @@ if(isset($_POST['proclogin'])) {
 			// update password and salt
 			$dbh->query("UPDATE users SET password='".$hash."', salt='".$salt."';");
 			// if 'Remember me' was checked:
-			if(isset($_POST['remember'])) {
-				setcookie(bloginfo('title','r').'user', $user->username, time()+60*60*24*100, "/");
-				setcookie(bloginfo('title','r').'pass', $_POST['password'], time()+60*60*24*100, "/");
+			if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
+				setcookie(bloginfo('title','r').'user', $user->username, time()+60*60*24*30, "/");
+				setcookie(bloginfo('title','r').'pass', $_POST['password'], time()+60*60*24*30, "/");
 			}
-			// send user to the dashboard	    
+			// send user to the dashboard
 			header('Location: dashboard.php');
 		}
 		else { echo 'Incorrect username or password!'; }	
@@ -75,14 +75,14 @@ if(isset($_GET['logout'])) {
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<title><?php bloginfo('title') ?> - Login</title>
-	<link rel="stylesheet" type="text/css" href="style/regstyle.css" />
+	<link rel="stylesheet" type="text/css" href="style/loginstyle.css" />
 </head>
 
 <body>
 <div id="registerbox">
     <form action="" method="post">
 		<label for="username">Username</label>
-		<p><input name="username" type="text" size="16" value="<?php echo $c_username ?>" id="username" /></p>
+		<p><input name="username" type="text" size="16" id="username" value="<?php echo $c_username ?>" /></p>
 		<label for="password">Password</label>
 		<p><input name="password" type="password" size="16" id="password" value="<?php echo $c_password ?>" /></p>
 		<p class="remember"><input name="remember" type="checkbox" id="rememberme" />
