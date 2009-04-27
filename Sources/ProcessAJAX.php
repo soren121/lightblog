@@ -56,43 +56,25 @@ if(isset($_POST['edit'])) {
 		if($type == 'post') { $ptext = $past->post; }
 		elseif($type == 'page') { $ptext = $past->page; }
 	}
+	# Set default query
 	$update = "UPDATE ".$type."s SET title='".$title."', ".$type."='".$text."' WHERE id=".$id;
+	# Run through possible change scenarios and update query
 	if($title == $ptitle and $text !== $ptext) { str_replace("title='".$title."',", "title='".$title."'", $update); }
 	if($title == $ptitle) { str_replace("title='".$title."'", "", $update); }
 	if($text == $ptext) { str_replace($type."='".$text."'", "", $update); }
 	if($title == $ptitle and $text == $ptext) {
+		# Nothing changed, so forget the query and send them the URL
 		echo bloginfo('url', 'r').$type.".php?id=".$id;
 		die();
 	}
 	else {
+		# Execute modified query
 		$dbh->query($update) or die(sqlite_error_string($dbh->lastError));		
 		# Return full url to page to jQuery
 		echo bloginfo('url', 'r').$type.".php?id=".$id;
 		# Prevent the rest of the page from loading
 		die();
 	}
-}
-
-# Process registration
-if(isset($_POST['processregistration'])) {
-	# Initiate MathValidator
-	require(ABSPATH .'/Sources/MathValidator.php');
-	$mv = new MathValidator;
-	# Generate and set salt
-	$salt = substr(md5(uniqid(rand(), true)), 0, 9);
-	# Set and escape all variables for easy access
-	$username = sqlite_escape_string($_POST['username']);
-	$password = md5($salt.$_POST['password']);
-	$email = sqlite_escape_string($_POST['email']);
-	$dname = sqlite_escape_string($_POST['dname']);
-	$ip = sqlite_escape_string($_SERVER['REMOTE_ADDR']);
-	$arians = (int)$_POST['arians'];
-	# Check math answer
-	if($mv->checkResult($arians, $_SESSION['mathvalidator_c']) == false) { echo "Incorrect answer!"; }
-	# Insert into database
-	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('".$username."', '".$password."', '".$email."', '".$displayname."', 0, '".$ip."', '".$salt."')");	
-	# Kill this file so jQuery can finish
-	die();
 }
 
 # Process comment submission
@@ -108,16 +90,16 @@ if(isset($_POST['comment_submit'])) {
 		$date = time();
 		# Insert comment into database
 		if(strlen($_POST['website']) > 0) {
-			$dbh->query("INSERT INTO comments (post_id,name,email,website,date,text) VALUES('$post_id','$name','$email','$website','$date','$text')");
+			$dbh->query("INSERT INTO comments (post_id,name,email,website,date,text) VALUES('$post_id','$name','$email','$website','$date','$text')") or die(sqlite_error_string($dbh->lastError));
 		} else {
-			$dbh->query("INSERT INTO comments (post_id,name,email,date,text) VALUES('$post_id','$name','$email','$date','$text')");
+			$dbh->query("INSERT INTO comments (post_id,name,email,date,text) VALUES('$post_id','$name','$email','$date','$text')") or die(sqlite_error_string($dbh->lastError));
 		}
 	}
 }
 
 # Process post/page deletion
 if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
-	# Delete post/page
+	# Execute query to delete post/page
 	$dbh->query("DELETE FROM ".sqlite_escape_string($_POST['type'])."s WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError));
 }
 
