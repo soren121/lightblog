@@ -45,6 +45,8 @@ require(ABSPATH .'/Sources/Core.php');
 				$(':input', this).each(function() {
 					inputs.push(this.name + '=' + escape(this.value));
 				})
+				$('.inform').remove();
+				$('#themesubmit').attr('disabled','disabled').after('<' + 'img src="style/loadingsmall.gif" alt="" class="loader" style="margin-left:5px;" />');
 				jQuery.ajax({
 					data: inputs.join('&'),
 					type: "POST",
@@ -55,7 +57,8 @@ require(ABSPATH .'/Sources/Core.php');
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						alert('Theme changed.');
+						$('.loader').remove();
+						$('#themesubmit').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">Theme changed.</' + 'span>');
 					}
 				})
 				return false;
@@ -73,14 +76,16 @@ require(ABSPATH .'/Sources/Core.php');
 		<div id="content">
 			<h2 class="title"><img class="textmid" src="style/design.png" alt="" />Choose Your Theme</h2>
 			<div class="settings">
+				<p>Themes are used to change the appearance of your blog. For more themes or information on how to
+					create your own, visit the LightBlog website.</p>
 				<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="themeform">
-					<p><label for="changetheme">Theme:</label>
-					<select name="changetheme" id="changetheme" />
+					<p class="label"><label for="changetheme">Available themes</label></p>
+					<p><select name="changetheme" id="changetheme">
 						<?php $dir = dirlist(ABSPATH .'/themes'); foreach($dir as $k => $v): ?>
 							<option value="<?php echo $v ?>"><?php echo $v ?></option>
 						<?php endforeach; ?>
-					</select>
-					<input type="submit" name="themesubmit" id="themesubmit" value="Change Theme" /></p>
+					</select></p>
+					<p><input type="submit" name="themesubmit" id="themesubmit" value="Save" /></p>
 				</form>
 			</div>
 		</div>
