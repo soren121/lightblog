@@ -39,6 +39,28 @@ require(ABSPATH .'/Sources/Core.php');
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
 		});
+		$(function() {
+			$('#themeform').submit(function() {
+				var inputs = [];
+				$(':input', this).each(function() {
+					inputs.push(this.name + '=' + escape(this.value));
+				})
+				jQuery.ajax({
+					data: inputs.join('&'),
+					type: "POST",
+					url: this.getAttribute('action'),
+					timeout: 2000,
+					error: function() {
+						console.log("Failed to submit");
+						alert("Failed to submit.");
+					},
+					success: function(r) {
+						alert('Theme changed.');
+					}
+				})
+				return false;
+			})
+		});
 	</script>
 </head>
 
@@ -52,9 +74,13 @@ require(ABSPATH .'/Sources/Core.php');
 			<h2 class="title"><img class="textmid" src="style/design.png" alt="" />Choose Your Theme</h2>
 			<div class="settings">
 				<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="themeform">
-					<p><label for="theme">Theme:</label>
-					<input type="text" name="theme" id="theme" /></p>
-					<p><input type="submit" name="themesubmit" id="themesubmit" value="Submit" /></p>
+					<p><label for="changetheme">Theme:</label>
+					<select name="changetheme" id="changetheme" />
+						<?php $dir = dirlist(ABSPATH .'/themes'); foreach($dir as $k => $v): ?>
+							<option value="<?php echo $v ?>"><?php echo $v ?></option>
+						<?php endforeach; ?>
+					</select>
+					<input type="submit" name="themesubmit" id="themesubmit" value="Change Theme" /></p>
 				</form>
 			</div>
 		</div>
