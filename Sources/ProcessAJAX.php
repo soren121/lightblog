@@ -103,4 +103,10 @@ if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
 	$dbh->query("DELETE FROM ".sqlite_escape_string($_POST['type'])."s WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError));
 }
 
+# Process theme change
+if(isset($_POST['themesubmit'])) {
+	# Execute query to change theme
+	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['changetheme'])."' WHERE variable='theme'");
+}
+
 ?>

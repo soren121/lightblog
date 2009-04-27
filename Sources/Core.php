@@ -111,6 +111,30 @@ function alternateColor($class1, $class2) {
 	$count++;
 }
 
+// Function to retrieve directory names or containing filenames
+function dirlist($dir, $bool = 'dirs'){
+	$truedir = $dir;
+	# Use scandir to scan the directory
+	$dir = scandir($dir);
+	# Set the correct type
+	if($bool == 'files') {
+		$direct = 'is_dir';
+    }
+	elseif($bool == 'dirs') {
+		$direct = 'is_file';
+    }
+	# Start a foreach loop
+    foreach($dir as $k => $v) {
+		# Unset what we don't want
+		if(($direct($truedir.$dir[$k])) || $dir[$k] == '.' || $dir[$k] == '..' ) {
+			unset($dir[$k]);
+		}
+	}
+	# Return the values of the array
+	$dir = array_values($dir);
+	return $dir;
+}
+
 // Function to reduce the risk of a cross-site scripting attack (XSS)
 function removeXSS($str) {
 	$str = htmlspecialchars($str, ENT_QUOTES);
