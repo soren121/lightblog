@@ -115,4 +115,10 @@ if(isset($_POST['comment_submit'])) {
 	}
 }
 
+# Process post/page deletion
+if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
+	# Delete post/page
+	$dbh->query("DELETE FROM ".sqlite_escape_string($_POST['type'])."s WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError));
+}
+
 ?>

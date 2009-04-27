@@ -51,7 +51,11 @@ require(ABSPATH .'/Sources/Core.php');
 		<div id="content">
 			<h2 class="title"><img class="textmid" src="style/design.png" alt="" />Choose Your Theme</h2>
 			<div class="settings">
-			Stuff!
+				<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="themeform">
+					<p><label for="theme">Theme:</label>
+					<input type="text" name="theme" id="theme" /></p>
+					<p><input type="submit" name="themesubmit" id="themesubmit" value="Submit" /></p>
+				</form>
 			</div>
 		</div>
 		<div id="footer" class="roundedb">		

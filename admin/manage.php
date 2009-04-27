@@ -42,21 +42,24 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
 		});
-		$('a.delete').click(function() {
-			var id = this.getAttribute('id');
-			jQuery.ajax({
-				data: "delete=true&type=<?php echo $type ?>&id=" + id,
-				type: "POST",
-				url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
-				timeout: 3000,
-				error: function() {
-					alert("Failed to delete <?php echo $type ?>.");
-				},
-				success: function(r) {
-					$('#tr'+id).slideUp('normal');
-				}
-			})	
-		});
+		function deleteItem(id,title) {
+			var answer = confirm("Really delete <?php echo $type ?> \"" + title + "\"?");
+			if(answer) {
+				jQuery.ajax({
+					data: "delete=true&type=<?php echo $type ?>&id=" + id,
+					type: "POST",
+					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
+					timeout: 3000,
+					error: function() {
+						alert("Failed to delete <?php echo $type ?>.");
+					},
+					success: function(r) {
+						var tr = '#tr' + id;
+						$(tr).slideUp('normal');
+					}
+				})
+			}
+		}
 	</script>
 </head>
 
@@ -94,7 +97,7 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 					<td class="managelist"><?php echo $post->author ?></td>
 					<td class="managelist"><?php echo date('n/j/Y', $post->date) ?></td>
 					<td class="managelist c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $post->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
-					<td class="managelist c"><a href="javascript:void(0)" id="<?php echo $post->id ?>"><img src="style/delete.png" alt="Delete" /></a></td>
+					<td class="managelist c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $post->id.', \''.$post->title.'\'' ?>);" style="cursor:pointer;" /></td>
 				</tr>
 				<?php endwhile; ?>
 				<!-- End row loop -->

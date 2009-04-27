@@ -23,8 +23,8 @@ require(ABSPATH .'/Sources/Core.php');
 // Check for cookies
 if(isset($_COOKIE[bloginfo('title','r').'user']) && isset($_COOKIE[bloginfo('title','r').'pass'])) {
 	// set cookie info
-	$c_username = $_COOKIE[bloginfo('title','r').'user'];
-	$c_password = $_COOKIE[bloginfo('title','r').'pass'];
+	$c_username = $_COOKIE[strtolower(bloginfo('title','r')).'user'];
+	$c_password = $_COOKIE[strtolower(bloginfo('title','r')).'pass'];
 }
 
 // Process normal login
@@ -53,8 +53,8 @@ if(isset($_POST['proclogin'])) {
 			$dbh->query("UPDATE users SET password='".$hash."', salt='".$salt."';");
 			// if 'Remember me' was checked:
 			if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
-				setcookie(bloginfo('title','r').'user', $user->username, time()+60*60*24*30, "/");
-				setcookie(bloginfo('title','r').'pass', $_POST['password'], time()+60*60*24*30, "/");
+				setcookie(strtolower(bloginfo('title','r')).'user', $user->username, time()+60*60*24*30, "/");
+				setcookie(strtolower(bloginfo('title','r')).'pass', $_POST['password'], time()+60*60*24*30, "/");
 			}
 			// send user to the dashboard
 			header('Location: dashboard.php');
