@@ -129,7 +129,7 @@ function dirlist($dir) {
 }
 
 // Function for identifying the number of comments
-function commentNum($id, $output = 1) {
+function commentNum($id, $output = 'e') {
 	// Make the database handle available here
 	global $dbh;
 	// Set the query
