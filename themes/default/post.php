@@ -32,7 +32,7 @@
 					<?php endif; ?>
 					<span class="comment_says"> says:</span><br />
 					<span class="comment_date"><?php echo date('F j, Y \a\t g:i A', $com->date) ?></span><br />
-					<p class="comment_text"><?php echo unescapeString($com->text) ?></p>
+					<p class="comment_text"><?php echo removeXSS(unescapeString($com->text)) ?></p>
 				</div>
 				<!-- End comment loop -->
 				<?php endwhile; endif; ?>

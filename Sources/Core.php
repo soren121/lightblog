@@ -96,7 +96,7 @@ function userFetch($var, $output = 'e') {
 function alternateColor($class1, $class2) {
 	# If $count isn't set, set it as 1
 	if(!isset($count)) { $count = 1; }
-	# Make it remember $count
+	# Make PHP remember $count
 	static $count;
 	# Is it odd or even?
 	if($count % 2 == 0) {
@@ -111,28 +111,38 @@ function alternateColor($class1, $class2) {
 	$count++;
 }
 
-// Function to retrieve directory names or containing filenames
-function dirlist($dir, $bool = 'dirs'){
+// Function to retrieve directory names
+function dirlist($dir) {
 	$truedir = $dir;
 	# Use scandir to scan the directory
 	$dir = scandir($dir);
-	# Set the correct type
-	if($bool == 'files') {
-		$direct = 'is_dir';
-    }
-	elseif($bool == 'dirs') {
-		$direct = 'is_file';
-    }
 	# Start a foreach loop
     foreach($dir as $k => $v) {
 		# Unset what we don't want
-		if(($direct($truedir.$dir[$k])) || $dir[$k] == '.' || $dir[$k] == '..' ) {
+		if(!is_dir($dir[$k]) == true) {
 			unset($dir[$k]);
 		}
 	}
 	# Return the values of the array
 	$dir = array_values($dir);
 	return $dir;
+}
+
+// Function for identifying the number of comments
+function commentNum($id, $output = 1) {
+	// Make the database handle available here
+	global $dbh;
+	// Set the query
+	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE post_id=".(int)$id);
+	// Query the database
+	@list($commentnum) = $query->fetch(SQLITE_NUM);
+	// Return or echo data
+	if($output == 'e') {
+		echo $commentnum;
+	}
+	else {
+		return $commentnum;
+	}
 }
 
 // Function to reduce the risk of a cross-site scripting attack (XSS)
@@ -207,7 +217,7 @@ function removeXSS($str) {
 		# Lets get going shall we?
 		foreach($matches['1'] as $key => $match) {
 			# We need to get the href out
-			if(preg_match('~href=(?:&quot;|&rsquo;)(.*?)(?:&quot;|&rsquo;)~is', $match, $sub_match)) {
+			if(preg_match('~href=(?:&quot;|&#039;)(.*?)(?:&quot;|&#039;)~is', $match, $sub_match)) {
 				# Sweet! We found it!
 				$url = $sub_match['1'];
 				# Get the protocol...
@@ -235,7 +245,7 @@ function removeXSS($str) {
 		$replacements = array();
 		foreach($matches['1'] as $key => $match) {
 			# Get out the src!
-			if(preg_match('~src=(?:&quot;|&rsquo;)(.*?)(?:&quot;|&rsquo;)~is', $str, $sub_match)) {
+			if(preg_match('~src=(?:&quot;|&#039;)(.*?)(?:&quot;|&#039;)~is', $str, $sub_match)) {
 				# So we got something!
 				$url = $sub_match['1'];
 				# Get the protocol
