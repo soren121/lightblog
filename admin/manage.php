@@ -42,6 +42,7 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
 		});
+		
 		function deleteItem(id,title) {
 			var answer = confirm("Really delete <?php echo $type ?> \"" + title + "\"?");
 			if(answer) {
@@ -79,6 +80,8 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Manage <?php echo ucwords($type) ?>s</h2>
 			<!-- Check if any posts/pages exist -->
 			<?php if($result->numRows() > 0): ?>
+			<div class="managelistwrap">
+			<div class="managelist">
 			<table class="managelist">
 				<!-- Add table headings -->
 				<tr class="managelist">
@@ -89,9 +92,13 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 					<th class="managelist">Edit</th>
 					<th class="managelist">Delete</th>
 				</tr>
+			</table>
+			</div>
 				<!-- Start row loop -->
 				<?php while($post = $result->fetchObject()): ?>
-				<tr class="managelist" id="tr<?php echo $post->id ?>">
+				<div id="tr<?php echo $post->id ?>" class="managelist">
+				<table>
+				<tr class="managelist">
 					<td class="managelist"><?php echo $post->id ?></td>
 					<td class="managelist"><?php echo $post->title ?></td>
 					<td class="managelist"><?php echo $post->author ?></td>
@@ -99,9 +106,11 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 					<td class="managelist c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $post->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
 					<td class="managelist c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $post->id.', \''.$post->title.'\'' ?>);" style="cursor:pointer;" /></td>
 				</tr>
+				</table>
+				</div>
 				<?php endwhile; ?>
 				<!-- End row loop -->
-			</table>
+			</div>
 			<!-- None exist error message -->
 			<?php else: ?>
 			<p>Sorry, no <?php echo $type ?>s exist to manage.</p>
