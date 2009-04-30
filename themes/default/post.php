@@ -1,6 +1,6 @@
 			<div id="content">
 				<!-- Start the loop -->
-				<?php if($result03->numRows() > 0): while($post = $result03->fetchObject()): $comments = $dbh->query("SELECT * FROM comments WHERE post_id=".(int)$post->id."") or die(sqlite_error_string($dbh->lastError)); ?>
+				<?php if($result03->numRows() > 0): while($post = $result03->fetchObject()): $commentnum = (int)$post->id; ?>
 				<div class="postbox">
 					<h4 class="postnamealt">
 						<?php echo unescapeString($post->title); ?>
@@ -20,7 +20,7 @@
 				<!-- End the loop -->			
 				<?php endwhile; endif; ?>
 				
-				<h4 class="commenthead"><?php echo $result04->numRows() ?> Comments</h4><br />
+				<h4 class="commenthead"><?php commentNum($commentnum) ?> Comments</h4><br />
 				<!-- Start comment loop -->
 				<?php if($result04->numRows() > 0): while($com = $result04->fetchObject()): ?>
 				<div class="comment <?php alternateColor('c1','c2') ?>">

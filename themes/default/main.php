@@ -1,6 +1,6 @@
 			<div id="content">
 				<!-- Start the loop -->
-				<?php if($result01->numRows() > 0): while($post = $result01->fetchObject()): $comments = $dbh->query("SELECT * FROM comments WHERE post_id=".(int)$post->id."") or die(sqlite_error_string($dbh->lastError)); ?>
+				<?php if($result01->numRows() > 0): while($post = $result01->fetchObject()): ?>
 				<div class="postbox">
 					<h4 class="postname">
 						<a class="postname" href="<?php bloginfo('url') ?>post.php?id=<?php echo (int)$post->id; ?>"><?php echo unescapeString($post->title); ?></a>
@@ -18,10 +18,10 @@
 						<span class="postdata">
 							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/comment.png" alt="" />
 							<a href="<?php bloginfo('url') ?>post.php?id=<?php echo (int)$post->id; ?>">
-							<?php if($comments->numRows() == 1):
-								  echo $comments->numRows(); ?> Comment</a>
+							<?php if(commentNum($post->id) == 1):
+								  commentNum($post->id) ?> Comment</a>
 							<?php else:
-								  echo $comments->numRows(); ?> Comments</a>
+								  commentNum($post->id) ?> Comments</a>
 							<?php endif; ?>							
 						</span>
 					</div>
