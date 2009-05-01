@@ -112,20 +112,18 @@ function alternateColor($class1, $class2) {
 }
 
 // Function to retrieve directory names
-function dirlist($dir) {
-	$truedir = $dir;
-	# Use scandir to scan the directory
-	$dir = scandir($dir);
-	# Start a foreach loop
-    foreach($dir as $k => $v) {
-		# Unset what we don't want
-		if(!is_dir($dir[$k]) == true) {
-			unset($dir[$k]);
-		}
+function dirlist($input) {
+	# Start foreach loop
+	foreach(glob($input.'/*', GLOB_ONLYDIR) as $dir) {
+		# Remove the containing directory
+		$dir = str_replace($input.'/', '', $dir);
+		# Place directories in an array
+		$array[$dir] = ucwords(strtolower($dir));
 	}
-	# Return the values of the array
-	$dir = array_values($dir);
-	return $dir;
+	# Sort the array into ascending order by values
+	asort($array);
+	# Return it!
+	return $array;
 }
 
 // Function for identifying the number of comments
@@ -136,12 +134,14 @@ function commentNum($id, $output = 'e') {
 	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE post_id=".(int)$id);
 	// Query the database
 	@list($commentnum) = $query->fetch(SQLITE_NUM);
+	// Strip leading zeros	
+	$return = substr('00', 1, 1); 
 	// Return or echo data
 	if($output == 'e') {
-		echo $commentnum;
+		echo $return;
 	}
 	else {
-		return $commentnum;
+		return $return;
 	}
 }
 
