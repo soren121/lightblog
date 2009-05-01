@@ -139,7 +139,7 @@ function commentNum($id, $output = 'e') {
 		echo $commentnum;
 	}
 	else {
-		return $return;
+		return $commentnum;
 	}
 }
 
