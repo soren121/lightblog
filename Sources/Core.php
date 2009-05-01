@@ -134,11 +134,9 @@ function commentNum($id, $output = 'e') {
 	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE post_id=".(int)$id);
 	// Query the database
 	@list($commentnum) = $query->fetch(SQLITE_NUM);
-	// Strip leading zeros	
-	$return = substr('00', 1, 1); 
 	// Return or echo data
 	if($output == 'e') {
-		echo $return;
+		echo $commentnum;
 	}
 	else {
 		return $return;

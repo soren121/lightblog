@@ -31,7 +31,7 @@ CREATE TABLE 'posts'(
 'date' INT(10) NOT NULL,
 'author' VARCHAR(20) NOT NULL);
 
-INSERT INTO 'posts' VALUES(1,'Welcome to LightBlog!','Welcome to LightBlog! We hope you enjoy it!<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1239321795,'LightBlog Devs');
+INSERT INTO 'posts' VALUES(1,'Welcome to LightBlog!','Welcome to LightBlog! We hope you enjoy it!<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1241136001,'LightBlog Devs');
 
 CREATE TABLE 'users'(
 'id' INTEGER NOT NULL PRIMARY KEY DEFAULT '0',
