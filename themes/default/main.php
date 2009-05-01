@@ -18,8 +18,11 @@
 						<span class="postdata">
 							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/comment.png" alt="" />
 							<a href="<?php bloginfo('url') ?>post.php?id=<?php echo (int)$post->id; ?>">
-							<?php commentNum((int)$post->id); ?> Comments
-							</a>
+							<?php if(commentNum((int)$post->id, 1) == 1):
+								  commentNum((int)$post->id) ?> Comment</a>
+							<?php else:
+								  commentNum((int)$post->id) ?> Comments</a>
+							<?php endif; ?>							
 						</span>
 					</div>
 				</div>
