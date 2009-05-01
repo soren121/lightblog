@@ -82,7 +82,7 @@ require(ABSPATH .'/Sources/Core.php');
 					<p class="label"><label for="changetheme">Available themes</label></p>
 					<p><select name="changetheme" id="changetheme">
 						<?php $dir = dirlist(ABSPATH .'/themes'); foreach($dir as $k => $v): ?>
-							<option value="<?php echo $v ?>"><?php echo $v ?></option>
+							<option value="<?php echo $k ?>"><?php echo $v ?></option>
 						<?php endforeach; ?>
 					</select></p>
 					<p><input type="submit" name="themesubmit" id="themesubmit" value="Save" /></p>

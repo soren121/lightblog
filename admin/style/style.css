@@ -91,28 +91,17 @@ body {
 	height: 190px;
 }
 
-#content div.managelistwrap {
-	margin: 10px 0 0 5px;
+#content table.managelist {
+	background: #F3F3F3;
+	width: 550px !important;
+	border-collapse: collapse;
 	border: 1px solid #ccc;
-	width: 550px;
-}
-
-#content div.managelist {
-	background: #F3F3F3;
-	width: 550px !important;
-	border-collapse: collapse;
-}
-
-#content div.managelist table {
-	background: #F3F3F3;
-	width: 550px !important;
-	border-collapse: collapse;
+	margin: 10px 0 0 5px;
 }
 
 #content tr.managelist {
 	border-bottom: 1px dashed #ccc;
 	height: 15px;
-	margin: 3px;
 }
 
 #content td,th.managelist {
