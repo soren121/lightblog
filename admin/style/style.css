@@ -114,6 +114,41 @@ body {
 	text-align: center;
 }
 
+#content div.pagination {
+	padding: 3px 3px 3px 2px;
+	margin: 5px 0 5px 0;
+	width: 550px;
+}
+
+#content div.pagination a {
+	padding: 2px 5px 2px 5px;
+	margin: 2px;
+	border: 1px solid #AAAADD;
+	text-decoration: none;
+	color: #000099;
+}
+
+#content div.pagination a:hover, div.pagination a:active {
+	border: 1px solid #000099;
+	color: #000;
+}
+
+#content div.pagination span.current {
+	padding: 2px 5px 2px 5px;
+	margin: 2px;
+	border: 1px solid #000099;
+	font-weight: bold;
+	background-color: #000099;
+	color: #FFF;
+}
+	
+#content div.pagination span.disabled {
+	padding: 2px 5px 2px 5px;
+	margin: 2px;
+	border: 1px solid #EEE;
+	color: #DDD;
+}
+
 #content div.settings {
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;

@@ -23,7 +23,16 @@ require(ABSPATH .'/Sources/Core.php');
 if((int)$_GET['type'] == 1) { $type = 'post'; }
 elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 
-$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
+# Functions to find the start and limit for a query based on the page number
+function findStart($input) { $input = $input - 1; return $input * 8; }
+function findLimit($input) { return findStart($input) * 8; }
+
+if($_GET['page'] > 1) {
+	$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT ".findStart($_GET['page']).",".findLimit($_GET['page'])) or die(sqlite_error_string($dbh->lastError));
+}
+else {
+	$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
+}
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -56,7 +65,7 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 					},
 					success: function(r) {
 						var tr = '#tr' + id;
-						$(tr).slideUp('normal');
+						$(tr).hide();
 					}
 				})
 			}
@@ -103,6 +112,7 @@ $result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc") or die(sqlite
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
+			<?php echo advancedPagination($type.'s', $_SERVER['PHP_SELF'].'?type='.(int)$_GET['type'], (int)$_GET['page']); ?>
 			<!-- None exist error message -->
 			<?php else: ?>
 			<p>Sorry, no <?php echo $type ?>s exist to manage.</p>
