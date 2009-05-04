@@ -42,6 +42,7 @@ body {
 	background: #3E8BBF;
 	height: 28px;
 	border-bottom: 4px solid #81B4D9;
+	position: relative;
 }
 
 #content { 
@@ -51,6 +52,8 @@ body {
  	margin: 0px 0px 0px 0px;
  	padding: 10px 10px 10px 20px;
  	min-height: 350px;
+	position: relative;
+	z-index: 2;
 }
 
 #content h2.title {
@@ -99,25 +102,27 @@ body {
 	margin: 10px 0 0 5px;
 }
 
-#content tr.managelist {
-	border-bottom: 1px dashed #ccc;
+#content table.managelist tr {
 	height: 15px;
 }
 
-#content td,th.managelist {
+#content table.managelist th, #content table.managelist td {
 	padding: 5px;
 	border-right: 1px dashed #ccc;
 	text-align: left;
+	border-bottom: 1px dashed #ccc;
 }
 
-#content .c {
-	text-align: center;
+#content td.c {
+	text-align: center !important;
 }
 
 #content div.pagination {
 	padding: 3px 3px 3px 2px;
 	margin: 5px 0 5px 0;
 	width: 550px;
+	position: absolute;
+	bottom: 10px;
 }
 
 #content div.pagination a {

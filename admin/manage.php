@@ -41,7 +41,10 @@ else {
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<title>Manage <?php echo ucwords($type) ?>s - <?php bloginfo('title') ?></title>
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
-	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
+	<!--[if lte IE 7]>
+	<style type="text/css">html.jqueryslidemenu { height: 1%; }</style>
+	<script src="<?php bloginfo('url') ?>Sources/IE8.js" type="text/javascript"></script>
+	<![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
@@ -91,7 +94,7 @@ else {
 			<?php if($result->numRows() > 0): ?>
 			<table class="managelist">
 				<!-- Add table headings -->
-				<tr class="managelist">
+				<tr>
 					<th class="managelist">ID</th>
 					<th class="managelist">Title</th>
 					<th class="managelist">Author</th>
@@ -101,13 +104,13 @@ else {
 				</tr>		
 				<!-- Start row loop -->
 				<?php while($post = $result->fetchObject()): ?>	
-				<tr class="managelist" id="tr<?php echo $post->id ?>" >
-					<td class="managelist"><?php echo $post->id ?></td>
-					<td class="managelist"><?php echo $post->title ?></td>
-					<td class="managelist"><?php echo $post->author ?></td>
-					<td class="managelist"><?php echo date('n/j/Y', $post->date) ?></td>
-					<td class="managelist c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $post->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
-					<td class="managelist c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $post->id.', \''.$post->title.'\'' ?>);" style="cursor:pointer;" /></td>
+				<tr id="tr<?php echo $post->id ?>">
+					<td><?php echo $post->id ?></td>
+					<td><?php echo $post->title ?></td>
+					<td><?php echo $post->author ?></td>
+					<td><?php echo date('n/j/Y', $post->date) ?></td>
+					<td class="c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $post->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
+					<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $post->id.', \''.$post->title.'\'' ?>);" style="cursor:pointer;" /></td>
 				</tr>
 				<?php endwhile; ?>
 				<!-- End row loop -->
