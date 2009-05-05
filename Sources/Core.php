@@ -333,8 +333,40 @@ function undoMagicArray($array, $max_depth = 1, $cur_depth = 0) {
 	}
 }
 
+# Function to show simple pagination links
+function simplePagination($direction, $type, $target, $page = 1, $limit = 6, $pagestring = "?page=") {
+	# Global the database handle so we can use it in this function
+	global $dbh;
+	# Set defaults
+	if(!$limit) $limit = 6;
+	if(!$page) $page = 1;
+	# Set the query to retrieve the number of rows
+	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($table)."s");
+	# Query the database
+	@list($totalitems) = $query->fetch(SQLITE_NUM);	
+	# Set various required variables
+	$prev = $page - 1;						# Previous page is page - 1
+	$next = $page + 1;						# Next page is page + 1
+	$lastpage = ceil($totalitems/$limit);	# Last page is = total items / items per page, rounded up.
+	$lpm1 = $lastpage - 1;					# Last page minus 1
+	
+	# Clear $pagination
+	$pagination = "";
+	# Do we have more than one page?
+	if($lastpage > 1) {
+		# Add the previous link
+		if($direction == 'l' && $page > 1) {
+			$pagination .= "<a href=\"" . $target . $pagestring . $prev . "\">« Previous Posts</a>";
+		}
+		# Add the next link
+		if($direction == 'r' && $page < $counter - 1) {
+			$pagination .= "<a href=\"" . $target . $pagestring . $next . "\">« Next Posts</a>";
+		}
+	}
+}
+
 # Function to return an advanced Digg-style pagination thingy
-function advancedPagination($table, $target, $page = 1, $limit = 8, $adjacents = 1, $pagestring = "&page=") {
+function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 1, $pagestring = "&page=") {
 	# Global the database handle so we can use it in this function
 	global $dbh;	
 	# Set defaults
@@ -342,7 +374,7 @@ function advancedPagination($table, $target, $page = 1, $limit = 8, $adjacents =
 	if(!$limit) $limit = 8;
 	if(!$page) $page = 1;
 	# Set teh query to retrieve the number of rows
-	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($table));
+	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($table)."s");
 	# Query the database
 	@list($totalitems) = $query->fetch(SQLITE_NUM);	
 	# Set various required variables
