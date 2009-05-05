@@ -341,7 +341,7 @@ function simplePagination($direction, $type, $target, $page = 1, $limit = 6, $pa
 	if(!$limit) $limit = 6;
 	if(!$page) $page = 1;
 	# Set the query to retrieve the number of rows
-	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($table)."s");
+	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($type)."s");
 	# Query the database
 	@list($totalitems) = $query->fetch(SQLITE_NUM);	
 	# Set various required variables
@@ -374,7 +374,7 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 	if(!$limit) $limit = 8;
 	if(!$page) $page = 1;
 	# Set teh query to retrieve the number of rows
-	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($table)."s");
+	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($type)."s");
 	# Query the database
 	@list($totalitems) = $query->fetch(SQLITE_NUM);	
 	# Set various required variables

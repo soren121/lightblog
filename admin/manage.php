@@ -41,10 +41,7 @@ else {
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<title>Manage <?php echo ucwords($type) ?>s - <?php bloginfo('title') ?></title>
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
-	<!--[if lte IE 7]>
-	<style type="text/css">html.jqueryslidemenu { height: 1%; }</style>
-	<script src="<?php bloginfo('url') ?>Sources/IE8.js" type="text/javascript"></script>
-	<![endif]-->
+	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style></script><![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
