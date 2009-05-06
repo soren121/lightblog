@@ -28,6 +28,9 @@
 				</div>
 				<!-- End the loop -->
 				<?php endwhile; endif; ?>
+				<div class="pagination">
+					<?php echo simplePagination('post', "index.php", (int)$_GET['page']); ?>
+				</div>
 		      
 			   <div class="clear"></div>
 			</div>

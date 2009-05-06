@@ -229,6 +229,18 @@ body {
 	margin: 0px 0 10px 0;
 }
 
+#content div.pagination {
+	width: 458px;
+}
+
+#content div.pagination a.prev {
+	float: left;
+}
+
+#content div.pagination a.next {
+	float: right;
+}
+
 #sidebar { 
 	display: inline;
 	color: #333;
