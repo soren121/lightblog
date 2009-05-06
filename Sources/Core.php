@@ -333,8 +333,8 @@ function undoMagicArray($array, $max_depth = 1, $cur_depth = 0) {
 	}
 }
 
-# Function to show simple pagination links
-function simplePagination($direction, $type, $target, $page = 1, $limit = 6, $pagestring = "?page=") {
+# Function to return simple pagination links
+function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "?page=") {
 	# Global the database handle so we can use it in this function
 	global $dbh;
 	# Set defaults
@@ -348,21 +348,22 @@ function simplePagination($direction, $type, $target, $page = 1, $limit = 6, $pa
 	$prev = $page - 1;						# Previous page is page - 1
 	$next = $page + 1;						# Next page is page + 1
 	$lastpage = ceil($totalitems/$limit);	# Last page is = total items / items per page, rounded up.
-	$lpm1 = $lastpage - 1;					# Last page minus 1
 	
 	# Clear $pagination
 	$pagination = "";
 	# Do we have more than one page?
-	if($lastpage > 1) {
+	if($totalitems > $limit) {
 		# Add the previous link
-		if($direction == 'l' && $page > 1) {
-			$pagination .= "<a href=\"" . $target . $pagestring . $prev . "\">« Previous Posts</a>";
+		if($page > 1) {
+			$pagination .= "<a href=\"" . $target . $pagestring . $prev . "\" class=\"prev\">« Older Posts</a>";
 		}
 		# Add the next link
-		if($direction == 'r' && $page < $counter - 1) {
-			$pagination .= "<a href=\"" . $target . $pagestring . $next . "\">« Next Posts</a>";
+		if($page < $lastpage) {
+			$pagination .= "<a href=\"" . $target . $pagestring . $next . "\" class=\"next\">Newer Posts »</a>";
 		}
 	}
+	# Return the links! Duh!
+	return $pagination;
 }
 
 # Function to return an advanced Digg-style pagination thingy
@@ -386,7 +387,7 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 	# Clear $pagination
 	$pagination = "";
 	# Do we have more than one page?
-	if($lastpage > 1) {	
+	if($totalitems > $limit) {	
 		# Start the pagination div
 		$pagination .= "<div class=\"pagination\">";
 		
