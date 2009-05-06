@@ -43,6 +43,7 @@ body {
 	height: 28px;
 	border-bottom: 4px solid #81B4D9;
 	position: relative;
+	z-index: 2;
 }
 
 #content { 
@@ -53,7 +54,7 @@ body {
  	padding: 10px 10px 10px 20px;
  	min-height: 350px;
 	position: relative;
-	z-index: 2;
+	z-index: 1;
 }
 
 #content h2.title {
