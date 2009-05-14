@@ -21,15 +21,15 @@ function randomString($length) {
 	// start with a blank string
 	$string = "";
 	// define possible characters
-	$possible = "0123456789bcdfghjkmnpqrstvwxyz";   
+	$possible = "0123456789bcdfghjkmnpqrstvwxyzBCDFGHJKMNPQRSTVWXYZ_!.$#?-";   
 	// set up a counter
 	$i = 0;    
 	// add random characters to $password until $length is reached
-	while ($i < $length) { 
+	while($i < $length) { 
 		// pick a random character from the possible ones
 		$char = substr($possible, mt_rand(0, strlen($possible)-1), 1);   
 		// we don't want this character if it's already in the string
-		if (!strstr($string, $char)) { 
+		if(!strstr($string, $char)) { 
 			$string .= $char;
 			$i++;
 		}
@@ -130,7 +130,10 @@ if(isset($_POST['isubmit'])) {
 	<meta name="generator" content="Geany 0.13/soren121" />
 	<script type="text/javascript" src="Sources/jQuery.js"></script>
 	<script type="text/javascript" src="Sources/jQuery.Corners.js"></script>
-	<script type="text/javascript" src="Sources/yetii.js"></script>
+	<script type="text/javascript" src="Sources/jQuery.MiniPages.js"></script>
+	<script type="text/javascript">	
+		$(document).ready(function(){ $('.rounded').corner(); $("#content").minipages(); });
+	</script>
 	<style type="text/css">
 	body {
 		text-align: center;
@@ -170,12 +173,6 @@ if(isset($_POST['isubmit'])) {
 
 <body>
 	<div class="rounded" id="content">
-		<ul id="content-nav" style="display: none;">
-			<li><a href="#tab1"></a></li>
-			<li><a href="#tab2"></a></li>
-			<li><a href="#tab3"></a></li>
-			<li><a href="#tab4"></a></li>
-		</ul>
 		<h2>LightBlog Installer</h2>
 		<div class="tab" id="tab1">
 			<h4>Welcome to the LightBlog installer.<br />First, we must check to see if your server meets the requirements to run LightBlog.</h4>
@@ -194,7 +191,7 @@ if(isset($_POST['isubmit'])) {
 				<button disabled="disabled" class="continue" onclick="tabber1.show(2); return false;">Continue</button>	
 			<?php else: ?>
 				<br />
-				<button class="continue" onclick="tabber1.show(2); return false;">Continue</button>
+				<button class="continue" onclick="jQuery().minipageShow(2); return false;">Continue</button>
 			<?php endif; ?>
 		</div>
 		<div class="tab" id="tab2">
@@ -218,7 +215,7 @@ if(isset($_POST['isubmit'])) {
 					},
 					success: function(r) {
 						$('#form-tab2').empty(); 
-						tabber1.show(3); return false;
+						jQuery().minipageShow(3); return false;
 					}
 				})
 				return false;
@@ -254,7 +251,7 @@ if(isset($_POST['isubmit'])) {
 					},
 					success: function(r) {
 						$('#form-tab2').empty(); 
-						tabber1.show(4); return false;
+						jQuery().minipageShow(3); return false;
 					}
 				})
 				return false;
@@ -293,9 +290,5 @@ if(isset($_POST['isubmit'])) {
 			<a href="index.php?install=true">Click here to go to the front page.</a>
 		</div>
 	</div>
-	<script type="text/javascript">
-		var tabber1 = new Yetii({ id: 'content' });
-		$(document).ready(function(){ $('.rounded').corner(); });
-	</script>
 </body>
 </html>
