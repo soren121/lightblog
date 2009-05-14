@@ -251,7 +251,7 @@ if(isset($_POST['isubmit'])) {
 					},
 					success: function(r) {
 						$('#form-tab2').empty(); 
-						jQuery().minipageShow(3); return false;
+						jQuery().minipageShow(4); return false;
 					}
 				})
 				return false;
