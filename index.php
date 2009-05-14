@@ -27,7 +27,7 @@ require('config.php');
 require(ABSPATH .'/Sources/Core.php');
 
 # Functions to find the start and limit for a query based on the page number
-function findStart($input) { return ($input + 1) * 6; }
+function findStart($input) { return ($input - 1) * 6; }
 function findLimit($input) { return findStart($input) * 6; }
 
 // Request posts and pages from database
