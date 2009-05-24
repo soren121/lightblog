@@ -25,10 +25,9 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 
 # Functions to find the start and limit for a query based on the page number
 function findStart($input) { $input = $input - 1; return $input * 8; }
-function findLimit($input) { return findStart($input) * 8; }
 
 if($_GET['page'] > 1) {
-	$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT ".findStart($_GET['page']).",".findLimit($_GET['page'])) or die(sqlite_error_string($dbh->lastError));
+	$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
 }
 else {
 	$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));

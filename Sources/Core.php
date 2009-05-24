@@ -184,11 +184,11 @@ function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "
 	if($totalitems > $limit) {
 		# Add the previous link
 		if($page > 1) {
-			$pagination .= "<a href=\"" . $target . $pagestring . $prev . "\" class=\"prev\">« Older Posts</a>";
+			$pagination .= "<a href=\"" . $target . $pagestring . $prev . "\" class=\"prev\">&laquo; Older Posts</a>";
 		}
 		# Add the next link
 		if($page < $lastpage) {
-			$pagination .= "<a href=\"" . $target . $pagestring . $next . "\" class=\"next\">Newer Posts »</a>";
+			$pagination .= "<a href=\"" . $target . $pagestring . $next . "\" class=\"next\">Newer Posts &raquo;</a>";
 		}
 	}
 	# Return the links! Duh!

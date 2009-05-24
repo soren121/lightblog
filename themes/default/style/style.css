@@ -26,12 +26,6 @@ body {
 	border: 1px solid #a1a1a1;
 }
 
-#faux {
-	margin-bottom: 5px;
-	overflow: auto;
-	width: 100%;
-}
-
 #header {
 	color: #fff;
 	width: 700px;
@@ -228,7 +222,7 @@ body {
 }
 
 #content div.pagination {
-	width: 440px;
+	width: 460px;
 }
 
 #content div.pagination a.prev {
@@ -288,6 +282,7 @@ body {
 	padding: 10px;
 	text-align: center;
 	font-size: 0.85em;
+	margin-top: 20px !important;
 }
 
 .clear { clear: both; background: none; }

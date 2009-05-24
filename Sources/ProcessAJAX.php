@@ -26,7 +26,7 @@ if(isset($_POST['create'])) {
 	$title = sqlite_escape_string($_POST['title']);
 	$text = sqlite_escape_string($_POST['text']);
 	$date = time();
-	$author = sqlite_escape_string(userFetch('realname', 'r'));
+	$author = sqlite_escape_string(userFetch('displayname', 'r'));
 	$type = $_POST['type'];
 	# Insert post/page into database
 	$dbh->query("INSERT INTO ".$type."s (title,".$type.",date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die(sqlite_error_string($dbh->lastError));
