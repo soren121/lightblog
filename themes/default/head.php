@@ -15,5 +15,3 @@
         <div id="header" class="rounded">
 			<h3><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a></h3>
 		</div>
-		
-		<div id="faux">

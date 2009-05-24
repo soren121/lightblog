@@ -46,6 +46,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 		});
 		$(function() {
 			$('#create').submit(function() {
+				$('#notifybox').slideUp('normal').empty();
 				var inputs = [];
 				var wysiwygtext = nicEditors.findEditor('wysiwyg').getContent();
 				$('.cf', this).each(function() {
@@ -66,6 +67,8 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 					},
 					success: function(r) {
 						$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
+						$('.hint').val('');
+						nicEditors.findEditor('wysiwyg').setContent('');
 					}
 				})
 				return false;
