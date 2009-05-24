@@ -91,8 +91,11 @@ if(isset($_POST['comment_submit'])) {
 		# Insert comment into database
 		if(strlen($_POST['website']) > 0) {
 			$dbh->query("INSERT INTO comments (post_id,name,email,website,date,text) VALUES('$post_id','$name','$email','$website','$date','$text')") or die(sqlite_error_string($dbh->lastError));
-		} else {
+			echo $_POST['name'].'&'.$_POST['email'].'&'.$_POST['website'].'&'.$_POST['text'];
+		} 
+		else {
 			$dbh->query("INSERT INTO comments (post_id,name,email,date,text) VALUES('$post_id','$name','$email','$date','$text')") or die(sqlite_error_string($dbh->lastError));
+			echo $_POST['name'].'&'.$_POST['email'].'&'.$_POST['text'];
 		}
 	}
 }

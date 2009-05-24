@@ -36,7 +36,7 @@ function bloginfo($var, $output = 'e') {
 	global $dbh;
 	# Make PHP remember $bloginfo next time
 	static $bloginfo = null;
-
+	# If this is the first time bloginfo's been called...
 	if($bloginfo == null) {
 		$result = $dbh->query('SELECT * FROM core') or die(sqlite_error_string($dbh->lastError));
 		# Let's make an array!
@@ -56,37 +56,27 @@ function fetchGravatar($email, $size = 32, $output = 'e') {
 	# Is the Gravatar being echoed?
 	if($output == 'e') {
 		# Yep, so echo the URL
-		echo "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size."&amp;default=http://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=32";
+		echo "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".(int)$size."&amp;default=http://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=".(int)$size;
 	}
 	else {
 		# It's not being echoed, so return the URL
-		return "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".$size."&amp;default=http://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=32";
+		return "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".(int)$size."&amp;default=http://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=".(int)$size;
 	}
 }
 
 // Function to fetch user data
 function userFetch($var, $output = 'e') {
-	# Is this being echoed?
-	if($output == 'e') {
-		# Does that value exist?
-		if(!isset($_SESSION[$var])) { 
-			# Nope, so return nothing
-			return null;
-		}
-		else {
-			# It exists, so echo it
+	# Does that value exist?
+	if(!isset($_SESSION[$var])) { 
+		# Nope, so return nothing
+		return null;
+	}
+	else {
+		# It exists, so echo/return it
+		if($output == 'e') {
 			echo $_SESSION[$var];
 		}
-	}
-	# It's not echoing, so we'll return it
-	else { 
-		# Does the value exist?
-		if(!isset($_SESSION[$var])) { 
-			# Nope, so return nothing
-			return null;
-		}
 		else {
-			# Return it like they asked
 			return $_SESSION[$var];
 		}
 	}
@@ -113,7 +103,7 @@ function alternateColor($class1, $class2) {
 
 // Function to retrieve directory names
 function dirlist($input) {
-	# Start foreach loop
+	# Start foreach loop and set search pattern
 	foreach(glob($input.'/*', GLOB_ONLYDIR) as $dir) {
 		# Remove the containing directory
 		$dir = str_replace($input.'/', '', $dir);
@@ -131,7 +121,7 @@ function commentNum($id, $output = 'e') {
 	// Make the database handle available here
 	global $dbh;
 	// Set the query
-	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE post_id=".(int)$id);
+	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE post_id=".(int)$id) or die(sqlite_error_string($dbh->lastError));
 	// Query the database
 	@list($commentnum) = $query->fetch(SQLITE_NUM);
 	// Return or echo data
@@ -180,7 +170,7 @@ function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "
 	if(!$limit) $limit = 6;
 	if(!$page) $page = 1;
 	# Set the query to retrieve the number of rows
-	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($type)."s");
+	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($type)."s") or die(sqlite_error_string($dbh->lastError));
 	# Query the database
 	@list($totalitems) = $query->fetch(SQLITE_NUM);	
 	# Set various required variables
@@ -214,7 +204,7 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 	if(!$limit) $limit = 8;
 	if(!$page) $page = 1;
 	# Set teh query to retrieve the number of rows
-	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($type)."s");
+	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($type)."s") or die(sqlite_error_string($dbh->lastError));
 	# Query the database
 	@list($totalitems) = $query->fetch(SQLITE_NUM);	
 	# Set various required variables
@@ -318,6 +308,53 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 	}
 	# Return the final pagination div
 	return $pagination;
+}
+
+// Login function
+function login($method) {
+	// Global the database handle so we can use it
+	global $dbh;
+	// Are we logging the user in via username/password?
+	if($method == 'userpass') {
+		// Set easy variables and escape username
+		$username = sqlite_escape_string($_POST['username']);
+		$password = $_POST['password'];
+		// Does that user exist?
+		$saltquery = $dbh->query("SELECT salt FROM users WHERE username='$username'") or null;
+		// Well?
+		if($saltquery !== null) {
+			// It exists, so recreate the password hash so we can match it
+			$passhash = md5($saltquery->fetchSingle().$password);
+			// Retrieve all user data
+			$userquery = $dbh->query("SELECT * FROM users WHERE username='$username'") or die(sqlite_error_string($dbh->lastError));
+			// Start the while loop
+			while($user = $userquery->fetchObject()) {
+				// Does the provided password match the database hash?
+				if($passhash == $user->password) {	
+					// Send the user data to the session
+					$_SESSION['username'] = $user->username;
+					$_SESSION['email'] = $user->email;
+					$_SESSION['displayname'] = $user->displayname;
+					$_SESSION['role'] = $user->role;
+					// Resalt password
+					$salt = substr(md5(uniqid(rand(), true)), 0, 9);
+					$passhash = md5($salt.$password);
+					// Send new hash and salt to database
+					$dbh->query("UPDATE users SET password='$passhash', salt='$salt'");
+					// Does the user want to remember their data?
+					if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
+						setcookie(strtolower(bloginfo('title','r')).'user', $user->username, time()+60*60*24*30, "/");
+						setcookie(strtolower(bloginfo('title','r')).'pass', $_POST['password'], time()+60*60*24*30, "/");
+					}
+					// Send the user to the dashboard
+					header('Location: '.bloginfo('url','r').'admin/');
+				}
+			}
+		}
+	}
+	elseif($method == 'openid') {
+	
+	}
 }
 
 ?>

@@ -29,44 +29,13 @@ if(isset($_COOKIE[bloginfo('title','r').'user']) && isset($_COOKIE[bloginfo('tit
 
 // Process normal login
 if(isset($_POST['proclogin'])) {
-	// get username from form
-	$username = $_POST['username'];
-	// fetch salt from database
-	$result10 = $dbh->query("SELECT salt FROM users WHERE username='".sqlite_escape_string($username)."'");
-	$salt = $result10->fetchSingle();
-	// recreate password hash
-	$password = md5($salt.$_POST['password']);
-	// fetch user info from database
-	$result11 = $dbh->query("SELECT * FROM users WHERE username='".sqlite_escape_string($username)."'") or die("Incorrect username or password!");
-	while($user = $result11->fetchObject()) {
-		// check if username and password are correct
-		if($user->username == $username and $user->password == $password) {
-			// send username, email, display name, and role to session
-			$_SESSION['username'] = $user->username;
-			$_SESSION['email'] = $user->email;
-			$_SESSION['realname'] = $user->displayname;
-			$_SESSION['role'] = $user->role;
-			// create new salt
-			$salt = substr(md5(uniqid(rand(), true)), 0, 9);
-			$hash = md5($salt.$_POST['password']);
-			// update password and salt
-			$dbh->query("UPDATE users SET password='".$hash."', salt='".$salt."';");
-			// if 'Remember me' was checked:
-			if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
-				setcookie(strtolower(bloginfo('title','r')).'user', $user->username, time()+60*60*24*30, "/");
-				setcookie(strtolower(bloginfo('title','r')).'pass', $_POST['password'], time()+60*60*24*30, "/");
-			}
-			// send user to the dashboard
-			header('Location: dashboard.php');
-		}
-		else { echo 'Incorrect username or password!'; }	
-   }
+	login('userpass');
 }
 	
 // Logout the user
 if(isset($_GET['logout'])) {
 	// destroy their session and send them to the main page
-	session_destroy(); header('Location: '.bloginfo('url', 'r').'index.php');
+	session_destroy(); header('Location: '.bloginfo('url', 'r'));
 }
 
 ?>
@@ -79,6 +48,9 @@ if(isset($_GET['logout'])) {
 </head>
 
 <body>
+<?php if($inotice == true): ?>
+	<span style="color:red;text-align:center;">Incorrect username or password.</span>
+<?php endif; ?>
 <div id="registerbox">
     <form action="" method="post">
 		<label for="username">Username</label>
