@@ -58,9 +58,7 @@ body {
 	color: #333;
 	margin: 10px 10px 0 10px;
 	padding: 0 20px 0 20px;
-	width: 460px;
-	position: relative;
-	z-index: 1;
+	width: 450px;
 }
 
 #content div.postbox {
@@ -230,7 +228,7 @@ body {
 }
 
 #content div.pagination {
-	width: 458px;
+	width: 440px;
 }
 
 #content div.pagination a.prev {

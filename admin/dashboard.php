@@ -47,7 +47,7 @@ require(ABSPATH .'/Sources/Core.php');
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
-			<h2 class="title">Welcome <?php userFetch('realname') ?>!</h2> 
+			<h2 class="title">Welcome <?php userFetch('displayname') ?>!</h2> 
 		</div>
 		<div id="footer" class="roundedb">		
 			Powered by LightBlog <?php LightyVersion() ?>    
