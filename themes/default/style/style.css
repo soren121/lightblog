@@ -278,11 +278,10 @@ body {
 	width: 700px;
 	clear: both;
 	color: #333;
-	margin: 0px 0px 10px 0px;
-	padding: 10px;
+	margin: 10px 0px 10px 0px;
+	padding: 20px 10px 10px 10px;
 	text-align: center;
 	font-size: 0.85em;
-	margin-top: 20px !important;
 }
 
 .clear { clear: both; background: none; }

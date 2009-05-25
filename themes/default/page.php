@@ -19,3 +19,5 @@
 				</div>
 				<!-- End the loop -->			
 				<?php endwhile; endif; ?>
+				<div class="clear"></div>
+			</div>

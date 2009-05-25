@@ -112,4 +112,16 @@ if(isset($_POST['themesubmit'])) {
 	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['changetheme'])."' WHERE variable='theme'");
 }
 
+# Process title change
+if(isset($_POST['titlesubmit'])) {
+	# Execute query to change title
+	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['title'])."' WHERE variable='title'");
+}
+
+# Process URL change
+if(isset($_POST['urlsubmit'])) {
+	# Execute query to change url
+	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['url'])."' WHERE variable='url'");
+}
+
 ?>
