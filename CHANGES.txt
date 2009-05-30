@@ -1,20 +1,17 @@
-[03.28.09] Changes in 0.9.1
+[05.30.09] Changes in 0.9.2
 	* Basic theme support
 	* New AJAX installer
+	* New AJAX administration panel
 	* Absolute path system
 	* New config file
 	* New Core file
-	* Included MathValidator class for human validation
 	* Included Akismet class for spam protection
 	* Included FeedWriter class for RSS2/Atom feeds
-	* Included Yetii script for JavaScript tabs
-	* Removed jQuery UI in favor of Yetii
-        * Removed OpenID library due to bad implementation
-	* Patched cross-site-scripting vulnerabilities
+    * Removed OpenID library due to bad implementation
+	* Patched XSS vulnerabilities
 	* Patched SQL injection vulnerabilities
 	* Componentized installer
-	* Included actual license
-	* Seperated presentational theme from business
+	* Included GPL v3 license
 	* New feed system
 	* Renamed rss.php to feed.php
 	* Added CHANGES.txt

@@ -1,18 +1,9 @@
-/***********************************************
+/****************************************************
 
-	LightBlog 0.9
-	SQLite blogging platform
+	jQuery MiniPages Plugin v1.0, ©2009 soren121.
+	Licensed under the GNU GPL version 3.
 	
-	Sources/jQuery.MiniPages.js
-	
-	©2009 soren121. All rights reserved.
-	Released under the GNU General
-	Public License. For all licensing
-	information, please see the
-	LICENSE.txt document included in this
-	distribution.
-
-***********************************************/
+****************************************************/
 
 jQuery.fn.minipages = function() {
 	id = this.attr("id");

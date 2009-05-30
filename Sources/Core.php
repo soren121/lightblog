@@ -121,7 +121,7 @@ function commentNum($id, $output = 'e') {
 	// Make the database handle available here
 	global $dbh;
 	// Set the query
-	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE post_id=".(int)$id) or die(sqlite_error_string($dbh->lastError));
+	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE pid=".(int)$id) or die(sqlite_error_string($dbh->lastError));
 	// Query the database
 	@list($commentnum) = $query->fetch(SQLITE_NUM);
 	// Return or echo data
@@ -355,6 +355,35 @@ function login($method) {
 	elseif($method == 'openid') {
 	
 	}
+}
+
+// Function to clean form input to reduce the risk of XSS attacks
+function cleanHTML($str) {
+	// Remove empty space
+	$str = trim($str);
+	// Prevent Unicode codec problems
+	$str = utf8_decode($str);
+	// Strip out CDATA
+	preg_match_all('/<!\[cdata\[(.*?)\]\]>/is', $str, $matches);
+    $str = str_replace($matches[0], $matches[1], $str);
+	// Strip out all JavaScript
+    $str = preg_replace("/href=(['\"]).*?javascript:(.*)?\\1/i", "onclick=' $2 '", $str);
+    while(preg_match("/<(.*)?javascript.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", $str))
+        $str = preg_replace("/<(.*)?javascript.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", "<$1$3$4$5>", $str);
+    // Remove all expressions
+	$str = preg_replace("/:expression\(.*?((?>[^(.*?)]+)|(?R)).*?\)\)/i", "", $str);
+    while(preg_match("/<(.*)?:expr.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", $str))
+        $str = preg_replace("/<(.*)?:expr.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", "<$1$3$4$5>", $str);
+	// Remove all on* attributes
+    while(preg_match("/<(.*)?\s?on.+?=?\s?.+?(['\"]).*?\\2\s?(.*)?>/i", $str))
+       $str = preg_replace("/<(.*)?\s?on.+?=?\s?.+?(['\"]).*?\\2\s?(.*)?>/i", "<$1$3>", $str);
+	// Strip all but allowed tags
+	$str = strip_tags($str, "<b><strong><i><em><u><a><img><quote><p>");
+	// Convert symbols to HTML entities to kill hex attacks
+	$str = str_replace("#", "&#35;", $str);
+	$str = str_replace("%", "&#37;", $str);
+	// Return the final string
+	return $str;
 }
 
 ?>
