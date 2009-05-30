@@ -16,97 +16,42 @@
 
 *********************************************/
 
-// Open config if not open
+// Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
-	
-if(isset($_POST['updpass'])) {
-	$newpass = $_POST['newpass'];
-	$cnfpass = $_POST['cnfpass'];
-	if($newpass == $cnfpass) {
-		$crtpass = md5($cnfpass);
-		$dbh->query("UPDATE users SET password='".$crtpass."' WHERE username='".$_SESSION['username']."'") or die(sqlite_error_string($dbh->lastError));		
-		echo '<p style="color: #fff; text-align: center;">Password updated.</p>';		
-	}
-	else { echo'Passwords don\'t match!'; }
-}
-	
-if(isset($_POST['updemail'])) {
-	$newemail = $_POST['newemail'];
-	$cnfemail = $_POST['cnfemail'];
-	if($newemail == $cnfemail) {
-		$crtemail = $cnfemail;
-		$dbh->query("UPDATE users SET email='".$crtemail."' WHERE username='".$_SESSION['username']."'") or die(sqlite_error_string($dbh->lastError));
-		$_SESSION['email'] = $newemail;
-		echo '<p style="color: #000; text-align: center;">Email updated.</p>';
-	}
-	else { echo'Emails don\'t match!'; }
-}
-	
-if(isset($_POST['linkopenid'])) {
-	require('openidlib.php');
-	$openid = new SimpleOpenID;
-	$openid = $openid->OpenID_Standarize($_SESSION['openid_url']);
-	$dbh->query("UPDATE users SET openid='".$openid."' WHERE username='".$_POST['username']."' AND password='".md5($_POST['password'])."'") or die(sqlite_error_string($dbh->lastError));
-}
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title><?php echo $site_name; ?></title>
-	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-	<meta name="generator" content="Geany 0.13/soren121" />
-	<link rel="stylesheet" href="style/style.css" type="text/css" media="screen" />
-	<!--[if IE]>
-	<link rel="stylesheet" href="style/iefix.css" type="text/css" media="screen" />
-	<![endif]-->
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>User Profile - <?php bloginfo('title') ?></title>
+	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
+	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){ 
+			$('.rounded').corner(); 
+			$('.roundedt').corner("round top 10px"); 
+			$('.roundedb').corner("round bottom 10px");
+		});
+	</script>
 </head>
 
 <body>
-<div id="container">
-	<div id="header">
-		<div id="headerimg">
-			<img class="headerimg" src="style/title.png" alt="LightBlog" />
+	<div id="wrapper">
+		<div id="header" class="roundedt">
+			<a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>	 
 		</div>
+		<?php include('menu.php'); ?>
+		<div id="content">
+			<h2 class="title"><img class="textmid" src="style/users.png" alt="" />User Profile</h2>
+		</div>
+		<div id="footer" class="roundedb">		
+			Powered by LightBlog <?php LightyVersion() ?>    
+	    </div>
 	</div>
-	<?php include('admside.php'); ?>
-	<div id="content">
-	<h2>Profile</h2><br />
-	<table><tr>
-	<td><img src="<?php fetchGravatar($_SESSION['email'], 60) ?>" alt="Gravatar" /></td>
-	<td class="profileinfo">Username: <?php echo $_SESSION['username'] ?><br />
-	Email: <?php echo $_SESSION['email'] ?><br />
-	Real Name: <?php echo $_SESSION['realname'] ?><br />
-	Rank: <?php if($_SESSION['uservip'] >= 1) { echo'Admin'; } else { echo 'Normal'; } ?></td></tr></table><br />
-		<?php if(isset($_SESSION['openid_url'])): ?>		
-		<h3>Link your OpenID</h3><br />
-			<p>You can link your OpenID to your regular account for easier login.</p><br />
-			<form action="" method="post">
-      		<table>
-      		<tr><td>Username: </td><td colspan="2"><input name="username" type="text" /></td></tr>
-      		<tr><td>Password: </td><td colspan="2"><input name="password" type="password" /></td></tr>
-      		<tr><td>&nbsp;</td><td colspan="2"><input name="linkopenid" type="submit" value="Link!"/></td></tr>
-    		</table></form><br />
-		<?php else: ?>
-		<h3>Update password</h3><br />
-			<form action="" method="post">
-      		<table>
-      		<tr><td>New password: </td><td colspan="2"><input name="newpass" type="password" /></td></tr>
-      		<tr><td>Confirm password: </td><td colspan="2"><input name="cnfpass" type="password" /></td></tr>
-      		<tr><td>&nbsp;</td><td colspan="2"><input name="updpass" type="submit" value="Update"/></td></tr>
-    		</table></form><br />
-		<h3>Update email</h3><br />
-			<form action="" method="post">
-      		<table>
-      		<tr><td>New email: </td><td colspan="2"><input name="newemail" type="text" /></td></tr>
-      		<tr><td>Confirm email: </td><td colspan="2"><input name="cnfemail" type="text" /></td></tr>
-      		<tr><td>&nbsp;</td><td colspan="2"><input name="updemail" type="submit" value="Update"/></td></tr>
-    		</table></form>
-		<?php endif; ?>
-	</div>
-</div>
 </body>
 </html>

@@ -77,29 +77,6 @@ if(isset($_POST['edit'])) {
 	}
 }
 
-# Process comment submission
-if(isset($_POST['comment_submit'])) {
-	# Check if the required fields have been filled
-	if(strlen($_POST['name']) and strlen($_POST['email']) and strlen($_POST['text']) > 0) {
-		# Escape and format input
-		$name = sqlite_escape_string($_POST['name']);
-		$email = sqlite_escape_string($_POST['email']);
-		$website = sqlite_escape_string(htmlentities($_POST['website']));
-		$text = sqlite_escape_string(removeXSS($_POST['text']));
-		$post_id = (int)$_POST['post_id'];
-		$date = time();
-		# Insert comment into database
-		if(strlen($_POST['website']) > 0) {
-			$dbh->query("INSERT INTO comments (post_id,name,email,website,date,text) VALUES('$post_id','$name','$email','$website','$date','$text')") or die(sqlite_error_string($dbh->lastError));
-			echo $_POST['name'].'&'.$_POST['email'].'&'.$_POST['website'].'&'.$_POST['text'];
-		} 
-		else {
-			$dbh->query("INSERT INTO comments (post_id,name,email,date,text) VALUES('$post_id','$name','$email','$date','$text')") or die(sqlite_error_string($dbh->lastError));
-			echo $_POST['name'].'&'.$_POST['email'].'&'.$_POST['text'];
-		}
-	}
-}
-
 # Process post/page deletion
 if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
 	# Execute query to delete post/page
@@ -113,15 +90,15 @@ if(isset($_POST['themesubmit'])) {
 }
 
 # Process title change
-if(isset($_POST['titlesubmit'])) {
+if(isset($_POST['changetitle'])) {
 	# Execute query to change title
-	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['title'])."' WHERE variable='title'");
+	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['changetitle'])."' WHERE variable='title'");
 }
 
 # Process URL change
-if(isset($_POST['urlsubmit'])) {
+if(isset($_POST['changeurl'])) {
 	# Execute query to change url
-	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['url'])."' WHERE variable='url'");
+	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['changeurl'])."' WHERE variable='url'");
 }
 
 ?>

@@ -38,13 +38,13 @@ require(ABSPATH .'/Sources/Core.php');
 			$('.roundedb').corner("round bottom 10px");
 		});
 		$(function() {
-			$('#titleform').submit(function() {
+			$('form').submit(function() {
 				var inputs = [];
 				$(':input', this).each(function() {
 					inputs.push(this.name + '=' + escape(this.value));
 				})
 				$('.inform').remove();
-				$('#titlesubmit').attr('disabled','disabled').after('<' + 'img src="style/loadingsmall.gif" alt="" class="loader" style="margin-left:5px;" />');
+				$('input[type=submit]').attr('disabled','disabled').after('<' + 'img src="style/loadingsmall.gif" alt="" class="loader" style="margin-left:5px;" />');
 				jQuery.ajax({
 					data: inputs.join('&'),
 					type: "POST",
@@ -56,32 +56,7 @@ require(ABSPATH .'/Sources/Core.php');
 					},
 					success: function(r) {
 						$('.loader').remove();
-						$('#titlesubmit').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">Title changed.<\/' + 'span>');
-					}
-				})
-				return false;
-			})
-		});
-		$(function() {
-			$('#urlform').submit(function() {
-				var inputs = [];
-				$(':input', this).each(function() {
-					inputs.push(this.name + '=' + escape(this.value));
-				})
-				$('.inform').remove();
-				$('#urlsubmit').attr('disabled','disabled').after('<' + 'img src="style/loadingsmall.gif" alt="" class="loader" style="margin-left:5px;" />');
-				jQuery.ajax({
-					data: inputs.join('&'),
-					type: "POST",
-					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
-					timeout: 2000,
-					error: function() {
-						console.log("Failed to submit");
-						alert("Failed to submit.");
-					},
-					success: function(r) {
-						$('.loader').remove();
-						$('#urlsubmit').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">URL changed.<\/' + 'span>');
+						$('input[type=submit]').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">Changes saved.<\/' + 'span>');
 					}
 				})
 				return false;
@@ -101,20 +76,18 @@ require(ABSPATH .'/Sources/Core.php');
 			<div class="settings">
 				<p style="margin-bottom:10px;">You can find core settings like the title of your blog here.</p>
 				
-				<form action="" method="post" id="titleform" style="margin-bottom:5px;">
+				<form action="" method="post" style="margin-bottom:5px;">
 					<p class="label"><label for="title">Blog title</label></p>
 					<p style="margin-top:-5px;">
-						<input type="text" name="title" id="title" value="<?php bloginfo('title') ?>" />
-						<input type="submit" name="titlesubmit" id="titlesubmit" value="Save" />
+						<input type="text" name="changetitle" id="title" value="<?php bloginfo('title') ?>" />
 					</p>
-				</form>
-				
-				<form action="" method="post" id="urlform" style="margin-bottom:5px;">
+					
 					<p class="label"><label for="url">Blog URL</label></p>
 					<p style="margin-top:-5px;">
-						<input type="text" name="url" id="url" value="<?php bloginfo('url') ?>" />
-						<input type="submit" name="urlsubmit" id="urlsubmit" value="Save" />
+						<input type="text" name="changeurl" id="url" value="<?php bloginfo('url') ?>" />
 					</p>
+					
+					<p><input type="submit" value="Save" /></p>
 				</form>
 			</div>
 		</div>

@@ -21,7 +21,7 @@ function randomString($length) {
 	// start with a blank string
 	$string = "";
 	// define possible characters
-	$possible = "0123456789bcdfghjkmnpqrstvwxyzBCDFGHJKMNPQRSTVWXYZ_!.$#?-";   
+	$possible = "0123456789bcdfghjkmnpqrstvwxyz_.-";   
 	// set up a counter
 	$i = 0;    
 	// add random characters to $password until $length is reached
@@ -71,6 +71,8 @@ if(isset($_POST['dbsubmit'])) {
 	$sql = fread($sqlh, filesize("install.sql"));
 	fclose($sqlh);
 	$dbh->queryExec($sql) or die("Cannot write to database. Check your permissions.");
+	// Check config write permissions
+	if(fileperms("config.php") < 0770) { chmod($dbpath, 0770); }
 	// Create config file
 	fclose(fopen(dirname(__FILE__)."/"."config.php", 'w')) or die("Cannot create configuration file. Check your permissions.");
 	// Read example file
@@ -79,8 +81,6 @@ if(isset($_POST['dbsubmit'])) {
 	// Create config file
 	$configdata = str_replace("absolute path to database here", $dbpath, $exconfig);
 	$config = fopen("config.php", 'w') or die("Cannot write to configuration file. Check your permissions.");
-	// Check config write permissions
-	if(fileperms("config.php") < 0770) { chmod($dbpath, 0770); }
 	// Write config file
 	fwrite($config, $configdata);
 	// Close file handles
@@ -111,7 +111,7 @@ if(isset($_POST['isubmit'])) {
 	// Add blog directory URL to database
 	$dbh->query("INSERT INTO core VALUES('url', '".curDirURL()."');") or die("Cannot write to database. Check your permissions.");
 	// Add user to database
-	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('".$username."', '".$password."', '".$email."', '".$displayname."', '1', '".$ip."', '".$salt."');") or die("Cannot write to database. Check your permissions.");
+	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$password','$email','$displayname',1,'$ip','$salt');") or die("Cannot write to database. Check your permissions.");
 	// Unset variables
 	unset($username, $password, $email, $displayname, $ip, $dbh);
 	// Prevent the rest of the page from loading
@@ -186,7 +186,7 @@ if(isset($_POST['isubmit'])) {
 					<?php if(floatval(sqlite_libversion()) >= "2.8"){ echo '<td style="background:#6CCC0D;color:#fff;">OK</td>'; } else {echo '<td style="background:#CC2626;color:#fff;">Unsatisfactory</td>'; }?>
 				</tr>
 			</table>
-			<?php if($error1 or $error2 or $error3 == true): ?>
+			<?php if($error1 or $error2 == true): ?>
 				<h4 style="color:red;">Your server does not meet the minimum requirements. Please rectify the issues listed above and try again.</h4>
 				<button disabled="disabled" class="continue" onclick="tabber1.show(2); return false;">Continue</button>	
 			<?php else: ?>
