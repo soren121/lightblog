@@ -167,21 +167,23 @@ body {
 	background: #f3f3f3;
 }
 
-#content div.settings p.label {
+#content div.settings label {
 	font-weight: bold;
-	margin-top: 3px;
-	margin-bottom: 3px;
 }
 
 #content div.settings p select {
 	width: 150px;
 }
 
+#content div.settings p input {
+	margin: 6px 0 6px 0;
+}
+
 #content div.settings p input[type=submit] {
 	margin-top: 10px;
 }
 
-#content div.settings #themeform {
+#content div.settings form {
 	margin-top: 8px;
 }
 
