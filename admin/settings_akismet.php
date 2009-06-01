@@ -5,7 +5,7 @@
 	LightBlog 0.9
 	SQLite blogging platform
 	
-	admin/settings.php
+	admin/settings_akismet.php
 	
 	©2009 soren121. All rights reserved.
 	Released under the GNU General
@@ -25,7 +25,7 @@ require(ABSPATH .'/Sources/Core.php');
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<title>General Settings - <?php bloginfo('title') ?></title>
+	<title>Akismet Settings - <?php bloginfo('title') ?></title>
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
 	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
@@ -72,19 +72,20 @@ require(ABSPATH .'/Sources/Core.php');
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
-			<h2 class="title"><img class="textmid" src="style/settings.png" alt="" />General Settings</h2>
+			<h2 class="title"><img class="textmid" src="style/settings.png" alt="" />Akismet Settings</h2>
 			<div class="settings">
 				<p style="margin-bottom:10px;">You can find core settings like the title of your blog here.</p>
 				
 				<form action="" method="post" style="margin-bottom:5px;">
-					<p class="label"><label for="title">Blog title</label></p>
+					<p class="label"><label>Akismet</label></p>
 					<p style="margin-top:-5px;">
-						<input type="text" name="changetitle" id="title" value="<?php bloginfo('title') ?>" />
+						<input type="radio" name="akismet" value="off" /> Off
+						<input type="radio" name="akismet" value="on" /> On
 					</p>
 					
-					<p class="label"><label for="url">Blog URL</label></p>
+					<p class="label"><label for="akismet_key">Akismet key</label></p>
 					<p style="margin-top:-5px;">
-						<input type="text" name="changeurl" id="url" value="<?php bloginfo('url') ?>" />
+						<input type="text" name="akismet_key" id="akismet_key" value="<?php bloginfo('akismet_key') ?>" />
 					</p>
 					
 					<p><input type="submit" value="Save" /></p>
