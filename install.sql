@@ -1,8 +1,10 @@
 CREATE TABLE core(
 'variable' text NOT NULL,
-'value' text NOT NULL);
+'value' text);
 
 INSERT INTO core VALUES('theme','default');
+INSERT INTO core VALUES('akismet','1');
+INSERT INTO core VAlUES('akismet_key','');
 
 CREATE TABLE 'comments'(
 'id' INTEGER PRIMARY KEY DEFAULT '0',
