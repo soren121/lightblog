@@ -104,7 +104,7 @@ if(isset($_POST['changeurl'])) {
 # Process Akismet (de/en)abling or key change
 if(isset($_POST['akismet'])) {
 	# Initiate the Akismet library
-	require_once(ABSPATH .'Sources/Akismet.php');
+	require_once(ABSPATH .'/Sources/Akismet.php');
 	# Will it be turned on?
 	if($_POST['akismet'] == 1) {
 		# Did the user specify a key?

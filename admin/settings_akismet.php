@@ -63,6 +63,9 @@ require(ABSPATH .'/Sources/Core.php');
 			})
 		});
 	</script>
+	<?php if(bloginfo('akismet',2) == 3) { 
+		echo '<style type="text/css">#akismet_key{background:#EEEF68;}</style>';
+	} ?>
 </head>
 
 <body>
@@ -79,8 +82,8 @@ require(ABSPATH .'/Sources/Core.php');
 				<form action="" method="post" style="margin-bottom:5px;">
 					<p class="label"><label>Akismet</label></p>
 					<p style="margin-top:-5px;">
-						<input type="radio" name="akismet" value="off" /> Off
-						<input type="radio" name="akismet" value="on" /> On
+						<input type="radio" name="akismet" value="0" /> Off
+						<input type="radio" name="akismet" value="1" /> On
 					</p>
 					
 					<p class="label"><label for="akismet_key">Akismet key</label></p>
