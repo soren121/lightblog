@@ -1,3 +1,5 @@
+<?php include('head.php')?>
+<?php include('sidebar.php')?>
 			<div id="content">
 				<!-- Start the loop -->
 				<?php if($result05->numRows() > 0): while($page = $result05->fetchObject()): ?>
@@ -11,3 +13,4 @@
 				<?php endwhile; endif; ?>
 				<div class="clear"></div>
 			</div>
+<?php include('footer.php')?>

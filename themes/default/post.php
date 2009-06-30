@@ -1,3 +1,5 @@
+<?php include('head.php')?>
+<?php include('sidebar.php')?>
 			<div id="content">
 				<!-- Start the loop -->
 				<?php if($result03->numRows() > 0): while($post = $result03->fetchObject()): $commentnum = (int)$post->id; ?>
@@ -52,3 +54,4 @@
 				</form>
 				<div class="clear"></div>
 			</div>
+<?php include('footer.php')?>
