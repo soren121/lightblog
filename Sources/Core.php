@@ -384,7 +384,7 @@ function login($method) {
 				// Does the provided password match the database hash?
 				if($passhash == $user->password) {
 					// Set the session timeout to 20 minutes
-					$_SESSION['expires_by'] = time() + 1200;
+					$_SESSION['expires_by'] = time() + 60*20;
 					// Send the user data to the session
 					$_SESSION['username'] = $user->username;
 					$_SESSION['email'] = $user->email;
@@ -401,7 +401,7 @@ function login($method) {
 					// Set it in the session
 					$_SESSION['securestring'] = $secure_string;
 					// ...And a cookie
-					setcookie(strtolower(bloginfo('title','r')).'securestring', $secure_string, time()+1200, "/");
+					setcookie(strtolower(bloginfo('title','r')).'securestring', $secure_string, time()+60*20, "/");
 					// Does the user want to remember their data?
 					if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
 						setcookie(strtolower(bloginfo('title','r')).'user', $user->username, time()+60*60*24*30, "/");
