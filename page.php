@@ -26,9 +26,6 @@ $result10 = $dbh->query("SELECT * FROM pages ORDER BY id desc") or die(sqlite_er
 
 // Include theme files 
 $themeName = bloginfo('theme', 'r');
-include('themes/'.$themeName.'/head.php');
-include('themes/'.$themeName.'/sidebar.php');
 include('themes/'.$themeName.'/page.php');
-include('themes/'.$themeName.'/footer.php'); 
 
 ?>

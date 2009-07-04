@@ -19,8 +19,9 @@
 // Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
+require(ABSPATH .'/Sources/Admin.php');
 
-# Functions to find the start and limit for a query based on the page number
+# Functions to find the start for a query based on the page number
 function findStart($input) { $input = $input - 1; return $input * 8; }
 
 if($_GET['page'] > 1) {
@@ -87,6 +88,7 @@ else {
 					<th class="managelist">Email</th>
 					<th class="managelist">Display Name</th>
 					<th class="managelist">IP Address</th>
+					<th class="managelist">Ban</th>
 				</tr>		
 				<!-- Start row loop -->
 				<?php while($user = $result->fetchObject()): ?>	
@@ -96,6 +98,7 @@ else {
 					<td><?php echo $user->email ?></td>
 					<td><?php echo $user->displayname ?></td>
 					<td><?php echo $user->ip ?></td>
+					<td><img src="images/ban.png" onclick="banUser('<?php echo $user->id ?>','<?php echo $user->username ?>');" alt="Ban" /></td>
 				</tr>
 				<?php endwhile; ?>
 				<!-- End row loop -->

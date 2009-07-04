@@ -1,4 +1,4 @@
- <?php session_start(); 
+ <?php 
 
 /*********************************************
 
@@ -130,7 +130,7 @@ if(isset($_POST['isubmit'])) {
 	$salt = substr(md5(uniqid(rand(), true)), 0, 9);
 	// Set variables for easy manipulation
 	$username = sqlite_escape_string($_POST['iusername']);
-	$password = sqlite_escape_string(md5($salt.$_POST['ipassword']));
+	$password = sqlite_escape_string(sha1($salt.$_POST['ipassword']));
 	$email = sqlite_escape_string($_POST['iemail']);
 	$displayname = sqlite_escape_string($_POST['iname']);
 	// Open connection to database

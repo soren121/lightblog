@@ -19,6 +19,7 @@
 // Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
+require(ABSPATH .'/Sources/Admin.php');
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -48,6 +49,25 @@ require(ABSPATH .'/Sources/Core.php');
 		<?php include('menu.php'); ?>
 		<div id="content">
 			<h2 class="title"><img class="textmid" src="style/users.png" alt="" />User Profile</h2>
+			<div class="settings">
+				<p style="margin-bottom:10px;">.</p>
+				<!-->
+				<form action="" method="post" style="margin-bottom:5px;">
+					<p class="label"><label>Akismet</label></p>
+					<p style="margin-top:-5px;">
+						<input type="radio" name="akismet" value="0" /> Off
+						<input type="radio" name="akismet" value="1" /> On
+					</p>
+					
+					<p class="label"><label for="akismet_key">Akismet key</label></p>
+					<p style="margin-top:-5px;">
+						<input type="text" name="akismet_key" id="akismet_key" value="<?php bloginfo('akismet_key') ?>" />
+					</p>
+				-->
+					
+					<p><input type="submit" value="Save" /></p>
+				</form>
+			</div>
 		</div>
 		<div id="footer" class="roundedb">		
 			Powered by LightBlog <?php LightyVersion() ?>    
