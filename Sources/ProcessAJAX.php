@@ -101,35 +101,4 @@ if(isset($_POST['changeurl'])) {
 	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['changeurl'])."' WHERE variable='url'");
 }
 
-# Process Akismet (de/en)abling or key change
-if(isset($_POST['akismet'])) {
-	# Initiate the Akismet library
-	require_once(ABSPATH .'/Sources/Akismet.php');
-	# Will it be turned on?
-	if($_POST['akismet'] == 1) {
-		# Did the user specify a key?
-		if(strlen($_POST['akismet_key']) > 0) {
-			# Setup the Akismet library parameters
-			$akismet = new Akismet(bloginfo('url',2),$_POST['akismet_key']);
-			# Validate the key
-			if($akismet->isKeyValid()) {
-				# It's all ready!
-				$akismet_status = 2;
-			}
-		}
-		else {
-			# Still need a (good) key!
-			$akismet_status = 3;
-		}
-		# Change the Akismet status in the database
-		$dbh->query("UPDATE core SET value=$akismet_status WHERE variable='akismet'");
-	}
-	# Let's turn it off!
-	else {
-		$dbh->query("UPDATE core SET value=1 WHERE variable='akismet'");
-		# Don't forget to clear the key!
-		$dbh->query("UPDATE core SET value='' WHERE variable='akismet_key'");
-	}
-}
-
 ?>
