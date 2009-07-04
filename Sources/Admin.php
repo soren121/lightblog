@@ -27,11 +27,13 @@ if($_SESSION['securestring'] !== $_COOKIE[strtolower(bloginfo('title','r')).'sec
 // Similar IP lock
 	// Get first 3 octets of current IP
 	$current_ip = explode('.', get_ip());
-	$current_ip = $current_ip[0] . '.' . $current_ip[1] . '.' . $current_ip[2];
+	unset($current_ip[3]);
+	$current_ip = implode('.', $current_ip);
 
 	// Get first 3 octets of session IP
 	$session_ip = explode('.', $_SESSION['ip']);
-	$session_ip = $session_ip[0] . '.' . $session_ip[1] . '.' . $session_ip[2];
+	unset($session_ip[3]);
+	$session_ip = implode('.', $session_ip);
 
 	if($current_ip !== $session_ip) {
 		session_destroy();
