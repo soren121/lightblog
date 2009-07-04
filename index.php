@@ -16,6 +16,12 @@
 
 *********************************************/
 
+// Check if LightBlog is installed
+if(!file_exists('config.php')){ 
+	// It isn't, so head to the installer
+	header('Location: install.php');
+}
+
 // Require config file
 require('config.php');
 require(ABSPATH .'/Sources/Core.php');

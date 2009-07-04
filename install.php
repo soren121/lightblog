@@ -85,6 +85,10 @@ function get_ip() {
 				$client_ip = preg_replace($private_ip, $client_ip, $ip_list[1]);
 		}
 	}
+	// Fix a strange localhost IP problem
+	if($client_ip == '::1') {
+		$client_ip = '127.0.0.1';
+	}
 	// Return what we think the IP is
 	return $client_ip;
 }
@@ -104,7 +108,7 @@ if(isset($_POST['dbsubmit'])) {
 	fclose($sqlh);
 	$dbh->queryExec($sql) or die("Cannot write to database. Check your permissions.");
 	// Check config write permissions
-	if(fileperms("config.php") < 0770) { chmod($dbpath, 0770); }
+	if(fileperms($dbpath) < 0770) { chmod($dbpath, 0770); }
 	// Create config file
 	fclose(fopen(dirname(__FILE__)."/"."config.php", 'w')) or die("Cannot create configuration file. Check your permissions.");
 	// Read example file
@@ -243,8 +247,14 @@ if(isset($_POST['isubmit'])) {
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						$('#form-tab2').empty(); 
-						jQuery().minipageShow(3); return false;
+						if(r !== ' ') {
+							alert(r);
+							$('#form-tab2').empty();
+						}
+						else {
+							$('#form-tab2').empty(); 
+							jQuery().minipageShow(3); return false;
+						}
 					}
 				})
 				return false;
@@ -279,8 +289,14 @@ if(isset($_POST['isubmit'])) {
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						$('#form-tab2').empty(); 
-						jQuery().minipageShow(4); return false;
+						if(r !== ' ') {
+							alert(r);
+							$('#form-tab3').empty();
+						}
+						else {
+							$('#form-tab2').empty(); 
+							jQuery().minipageShow(4); return false;
+						}
 					}
 				})
 				return false;

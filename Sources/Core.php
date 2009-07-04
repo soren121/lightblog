@@ -16,12 +16,6 @@
 
 ***********************************************/
 
-// Check if LightBlog is installed
-if(!file_exists('config.php')){ 
-	// It isn't, so head to the installer
-	header('Location: install.php');
-}
-
 // Open database if not open
 $dbh = new SQLiteDatabase( DBH );
 
@@ -318,24 +312,54 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 
 // Function to generate a random string of specified length
 function randomString($length) {
-	// start with a blank string
-	$string = "";
-	// define possible characters
-	$possible = "0123456789bcdfghjkmnpqrstvwxyz_.-!@#:";   
-	// set up a counter
-	$i = 0;    
-	// add random characters to $password until $length is reached
-	while($i < $length) { 
-		// pick a random character from the possible ones
-		$char = substr($possible, mt_rand(0, strlen($possible)-1), 1);   
-		// we don't want this character if it's already in the string
-		if(!strstr($string, $char)) { 
-			$string .= $char;
-			$i++;
+	if((is_numeric($length)) && ($length > 0) && (!is_null($length))) {
+		// Start with a blank string
+		$string = '';
+		$accepted_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_,.?/!@#$&*';
+		// Loop through and make a string
+		for($i=0;$i<=$length;$i++) {
+			$random_number = rand(0, (strlen($accepted_chars) -1));
+			$string .= $accepted_chars[$random_number];
+		}
+		// Return the final string
+		return $string;
+	}
+}
+
+// Function to get a real IP
+function get_ip() {
+	// Look for an IP address
+	if(!empty($_SERVER['REMOTE_ADDR'])) {
+		$client_ip = $_SERVER['REMOTE_ADDR'];
+	}
+	// Look for proxies
+	if($_SERVER['HTTP_CLIENT_IP']) {
+		$proxy_ip = $_SERVER['HTTP_CLIENT_IP'];
+	}
+	elseif($_SERVER['HTTP_X_FORWARDED_FOR']) {
+		$proxy_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+	}
+	// Look for a real IP underneath a proxy
+	if($proxy_ip) {
+		if(preg_match("/^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/", $proxy_ip, $ip_list)) {
+				$private_ip = array(
+					'/^0\./',
+					'/^127\.0\.0\.1/',
+					'/^192\.168\..*/',
+					'/^172\.16\..*/',
+					'/^10.\.*/',
+					'/^224.\.*/',
+					'/^240.\.*/');
+				// A generic private IP is useless to us, so don't use those
+				$client_ip = preg_replace($private_ip, $client_ip, $ip_list[1]);
 		}
 	}
-	// done!
-	return $string;
+	// Fix a strange localhost IP problem
+	if($client_ip == '::1') {
+		$client_ip = '127.0.0.1';
+	}
+	// Return what we think the IP is
+	return $client_ip;
 }
 
 // Login function
@@ -366,6 +390,7 @@ function login($method) {
 					$_SESSION['email'] = $user->email;
 					$_SESSION['displayname'] = $user->displayname;
 					$_SESSION['role'] = $user->role;
+					$_SESSION['ip'] = get_ip();
 					// Resalt password
 					$salt = substr(md5(uniqid(rand(), true)), 0, 9);
 					$passhash = sha1($salt.$password);
@@ -376,7 +401,7 @@ function login($method) {
 					// Set it in the session
 					$_SESSION['securestring'] = $secure_string;
 					// ...And a cookie
-					setcookie(strtolower(bloginfo('title','r')).'securestring', $secure_string, time()+1200, "/")
+					setcookie(strtolower(bloginfo('title','r')).'securestring', $secure_string, time()+1200, "/");
 					// Does the user want to remember their data?
 					if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
 						setcookie(strtolower(bloginfo('title','r')).'user', $user->username, time()+60*60*24*30, "/");
@@ -387,10 +412,6 @@ function login($method) {
 				}
 			}
 		}
-	}
-	// Looks like we're going in via OpenID
-	elseif($method == 'openid') {
-	
 	}
 }
 

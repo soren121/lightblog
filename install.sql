@@ -1,8 +1,3 @@
-CREATE TABLE active_users (
-	'username' VARCHAR(20) NOT NULL,
-	
-);
-
 CREATE TABLE banned_users (
 	'username' VARCHAR(20) NOT NULL,
 	'length' INTEGER NOT NULL,
