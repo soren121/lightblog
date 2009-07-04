@@ -16,6 +16,12 @@
 
 ***********************************************/
 
+// Check if LightBlog is installed
+if(!file_exists('config.php')){ 
+	// It isn't, so head to the installer
+	header('Location: install.php');
+}
+
 // Open database if not open
 $dbh = new SQLiteDatabase( DBH );
 
@@ -310,6 +316,28 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 	return $pagination;
 }
 
+// Function to generate a random string of specified length
+function randomString($length) {
+	// start with a blank string
+	$string = "";
+	// define possible characters
+	$possible = "0123456789bcdfghjkmnpqrstvwxyz_.-!@#:";   
+	// set up a counter
+	$i = 0;    
+	// add random characters to $password until $length is reached
+	while($i < $length) { 
+		// pick a random character from the possible ones
+		$char = substr($possible, mt_rand(0, strlen($possible)-1), 1);   
+		// we don't want this character if it's already in the string
+		if(!strstr($string, $char)) { 
+			$string .= $char;
+			$i++;
+		}
+	}
+	// done!
+	return $string;
+}
+
 // Login function
 function login($method) {
 	// Global the database handle so we can use it
@@ -324,13 +352,15 @@ function login($method) {
 		// Well?
 		if($saltquery !== null) {
 			// It exists, so recreate the password hash so we can match it
-			$passhash = md5($saltquery->fetchSingle().$password);
+			$passhash = sha1($saltquery->fetchSingle().$password);
 			// Retrieve all user data
 			$userquery = $dbh->query("SELECT * FROM users WHERE username='$username'") or die(sqlite_error_string($dbh->lastError));
 			// Start the while loop
 			while($user = $userquery->fetchObject()) {
 				// Does the provided password match the database hash?
-				if($passhash == $user->password) {	
+				if($passhash == $user->password) {
+					// Set the session timeout to 20 minutes
+					$_SESSION['expires_by'] = time() + 1200;
 					// Send the user data to the session
 					$_SESSION['username'] = $user->username;
 					$_SESSION['email'] = $user->email;
@@ -338,9 +368,15 @@ function login($method) {
 					$_SESSION['role'] = $user->role;
 					// Resalt password
 					$salt = substr(md5(uniqid(rand(), true)), 0, 9);
-					$passhash = md5($salt.$password);
+					$passhash = sha1($salt.$password);
 					// Send new hash and salt to database
 					$dbh->query("UPDATE users SET password='$passhash', salt='$salt'");
+					// Generate secure random string
+					$secure_string = randomString(48);
+					// Set it in the session
+					$_SESSION['securestring'] = $secure_string;
+					// ...And a cookie
+					setcookie(strtolower(bloginfo('title','r')).'securestring', $secure_string, time()+1200, "/")
 					// Does the user want to remember their data?
 					if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
 						setcookie(strtolower(bloginfo('title','r')).'user', $user->username, time()+60*60*24*30, "/");
@@ -352,6 +388,7 @@ function login($method) {
 			}
 		}
 	}
+	// Looks like we're going in via OpenID
 	elseif($method == 'openid') {
 	
 	}

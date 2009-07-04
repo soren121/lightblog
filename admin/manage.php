@@ -19,11 +19,12 @@
 // Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
+require(ABSPATH .'/Sources/Admin.php');
 
 if((int)$_GET['type'] == 1) { $type = 'post'; }
 elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 
-# Functions to find the start and limit for a query based on the page number
+# Functions to find the start for a query based on the page number
 function findStart($input) { $input = $input - 1; return $input * 8; }
 
 if($_GET['page'] > 1) {
