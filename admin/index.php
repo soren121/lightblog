@@ -21,7 +21,7 @@ require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
 # check user status
-if(userFetch('username', 'r') !== null) {
+if(isset($_SESSION['securestring'])) {
 	header('Location: dashboard.php');
 }
 else {
