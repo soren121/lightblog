@@ -1,4 +1,4 @@
-<?php session_start(); 
+ <?php session_start(); 
 
 /*********************************************
 
@@ -57,6 +57,38 @@ function undoMagicString($str) {
 	}
 }
 
+// Function to get a real IP
+function get_ip() {
+	// Look for an IP address
+	if(!empty($_SERVER['REMOTE_ADDR'])) {
+		$client_ip = $_SERVER['REMOTE_ADDR'];
+	}
+	// Look for proxies
+	if($_SERVER['HTTP_CLIENT_IP']) {
+		$proxy_ip = $_SERVER['HTTP_CLIENT_IP'];
+	}
+	elseif($_SERVER['HTTP_X_FORWARDED_FOR']) {
+		$proxy_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+	}
+	// Look for a real IP underneath a proxy
+	if($proxy_ip) {
+		if(preg_match("/^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/", $proxy_ip, $ip_list)) {
+				$private_ip = array(
+					'/^0\./',
+					'/^127\.0\.0\.1/',
+					'/^192\.168\..*/',
+					'/^172\.16\..*/',
+					'/^10.\.*/',
+					'/^224.\.*/',
+					'/^240.\.*/');
+				// A generic private IP is useless to us, so don't use those
+				$client_ip = preg_replace($private_ip, $client_ip, $ip_list[1]);
+		}
+	}
+	// Return what we think the IP is
+	return $client_ip;
+}
+
 if(isset($_POST['dbsubmit'])) {
 	// Create full database path
 	$dbpath = undoMagicString($_POST['dblocation'])."/".randomString(mt_rand(9, 16)).".db";
@@ -101,9 +133,6 @@ if(isset($_POST['isubmit'])) {
 	$password = sqlite_escape_string(md5($salt.$_POST['ipassword']));
 	$email = sqlite_escape_string($_POST['iemail']);
 	$displayname = sqlite_escape_string($_POST['iname']);
-	// Get the user's real IP, if possible
-	if (getenv(HTTP_X_FORWARDED_FOR)) { $ip = getenv(HTTP_X_FORWARDED_FOR); } 
-	else { $ip = getenv(REMOTE_ADDR); }
 	// Open connection to database
 	$dbh = new SQLiteDatabase( DBH );
 	// Add blog title to database
@@ -111,7 +140,7 @@ if(isset($_POST['isubmit'])) {
 	// Add blog directory URL to database
 	$dbh->query("INSERT INTO core VALUES('url', '".curDirURL()."');") or die("Cannot write to database. Check your permissions.");
 	// Add user to database
-	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$password','$email','$displayname',1,'$ip','$salt');") or die("Cannot write to database. Check your permissions.");
+	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$password','$email','$displayname',1,'".get_ip()."','$salt');") or die("Cannot write to database. Check your permissions.");
 	// Unset variables
 	unset($username, $password, $email, $displayname, $ip, $dbh);
 	// Prevent the rest of the page from loading
