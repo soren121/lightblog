@@ -48,7 +48,31 @@ require(ABSPATH .'/Sources/Admin.php');
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
-			<h2 class="title">Welcome <?php userFetch('displayname') ?>!</h2> 
+			<h2 class="title">Welcome <?php userFetch('displayname') ?>!</h2>
+			<div>
+				<div style="float:left;width:50%;">
+					<div class="db_box rounded">
+						<h4 class="roundedt">LightBlog News</h4>
+						<ul>
+						<?php
+							include(ABSPATH .'/Sources/FeedReader.php');
+							$reader = new Reader('http://tcn.110mb.com/feed/');
+							$items = $reader->return_items(5);
+							foreach($items as $news): ?>
+								<li><a href="<?php echo $news['link'] ?>"><?php echo $news['title'] ?></a></li>
+							<?php endforeach; ?>
+						</ul>
+					</div>
+					<div class="db_box">
+					</div>
+				</div>
+				<div style="float:right;width:50%;">
+					<div class="db_box">
+					</div>
+					<div class="db_box">
+					</div>
+				</div>
+			</div>
 		</div>
 		<div id="footer" class="roundedb">		
 			Powered by LightBlog <?php LightyVersion() ?>    

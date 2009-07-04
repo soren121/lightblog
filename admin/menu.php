@@ -44,7 +44,6 @@
 				<li><a href="settings.php">Settings</a>
 					<ul>
 						<li><a href="settings.php">General Settings</a></li>
-						<li><a href="settings_akismet.php">Akismet Settings</a></li>
 					</ul>
 				</li>
 				<?php endif; ?>
