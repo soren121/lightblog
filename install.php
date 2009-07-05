@@ -98,17 +98,15 @@ if(isset($_POST['dbsubmit'])) {
 	$dbpath = undoMagicString($_POST['dblocation'])."/".randomString(mt_rand(9, 16)).".db";
 	// Create database file
 	fclose(fopen($dbpath, 'w')) or die("Cannot create database. Check your permissions.");
+	// Check database permissions
+	if(fileperms($dbpath) < 0755) { chmod($dbpath, 0755) or die('Couldn\'t change permissions.' ); }
 	// Open database
 	$dbh = new SQLiteDatabase($dbpath);
-	// Check database permissions
-	if(fileperms($dbpath) < 0770) { chmod($dbpath, 0770); }
 	// Write data to database
 	$sqlh = fopen("install.sql", 'r');
 	$sql = fread($sqlh, filesize("install.sql"));
 	fclose($sqlh);
 	$dbh->queryExec($sql) or die("Cannot write to database. Check your permissions.");
-	// Check config write permissions
-	if(fileperms($dbpath) < 0770) { chmod($dbpath, 0770); }
 	// Create config file
 	fclose(fopen(dirname(__FILE__)."/"."config.php", 'w')) or die("Cannot create configuration file. Check your permissions.");
 	// Read example file
@@ -123,6 +121,8 @@ if(isset($_POST['dbsubmit'])) {
 	fclose($config);
 	// Unset variables
 	unset($dbpath, $dbh, $sqlfile, $sql, $sqlh, $exconfig, $exconfigfile, $config, $configdata);
+	// Respond
+	echo "OK";
 	// Prevent the rest of the page from loading
 	die();
 }
@@ -147,6 +147,8 @@ if(isset($_POST['isubmit'])) {
 	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$password','$email','$displayname',1,'".get_ip()."','$salt');") or die("Cannot write to database. Check your permissions.");
 	// Unset variables
 	unset($username, $password, $email, $displayname, $ip, $dbh);
+	// Respond
+	echo "OK";
 	// Prevent the rest of the page from loading
 	die();
 }
@@ -247,14 +249,8 @@ if(isset($_POST['isubmit'])) {
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						if(r !== ' ') {
-							alert(r);
-							$('#form-tab2').empty();
-						}
-						else {
-							$('#form-tab2').empty(); 
+							alert(r); 
 							jQuery().minipageShow(3); return false;
-						}
 					}
 				})
 				return false;
@@ -289,14 +285,8 @@ if(isset($_POST['isubmit'])) {
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						if(r !== ' ') {
 							alert(r);
-							$('#form-tab3').empty();
-						}
-						else {
-							$('#form-tab2').empty(); 
 							jQuery().minipageShow(4); return false;
-						}
 					}
 				})
 				return false;
