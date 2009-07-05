@@ -20,7 +20,8 @@
 require_once('Core.php');
 
 // Authentication check
-if($_SESSION['securestring'] !== $_COOKIE[strtolower(bloginfo('title','r')).'securestring']) {
+if(($_SESSION['securestring'] !== $_COOKIE[strtolower(bloginfo('title','r')).'securestring']) && (!isset($_SESSION['SESSIONID']))) {
+	session_destroy();
 	die('Session is invalid. Return to the <a href="'.bloginfo('url','r').'">homepage</a>.');
 }
 

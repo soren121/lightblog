@@ -315,7 +315,7 @@ function randomString($length) {
 	if((is_numeric($length)) && ($length > 0) && (!is_null($length))) {
 		// Start with a blank string
 		$string = '';
-		$accepted_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_,.?/!@#$&*';
+		$accepted_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,';
 		// Loop through and make a string
 		for($i=0;$i<=$length;$i++) {
 			$random_number = rand(0, (strlen($accepted_chars) -1));
@@ -323,6 +323,59 @@ function randomString($length) {
 		}
 		// Return the final string
 		return $string;
+	}
+}
+
+// Login function
+function login($method) {
+	// Global the database handle so we can use it
+	global $dbh;
+	// Are we logging the user in via username/password?
+	if($method == 'userpass') {
+		// Set easy variables and escape username
+		$username = sqlite_escape_string($_POST['username']);
+		$password = $_POST['password'];
+		// Does that user exist?
+		$saltquery = $dbh->query("SELECT salt FROM users WHERE username='$username'") or null;
+		// Well?
+		if($saltquery !== null) {
+			// It exists, so recreate the password hash so we can match it
+			$passhash = sha1($saltquery->fetchSingle().$password);
+			// Retrieve all user data
+			$userquery = $dbh->query("SELECT * FROM users WHERE username='$username'") or die(sqlite_error_string($dbh->lastError));
+			// Start the while loop
+			while($user = $userquery->fetchObject()) {
+				// Does the provided password match the database hash?
+				if($passhash == $user->password) {
+					// Generate secure random string
+					$secure_string = randomString(48);
+					// Set it in the session
+					$_SESSION['securestring'] = $secure_string;
+					// ...And a cookie
+					setcookie(strtolower(bloginfo('title','r')).'securestring', $secure_string, time()+60*20, "/");					
+					// Set the session timeout to 20 minutes
+					$_SESSION['expires_by'] = time() + 60*20;
+					// Send the user data to the session
+					$_SESSION['username'] = $user->username;
+					$_SESSION['email'] = $user->email;
+					$_SESSION['displayname'] = $user->displayname;
+					$_SESSION['role'] = $user->role;
+					$_SESSION['ip'] = get_ip();
+					// Resalt password
+					$salt = substr(md5(uniqid(rand(), true)), 0, 9);
+					$passhash = sha1($salt.$password);
+					// Send new hash and salt to database
+					$dbh->query("UPDATE users SET password='$passhash', salt='$salt'");
+					// Does the user want to remember their data?
+					if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
+						setcookie(strtolower(bloginfo('title','r')).'user', $user->username, time()+60*60*24*30, "/");
+						setcookie(strtolower(bloginfo('title','r')).'pass', $_POST['password'], time()+60*60*24*30, "/");
+					}
+					// Send the user to the dashboard
+					header('Location: '.bloginfo('url','r').'admin/dashboard.php');
+				}
+			}
+		}
 	}
 }
 
@@ -360,59 +413,6 @@ function get_ip() {
 	}
 	// Return what we think the IP is
 	return $client_ip;
-}
-
-// Login function
-function login($method) {
-	// Global the database handle so we can use it
-	global $dbh;
-	// Are we logging the user in via username/password?
-	if($method == 'userpass') {
-		// Set easy variables and escape username
-		$username = sqlite_escape_string($_POST['username']);
-		$password = $_POST['password'];
-		// Does that user exist?
-		$saltquery = $dbh->query("SELECT salt FROM users WHERE username='$username'") or null;
-		// Well?
-		if($saltquery !== null) {
-			// It exists, so recreate the password hash so we can match it
-			$passhash = sha1($saltquery->fetchSingle().$password);
-			// Retrieve all user data
-			$userquery = $dbh->query("SELECT * FROM users WHERE username='$username'") or die(sqlite_error_string($dbh->lastError));
-			// Start the while loop
-			while($user = $userquery->fetchObject()) {
-				// Does the provided password match the database hash?
-				if($passhash == $user->password) {
-					// Set the session timeout to 20 minutes
-					$_SESSION['expires_by'] = time() + 60*20;
-					// Send the user data to the session
-					$_SESSION['username'] = $user->username;
-					$_SESSION['email'] = $user->email;
-					$_SESSION['displayname'] = $user->displayname;
-					$_SESSION['role'] = $user->role;
-					$_SESSION['ip'] = get_ip();
-					// Resalt password
-					$salt = substr(md5(uniqid(rand(), true)), 0, 9);
-					$passhash = sha1($salt.$password);
-					// Send new hash and salt to database
-					$dbh->query("UPDATE users SET password='$passhash', salt='$salt'");
-					// Generate secure random string
-					$secure_string = randomString(48);
-					// Set it in the session
-					$_SESSION['securestring'] = $secure_string;
-					// ...And a cookie
-					setcookie(strtolower(bloginfo('title','r')).'securestring', $secure_string, time()+60*20, "/");
-					// Does the user want to remember their data?
-					if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
-						setcookie(strtolower(bloginfo('title','r')).'user', $user->username, time()+60*60*24*30, "/");
-						setcookie(strtolower(bloginfo('title','r')).'pass', $_POST['password'], time()+60*60*24*30, "/");
-					}
-					// Send the user to the dashboard
-					header('Location: '.bloginfo('url','r').'admin/');
-				}
-			}
-		}
-	}
 }
 
 // Function to clean form input to reduce the risk of XSS attacks
