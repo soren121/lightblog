@@ -52,9 +52,6 @@ if(isset($_GET['logout'])) {
 </head>
 
 <body>
-<?php if($inotice == true): ?>
-	<span style="color:red;text-align:center;">Incorrect username or password.</span>
-<?php endif; ?>
 <div id="registerbox">
     <form action="" method="post">
 		<label for="username">Username</label>
