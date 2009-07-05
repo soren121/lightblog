@@ -32,8 +32,8 @@ require(ABSPATH .'/Sources/Admin.php');
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function(){ 
+	<script type="text/javascript">	
+		$(document).ready(function(){
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
@@ -52,7 +52,27 @@ require(ABSPATH .'/Sources/Admin.php');
 			<div>
 				<div style="float:left;width:50%;">
 					<div class="db_box rounded">
-						<h4 class="roundedt">LightBlog News</h4>
+						<h4>Recent Posts</h4>
+						<ul>
+
+						</ul>
+					</div>
+					<div class="db_box rounded">
+						<h4>Recent Comments</h4>
+						<ul>
+
+						</ul>
+					</div>
+				</div>
+				<div style="float:right;width:50%;">
+					<div class="db_box rounded">
+						<h4>Quick Links</h4>
+						<ul>
+
+						</ul>
+					</div>
+					<div class="db_box rounded">
+						<h4>LightBlog News</h4>
 						<ul>
 						<?php
 							include(ABSPATH .'/Sources/FeedReader.php');
@@ -62,14 +82,6 @@ require(ABSPATH .'/Sources/Admin.php');
 								<li><a href="<?php echo $news['link'] ?>"><?php echo $news['title'] ?></a></li>
 							<?php endforeach; ?>
 						</ul>
-					</div>
-					<div class="db_box">
-					</div>
-				</div>
-				<div style="float:right;width:50%;">
-					<div class="db_box">
-					</div>
-					<div class="db_box">
 					</div>
 				</div>
 			</div>
