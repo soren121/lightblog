@@ -40,5 +40,19 @@ if(($_SESSION['securestring'] !== $_COOKIE[strtolower(bloginfo('title','r')).'se
 		session_destroy();
 		die('Session is invalid. Return to the <a href="'.bloginfo('url','r').'">homepage</a>.');
 	}
+	
+// Function to list themes in a drop-down box
+function list_themes() {
+	// List directories
+	$dir = dirlist(ABSPATH .'/themes'); 
+	foreach($dir as $k => $v) {
+		if(bloginfo('theme','r') == $k) {
+			echo '<option selected="selected" value="'.$k.'">'.$v.'</option>';
+		}
+		else {
+			echo '<option value="'.$k.'">'.$v.'</option>';
+		}		
+	}
+}
 
 ?>

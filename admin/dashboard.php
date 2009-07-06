@@ -68,7 +68,10 @@ require(ABSPATH .'/Sources/Admin.php');
 					<div class="db_box rounded">
 						<h4>Quick Links</h4>
 						<ul>
-
+							<li><a href="create.php?type=1">Create a post</a></li>
+							<li><a href="create.php?type=2">Create a page</a></li>
+							<li><a href="manage.php?type=1">Manage posts</a></li>
+							<li><a href="design.php">Change your theme</a></li>
 						</ul>
 					</div>
 					<div class="db_box rounded">

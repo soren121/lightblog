@@ -10,6 +10,14 @@ body {
 	background: #efefef;
 }
 
+a {
+	color: #0000EE;
+}
+
+a:link, a:visited {
+	color: #551A8B;
+}
+
 #wrapper { 
 	margin: 0 auto;
 	width: 722px;
@@ -195,7 +203,7 @@ body {
 }
 
 #content .db_box h4 {
-	background: #1F1F1F;
+	background: url('dbbox_bg.png') top center no-repeat;
 	color: #fff;
 	font-weight: bold;
 	padding: 5px 5px 5px 15px;
