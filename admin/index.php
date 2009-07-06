@@ -21,7 +21,7 @@ require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
 # check user status
-if(isset($_COOKIE['securestring'])) {
+if(isset($_COOKIE[bloginfo('title','r').'securestring'])) {
 	header('Location: dashboard.php');
 }
 else {
