@@ -54,13 +54,21 @@ require(ABSPATH .'/Sources/Admin.php');
 					<div class="db_box rounded">
 						<h4>Recent Posts</h4>
 						<ul>
-
+						<?php
+							$rpresult = $dbh->query("SELECT * FROM posts ORDER BY id desc LIMIT 5");
+							while($rp = $rpresult->fetch(SQLITE_ASSOC)): ?>
+								<li><a href="<?php bloginfo('url')?>post.php?id=<?php echo $rp['id']; ?>"><?php echo $rp['title']?></a></li>
+							<?php endwhile; ?>
 						</ul>
 					</div>
 					<div class="db_box rounded">
 						<h4>Recent Comments</h4>
 						<ul>
-
+						<?php
+							$rcresult = $dbh->query("SELECT * FROM comments ORDER BY id desc LIMIT 5");
+							while($rp = $rcresult->fetch(SQLITE_ASSOC)): $rcpresult = $dbh->query("SELECT title FROM posts WHERE id=".(int)$rp['id']) ?>
+								<li><a href="<?php bloginfo('url')?>post.php?id=<?php echo $rp['pid']; ?>#comment-<?php echo $rp['id']; ?>"><?php echo $rp['name']?> on <?php echo $rcpresult->fetchSingle(); ?></a></li>
+							<?php endwhile; ?>
 						</ul>
 					</div>
 				</div>
