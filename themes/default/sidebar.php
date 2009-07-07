@@ -2,9 +2,7 @@
 				<div>
 					<h4>Pages</h4>
 					<ul>
-					<?php while($page = $result10->fetchObject()) : ?>		
-						<li><a href="<?php bloginfo('url') ?>page.php?id=<?php echo $page->id ?>"><?php echo $page->title; ?></a></li>
-					<?php endwhile; ?>	
+					<?php list_pages() ?>
 					</ul>
 				</div>
 				

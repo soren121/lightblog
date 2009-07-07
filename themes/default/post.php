@@ -25,7 +25,7 @@
 				<h4 class="commenthead"><?php commentNum($commentnum) ?> Comments</h4><br />
 				<!-- Start comment loop -->
 				<?php if($result04->numRows() > 0): while($com = $result04->fetchObject()): ?>
-				<div class="comment <?php alternateColor('c1','c2') ?>">
+				<div class="comment <?php alternateColor('c1','c2') ?>" id="comment-<?php echo $com->id ?>">
 					<img class="comment_gravatar" src="<?php fetchGravatar($com->email) ?>" alt="" />
 					<?php if($com->website !== null) : ?>
 					<a class="comment_name" href="<?php echo $com->website ?>"><?php echo $com->name ?></a>

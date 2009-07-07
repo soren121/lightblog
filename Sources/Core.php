@@ -133,19 +133,6 @@ function commentNum($id, $output = 'e') {
 	}
 }
 
-// Function to undo Magic Quotes in strings
-function unescapeString($str) {
-	# Is Magic Quotes on?
-	if(function_exists('magic_quotes_gpc') && magic_quotes_gpc() == 1) {
-		# It is, so undo its filthy mess
-		return stripslashes(stripslashes($str));
-	}
-	else {
-		# Magic Quotes is off, so leave it as is
-		return stripslashes($str);
-	}
-}
-
 // Function to undo Magic Quotes in arrays
 function undoMagicArray($array, $max_depth = 1, $cur_depth = 0) {
 	if($cur_depth > $max_depth)
@@ -160,39 +147,6 @@ function undoMagicArray($array, $max_depth = 1, $cur_depth = 0) {
 		}
 		return $new_array;
 	}
-}
-
-# Function to return simple pagination links
-function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "?page=") {
-	# Global the database handle so we can use it in this function
-	global $dbh;
-	# Set defaults
-	if(!$limit) $limit = 6;
-	if(!$page) $page = 1;
-	# Set the query to retrieve the number of rows
-	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($type)."s") or die(sqlite_error_string($dbh->lastError));
-	# Query the database
-	@list($totalitems) = $query->fetch(SQLITE_NUM);	
-	# Set various required variables
-	$prev = $page - 1;						# Previous page is page - 1
-	$next = $page + 1;						# Next page is page + 1
-	$lastpage = ceil($totalitems/$limit);	# Last page is = total items / items per page, rounded up.
-	
-	# Clear $pagination
-	$pagination = "";
-	# Do we have more than one page?
-	if($totalitems > $limit) {
-		# Add the previous link
-		if($page > 1) {
-			$pagination .= "<a href=\"" . $target . $pagestring . $prev . "\" class=\"prev\">&laquo; Older Posts</a>";
-		}
-		# Add the next link
-		if($page < $lastpage) {
-			$pagination .= "<a href=\"" . $target . $pagestring . $next . "\" class=\"next\">Newer Posts &raquo;</a>";
-		}
-	}
-	# Return the links! Duh!
-	return $pagination;
 }
 
 # Function to return an advanced Digg-style pagination thingy
@@ -365,7 +319,7 @@ function login($method) {
 					$salt = substr(md5(uniqid(rand(), true)), 0, 9);
 					$passhash = sha1($salt.$password);
 					// Send new hash and salt to database
-					$dbh->query("UPDATE users SET password='$passhash', salt='$salt'");
+					$dbh->query("UPDATE users SET password='$passhash', salt='$salt' WHERE username='$username'");
 					// Does the user want to remember their data?
 					if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
 						setcookie(strtolower(bloginfo('title','r')).'user', $user->username, time()+60*60*24*30, "/");
@@ -375,6 +329,9 @@ function login($method) {
 					header('Location: '.bloginfo('url','r').'admin/dashboard.php');
 				}
 			}
+		}
+		else {
+			echo 'Incorrect username or password.';
 		}
 	}
 }
