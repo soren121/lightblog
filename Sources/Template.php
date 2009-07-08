@@ -56,6 +56,35 @@ function unescapeString($str) {
 	}
 }
 
+// Function to create text excerpts
+function substrws($text, $length = 180) {
+	// Make the excerpt!
+	if((mb_strlen($text) > $length)) {
+		$wsposition = mb_strpos($text, "", $length)-1;
+		if($wsposition > 0) {
+			$chars = count_chars(mb_substr($text, 0, ($wsposition+1)), 1);
+			if($chars[ord('<')] > $chars[ord('>')]) {
+				$wsposition = mb_strpos($text, '>', $wsposition)-1;
+			}				
+			$text = mb_substr($text, 0, ($wsposition+1));
+	}
+	// Close unclosed tags
+	if(preg_match_all("|<([a-zA-Z]+)|", $text, $aBuffer)) {
+		if(!empty($aBuffer[1])) {
+			preg_match_all("|</([a-zA-Z]+)>|", $text, $aBuffer2);
+				if(count($aBuffer[1]) != count($aBuffer2[1])) {
+					foreach($aBuffer[1] as $index => $tag) {
+						if(empty($aBuffer2[1][$index]) || $aBuffer2[1][$index] != $tag) {
+							$text .= '</'.$tag.'>';
+						}
+					}
+				}
+			}
+		}
+	}
+	return $text;
+}
+
 class PostLoop {
 	private $dbh = null;
 	private $result = null;
@@ -227,7 +256,7 @@ class CommentLoop {
   	public function obtain_comments($pid) {
 		$dbh = $this->dbh;
 		$pid = (int)$pid;
-    	$this->result = $dbh->query("SELECT * FROM 'comments' ORDER BY id desc WHERE pid=".$pid);
+    	$this->result = $dbh->query("SELECT * FROM 'comments' WHERE pid='$pid'");
   	}
 
   	public function has_comments() {

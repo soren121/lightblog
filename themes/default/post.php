@@ -22,7 +22,7 @@
 				<!-- End the loop -->			
 				<?php endwhile; ?>
 				
-				<h4 class="commenthead"><?php commentNum($commentnum) ?> Comments</h4><br />
+				<h4 class="commenthead"><?php commentNum($pid) ?> Comments</h4><br />
 				<!-- Start comment loop -->
 				<?php $com = new CommentLoop(); $com->obtain_comments($pid); while($com->has_comments()): ?>
 				<div class="comment <?php alternateColor('c1','c2') ?>" id="comment-<?php $com->id() ?>">
@@ -34,7 +34,7 @@
 					<?php endif; ?>
 					<span class="comment_says"> says:</span><br />
 					<span class="comment_date"><?php $com->date('F j, Y \a\t g:i A') ?></span><br />
-					<p class="comment_text"><?php $com->text() ?></p>
+					<p class="comment_text"><?php $com->comment() ?></p>
 				</div>
 				<!-- End comment loop -->
 				<?php endwhile; ?>
