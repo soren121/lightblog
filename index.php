@@ -26,7 +26,9 @@ if(!file_exists('config.php')){
 require('config.php');
 require(ABSPATH .'/Sources/Template.php');
 
-$result10 = $dbh->query("SELECT * FROM pages ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
+// Pagination variables
+if((int)$_GET['page']>1){$page=(int)$_GET['page'];}else{$page=0;};
+$file = $_SERVER['SCRIPT_FILENAME'];
 
 // Include theme files
 $themeName = bloginfo('theme', 'r');

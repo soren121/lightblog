@@ -2,42 +2,42 @@
 <?php include('sidebar.php')?>
 			<div id="content">
 				<!-- Start the loop -->
-				<?php if($result03->numRows() > 0): while($post = $result03->fetchObject()): $commentnum = (int)$post->id; ?>
+				<?php $posts = new PostLoop(); $posts->obtain_posts(0,1); while($posts->has_posts()): ?>
 				<div class="postbox">
 					<h4 class="postnamealt">
-						<?php echo unescapeString($post->title); ?>
+						<?php $posts->title() ?>
 					</h4>
-					<p class="post"><?php echo unescapeString($post->post); ?></p>
+					<p class="post"><?php $posts->post() ?></p>
 					<div class="postdata">
 						<span class="postdata">
-							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/date.png" alt="" />
-							<?php echo date('F j, Y', $post->date); ?>
+							<img src="<?php bloginfo('themeurl') ?>/style/date.png" alt="" />
+							<?php $posts->date('F j, Y') ?>
 						</span>
 						<span class="postdata">
-							<img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/user.png" alt="" />
-							<?php echo $post->author; ?>
+							<img src="<?php bloginfo('themeurl') ?>/style/user.png" alt="" />
+							<?php $posts->author() ?>
 						</span>
 					</div>
 				</div>
 				<!-- End the loop -->			
-				<?php endwhile; endif; ?>
+				<?php endwhile; ?>
 				
 				<h4 class="commenthead"><?php commentNum($commentnum) ?> Comments</h4><br />
 				<!-- Start comment loop -->
-				<?php if($result04->numRows() > 0): while($com = $result04->fetchObject()): ?>
-				<div class="comment <?php alternateColor('c1','c2') ?>" id="comment-<?php echo $com->id ?>">
-					<img class="comment_gravatar" src="<?php fetchGravatar($com->email) ?>" alt="" />
-					<?php if($com->website !== null) : ?>
-					<a class="comment_name" href="<?php echo $com->website ?>"><?php echo $com->name ?></a>
+				<?php $com = new CommentLoop(); $com->obtain_comments($pid); while($com->has_comments()): ?>
+				<div class="comment <?php alternateColor('c1','c2') ?>" id="comment-<?php $com->id() ?>">
+					<img class="comment_gravatar" src="<?php $com->gravatar() ?>" alt="" />
+					<?php if($com->website() !== false) : ?>
+					<a class="comment_name" href="<?php $com->website() ?>"><?php $com->name() ?></a>
 					<?php else: ?>
-					<span class="comment_name"><?php echo $com->name ?></span>
+					<span class="comment_name"><?php $com->name() ?></span>
 					<?php endif; ?>
 					<span class="comment_says"> says:</span><br />
-					<span class="comment_date"><?php echo date('F j, Y \a\t g:i A', $com->date) ?></span><br />
-					<p class="comment_text"><?php echo unescapeString($com->text) ?></p>
+					<span class="comment_date"><?php $com->date('F j, Y \a\t g:i A') ?></span><br />
+					<p class="comment_text"><?php $com->text() ?></p>
 				</div>
 				<!-- End comment loop -->
-				<?php endwhile; endif; ?>
+				<?php endwhile; ?>
 				
 				<h4 class="commentform-title">Post a comment</h4><br />
 				<div id="notifybox"></div>
@@ -50,7 +50,7 @@
 					<label for="cfwebsite"><small>Website</small></label></p>
 					<p><textarea cols="41" rows="10" name="comment_text" id="wysiwyg"></textarea></p>
 					<p><input name="comment_submit" type="submit" value="Submit" id="cfsubmit" /></p>
-					<p><input name="comment_pid" type="hidden" value="<?php echo (int)$_GET['id']; ?>" /></p>
+					<p><input name="comment_pid" type="hidden" value="<?php echo $pid; ?>" /></p>
 				</form>
 				<div class="clear"></div>
 			</div>
