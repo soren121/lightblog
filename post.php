@@ -18,12 +18,9 @@
 
 // Require config file
 require('config.php');
-require(ABSPATH .'/Sources/Core.php');
+require(ABSPATH .'/Sources/Template.php');
 
-// Request post and comments from database
-$result03 = $dbh->query("SELECT * FROM posts WHERE id=".(int)$_GET['id']." ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
-$result04 = $dbh->query("SELECT * FROM comments WHERE pid=".(int)$_GET['id']." ORDER BY id asc") or die(sqlite_error_string($dbh->lastError));
-$result10 = $dbh->query("SELECT * FROM pages ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
+$pid = (int)$_GET['id'];
 
 // Include theme files
 $themeName = bloginfo('theme', 'r');
