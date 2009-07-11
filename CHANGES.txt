@@ -1,17 +1,15 @@
-[05.30.09] Changes in 0.9.2
-	* Basic theme support
-	* New AJAX installer
-	* New AJAX administration panel
+[07.12.09] Changes in 0.9.2
+	* Theme support
+	* Rewritten AJAX installer
+	* Rewritten AJAX administration panel
+	* Rewritten Core
 	* Absolute path system
 	* New config file
 	* New Core file
-	* Included Akismet class for spam protection
 	* Included FeedWriter class for RSS2/Atom feeds
     * Removed OpenID library due to bad implementation
 	* Patched XSS vulnerabilities
 	* Patched SQL injection vulnerabilities
-	* Componentized installer
-	* Included GPL v3 license
+	* Greatly improved session security
+	* Improved database security
 	* New feed system
-	* Renamed rss.php to feed.php
-	* Added CHANGES.txt

@@ -19,7 +19,7 @@
 						</span>
 						<span class="postdata">
 							<img src="<?php bloginfo('themeurl') ?>/style/comment.png" alt="" />
-							<a href="<?php $posts->permalink() ?>"></a>				
+							<a href="<?php $posts->permalink() ?>"><?php $posts->commentNum() ?> Comments</a>				
 						</span>
 					</div>
 				</div>

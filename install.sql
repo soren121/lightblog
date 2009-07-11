@@ -34,7 +34,7 @@ CREATE TABLE 'pages' (
 	'author' VARCHAR(20) NOT NULL
 );
 
-INSERT INTO pages VALUES('1','About','This is a page. It works like a post, but it lives outside of the hierachel world of posts. You can edit and delete it in the admin panel.','1240703031','LightBlog Devs');
+INSERT INTO pages VALUES('1','About','This is a page. It works like a post, but it lives outside of the hierarchic world of posts. You can edit and delete it in the admin panel.','1247356860','LightBlog Devs');
 
 CREATE TABLE 'posts' (
 	'id' INTEGER PRIMARY KEY NOT NULL DEFAULT '0',
@@ -44,7 +44,7 @@ CREATE TABLE 'posts' (
 	'author' VARCHAR(20) NOT NULL
 );
 
-INSERT INTO 'posts' VALUES(1,'Welcome to LightBlog!','Welcome to LightBlog! We hope you enjoy it!<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1241136001,'LightBlog Devs');
+INSERT INTO 'posts' VALUES(1,'Hello world!','Thank you for choosing LightBlog to manage your website. We hope you like it! Feel free to delete this post after you''re all set up. :)<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1247356860,'LightBlog Devs');
 
 CREATE TABLE 'users' (
 	'id' INTEGER PRIMARY KEY NOT NULL DEFAULT '0',
