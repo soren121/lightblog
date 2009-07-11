@@ -159,6 +159,13 @@ class PostLoop {
     	else
       		return false;
   	}
+
+	public function commentNum() {
+		if(!empty($this->cur_result))
+			commentNum($this->cur_result->id);
+		else
+			return false;
+	}
 }
 
 class PageLoop {

@@ -89,10 +89,11 @@ else {
 			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Manage <?php echo ucwords($type) ?>s</h2>
 			<!-- Check if any posts/pages exist -->
 			<?php if($result->numRows() > 0): ?>
+			<form action="" id="bulk" method="post">
 			<table class="managelist">
 				<!-- Add table headings -->
 				<tr>
-					<th class="managelist">ID</th>
+					<th class="managelist">&nbsp;</th>
 					<th class="managelist">Title</th>
 					<th class="managelist">Author</th>
 					<th class="managelist">Date</th>
@@ -102,7 +103,7 @@ else {
 				<!-- Start row loop -->
 				<?php while($post = $result->fetchObject()): ?>	
 				<tr id="tr<?php echo $post->id ?>">
-					<td><?php echo $post->id ?></td>
+					<td><input type="checkbox" name="<?php echo $type; ?>-bulk" value="<?php echo $post->id ?>"></td>
 					<td><?php echo $post->title ?></td>
 					<td><?php echo $post->author ?></td>
 					<td><?php echo date('n/j/Y', $post->date) ?></td>
@@ -112,6 +113,7 @@ else {
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
+			</form>
 			<?php echo advancedPagination($type, $_SERVER['PHP_SELF'].'?type='.(int)$_GET['type'], (int)$_GET['page']); ?>
 			<!-- None exist error message -->
 			<?php else: ?>
