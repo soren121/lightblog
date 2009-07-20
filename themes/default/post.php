@@ -2,7 +2,7 @@
 <?php include('sidebar.php')?>
 			<div id="content">
 				<!-- Start the loop -->
-				<?php $posts = new PostLoop(); $posts->obtain_posts(0,1); while($posts->has_posts()): ?>
+				<?php $posts = new PostLoop(); $posts->obtain_posts($pid, 1); while($posts->has_posts()): ?>
 				<div class="postbox">
 					<h4 class="postnamealt">
 						<?php $posts->title() ?>
