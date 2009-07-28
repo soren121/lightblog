@@ -20,6 +20,8 @@
 require('config.php');
 require(ABSPATH .'/Sources/Template.php');
 
+$pid = (int)$_GET['id'];
+
 // Include theme files 
 $themeName = bloginfo('theme', 'r');
 include('themes/'.$themeName.'/page.php');

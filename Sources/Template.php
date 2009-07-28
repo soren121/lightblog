@@ -101,6 +101,13 @@ class PostLoop {
       		trigger_error('Invalid object supplied.');
   	}
 
+	public function obtain_post($pid) {
+		$pid = (((int)$pid) -1);
+		$dbh = $this->dbh;
+		
+		$this->result = $dbh->query("SELECT * FROM 'posts' LIMIT ".$pid.", 1");
+	}
+
   	public function obtain_posts($start = 0, $limit = 10) {
     	$start = (int)$start;
     	$limit = (int)$limit;
@@ -183,6 +190,13 @@ class PageLoop {
     	else
       		trigger_error('Invalid object supplied.');
   	}
+
+	public function obtain_page($pid) {
+		$pid = (((int)$pid) -1);
+		$dbh = $this->dbh;
+		
+		$this->result = $dbh->query("SELECT * FROM 'pages' LIMIT ".$pid.", 1");
+	}
 
   	public function obtain_pages($start = 0, $limit = 10) {
     	$start = (int)$start;
