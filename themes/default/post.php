@@ -2,7 +2,7 @@
 <?php include('sidebar.php')?>
 			<div id="content">
 				<!-- Start the loop -->
-				<?php $posts = new PostLoop(); $posts->obtain_posts($pid, 1); while($posts->has_posts()): ?>
+				<?php $posts = new PostLoop(); $posts->obtain_post($pid); while($posts->has_posts()): ?>
 				<div class="postbox">
 					<h4 class="postnamealt">
 						<?php $posts->title() ?>
@@ -27,11 +27,7 @@
 				<?php $com = new CommentLoop(); $com->obtain_comments($pid); while($com->has_comments()): ?>
 				<div class="comment <?php alternateColor('c1','c2') ?>" id="comment-<?php $com->id() ?>">
 					<img class="comment_gravatar" src="<?php $com->gravatar() ?>" alt="" />
-					<?php if($com->website() !== false) : ?>
 					<a class="comment_name" href="<?php $com->website() ?>"><?php $com->name() ?></a>
-					<?php else: ?>
-					<span class="comment_name"><?php $com->name() ?></span>
-					<?php endif; ?>
 					<span class="comment_says"> says:</span><br />
 					<span class="comment_date"><?php $com->date('F j, Y \a\t g:i A') ?></span><br />
 					<p class="comment_text"><?php $com->comment() ?></p>
