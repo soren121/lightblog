@@ -72,11 +72,10 @@ function substrws($text, $length = 180) {
 	if(preg_match_all("|<([a-zA-Z]+)|", $text, $aBuffer)) {
 		if(!empty($aBuffer[1])) {
 			preg_match_all("|</([a-zA-Z]+)>|", $text, $aBuffer2);
-				if(count($aBuffer[1]) != count($aBuffer2[1])) {
-					foreach($aBuffer[1] as $index => $tag) {
-						if(empty($aBuffer2[1][$index]) || $aBuffer2[1][$index] != $tag) {
-							$text .= '</'.$tag.'>';
-						}
+			if(count($aBuffer[1]) != count($aBuffer2[1])) {
+				foreach($aBuffer[1] as $index => $tag) {
+					if(empty($aBuffer2[1][$index]) || $aBuffer2[1][$index] != $tag) {
+						$text .= '</'.$tag.'>';
 					}
 				}
 			}
@@ -345,7 +344,7 @@ class CommentLoop {
 function list_pages($start_tag = '<li>', $end_tag = '</li>', $limit = 5) {
 	global $dbh;
 	$limit = intval($limit);
-	$result = $dbh->query("SELECT * FROM pages ORDER BY id desc LIMIT $limit");
+	$result = $dbh->query("SELECT * FROM pages ORDER BY id desc LIMIT 0, ".$limit);
 	while($pages = $result->fetchObject()) {
 		echo $start_tag.'<a href="'.bloginfo('url',2).'page.php?id='.$pages->id.'">'.$pages->title.'</a>'.$end_tag;
 	}
