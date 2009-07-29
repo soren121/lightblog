@@ -103,7 +103,7 @@ else {
 				<!-- Start row loop -->
 				<?php while($post = $result->fetchObject()): ?>	
 				<tr id="tr<?php echo $post->id ?>">
-					<td><input type="checkbox" name="<?php echo $type; ?>-bulk" value="<?php echo $post->id ?>"></td>
+					<td><input type="checkbox" name="<?php echo $type; ?>-bulk" value="<?php echo $post->id ?>" /></td>
 					<td><?php echo $post->title ?></td>
 					<td><?php echo $post->author ?></td>
 					<td><?php echo date('n/j/Y', $post->date) ?></td>
