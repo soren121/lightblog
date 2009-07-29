@@ -67,6 +67,7 @@ function substrws($text, $length = 180) {
 				$wsposition = mb_strpos($text, '>', $wsposition)-1;
 			}				
 			$text = mb_substr($text, 0, ($wsposition+1));
+		}
 	}
 	// Close unclosed tags
 	if(preg_match_all("|<([a-zA-Z]+)|", $text, $aBuffer)) {
