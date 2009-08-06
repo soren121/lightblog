@@ -70,6 +70,16 @@ else {
 				})
 			}
 		}
+		function bulkChange() {
+			action = $('#bulk_dropdown').val();
+			checkednum = $("input[name='bulk[]']:checkbox:checked").length;
+			if(checkednum > 0) {
+				var answer = confirm("Really " + action + " these <?php echo $type; ?>s?");
+				if(answer) {
+				
+				}
+			}
+		}
 	</script>
 </head>
 
@@ -90,6 +100,10 @@ else {
 			<!-- Check if any posts/pages exist -->
 			<?php if($result->numRows() > 0): ?>
 			<form action="" id="bulk" method="post">
+			Bulk action: <select name="bulk_action" id="bulk_dropdown" onchange="bulkChange()">
+							<option selected="selected" value=""> </option>
+							<option value="delete">Delete</option>
+						</select>
 			<table class="managelist">
 				<!-- Add table headings -->
 				<tr>
@@ -103,7 +117,7 @@ else {
 				<!-- Start row loop -->
 				<?php while($post = $result->fetchObject()): ?>	
 				<tr id="tr<?php echo $post->id ?>">
-					<td><input type="checkbox" name="<?php echo $type; ?>-bulk" value="<?php echo $post->id ?>" /></td>
+					<td><input type="checkbox" name="bulk[]" value="<?php echo $post->id ?>" /></td>
 					<td><?php echo $post->title ?></td>
 					<td><?php echo $post->author ?></td>
 					<td><?php echo date('n/j/Y', $post->date) ?></td>

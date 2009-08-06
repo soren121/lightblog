@@ -23,8 +23,9 @@
 						</span>
 					</div>
 				</div>
-				<!-- End the loop -->
 				<?php endwhile; ?>
+				<!-- End the loop -->
+				
 				<div class="pagination">
 					<?php simplePagination('post', $file, $page); ?>
 				</div>

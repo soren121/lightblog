@@ -33,18 +33,23 @@ endif;
 // Setting the channel elements
 // Use wrapper functions for common elements
 $TestFeed->setTitle('Syndication feed for '.bloginfo('title', 'r'));
-$TestFeed->setLink(bloginfo('url', 'r').'rss.php?type='.$type);
+
+if($type == 'rss'):
+	$TestFeed->setLink(bloginfo('url', 'r').'feed.php');
+else:
+	$TestFeed->setLink(bloginfo('url', 'r').'feed.php?type=atom');
+endif;
 	
 // For other channel elements, use setChannelElement() function
 if($type == 'atom'):
 	$TestFeed->setChannelElement('updated', date(DATE_ATOM, time()));
 	$TestFeed->setChannelElement('author', array('name'=>'LightBlog')); // temporary
 elseif($type == 'rss'):
-	$TestFeed->setChannelElement('pubDate', date(DATE_RSS, time()));
+	$TestFeed->setChannelElement('pubDate', date("D, d M Y h:i:s O", time()));
 	$TestFeed->setChannelElement('description', 'RSS2 syndication feed for '.bloginfo('title', 'r'));
 endif;
 
-// Adding items to feed. Generally this protion will be in a loop and add all feeds.
+// Adding items to feed. Generally this portion will be in a loop and add all feeds.
 $result = $dbh->query("SELECT * FROM posts ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
 
 while($row = $result->fetch(SQLITE_ASSOC)) {
@@ -55,15 +60,14 @@ while($row = $result->fetch(SQLITE_ASSOC)) {
 	$newItem->setTitle(stripslashes($row['title']));
 	$newItem->setLink(bloginfo('url', 'r').'post.php?id='.$row['id']);
 	$newItem->setDescription(stripslashes($row['post']));
+	$newItem->setDate(date("D, d M Y h:i:s O", $row['date']));
 	// Add RSS-unique elements
 	if($type == 'rss'):
 		$newItem->addElement('guid', bloginfo('url', 'r').'post.php?id='.$row['id'], array('isPermaLink'=>'true'));
-		$newItem->setDate(date(DATE_RSS, $row['date']));
 	// Add Atom-unique elements
 	elseif($type == 'atom'):
 		$newItem->addElement('id', bloginfo('url', 'r').'post.php?id='.$row['id']);
-		$newItem->setDate(date(DATE_ATOM, $row['date']));
-	endif;	
+	endif;
 	// Now add the feed item
 	$TestFeed->addItem($newItem);
 }
