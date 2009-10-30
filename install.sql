@@ -53,7 +53,7 @@ CREATE TABLE 'users' (
 	'email' VARCHAR(255) NOT NULL,
 	'displayname' VARCHAR(40) NOT NULL,
 	'role' INTEGER NOT NULL,
-	'ip' VARCHAR(16) NOT NULL,
+	'ip' VARCHAR(16),
 	'salt' VARCHAR(9) NOT NULL
 );
 
