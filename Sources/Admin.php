@@ -55,4 +55,34 @@ function list_themes() {
 	}
 }
 
+// User creation
+if(isset($_POST['addusersubmit'])) {
+	// Was everything sent?
+	if(isset($_POST['username'],$_POST['password'],$_POST['vpassword'],$_POST['email'],$_POST['displayname'],$POST['role']) {
+		// Clean!
+		$username = sqlite_escape_string($_POST['username']);
+		$password = sqlite_escape_string($_POST['password']);
+		$vpassword = sqlite_escape_string($_POST['vpassword']);
+		$email = sqlite_escape_string($_POST['email']);
+		$displayname = sqlite_escape_string(strip_tags($_POST['displayname']));
+		$role = sqlite_escape_string($_POST['role']);
+		// Global the database handle for use
+		global $dbh;
+		// Does that username exist already?		
+		$result = $dbh->query("SELECT * FROM users WHERE username='$username'") or die(sqlite_error_string($dbh->lastError));
+		if(sqlite_num_rows($result) < 0) { die("Username already in use."); }
+		unset($result);
+		// I guess not, let's verify the password
+		if($password !=== $vpassword) { die("Passwords not the same."); }
+		// Let's check the email syntax with a simple regex
+		if(!preg_match("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b", $email)) { die("Email not valid."); }
+		// Well, everything looks good, let's go
+		// Create a password hash
+		$salt = substr(md5(uniqid(rand(), true)), 0, 9);
+		$passhash = sha1($salt.$password);
+		// Create the user!
+		$dbh->query("INSERT INTO users (username,password,email,displayname,role,salt) VALUES('$username','$password','$email','$displayname','$role','$salt')");
+	}
+}
+
 ?>

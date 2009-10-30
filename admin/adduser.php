@@ -57,7 +57,7 @@ require(ABSPATH .'/Sources/Admin.php');
 					},
 					success: function(r) {
 						$('.loader').remove();
-						$('input[type=submit]').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">Changes saved.<\/' + 'span>');
+						$('input[type=submit]').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">User '+r+' created.<\/' + 'span>');
 					}
 				})
 				return false;
@@ -78,17 +78,27 @@ require(ABSPATH .'/Sources/Admin.php');
 				<p style="margin-bottom:10px;">You can add extra users to your blog here.</p>
 				
 				<form action="" method="post" style="margin-bottom:5px;">
-					<p class="label"><label for="title">Username</label></p>
+					<p class="label"><label for="username">Username</label></p>
 					<p style="margin-top:-5px;">
-						<input type="text" name="changetitle" id="title" value="<?php bloginfo('title') ?>" />
+						<input type="text" name="username" id="username" value="" />
 					</p>
 					
-					<p class="label"><label for="url">Blog URL</label></p>
+					<p class="label"><label for="password">Password</label></p>
 					<p style="margin-top:-5px;">
-						<input type="text" name="changeurl" id="url" value="<?php bloginfo('url') ?>" />
+						<input type="text" name="password" id="password" value="" />
 					</p>
 					
-					<p><input type="submit" value="Save" name="addusersubmit" /></p>
+					<p class="label"><label for="vpassword">Verify</label></p>
+					<p style="margin-top:-5px;">
+						<input type="text" name="vpassword" id="vpassword" value="" />
+					</p>
+					
+					<p class="label"><label for="password">Email</label></p>
+					<p style="margin-top:-5px;">
+						<input type="text" name="email" id="email" value="" />
+					</p>
+					
+					<p><input type="submit" value="Add User" name="addusersubmit" /></p>
 				</form>
 			</div>
 		</div>
