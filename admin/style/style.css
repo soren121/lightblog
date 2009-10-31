@@ -220,6 +220,15 @@ a:link, a:visited {
 	margin-bottom: 2px;
 }
 
+#content .db_box li a, #content .db_box li a:visited {
+	color: #3E8BBF !important;
+	text-decoration: none;
+}
+
+#content .db_box li a:hover, #content .db_box li a:visited:hover {
+	text-decoration: underline;
+}
+
 #footer { 
  	width: 700px;
  	color: #dddfdc;
