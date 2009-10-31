@@ -27,12 +27,13 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 # Functions to find the start for a query based on the page number
 function findStart($input) { $input = $input - 1; return $input * 8; }
 
-if($_GET['page'] > 1) {
-	$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
+if(isset($_GET['page']) && $_GET['page'] > 1) {
+		$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
 }
 else {
 	$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
 }
+
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

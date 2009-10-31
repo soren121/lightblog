@@ -19,6 +19,9 @@
 // Open database if not open
 $dbh = new SQLiteDatabase( DBH );
 
+// Set default timezone
+date_default_timezone_set('UTC');
+
 // Function to output the current version of LightBlog
 function LightyVersion($output = 'e') {
 	# DON'T TOUCH!
@@ -308,14 +311,14 @@ function get_ip() {
 		$client_ip = $_SERVER['REMOTE_ADDR'];
 	}
 	// Look for proxies
-	if($_SERVER['HTTP_CLIENT_IP']) {
+	if(isset($_SERVER['HTTP_CLIENT_IP'])) {
 		$proxy_ip = $_SERVER['HTTP_CLIENT_IP'];
 	}
-	elseif($_SERVER['HTTP_X_FORWARDED_FOR']) {
+	elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		$proxy_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
 	}
 	// Look for a real IP underneath a proxy
-	if($proxy_ip) {
+	if(isset($proxy_ip)) {
 		if(preg_match("/^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/", $proxy_ip, $ip_list)) {
 				$private_ip = array(
 					'/^0\./',

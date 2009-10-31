@@ -24,8 +24,8 @@ require(ABSPATH .'/Sources/Admin.php');
 # Functions to find the start for a query based on the page number
 function findStart($input) { $input = $input - 1; return $input * 8; }
 
-if($_GET['page'] > 1) {
-	$result = $dbh->query("SELECT * FROM users ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
+if(isset($_GET['page']) && $_GET['page'] > 1) {
+		$result = $dbh->query("SELECT * FROM users ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
 }
 else {
 	$result = $dbh->query("SELECT * FROM users ORDER BY id desc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));

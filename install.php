@@ -211,6 +211,7 @@ if(isset($_POST['isubmit'])) {
 	<div class="rounded" id="content">
 		<h2>LightBlog Installer</h2>
 		<div class="tab" id="tab1">
+			<?php $error1=''; $error2=''; ?>
 			<h4>Welcome to the LightBlog installer.<br />First, we must check to see if your server meets the requirements to run LightBlog.</h4>
 			<table class="vercheck">
 				<tr><td>PHP Version</td>
