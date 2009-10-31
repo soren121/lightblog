@@ -55,9 +55,9 @@ if(isset($_GET['logout'])) {
 <div id="registerbox">
     <form action="" method="post">
 		<label for="username">Username</label>
-		<p><input name="username" type="text" size="16" id="username" value="<?php echo $c_username ?>" /></p>
+		<p><input name="username" type="text" size="16" id="username" value="<?php if(isset($c_username)){echo $c_username;} ?>" /></p>
 		<label for="password">Password</label>
-		<p><input name="password" type="password" size="16" id="password" value="<?php echo $c_password ?>" /></p>
+		<p><input name="password" type="password" size="16" id="password" value="<?php if(isset($c_password)){echo $c_password;} ?>" /></p>
 		<p class="remember"><input name="remember" type="checkbox" id="rememberme" />
 		<label for="rememberme">Remember Me</label></p>
 		<p><input name="proclogin" type="submit" value="Login" id="submit" /></p>

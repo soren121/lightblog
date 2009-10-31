@@ -19,6 +19,9 @@
 // Open database
 $dbh = new SQLiteDatabase( DBH );
 
+// Set default timezone
+date_default_timezone_set('UTC');
+
 // Bloginfo function
 // Retrieves general info stored in core
 function bloginfo($var, $output = 'e') {
@@ -155,6 +158,7 @@ class PostLoop {
 
   	public function date($format = null) {
     	if(!empty($this->cur_result))
+			
       		echo date(!empty($format) ? $format : 'F jS, Y', $this->cur_result->date);
     	else
       		return false;

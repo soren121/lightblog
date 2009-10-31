@@ -1,6 +1,6 @@
 <?php session_start();
 
-/*********************************************
+/***********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
@@ -14,7 +14,7 @@
 	LICENSE.txt document included in this
 	distribution.
 
-*********************************************/
+***********************************************/
 
 // Require config file
 require('../config.php');
