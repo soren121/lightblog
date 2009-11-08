@@ -1,10 +1,10 @@
 <?php
  /**
- * Univarsel Feed Writer
+ * Universal Feed Writer
  * 
  * FeedItem class - Used as feed element in FeedWriter class
  *
- * @package         UnivarselFeedWriter
+ * @package         UniversalFeedWriter
  * @author          Anis uddin Ahmad <anisniit@gmail.com>
  * @link            http://www.ajaxray.com/projects/rss
  */
@@ -126,6 +126,24 @@
 		$this->addElement($tag, $value);    
 	}
 	
+  	/**
+  	* generates an UUID
+  	* @author     Anis uddin Ahmad <admin@ajaxray.com>
+  	* @param      string  an optional prefix
+  	* @return     string  the formated uuid
+	*/
+  	public function uuid($key = null, $prefix = '') 
+  	{
+		$key = ($key == null)? uniqid(rand()) : $key;
+		$chars = md5($key);
+		$uuid  = substr($chars,0,8) . '-';
+		$uuid .= substr($chars,8,4) . '-';
+		$uuid .= substr($chars,12,4) . '-';
+		$uuid .= substr($chars,16,4) . '-';
+		$uuid .= substr($chars,20,12);
+		return $prefix . $uuid;
+  	}
+  
 	/**
 	* Set the 'link' element of feed item
 	* 
@@ -142,7 +160,7 @@
 		else
 		{
 			$this->addElement('link','',array('href'=>$link));
-			$this->addElement('id', FeedWriter::uuid($link,'urn:uuid:'));
+			$this->addElement('id', $this->uuid($link,'urn:uuid:'));
 		} 
 		
 	}
