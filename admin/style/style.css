@@ -264,7 +264,7 @@ a:link, a:visited {
 	display: block;
 	background: transparent;
 	color: #fff;
-	padding: 6px 10px 6px 10px;
+	padding: 6px 10px 8px 10px;
 	margin-right: 1px;
 	color: #2d2b2b;
 	text-decoration: none;
@@ -282,7 +282,6 @@ a:link, a:visited {
 .jqueryslidemenu ul li a:hover {
 	background: #81B4D9;
 	color: #fff;
-	padding-bottom: 8px;
 }
 
 /* tab link background during selected state */
@@ -316,7 +315,7 @@ a:link, a:visited {
 /* Sub level menu links style */
 .jqueryslidemenu ul li ul li a {
 	font: normal 13px Verdana;
-	width: 160px;
+	width: 164px;
 	padding: 5px;
 	margin: 0;
 	border-top-width: 0;

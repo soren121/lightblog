@@ -104,7 +104,7 @@ if(isset($_POST['changeurl'])) {
 // User creation
 if(isset($_POST['addusersubmit'])) {
 	// Was everything sent?
-	if(isset($_POST['username'],$_POST['password'],$_POST['vpassword'],$_POST['email'],$_POST['displayname'],$POST['role']) {
+	if(isset($_POST['username'], $_POST['password'], $_POST['vpassword'], $_POST['email'], $_POST['displayname'], $POST['role'])) {
 		// Clean!
 		$username = sqlite_escape_string($_POST['username']);
 		$password = sqlite_escape_string($_POST['password']);
@@ -119,7 +119,7 @@ if(isset($_POST['addusersubmit'])) {
 		if(sqlite_num_rows($result) < 0) { die("Username already in use."); }
 		unset($result);
 		// I guess not, let's verify the password
-		if($password !=== $vpassword) { die("Passwords not the same."); }
+		if($password !== $vpassword) { die("Passwords not the same."); }
 		// Let's check the email syntax with a simple regex
 		if(!preg_match("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b", $email)) { die("Email not valid."); }
 		// Well, everything looks good, let's go
