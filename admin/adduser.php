@@ -1,4 +1,4 @@
-<?php
+<?php session_start();
 
 /***********************************************
 
@@ -77,7 +77,7 @@ require(ABSPATH .'/Sources/Admin.php');
 			<div class="settings">
 				<p style="margin-bottom:10px;">You can add extra users to your blog here.</p>
 				
-				<form action="" method="post" style="margin-bottom:5px;">
+				<form action="" method="post" style="margin-bottom:5px;margin-left:25px;">
 					<p class="label"><label for="username">Username</label></p>
 					<p style="margin-top:-5px;">
 						<input type="text" name="username" id="username" value="" />
@@ -93,9 +93,22 @@ require(ABSPATH .'/Sources/Admin.php');
 						<input type="text" name="vpassword" id="vpassword" value="" />
 					</p>
 					
-					<p class="label"><label for="password">Email</label></p>
+					<p class="label"><label for="email">Email</label></p>
 					<p style="margin-top:-5px;">
 						<input type="text" name="email" id="email" value="" />
+					</p>
+					
+					<p class="label"><label for="displayname">Display Name</label></p>
+					<p style="margin-top:-5px;">
+						<input type="text" name="displayname" id="displayname" value="" />
+					</p>
+					
+					<p class="label"><label for "role">Role</label></p>
+					<p>
+						<select name="role" id="role">
+							<option value="1">Standard User</option>
+							<option value="2">Administrator</option>
+						</select>
 					</p>
 					
 					<p><input type="submit" value="Add User" name="addusersubmit" /></p>

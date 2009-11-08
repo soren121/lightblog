@@ -38,6 +38,7 @@
 					<ul>
 						<li><a href="users.php">Manage Users</a></li>
 						<li><a href="profile.php">Your Profile</a></li>
+						<li><a href="adduser.php">Add User</a></li>
 					</ul>
 				</li>
 				<?php if(userFetch('role', 'r') >= 1): ?>
