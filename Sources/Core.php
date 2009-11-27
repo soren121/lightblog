@@ -101,6 +101,19 @@ function dirlist($input) {
 	return $array;
 }
 
+// Function to undo Magic Quotes in strings
+function unescapeString($str) {
+		# Is Magic Quotes on?
+		if(function_exists('magic_quotes_gpc') && magic_quotes_gpc() == 1) {
+				# It is, so undo its filthy mess
+				return stripslashes(stripslashes($str));
+		}
+		else {
+				# Magic Quotes is off, so leave it as is
+				return stripslashes($str);
+		}
+}
+
 // Function to undo Magic Quotes in arrays
 function undoMagicArray($array, $max_depth = 1, $cur_depth = 0) {
 	if($cur_depth > $max_depth)
