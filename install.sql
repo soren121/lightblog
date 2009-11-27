@@ -44,7 +44,7 @@ CREATE TABLE 'posts' (
 	'author' VARCHAR(20) NOT NULL
 );
 
-INSERT INTO 'posts' VALUES(1,'Hello world!','Thank you for choosing LightBlog to manage your website. We hope you like it! Feel free to delete this post after you''re all set up. :)<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1247356860,'LightBlog Devs');
+INSERT INTO 'posts' VALUES(1,'Hello world!','Thank you for choosing LightBlog to manage your website. We hope you like it! Feel free to delete this post after you''re all set up. :)<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1258300189,'LightBlog Devs');
 
 CREATE TABLE 'users' (
 	'id' INTEGER PRIMARY KEY NOT NULL DEFAULT '0',

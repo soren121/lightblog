@@ -56,6 +56,7 @@ require(ABSPATH .'/Sources/Admin.php');
 						alert("Failed to submit.");
 					},
 					success: function(r) {
+						alert(r);
 						$('.loader').remove();
 						$('input[type=submit]').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">User '+r+' created.<\/' + 'span>');
 					}
