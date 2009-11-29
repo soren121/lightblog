@@ -59,35 +59,6 @@ function unescapeString($str) {
 	}
 }
 
-// Function to create text excerpts
-function substrws($text, $length = 180) {
-	// Make the excerpt!
-	if((mb_strlen($text) > $length)) {
-		$wsposition = mb_strpos($text, "", $length)-1;
-		if($wsposition > 0) {
-			$chars = count_chars(mb_substr($text, 0, ($wsposition+1)), 1);
-			if($chars[ord('<')] > $chars[ord('>')]) {
-				$wsposition = mb_strpos($text, '>', $wsposition)-1;
-			}				
-			$text = mb_substr($text, 0, ($wsposition+1));
-		}
-	}
-	// Close unclosed tags
-	if(preg_match_all("|<([a-zA-Z]+)|", $text, $aBuffer)) {
-		if(!empty($aBuffer[1])) {
-			preg_match_all("|</([a-zA-Z]+)>|", $text, $aBuffer2);
-			if(count($aBuffer[1]) != count($aBuffer2[1])) {
-				foreach($aBuffer[1] as $index => $tag) {
-					if(empty($aBuffer2[1][$index]) || $aBuffer2[1][$index] != $tag) {
-						$text .= '</'.$tag.'>';
-					}
-				}
-			}
-		}
-	}
-	return $text;
-}
-
 class PostLoop {
 	private $dbh = null;
 	private $result = null;
@@ -149,11 +120,23 @@ class PostLoop {
       		return false;
   	}
 
-  	public function post() {
-    	if(!empty($this->cur_result))
-      		echo unescapeString($this->cur_result->post);
-    	else
+  	public function content($excerpt = '') {
+    	if(!empty($this->cur_result)) {
+			if($excerpt !== '') {
+				$length = 360;
+				$length -= mb_strlen('...');
+				if(mb_strlen(unescapeString($this->cur_result->post)) > $length) {
+      				echo mb_substr(unescapeString($this->cur_result->post), 0, $length).' ... <a href="post.php?id='. $this->cur_result->id.'">'.$excerpt.'</a>';
+				}
+				else { echo unescapeString($this->cur_result->post); }
+			}
+			else {
+				echo unescapeString($this->cur_result->post);
+			}
+		}
+    	else {
       		return false;
+		}
   	}
 
   	public function date($format = null) {

@@ -382,4 +382,18 @@ function cleanHTML($str) {
 	return $str;
 }
 
+// User permissions function
+function permissions($group) {
+	# Fetch the session info
+	if(userFetch('role', 1) >= $group) {
+		# Return true if they're allowed
+		return true;
+	}
+	
+	else {
+		# Return false if they aren't
+		return false;
+	}
+}
+
 ?>

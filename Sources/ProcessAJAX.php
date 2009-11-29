@@ -103,30 +103,38 @@ if(isset($_POST['changeurl'])) {
 
 // User creation
 if(isset($_POST['addusersubmit'])) {
-	// Set
-	$username = sqlite_escape_string($_POST['username']);
-	$password = $_POST['password'];
-	$vpassword = $_POST['vpassword'];
-	$email = $_POST['email'];
-	$displayname = $_POST['displayname'];
-	$role = $_POST['role'];
-	// Does that username exist already?		
-	$result = $dbh->query("SELECT * FROM users WHERE username='$username';") or die(sqlite_error_string($dbh->lastError));
-	if($result->numRows() < 0) { die("Username already in use."); }
-	unset($result);
-	// I guess not, let's verify the password
-	if($password !== $vpassword) { die("Passwords not the same."); }
-	// Well, everything looks good, let's go
-	// Create a password hash
-	$salt = substr(md5(uniqid(rand(), true)), 0, 9);
-	$passhash = sha1($salt.$password);
-	// Clean!
-	$email = sqlite_escape_string($email);
-	$displayname = sqlite_escape_string(strip_tags($displayname));
-	$role = sqlite_escape_string($role);
-	// Create the user!
-	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$passhash','$email','$displayname','$role', '".get_ip()."', '$salt');") or die(sqlite_error_string($dbh->lastError));
-	echo $username;
+	// Can the user do this?
+	if(permissions(3)) {
+		// Set
+		$username = sqlite_escape_string($_POST['username']);
+		$password = $_POST['password'];
+		$vpassword = $_POST['vpassword'];
+		$email = $_POST['email'];
+		$displayname = $_POST['displayname'];
+		$role = $_POST['role'];
+		// Does that username exist already?		
+		$result = $dbh->query("SELECT * FROM users WHERE username='$username';") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">".sqlite_error_string($dbh->lastError));
+		if($result->numRows() < 0) { die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Username already in use."); }
+		unset($result);
+		// I guess not, let's verify the password
+		if($password !== $vpassword) { die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Passwords not the same."); }
+		// Let's verify the email
+		if(!preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/',$email)) { die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Email syntax not valid."); }
+		// Well, everything looks good, let's go
+		// Create a password hash
+		$salt = substr(md5(uniqid(rand(), true)), 0, 9);
+		$passhash = sha1($salt.$password);
+		// Clean!
+		$email = sqlite_escape_string($email);
+		$displayname = sqlite_escape_string(strip_tags($displayname));
+		$role = sqlite_escape_string($role);
+		// Create the user!
+		$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$passhash','$email','$displayname','$role', '".get_ip()."', '$salt');") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">".sqlite_error_string($dbh->lastError));
+		echo "span style=\"color:green;margin-left:5px;\" class=\"inform\">User ".$username." created successfully.";
+	}
+	else {
+		die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: user not allowed!");
+	}
 }
 
 ?>

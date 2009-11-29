@@ -56,9 +56,8 @@ require(ABSPATH .'/Sources/Admin.php');
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						alert(r);
 						$('.loader').remove();
-						$('input[type=submit]').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">User '+r+' created.<\/' + 'span>');
+						$('input[type=submit]').removeAttr('disabled').after('<' + r +'<\/' + 'span>');
 					}
 				})
 				return false;
@@ -86,12 +85,12 @@ require(ABSPATH .'/Sources/Admin.php');
 					
 					<p class="label"><label for="password">Password</label></p>
 					<p style="margin-top:-5px;">
-						<input type="text" name="password" id="password" value="" />
+						<input type="password" name="password" id="password" value="" />
 					</p>
 					
 					<p class="label"><label for="vpassword">Verify</label></p>
 					<p style="margin-top:-5px;">
-						<input type="text" name="vpassword" id="vpassword" value="" />
+						<input type="password" name="vpassword" id="vpassword" value="" />
 					</p>
 					
 					<p class="label"><label for="email">Email</label></p>
@@ -104,11 +103,12 @@ require(ABSPATH .'/Sources/Admin.php');
 						<input type="text" name="displayname" id="displayname" value="" />
 					</p>
 					
-					<p class="label"><label for "role">Role</label></p>
+					<p class="label"><label for="role">Role</label></p>
 					<p>
 						<select name="role" id="role">
 							<option value="1">Standard User</option>
-							<option value="2">Administrator</option>
+							<option value="2">Moderator</option>
+							<option value="3">Administrator</option>
 						</select>
 					</p>
 					

@@ -75,6 +75,7 @@ require(ABSPATH .'/Sources/Admin.php');
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
+			<?php if(permissions(3)): ?>
 			<h2 class="title"><img class="textmid" src="style/design.png" alt="" />Choose Your Theme</h2>
 			<div class="settings">
 				<p>Themes are used to change the appearance of your blog. For more themes or information on how to
@@ -87,6 +88,7 @@ require(ABSPATH .'/Sources/Admin.php');
 					<p><input type="submit" name="themesubmit" id="themesubmit" value="Save" /></p>
 				</form>
 			</div>
+			<?php endif; ?>
 		</div>
 		<div id="footer" class="roundedb">		
 			Powered by LightBlog <?php LightyVersion() ?>    

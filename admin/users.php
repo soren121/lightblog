@@ -25,11 +25,13 @@ require(ABSPATH .'/Sources/Admin.php');
 function findStart($input) { $input = $input - 1; return $input * 8; }
 
 if(isset($_GET['page']) && $_GET['page'] > 1) {
-		$result = $dbh->query("SELECT * FROM users ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
+		$result = $dbh->query("SELECT * FROM users ORDER BY id asc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
 }
 else {
-	$result = $dbh->query("SELECT * FROM users ORDER BY id desc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
+	$result = $dbh->query("SELECT * FROM users ORDER BY id asc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
 }
+
+$role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -77,14 +79,15 @@ else {
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
+			<?php if(permissions(2)): ?>
 			<h2 class="title"><img class="textmid" src="style/users.png" alt="" />Manage Users</h2>
 			<!-- Check if any posts/pages exist -->
 			<?php if($result->numRows() > 0): ?>
 			<table class="managelist">
 				<!-- Add table headings -->
 				<tr>
-					<th class="managelist">ID</th>
 					<th class="managelist">Username</th>
+					<th class="managelist">Role</th>
 					<th class="managelist">Email</th>
 					<th class="managelist">Display Name</th>
 					<th class="managelist">IP Address</th>
@@ -93,8 +96,8 @@ else {
 				<!-- Start row loop -->
 				<?php while($user = $result->fetchObject()): ?>	
 				<tr id="tr<?php echo $user->id ?>">
-					<td><?php echo $user->id ?></td>
 					<td><?php echo $user->username ?></td>
+					<td><?php echo $role_array[$user->role] ?></td>
 					<td><?php echo $user->email ?></td>
 					<td><?php echo $user->displayname ?></td>
 					<td><?php echo $user->ip ?></td>
@@ -104,7 +107,7 @@ else {
 				<!-- End row loop -->
 			</table>
 			<?php echo advancedPagination('user', $_SERVER['PHP_SELF'], (int)$_GET['page']); ?>
-			<?php endif; ?>
+			<?php endif; endif; ?>
 		</div>
 		<div id="footer" class="roundedb">		
 			Powered by LightBlog <?php LightyVersion() ?>    
