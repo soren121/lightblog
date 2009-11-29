@@ -48,26 +48,36 @@ require(ABSPATH .'/Sources/Admin.php');
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
+			<?php if(permissions(1)): ?>
 			<h2 class="title"><img class="textmid" src="style/users.png" alt="" />User Profile</h2>
 			<div class="settings">
-				<p style="margin-bottom:10px;">.</p>
-				<!-->
-				<form action="" method="post" style="margin-bottom:5px;">
-					<p class="label"><label>Akismet</label></p>
+				<p style="margin-bottom:10px;">You can edit your profile here.</p>
+
+				<form action="" method="post" style="margin-bottom:5px;margin-left:25px;">
+					<p class="label"><label for="password">Password</label></p>
 					<p style="margin-top:-5px;">
-						<input type="radio" name="akismet" value="0" /> Off
-						<input type="radio" name="akismet" value="1" /> On
+						<input type="password" name="password" id="password" value="" />
+					</p>
+
+					<p class="label"><label for="email">Email</label></p>
+					<p style="margin-top:-5px;">
+						<input type="text" name="email" id="email" value="<?php userFetch('email') ?>" />
+					</p>
+
+					<p class="label"><label for="displayname">Display Name</label></p>
+					<p style="margin-top:-5px;">
+						<input type="text" name="displayname" id="displayname" value="<?php userFetch('displayname') ?>" />
 					</p>
 					
-					<p class="label"><label for="akismet_key">Akismet key</label></p>
-					<p style="margin-top:-5px;">
-						<input type="text" name="akismet_key" id="akismet_key" value="<?php bloginfo('akismet_key') ?>" />
+					<p class="label" style="margin-top:20px;">For security reasons, please type your current password in here.</p>
+					<p style="margin-top:0px;">
+						<input type="text" name="vpassword" id="vpassword" value="" />
 					</p>
-				-->
-					
-					<p><input type="submit" value="Save" /></p>
+
+					<p><input type="submit" value="Save Changes" name="editprofilesubmit" /></p>
 				</form>
 			</div>
+			<?php endif; ?>
 		</div>
 		<div id="footer" class="roundedb">		
 			Powered by LightBlog <?php LightyVersion() ?>    
