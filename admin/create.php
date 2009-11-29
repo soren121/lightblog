@@ -85,7 +85,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
-			<?php if(!isset($type)): ?>
+			<?php if(permissions(1)): if(!isset($type)): ?>
 			<p>The type of content to add was not specified. You must have taken a bad link. Please
 			use the navigation bar above to choose the correct type.</p>
 			<?php else: ?>
@@ -97,7 +97,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 				<p><input class="cf" type="hidden" name="type" value="<?php echo $type ?>" /></p>
 				<p><input class="cf submit" name="create" type="submit" value="Publish" /></p>
 			</form>
-			<?php endif; ?>
+			<?php endif; endif; ?>
 		</div>
 		<div id="footer" class="roundedb">		
 			Powered by LightBlog <?php LightyVersion() ?>    

@@ -1,5 +1,5 @@
 		<div id="footer">
-			&copy; 2009 Soren Studios. Powered by LightBlog.		
+			&copy; <?php echo date('Y') ?> <?php bloginfo('title') ?>. Powered by LightBlog.		
 		</div>
     </div>
 </body>

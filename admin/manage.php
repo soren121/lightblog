@@ -92,7 +92,7 @@ else {
 		<?php include('menu.php'); ?>
 		<div id="content">
 			<!-- Check if parameters were set -->
-			<?php if(!isset($type)): ?>
+			<?php if(permissions(2)): if(!isset($type)): ?>
 			<p>The type of content to manage was not specified. You must have taken a bad link. Please
 			use the navigation bar above to choose the correct type.</p>
 			<!-- They were, so continue -->
@@ -100,15 +100,10 @@ else {
 			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Manage <?php echo ucwords($type) ?>s</h2>
 			<!-- Check if any posts/pages exist -->
 			<?php if($result->numRows() > 0): ?>
-			<form action="" id="bulk" method="post">
-			Bulk action: <select name="bulk_action" id="bulk_dropdown" onchange="bulkChange()">
-							<option selected="selected" value=""> </option>
-							<option value="delete">Delete</option>
-						</select>
 			<table class="managelist">
 				<!-- Add table headings -->
 				<tr>
-					<th class="managelist">&nbsp;</th>
+					<th class="managelist">ID</th>
 					<th class="managelist">Title</th>
 					<th class="managelist">Author</th>
 					<th class="managelist">Date</th>
@@ -118,7 +113,7 @@ else {
 				<!-- Start row loop -->
 				<?php while($post = $result->fetchObject()): ?>	
 				<tr id="tr<?php echo $post->id ?>">
-					<td><input type="checkbox" name="bulk[]" value="<?php echo $post->id ?>" /></td>
+					<td><?php echo $post->id ?></td>
 					<td><?php echo $post->title ?></td>
 					<td><?php echo $post->author ?></td>
 					<td><?php echo date('n/j/Y', $post->date) ?></td>
@@ -128,13 +123,12 @@ else {
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
-			</form>
 			<?php echo advancedPagination($type, $_SERVER['PHP_SELF'].'?type='.(int)$_GET['type'], (int)$_GET['page']); ?>
 			<!-- None exist error message -->
 			<?php else: ?>
 			<p>Sorry, no <?php echo $type ?>s exist to manage.</p>
-			<!-- End both ifs -->
-			<?php endif; endif; ?>
+			<!-- End all ifs -->
+			<?php endif; endif; endif; ?>
 		</div>
 		<div id="footer" class="roundedb">		
 			Powered by LightBlog <?php LightyVersion() ?>    

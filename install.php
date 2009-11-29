@@ -144,7 +144,7 @@ if(isset($_POST['isubmit'])) {
 	// Add blog directory URL to database
 	$dbh->query("INSERT INTO core VALUES('url', '".curDirURL()."');") or die("Cannot write to database. Check your permissions.");
 	// Add user to database
-	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$password','$email','$displayname',1,'".get_ip()."','$salt');") or die("Cannot write to database. Check your permissions.");
+	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$password','$email','$displayname',3,'".get_ip()."','$salt');") or die("Cannot write to database. Check your permissions.");
 	// Unset variables
 	unset($username, $password, $email, $displayname, $ip, $dbh);
 	// Respond
