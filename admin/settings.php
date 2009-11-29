@@ -73,6 +73,7 @@ require(ABSPATH .'/Sources/Admin.php');
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
+			<?php if(permissions(3)): ?>
 			<h2 class="title"><img class="textmid" src="style/settings.png" alt="" />General Settings</h2>
 			<div class="settings">
 				<p style="margin-bottom:10px;">You can find core settings like the title of your blog here.</p>
@@ -91,6 +92,7 @@ require(ABSPATH .'/Sources/Admin.php');
 					<p><input type="submit" value="Save" /></p>
 				</form>
 			</div>
+			<?php endif; ?>
 		</div>
 		<div id="footer" class="roundedb">		
 			Powered by LightBlog <?php LightyVersion() ?>    

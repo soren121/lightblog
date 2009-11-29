@@ -88,7 +88,7 @@ require(ABSPATH .'/Sources/Admin.php');
 						<input type="password" name="password" id="password" value="" />
 					</p>
 					
-					<p class="label"><label for="vpassword">Verify</label></p>
+					<p class="label"><label for="vpassword">Verify Password</label></p>
 					<p style="margin-top:-5px;">
 						<input type="password" name="vpassword" id="vpassword" value="" />
 					</p>
