@@ -50,7 +50,12 @@ require(ABSPATH .'/Sources/Admin.php');
 			$('form').submit(function() {
 				var inputs = [];
 				$(':input', this).each(function() {
-					inputs.push(this.name + '=' + escape(this.value));
+					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
+						nothing = 0;
+					}
+					else {
+						inputs.push(this.name + '=' + escape(this.value));
+					}
 				})
 				$('.inform').remove();
 				$('input[type=submit]').attr('disabled','disabled').after('<' + 'img src="style/loadingsmall.gif" alt="" class="loader" style="margin-left:5px;" />');
@@ -89,19 +94,19 @@ require(ABSPATH .'/Sources/Admin.php');
 				<form action="" method="post" style="margin-bottom:5px;margin-left:25px;">
 					<p class="label"><label for="password">Password</label></p>
 					<p style="margin-top:-5px;">
-						<input type="checkbox" name="pw-ck" />
+						<input type="checkbox" name="pw-ck" value="1" />
 						<input type="password" name="password" id="password" value="" disabled="disabled" />
 					</p>
 
 					<p class="label"><label for="email">Email</label></p>
 					<p style="margin-top:-5px;">
-						<input type="checkbox" name="em-ck" />
+						<input type="checkbox" name="em-ck" value="1" />
 						<input type="text" name="email" id="email" value="<?php userFetch('email') ?>" disabled="disabled" />
 					</p>
 
 					<p class="label"><label for="displayname">Display Name</label></p>
 					<p style="margin-top:-5px;">
-						<input type="checkbox" name="dn-ck" />
+						<input type="checkbox" name="dn-ck" value="1" />
 						<input type="text" name="displayname" id="displayname" value="<?php userFetch('displayname') ?>" disabled="disabled" />
 					</p>
 					

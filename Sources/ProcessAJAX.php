@@ -153,18 +153,18 @@ if(isset($_POST['editprofilesubmit'])) {
 		$passhash = sha1($dbsalt->fetchSingle().$vpassword);
 		// Do they match?
 		if($passhash === $dbpasshash->fetchSingle()) {
-			if(isset($_POST['pw-ck'])) {
+			if(isset($_POST['pw-ck']) && $_POST['pw-ck'] == 1) {
 				// Let's make a new salt!
 				$salt = substr(md5(uniqid(rand(), true)), 0, 9);
 				$passhash = sha1($salt.$password);
 				// Send it up to the mothership...I mean the database!
 				$dbh->query("UPDATE users SET password='$passhash', salt='$salt' WHERE username='$c_user'") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Password update failed.");
 			}
-			if(isset($_POST['em-ck'])) {
+			if(isset($_POST['em-ck']) && $_POST['em-ck'] == 1) {
 				// Send it to the database
 				$dbh->query("UPDATE users SET email='$email' WHERE username='$c_user'") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Email update failed.");
 			}
-			if(isset($_POST['dn-ck'])) {
+			if(isset($_POST['dn-ck']) && $_POST['dn-ck'] == 1) {
 				// Send it to the database
 				$dbh->query("UPDATE users SET displayname='$displayname' WHERE username='$c_user'") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Display name update failed.");
 			}	
