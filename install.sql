@@ -1,9 +1,3 @@
-CREATE TABLE banned_users (
-	'username' VARCHAR(20) NOT NULL,
-	'length' INTEGER NOT NULL,
-	'reason' TEXT NOT NULL
-);
-
 CREATE TABLE core (
 	'variable' TEXT NOT NULL,
 	'value' TEXT

@@ -106,12 +106,12 @@ if(isset($_POST['addusersubmit'])) {
 	// Can the user do this?
 	if(permissions(3)) {
 		// Set
-		$username = sqlite_escape_string($_POST['username']);
-		$password = $_POST['password'];
-		$vpassword = $_POST['vpassword'];
-		$email = $_POST['email'];
-		$displayname = $_POST['displayname'];
-		$role = $_POST['role'];
+		if(!isset($_POST['username'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$username = sqlite_escape_string($_POST['username']);}
+		if(!isset($_POST['password'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$password = $_POST['password'];}
+		if(!isset($_POST['vpassword'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$vpassword = $_POST['vpassword'];}
+		if(!isset($_POST['email'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$email = $_POST['email'];}
+		if(!isset($_POST['displayname'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$displayname = $_POST['displayname'];}
+		if(!isset($_POST['role'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$role = $_POST['role'];}
 		// Does that username exist already?		
 		$result = $dbh->query("SELECT * FROM users WHERE username='$username';") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">".sqlite_error_string($dbh->lastError));
 		if($result->numRows() < 0) { die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Username already in use."); }
@@ -131,6 +131,48 @@ if(isset($_POST['addusersubmit'])) {
 		// Create the user!
 		$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$passhash','$email','$displayname','$role', '".get_ip()."', '$salt');") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">".sqlite_error_string($dbh->lastError));
 		echo "span style=\"color:green;margin-left:5px;\" class=\"inform\">User ".$username." created successfully.";
+	}
+	else {
+		die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: user not allowed!");
+	}
+}
+
+if(isset($_POST['editprofilesubmit'])) {
+	// Can the user do this?
+	if(permissions(1)) {
+		// Sanitize input fields
+		$password = sqlite_escape_string($_POST['password']);
+		$email = sqlite_escape_string($_POST['email']);
+		$displayname = sqlite_escape_string($_POST['displayname']);
+		$vpassword = sqlite_escape_string($_POST['vpassword']);
+		$c_user = sqlite_escape_string(userFetch('username', 1));
+		// Run database query to get current password
+		$dbpasshash = $dbh->query("SELECT password FROM users WHERE username='$c_user'") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Username query failed.");
+		$dbsalt = $dbh->query("SELECT salt FROM users WHERE username='$c_user'") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Salt query failed.");
+		// Recreate hash
+		$passhash = sha1($dbsalt->fetchSingle().$vpassword);
+		// Do they match?
+		if($passhash === $dbpasshash->fetchSingle()) {
+			if(isset($_POST['pw-ck'])) {
+				// Let's make a new salt!
+				$salt = substr(md5(uniqid(rand(), true)), 0, 9);
+				$passhash = sha1($salt.$password);
+				// Send it up to the mothership...I mean the database!
+				$dbh->query("UPDATE users SET password='$passhash', salt='$salt' WHERE username='$c_user'") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Password update failed.");
+			}
+			if(isset($_POST['em-ck'])) {
+				// Send it to the database
+				$dbh->query("UPDATE users SET email='$email' WHERE username='$c_user'") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Email update failed.");
+			}
+			if(isset($_POST['dn-ck'])) {
+				// Send it to the database
+				$dbh->query("UPDATE users SET displayname='$displayname' WHERE username='$c_user'") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Display name update failed.");
+			}	
+		}
+		else {
+			die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Security password check failed.");
+		}
+		echo "span style=\"color:green;margin-left:5px;\" class=\"inform\">Success! Changes will appear on next login.";
 	}
 	else {
 		die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: user not allowed!");
