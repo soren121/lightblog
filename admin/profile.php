@@ -37,6 +37,39 @@ require(ABSPATH .'/Sources/Admin.php');
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
+			
+			$('input:checkbox').click(function() {
+	 			if($(this).is(':checked')) {
+	   				$(this).next().removeAttr('disabled');
+	 			} else {
+			   		$(this).next().attr('disabled', 'disabled');
+	 			}
+   			}); 
+		});
+		$(function() {
+			$('form').submit(function() {
+				var inputs = [];
+				$(':input', this).each(function() {
+					inputs.push(this.name + '=' + escape(this.value));
+				})
+				$('.inform').remove();
+				$('input[type=submit]').attr('disabled','disabled').after('<' + 'img src="style/loadingsmall.gif" alt="" class="loader" style="margin-left:5px;" />');
+				jQuery.ajax({
+					data: inputs.join('&'),
+					type: "POST",
+					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
+					timeout: 2000,
+					error: function() {
+						console.log("Failed to submit");
+						alert("Failed to submit.");
+					},
+					success: function(r) {
+						$('.loader').remove();
+						$('input[type=submit]').removeAttr('disabled').after('<' + r +'<\/' + 'span>');
+					}
+				})
+				return false;
+			})
 		});
 	</script>
 </head>
@@ -51,27 +84,30 @@ require(ABSPATH .'/Sources/Admin.php');
 			<?php if(permissions(1)): ?>
 			<h2 class="title"><img class="textmid" src="style/users.png" alt="" />User Profile</h2>
 			<div class="settings">
-				<p style="margin-bottom:10px;">You can edit your profile here.</p>
+				<p style="margin-bottom:10px;">You can edit your profile here. For each item you want to edit, you need to check the checkbox.</p>
 
 				<form action="" method="post" style="margin-bottom:5px;margin-left:25px;">
 					<p class="label"><label for="password">Password</label></p>
 					<p style="margin-top:-5px;">
-						<input type="password" name="password" id="password" value="" />
+						<input type="checkbox" name="pw-ck" />
+						<input type="password" name="password" id="password" value="" disabled="disabled" />
 					</p>
 
 					<p class="label"><label for="email">Email</label></p>
 					<p style="margin-top:-5px;">
-						<input type="text" name="email" id="email" value="<?php userFetch('email') ?>" />
+						<input type="checkbox" name="em-ck" />
+						<input type="text" name="email" id="email" value="<?php userFetch('email') ?>" disabled="disabled" />
 					</p>
 
 					<p class="label"><label for="displayname">Display Name</label></p>
 					<p style="margin-top:-5px;">
-						<input type="text" name="displayname" id="displayname" value="<?php userFetch('displayname') ?>" />
+						<input type="checkbox" name="dn-ck" />
+						<input type="text" name="displayname" id="displayname" value="<?php userFetch('displayname') ?>" disabled="disabled" />
 					</p>
 					
 					<p class="label" style="margin-top:20px;">For security reasons, please type your current password in here.</p>
 					<p style="margin-top:0px;">
-						<input type="text" name="vpassword" id="vpassword" value="" />
+						<input type="password" name="vpassword" id="vpassword" value="" />
 					</p>
 
 					<p><input type="submit" value="Save Changes" name="editprofilesubmit" /></p>
