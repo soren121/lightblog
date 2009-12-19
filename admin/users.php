@@ -4,9 +4,9 @@
 
 	LightBlog 0.9
 	SQLite blogging platform
-	
+
 	admin/users.php
-	
+
 	©2009 soren121. All rights reserved.
 	Released under the GNU General
 	Public License. For all licensing
@@ -50,6 +50,26 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
 		});
+
+		function deleteUser(id,user) {
+			var answer = confirm("Really delete user \"" + user + "\"?");
+			if(answer) {
+				jQuery.ajax({
+					data: "deleteusersubmit=true&id=" + id,
+					type: "POST",
+					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
+					timeout: 3000,
+					error: function() {
+						alert("Failed to delete user " + user + ".");
+					},
+					success: function(r) {
+						alert(r);
+						var tr = '#tr' + id;
+						$(tr).hide();
+					}
+				})
+			}
+		}
 	</script>
 </head>
 
@@ -72,6 +92,7 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 					<th class="managelist">Email</th>
 					<th class="managelist">Display Name</th>
 					<th class="managelist">IP Address</th>
+					<th class="managelist">Delete</th>
 				</tr>		
 				<!-- Start row loop -->
 				<?php while($user = $result->fetchObject()): ?>	
@@ -81,6 +102,7 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 					<td><?php echo $user->email ?></td>
 					<td><?php echo $user->displayname ?></td>
 					<td><?php echo $user->ip ?></td>
+					<td class="c"><img src="style/delete-user.png" onclick="deleteUser('<?php echo $user->id ?>', '<?php echo $user->username ?>');" alt="Delete User" style="cursor:pointer;" /></td>
 				</tr>
 				<?php endwhile; ?>
 				<!-- End row loop -->
@@ -90,7 +112,7 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 		</div>
 		<div id="footer" class="roundedb">		
 			Powered by LightBlog <?php LightyVersion() ?>    
-	    </div>
+		</div>
 	</div>
 </body>
 </html>

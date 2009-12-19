@@ -22,7 +22,7 @@
 				<!-- End the loop -->			
 				<?php endwhile; ?>
 				
-				<h4 class="commenthead"><?php commentNum($pid) ?> Comments</h4><br />
+				<h4 class="commenthead"><?php grammarFix(commentNum($pid), 'Comment', 'Comments') ?></h4><br />
 				<!-- Start comment loop -->
 				<?php $com = new CommentLoop(); $com->obtain_comments($pid); while($com->has_comments()): ?>
 				<div class="comment <?php alternateColor('c1','c2') ?>" id="comment-<?php $com->id() ?>">

@@ -51,7 +51,7 @@ require(ABSPATH .'/Sources/Admin.php');
 				var inputs = [];
 				$(':input', this).each(function() {
 					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
-						nothing = 0;
+						void(0);
 					}
 					else {
 						inputs.push(this.name + '=' + escape(this.value));

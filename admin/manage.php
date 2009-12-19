@@ -71,16 +71,6 @@ else {
 				})
 			}
 		}
-		function bulkChange() {
-			action = $('#bulk_dropdown').val();
-			checkednum = $("input[name='bulk[]']:checkbox:checked").length;
-			if(checkednum > 0) {
-				var answer = confirm("Really " + action + " these <?php echo $type; ?>s?");
-				if(answer) {
-				
-				}
-			}
-		}
 	</script>
 </head>
 

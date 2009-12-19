@@ -156,7 +156,7 @@ class PostLoop {
 
 	public function commentNum() {
 		if(!empty($this->cur_result))
-			commentNum($this->cur_result->id);
+			return commentNum($this->cur_result->id);
 		else
 			return false;
 	}
@@ -372,7 +372,7 @@ function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "
 }
 
 // Function for identifying the number of comments
-function commentNum($id, $output = 'e') {
+function commentNum($id, $output = 'r') {
 	// Make the database handle available here
 	global $dbh;
 	// Set the query
@@ -405,6 +405,18 @@ function alternateColor($class1, $class2) {
 	}
 	# Increase $count by 1 for next time
 	$count++;
+}
+
+// Function to correct plurals and such on dynamic numbers, mainly comment numbers
+function grammarFix($number, $singular, $plural) {
+	if($number == 1) {
+		// The number is 1, so we will use the singular form of the word
+		echo $number.' '.$singular;
+	}
+	else {
+		// The number is something other than 1, so we'll use the plural form
+		echo $number.' '.$plural;
+	}
 }
 
 ?>
