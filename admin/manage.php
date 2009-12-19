@@ -28,10 +28,10 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 function findStart($input) { $input = $input - 1; return $input * 8; }
 
 if(isset($_GET['page']) && $_GET['page'] > 1) {
-		$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id asc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
+		$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
 }
 else {
-	$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id asc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
+	$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
 }
 
 
