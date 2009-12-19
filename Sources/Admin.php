@@ -19,12 +19,6 @@
 // Require Core.php if it isn't already loaded
 require_once('Core.php');
 
-// Authentication check
-if(($_SESSION['securestring'] !== $_COOKIE[strtolower(bloginfo('title','r')).'securestring']) && (!isset($_SESSION['SESSIONID']))) {
-	session_destroy();
-	die('Session is invalid. Return to the <a href="'.bloginfo('url','r').'">homepage</a>.');
-}
-
 // Similar IP lock
 	// Get first 3 octets of current IP
 	$current_ip = explode('.', get_ip());
@@ -38,7 +32,7 @@ if(($_SESSION['securestring'] !== $_COOKIE[strtolower(bloginfo('title','r')).'se
 
 	if($current_ip !== $session_ip) {
 		session_destroy();
-		die('Session is invalid. Return to the <a href="'.bloginfo('url','r').'">homepage</a>.');
+		die('Either your session has expired or it is invalid. You can return to the <a href="'.bloginfo('url','r').'">homepage</a> now.');
 	}
 	
 // Function to list themes in a drop-down box
