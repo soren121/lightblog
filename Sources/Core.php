@@ -282,12 +282,6 @@ function login($method) {
 			while($user = $userquery->fetchObject()) {
 				// Does the provided password match the database hash?
 				if($passhash == $user->password) {
-					// Generate secure random string
-					$secure_string = randomString(48);
-					// Set it in the session
-					$_SESSION['securestring'] = $secure_string;
-					// ...And a cookie
-					setcookie(strtolower(bloginfo('title','r')).'securestring', $secure_string, time()+60*20, "/");					
 					// Set the session timeout to 20 minutes
 					$_SESSION['expires_by'] = time() + 60*20;
 					// Send the user data to the session
