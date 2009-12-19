@@ -25,7 +25,7 @@ date_default_timezone_set('UTC');
 // Function to output the current version of LightBlog
 function LightyVersion($output = 'e') {
 	# DON'T TOUCH!
-	$version = '0.9.2 SVN';
+	$version = '0.9.2 Beta 1';
 	# Are we echoing or returning?
 	if($output == 'e') { echo $version; }
 	# Returning!

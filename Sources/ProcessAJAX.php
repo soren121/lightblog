@@ -179,4 +179,14 @@ if(isset($_POST['editprofilesubmit'])) {
 	}
 }
 
+if(isset($_POST['deleteusersubmit'])) {
+	// Can the user do this?
+	if(permissions(2)) {
+		echo (int)$_POST['id'];
+		# Execute query to delete user
+		$dbh->query("DELETE FROM users WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError));
+		echo 'passed!';
+	}
+}
+
 ?>

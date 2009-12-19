@@ -19,7 +19,7 @@
 						</span>
 						<span class="postdata">
 							<img src="<?php bloginfo('themeurl') ?>/style/comment.png" alt="" />
-							<a href="<?php $posts->permalink() ?>#commentform"><?php $posts->commentNum() ?> Comments</a>				
+							<a href="<?php $posts->permalink() ?>#commentform"><?php grammarFix($posts->commentNum(), 'Comment', 'Comments') ?></a>				
 						</span>
 					</div>
 				</div>
