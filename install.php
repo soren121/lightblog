@@ -219,12 +219,12 @@ if(isset($_POST['isubmit'])) {
 					<?php if(floatval(phpversion()) >= "5.1") { echo '<td style="background:#6CCC0D;color:#fff;">OK</td>'; } else { echo '<td style="background:#CC2626;color:#fff;">Unsatisfactory</td>';$error1 = true; } ?>
 				</tr>
 				<tr><td>SQLite</td>
-					<td><?php if(extension_loaded('sqlite') == false){ echo 'Disabled';$error2 = true; } else {echo sqlite_libversion(); }?></td>
-					<?php if(floatval(sqlite_libversion()) >= "2.8"){ echo '<td style="background:#6CCC0D;color:#fff;">OK</td>'; } else {echo '<td style="background:#CC2626;color:#fff;">Unsatisfactory</td>'; }?>
+					<td><?php if(extension_loaded('sqlite') == false){ echo 'Disabled';$error2 = true; echo '<td style="background:#CC2626;color:#fff;">Unsatisfactory</td>'; } else {echo sqlite_libversion(); ?></td>
+					<?php if(floatval(sqlite_libversion()) >= "2.8"){ echo '<td style="background:#6CCC0D;color:#fff;">OK</td>'; } else {echo '<td style="background:#CC2626;color:#fff;">Unsatisfactory</td>'; }}?>
 				</tr>
 			</table>
 			<?php if($error1 or $error2 == true): ?>
-				<h4 style="color:red;">Your server does not meet the minimum requirements. Please rectify the issues listed above and try again.</h4>
+				<h4 style="color:red;">Your server does not meet the minimum requirements.<br /> Please rectify the issues listed above and try again.</h4>
 				<button disabled="disabled" class="continue" onclick="tabber1.show(2); return false;">Continue</button>	
 			<?php else: ?>
 				<br />

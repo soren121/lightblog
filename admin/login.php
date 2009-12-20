@@ -35,9 +35,7 @@ if(isset($_POST['proclogin'])) {
 // Logout the user
 if(isset($_GET['logout'])) {
 	// Destroy the session
-	session_destroy(); 
-	// Delete the session-link cookie
-	setcookie(strtolower(bloginfo('title','r')).'securestring', $secure_string, time()-60*20, "/");
+	session_destroy();
 	// Send them to the homepage
 	header('Location: '.bloginfo('url', 'r'));
 }

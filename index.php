@@ -22,6 +22,13 @@ if(!file_exists('config.php')){
 	header('Location: install.php');
 }
 
+if($_GET['install'] === 'true' && file_exists('install.php')) {
+	unlink('install.php');
+	if(file_exists('install.sql')) {
+		unlink('install.sql'); 
+	}
+}
+
 // Require config file
 require('config.php');
 require(ABSPATH .'/Sources/Template.php');
