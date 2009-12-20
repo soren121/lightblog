@@ -82,7 +82,7 @@ require(ABSPATH .'/Sources/Admin.php');
 								<li><a href="create.php?type=2">Create a page</a></li>
 								<li><a href="manage.php?type=1">Manage posts</a></li>
 							<?php endif; ?>
-							<li><a href="design.php">Edit your profile</a></li>
+							<li><a href="profile.php">Edit your profile</a></li>
 						</ul>
 					</div>
 					<div class="db_box rounded">

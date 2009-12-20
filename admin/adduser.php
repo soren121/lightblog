@@ -50,7 +50,7 @@ require(ABSPATH .'/Sources/Admin.php');
 					data: inputs.join('&'),
 					type: "POST",
 					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
-					timeout: 2000,
+					timeout: 3000,
 					error: function() {
 						console.log("Failed to submit");
 						alert("Failed to submit.");
