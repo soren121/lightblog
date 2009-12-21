@@ -67,7 +67,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
+						$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').css("background", "#CFEBF7").slideDown("normal");
 						$('.hint').val('');
 						nicEditors.findEditor('wysiwyg').setContent('');
 					}
