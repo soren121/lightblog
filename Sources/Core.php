@@ -368,7 +368,7 @@ function cleanHTML($str) {
     while(preg_match("/<(.*)?\s?on.+?=?\s?.+?(['\"]).*?\\2\s?(.*)?>/i", $str))
        $str = preg_replace("/<(.*)?\s?on.+?=?\s?.+?(['\"]).*?\\2\s?(.*)?>/i", "<$1$3>", $str);
 	// Strip all but allowed tags
-	$str = strip_tags($str, "<b><strong><i><em><u><a><img><quote><p>");
+	$str = strip_tags($str, "<b><strong><i><em><u><a><img><quote><div><span><br><ol><ul><li>");
 	// Convert symbols to HTML entities to kill hex attacks
 	$str = str_replace("#", "&#35;", $str);
 	$str = str_replace("%", "&#37;", $str);
