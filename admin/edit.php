@@ -76,7 +76,7 @@ while($past = $result->fetchObject()) {
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						$('#notifybox').html('<?php echo ucwords($type) ?> edited. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
+						$('#notifybox').html('<?php echo ucwords($type) ?> edited. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').css("background", "#CFEBF7").slideDown("normal");
 					}
 				})
 				return false;
