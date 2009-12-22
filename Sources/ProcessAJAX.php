@@ -79,26 +79,38 @@ if(isset($_POST['edit'])) {
 
 # Process post/page deletion
 if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
-	# Execute query to delete post/page
-	$dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags(cleanHTML($_POST['type'])))."s WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError));
+	# Do they have the proper permissions?
+	if(permissions(2)) {
+		# Execute query to delete post/page
+		$dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags(cleanHTML($_POST['type'])))."s WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError));
+	}
 }
 
 # Process theme change
 if(isset($_POST['themesubmit'])) {
-	# Execute query to change theme
-	$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetheme'])))."' WHERE variable='theme'");
+	# Do they have the proper permissions?
+	if(permissions(3)) {
+		# Execute query to change theme
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetheme'])))."' WHERE variable='theme'");
+	}
 }
 
 # Process title change
 if(isset($_POST['changetitle'])) {
-	# Execute query to change title
-	$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetitle'])))."' WHERE variable='title'");
+	# Do they have the proper permissions?
+	if(permissions(3)) {
+		# Execute query to change title
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetitle'])))."' WHERE variable='title'");
+	}
 }
 
 # Process URL change
 if(isset($_POST['changeurl'])) {
-	# Execute query to change url
-	$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changeurl']))."' WHERE variable='url'");
+	# Do they have the proper permissions?
+	if(permissions(3)) {
+		# Execute query to change url
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changeurl']))."' WHERE variable='url'");
+	}
 }
 
 // User creation
@@ -106,7 +118,7 @@ if(isset($_POST['addusersubmit'])) {
 	// Can the user do this?
 	if(permissions(3)) {
 		// Set
-		if(!isset($_POST['username'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$username = sqlite_escape_string($_POST['username']);}
+		if(!isset($_POST['username'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$username = sqlite_escape_string(strip_tags(cleanHTML($_POST['username'])));}
 		if(!isset($_POST['password'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$password = $_POST['password'];}
 		if(!isset($_POST['vpassword'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$vpassword = $_POST['vpassword'];}
 		if(!isset($_POST['email'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$email = $_POST['email'];}
@@ -125,9 +137,9 @@ if(isset($_POST['addusersubmit'])) {
 		$salt = substr(md5(uniqid(rand(), true)), 0, 9);
 		$passhash = sha1($salt.$password);
 		// Clean!
-		$email = sqlite_escape_string($email);
-		$displayname = sqlite_escape_string(strip_tags($displayname));
-		$role = sqlite_escape_string($role);
+		$email = sqlite_escape_string(strip_tags(cleanHTML($email)));
+		$displayname = sqlite_escape_string(strip_tags(cleanHTML($displayname)));
+		$role = sqlite_escape_string(strip_tags(cleanHTML($role)));
 		// Create the user!
 		$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$passhash','$email','$displayname','$role', '".get_ip()."', '$salt');") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">".sqlite_error_string($dbh->lastError));
 		echo "span style=\"color:green;margin-left:5px;\" class=\"inform\">User ".$username." created successfully.";
@@ -141,10 +153,10 @@ if(isset($_POST['editprofilesubmit'])) {
 	// Can the user do this?
 	if(permissions(1)) {
 		// Sanitize input fields
-		$password = sqlite_escape_string($_POST['password']);
+		$password = sqlite_escape_string(strip_tags(cleanHTML($_POST['password'])));
 		$email = sqlite_escape_string(strip_tags(cleanHTML($_POST['email'])));
 		$displayname = sqlite_escape_string(strip_tags(cleanHTML($_POST['displayname'])));
-		$vpassword = sqlite_escape_string($_POST['vpassword']);
+		$vpassword = $_POST['vpassword'];
 		$c_user = sqlite_escape_string(userFetch('username', 1));
 		// Run database query to get current password
 		$dbpasshash = $dbh->query("SELECT password FROM users WHERE username='$c_user'") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Username query failed.");
