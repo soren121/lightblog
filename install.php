@@ -244,14 +244,17 @@ if(isset($_POST['isubmit'])) {
 					data: inputs.join('&'),
 					type: "POST",
 					url: this.getAttribute('action'),
-					timeout: 2000,
+					timeout: 5000,
 					error: function() {
 						$('#form-tab2').empty(); 
-						console.log("Failed to submit");
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-							alert(r); 
+							var out = r.replace(/<.*?>/g, '');
+							if(out.match("Powered by 110MB Hosting")) {
+								var out2 = out.replace("Powered by 110MB Hosting", '');
+							}
+							alert(out2);
 							jQuery().minipageShow(3); return false;
 					}
 				})
@@ -262,7 +265,7 @@ if(isset($_POST['isubmit'])) {
 			<h4>Choose a location to place your SQLite database in.</h4>
 			<p>Be sure that the directory you are placing in the database in has the correct permissions.<br />
 			If you are unsure if it's correct, <strong>chmod the directory to 755 or higher</strong>, or rwxr-xr-x.</p>
-			<form action="<?php echo basename(__FILE__); ?>" method="get" id="form-tab2">
+			<form action="install.php" method="get" id="form-tab2">
 				<p><input type="text" class="dbl" name="dblocation" value="<?php echo dirname(__FILE__); ?>" style="width:400px;" /></p>
 				<p><input type="submit" name="dbsubmit" value="Create Database" /></p>
 			</form>
@@ -280,14 +283,17 @@ if(isset($_POST['isubmit'])) {
 					data: inputs.join('&'),
 					type: "POST",
 					url: this.getAttribute('action'),
-					timeout: 2000,
+					timeout: 5000,
 					error: function() {
 						$('#form-tab3').empty(); 
-						console.log("Failed to submit.");
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-							alert(r);
+							var out = r.replace(/<.*?>/g, '');
+							if(out.match("Powered by 110MB Hosting")) {
+								var out2 = out.replace("Powered by 110MB Hosting", '');
+							}
+							alert(out2);
 							jQuery().minipageShow(4); return false;
 					}
 				})
@@ -296,7 +302,7 @@ if(isset($_POST['isubmit'])) {
 			});
 			</script>
 			<h4>Please fill in all fields to complete setup.</h4>
-			<form action="<?php echo basename(__FILE__); ?>" method="get" id="form-tab3">
+			<form action="install.php" method="get" id="form-tab3">
 				<table class="iform" style="border:0;margin-left:auto;margin-right:auto;">
 					<tr>
 						<td>Blog Title:</td>
