@@ -52,13 +52,21 @@ if(isset($_GET['logout'])) {
 <body>
 <div id="registerbox">
     <form action="" method="post">
-		<label for="username">Username</label>
-		<p><input name="username" type="text" size="16" id="username" value="<?php if(isset($c_username)){echo $c_username;} ?>" /></p>
-		<label for="password">Password</label>
-		<p><input name="password" type="password" size="16" id="password" value="<?php if(isset($c_password)){echo $c_password;} ?>" /></p>
-		<p class="remember"><input name="remember" type="checkbox" id="rememberme" />
-		<label for="rememberme">Remember Me</label></p>
-		<p><input name="proclogin" type="submit" value="Login" id="submit" /></p>
+		<?php if(isset($_POST['proclogin'])): ?>
+		<div style="font-weight: bold; color: #FF0000; font-size: 1.2em; padding-bottom: 5px;">
+			Incorrect Username or Password
+			<?php $c_username = $_POST['username']; ?>
+		</div>
+		<?php endif; ?>
+		<div>
+			<label for="username">Username</label>
+			<p><input name="username" type="text" size="16" id="username" value="<?php if(isset($c_username)){echo $c_username;} ?>" /></p>
+			<label for="password">Password</label>
+			<p><input name="password" type="password" size="16" id="password" value="<?php if(isset($c_password)){echo $c_password;} ?>" /></p>
+			<p class="remember"><input name="remember" type="checkbox" id="rememberme" />
+			<label for="rememberme">Remember Me</label></p>
+			<p><input name="proclogin" type="submit" value="Login" id="submit" /></p>
+		</div>
 	</form>	
 </div>
 </body>
