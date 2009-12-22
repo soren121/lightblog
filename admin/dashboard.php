@@ -57,9 +57,11 @@ require(ABSPATH .'/Sources/Admin.php');
 						<ul>
 						<?php
 							$rpresult = $dbh->query("SELECT * FROM posts ORDER BY id desc LIMIT 5");
-							while($rp = $rpresult->fetch(SQLITE_ASSOC)): ?>
+							if($rpresult->numRows() == 0): ?>
+								No posts to display.
+							<?php else: while($rp = $rpresult->fetch(SQLITE_ASSOC)): ?>
 								<li><a href="<?php bloginfo('url')?>post.php?id=<?php echo $rp['id']; ?>"><?php echo $rp['title']?></a></li>
-							<?php endwhile; ?>
+							<?php endwhile; endif; ?>
 						</ul>
 					</div>
 					<div class="db_box rounded">
@@ -67,9 +69,11 @@ require(ABSPATH .'/Sources/Admin.php');
 						<ul>
 						<?php
 							$rcresult = $dbh->query("SELECT * FROM comments ORDER BY id desc LIMIT 5");
-							while($rp = $rcresult->fetch(SQLITE_ASSOC)): $rcpresult = $dbh->query("SELECT title FROM posts WHERE id=".(int)$rp['pid']) ?>
+							if($rcresult->numRows() == 0): ?>
+								No comments to display.
+							<?php else: while($rp = $rcresult->fetch(SQLITE_ASSOC)): $rcpresult = $dbh->query("SELECT title FROM posts WHERE id=".(int)$rp['pid']) ?>
 								<li><a href="<?php bloginfo('url')?>post.php?id=<?php echo $rp['pid']; ?>#comment-<?php echo $rp['id']; ?>"><?php echo $rp['name']?></a> on <a href="<?php bloginfo('url')?>post.php?id=<?php echo $rp['pid']; ?>"><?php echo $rcpresult->fetchSingle(); ?></a></li>
-							<?php endwhile; ?>
+							<?php endwhile; endif; ?>
 						</ul>
 					</div>
 				</div>
