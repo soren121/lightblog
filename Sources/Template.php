@@ -121,12 +121,15 @@ class PostLoop {
   	}
 
   	public function content($excerpt = '') {
+		// Create mbstring functions
+		$func['strlen'] = (function_exists('mb_strlen')) ? 'mb_strlen' : 'strlen';
+		$func['substr'] = (function_exists('mb_substr')) ? 'mb_substr' : 'substr';
     	if(!empty($this->cur_result)) {
 			if($excerpt !== '') {
 				$length = 360;
-				$length -= mb_strlen('...');
-				if(mb_strlen(unescapeString($this->cur_result->post)) > $length) {
-      				echo mb_substr(unescapeString($this->cur_result->post), 0, $length).' ... <a href="post.php?id='. $this->cur_result->id.'">'.$excerpt.'</a>';
+				$length -= $func['strlen']('...');
+				if($func['strlen'](unescapeString($this->cur_result->post)) > $length) {
+      				echo $func['substr'](unescapeString($this->cur_result->post), 0, $length).' ... <a href="post.php?id='. $this->cur_result->id.'">'.$excerpt.'</a>';
 				}
 				else { echo unescapeString($this->cur_result->post); }
 			}
