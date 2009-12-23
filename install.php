@@ -95,28 +95,30 @@ function get_ip() {
 
 if(isset($_POST['dbsubmit'])) {
 	// Create full database path
-	$dbpath = undoMagicString(strip_tags($_POST['dblocation']))."/".randomString(mt_rand(9, 16)).".db";
-	// Open JSONEncode
-	require_once('Sources/JSONEncode.php');
+	$dbpath = undoMagicString($_POST['dblocation'])."/".randomString(mt_rand(9, 16)).".db";
+	// Load replacement functions
+	require_once('Sources/FunctionReplacements.php');
+	// Write JSON headers
+	header('Content-type: application/json');
 	// Create database file
-	fclose(fopen($dbpath, 'w')) or die(echo json_encode(array('result' => 'error', 'error' => 'Unable to create database.')));
+	fclose(fopen($dbpath, 'w')) or die();
 	// Check database permissions
-	if(fileperms($dbpath) < 0755) { chmod($dbpath, 0755) or die(echo json_encode(array('result' => 'error', 'error' => 'Unable to change permissions.'))); }
+	if(fileperms($dbpath) < 0755) { chmod($dbpath, 0755) or die('Couldn\'t change permissions.' ); }
 	// Open database
 	$dbh = new SQLiteDatabase($dbpath);
 	// Write data to database
 	$sqlh = fopen("install.sql", 'r');
 	$sql = fread($sqlh, filesize("install.sql"));
 	fclose($sqlh);
-	$dbh->queryExec($sql) or die(echo json_encode(array('result' => 'error', 'error' => 'Unable to write to database.')));
+	$dbh->queryExec($sql) or die("Cannot write to database. Check your permissions.");
 	// Create config file
-	fclose(fopen(dirname(__FILE__)."/"."config.php", 'w')) or die(echo json_encode(array('result' => 'error', 'error' => 'Unable to create configuration file.')));
+	fclose(fopen(dirname(__FILE__)."/"."config.php", 'w')) or die("Cannot create configuration file. Check your permissions.");
 	// Read example file
 	$exconfigfile = "config-example.php";
 	$exconfig = fread(fopen($exconfigfile, 'r'), filesize($exconfigfile));
 	// Create config file
 	$configdata = str_replace("absolute path to database here", $dbpath, $exconfig);
-	$config = fopen("config.php", 'w') or die(json_encode(array('result' => 'error', 'error' => 'Unable to write to configuration file.')));
+	$config = fopen("config.php", 'w') or die("Cannot write to configuration file. Check your permissions.");
 	// Write config file
 	fwrite($config, $configdata);
 	// Close file handles
@@ -124,7 +126,7 @@ if(isset($_POST['dbsubmit'])) {
 	// Unset variables
 	unset($dbpath, $dbh, $sqlfile, $sql, $sqlh, $exconfig, $exconfigfile, $config, $configdata);
 	// Respond
-	echo json_encode(array('result' => 'success'));
+	echo json_encode(array('success'));
 	// Prevent the rest of the page from loading
 	die();
 }
@@ -135,10 +137,10 @@ if(isset($_POST['isubmit'])) {
 	// Generate salt
 	$salt = substr(md5(uniqid(rand(), true)), 0, 9);
 	// Set variables for easy manipulation
-	$username = sqlite_escape_string(strip_tags($_POST['iusername']));
+	$username = sqlite_escape_string($_POST['iusername']);
 	$password = sqlite_escape_string(sha1($salt.$_POST['ipassword']));
-	$email = sqlite_escape_string(strip_tags($_POST['iemail']));
-	$displayname = sqlite_escape_string(strip_tags($_POST['iname']));
+	$email = sqlite_escape_string($_POST['iemail']);
+	$displayname = sqlite_escape_string($_POST['iname']);
 	// Open connection to database
 	$dbh = new SQLiteDatabase( DBH );
 	// Add blog title to database
@@ -252,12 +254,13 @@ if(isset($_POST['isubmit'])) {
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-							var out = r.replace(/<.*?>/g, '');
-							if(out.match("Powered by 110MB Hosting")) {
-								var out2 = out.replace("Powered by 110MB Hosting", '');
-							}
-							alert(out2);
+						var array = eval(r);
+						if(array[0] == 'success') {
 							jQuery().minipageShow(3); return false;
+						}
+						else {
+							$("#form-tab2").text(array[1]);
+						}						
 					}
 				})
 				return false;
