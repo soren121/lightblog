@@ -22,6 +22,9 @@ $dbh = new SQLiteDatabase( DBH );
 // Set default timezone
 date_default_timezone_set('UTC');
 
+//Include any function replacements for backwards compatibilty
+include( 'FunctionReplacements.php' );
+
 // Function to output the current version of LightBlog
 function LightyVersion($output = 'e') {
 	# DON'T TOUCH!
