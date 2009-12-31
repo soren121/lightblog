@@ -96,12 +96,8 @@ function get_ip() {
 if(isset($_POST['dbsubmit'])) {
 	// Create full database path
 	$dbpath = undoMagicString($_POST['dblocation'])."/".randomString(mt_rand(9, 16)).".db";
-	// Load replacement functions
-	require_once('Sources/FunctionReplacements.php');
-	// Write JSON headers
-	header('Content-type: application/json');
 	// Create database file
-	fclose(fopen($dbpath, 'w')) or die();
+	fclose(fopen($dbpath, 'w')) or die("Cannot create database. Check your permissions.");
 	// Check database permissions
 	if(fileperms($dbpath) < 0755) { chmod($dbpath, 0755) or die('Couldn\'t change permissions.' ); }
 	// Open database
@@ -126,7 +122,7 @@ if(isset($_POST['dbsubmit'])) {
 	// Unset variables
 	unset($dbpath, $dbh, $sqlfile, $sql, $sqlh, $exconfig, $exconfigfile, $config, $configdata);
 	// Respond
-	echo json_encode(array('success'));
+	echo "OK";
 	// Prevent the rest of the page from loading
 	die();
 }
@@ -254,13 +250,12 @@ if(isset($_POST['isubmit'])) {
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						var array = eval(r);
-						if(array[0] == 'success') {
+							var out = r.replace(/<.*?>/g, '');
+							if(out.match("Powered by 110MB Hosting")) {
+								var out2 = out.replace("Powered by 110MB Hosting", '');
+							}
+							alert(out2);
 							jQuery().minipageShow(3); return false;
-						}
-						else {
-							$("#form-tab2").text(array[1]);
-						}						
 					}
 				})
 				return false;
