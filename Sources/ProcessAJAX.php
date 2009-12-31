@@ -22,58 +22,62 @@ require(ABSPATH .'/Sources/Core.php');
 
 # Process post/page creation
 if(isset($_POST['create'])) {
-	# Grab data from form and escape the text
-	$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title']));
-	$text = sqlite_escape_string(cleanHTML($_POST['text']));
-	$date = time();
-	$author = sqlite_escape_string(userFetch('displayname', 'r'));
-	$type = sqlite_escape_string(strip_tags(cleanHTML($_POST['type'])));
-	# Insert post/page into database
-	$dbh->query("INSERT INTO ".$type."s (title,".$type.",date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die(sqlite_error_string($dbh->lastError));
-	# Fetch post ID from database
-	$result = $dbh->query("SELECT id FROM ".$type."s WHERE date='".$date."'");
-	$id = $result->fetchSingle();
-	# Return full url to post to jQuery
-	echo bloginfo('url', 'r').$type.".php?id=".$id;
-	# Unset variables
-	unset($result, $id);
-	# Prevent the rest of the page from loading
-	die();
+	# Check permissions
+	if(permissions(1)) {
+		# Grab data from form and escape the text
+		$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title']));
+		$text = sqlite_escape_string(cleanHTML($_POST['text']));
+		$date = time();
+		$author = sqlite_escape_string(userFetch('displayname', 'r'));
+		# Insert post/page into database
+		$dbh->query("INSERT INTO ".$type."s (title,".$type.",date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die(sqlite_error_string($dbh->lastError));
+		# Fetch post ID from database
+		$id = $dbh->lastInsertRowid();
+		# Return full url to post to jQuery
+		echo bloginfo('url', 'r').$type.".php?id=".$id;
+		# Unset variables
+		unset($result, $id);
+		# Prevent the rest of the page from loading
+		die();
+	}
 }
 
 # Process post/page editing
 if(isset($_POST['edit'])) {
-	# Grab data from form and escape the text
-	$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title']));
-	$text = sqlite_escape_string(cleanHTML($_POST['text']));
-	$type = sqlite_escape_string(strip_tags(cleanHTML($_POST['type'])));
-	$id = (int)$_POST['id'];
-	# Query for previous data
-	$result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".$id) or die(sqlite_error_string($dbh->lastError));
-	# Fetch previous data
-	while($past = $result->fetchObject()) {
-		$ptitle = $past->title;
-		if($type == 'post') { $ptext = $past->post; }
-		elseif($type == 'page') { $ptext = $past->page; }
-	}
-	# Set default query
-	$update = "UPDATE ".$type."s SET title='".$title."', ".$type."='".$text."' WHERE id=".$id;
-	# Run through possible change scenarios and update query
-	if($title == $ptitle and $text !== $ptext) { str_replace("title='".$title."',", "title='".$title."'", $update); }
-	if($title == $ptitle) { str_replace("title='".$title."'", "", $update); }
-	if($text == $ptext) { str_replace($type."='".$text."'", "", $update); }
-	if($title == $ptitle and $text == $ptext) {
-		# Nothing changed, so forget the query and send them the URL
-		echo bloginfo('url', 'r').$type.".php?id=".$id;
-		die();
-	}
-	else {
-		# Execute modified query
-		$dbh->query($update) or die(sqlite_error_string($dbh->lastError));		
-		# Return full url to page to jQuery
-		echo bloginfo('url', 'r').$type.".php?id=".$id;
-		# Prevent the rest of the page from loading
-		die();
+	# Check permissions
+	if(permissions(2)) {
+		# Grab data from form and escape the text
+		$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title']));
+		$text = sqlite_escape_string(cleanHTML($_POST['text']));
+		$type = sqlite_escape_string(strip_tags(cleanHTML($_POST['type'])));
+		$id = (int)$_POST['id'];
+		# Query for previous data
+		$result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".$id) or die(sqlite_error_string($dbh->lastError));
+		# Fetch previous data
+		while($past = $result->fetchObject()) {
+			$ptitle = $past->title;
+			if($type == 'post') { $ptext = $past->post; }
+			elseif($type == 'page') { $ptext = $past->page; }
+		}
+		# Set default query
+		$update = "UPDATE ".$type."s SET title='".$title."', ".$type."='".$text."' WHERE id=".$id;
+		# Run through possible change scenarios and update query
+		if($title == $ptitle and $text !== $ptext) { str_replace("title='".$title."',", "title='".$title."'", $update); }
+		if($title == $ptitle) { str_replace("title='".$title."'", "", $update); }
+		if($text == $ptext) { str_replace($type."='".$text."'", "", $update); }
+		if($title == $ptitle and $text == $ptext) {
+			# Nothing changed, so forget the query and send them the URL
+			echo bloginfo('url', 'r').$type.".php?id=".$id;
+			die();
+		}
+		else {
+			# Execute modified query
+			$dbh->query($update) or die(sqlite_error_string($dbh->lastError));		
+			# Return full url to page to jQuery
+			echo bloginfo('url', 'r').$type.".php?id=".$id;
+			# Prevent the rest of the page from loading
+			die();
+		}
 	}
 }
 
