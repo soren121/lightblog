@@ -122,7 +122,7 @@ if(isset($_POST['dbsubmit'])) {
 	// Unset variables
 	unset($dbpath, $dbh, $sqlfile, $sql, $sqlh, $exconfig, $exconfigfile, $config, $configdata);
 	// Respond
-	echo "All OK";
+	echo "All OK! Press OK to continue.";
 	// Prevent the rest of the page from loading
 	die();
 }
@@ -148,7 +148,7 @@ if(isset($_POST['isubmit'])) {
 	// Unset variables
 	unset($username, $password, $email, $displayname, $ip, $dbh);
 	// Respond
-	echo "All OK";
+	echo "All OK! Press OK to continue.";
 	// Prevent the rest of the page from loading
 	die();
 }
@@ -250,11 +250,8 @@ if(isset($_POST['isubmit'])) {
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-							var out = r.replace(/<.*?>/g, '');
-							if(out.match("Powered by 110MB Hosting")) {
-								var out2 = out.replace("Powered by 110MB Hosting", '');
-							}
-							alert(out2);
+							var out = r.replace("/\s+?<!--.*>$/gi", "");
+							alert(out);
 							jQuery().minipageShow(3); return false;
 					}
 				})
@@ -289,11 +286,8 @@ if(isset($_POST['isubmit'])) {
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-							var out = r.replace(/<.*?>/g, '');
-							if(out.match("Powered by 110MB Hosting")) {
-								var out2 = out.replace("Powered by 110MB Hosting", '');
-							}
-							alert(out2);
+							var out = r.replace("/\s+?<!--.*>$/gi", "");
+							alert(out);
 							jQuery().minipageShow(4); return false;
 					}
 				})
