@@ -28,7 +28,7 @@ include( 'FunctionReplacements.php' );
 // Function to output the current version of LightBlog
 function LightyVersion($output = 'e') {
 	# DON'T TOUCH!
-	$version = '0.9.2 Beta 1';
+	$version = '0.9.2 Beta 3';
 	# Are we echoing or returning?
 	if($output == 'e') { echo $version; }
 	# Returning!

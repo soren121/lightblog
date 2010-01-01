@@ -22,24 +22,23 @@ require(ABSPATH .'/Sources/Core.php');
 
 # Process post/page creation
 if(isset($_POST['create'])) {
-	# Check permissions
-	if(permissions(1)) {
 		# Grab data from form and escape the text
-		$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title']));
-		$text = sqlite_escape_string(cleanHTML($_POST['text']));
+		$title = sqlite_escape_string($_POST['title']);
+		$text = sqlite_escape_string($_POST['text']);
 		$date = time();
 		$author = sqlite_escape_string(userFetch('displayname', 'r'));
+		$type = $_POST['type'];
 		# Insert post/page into database
 		$dbh->query("INSERT INTO ".$type."s (title,".$type.",date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die(sqlite_error_string($dbh->lastError));
 		# Fetch post ID from database
-		$id = $dbh->lastInsertRowid();
+		$result = $dbh->query("SELECT id FROM ".$type."s WHERE date='".$date."'");
+		$id = $result->fetchSingle();
 		# Return full url to post to jQuery
 		echo bloginfo('url', 'r').$type.".php?id=".$id;
 		# Unset variables
 		unset($result, $id);
 		# Prevent the rest of the page from loading
 		die();
-	}
 }
 
 # Process post/page editing

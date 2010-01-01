@@ -67,11 +67,8 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						var out = r.replace(/<.*?>/g, '');
-						if(out.match("Powered by 110MB Hosting")) {
-							var out2 = out.replace("Powered by 110MB Hosting", '');
-						}
-						$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + out2 + '">View <?php echo $type ?></' + 'a>').css("background", "#CFEBF7").slideDown("normal");
+						var out = r;
+						$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + out + '">View <?php echo $type ?></' + 'a>').css("background", "#CFEBF7").slideDown("normal");
 						$('.hint').val('');
 						nicEditors.findEditor('wysiwyg').setContent('');
 					}
