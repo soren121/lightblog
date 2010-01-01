@@ -31,6 +31,7 @@ function bloginfo($var, $output = 'e') {
 	static $bloginfo = null;
 	# If this is the first time bloginfo's been called...
 	if($bloginfo == null) {
+		# Fetch all the info from our core
 		$result = $dbh->query('SELECT * FROM core') or die(sqlite_error_string($dbh->lastError));
 		# Let's make an array!
 		$bloginfo = array();
@@ -43,6 +44,7 @@ function bloginfo($var, $output = 'e') {
 	}   		
 	# Are we echoing or returning?
 	if($output == 'e') { echo !empty($bloginfo[$var]) ? $bloginfo[$var] : false; }
+	# Looks like we're returning...
 	else { return !empty($bloginfo[$var]) ? $bloginfo[$var] : false; }	
 }
 
@@ -59,67 +61,102 @@ function unescapeString($str) {
 	}
 }
 
+// The PostLoop class, which loops through posts for display
 class PostLoop {
+	# Set private database variables
 	private $dbh = null;
 	private $result = null;
 	private $cur_result = null;
-
+	
+	# Set database handle for all functions in our class
 	public function __construct() {
     	$this->set_dbh($GLOBALS['dbh']);
   	}
 
+	# Function for setting database handle
   	public function set_dbh($dbh) {
-    	if(is_object($dbh) && $dbh instanceof SQLiteDatabase)
+		# Is this a valid handle?
+    	if(is_object($dbh) && $dbh instanceof SQLiteDatabase) {
       		$this->dbh = $dbh;
-    	else
+		}
+    	else {
+			# It's not a valid database :(
       		trigger_error('Invalid object supplied.');
+      	}
   	}
-
+	
+	# Function to obtain single post
 	public function obtain_post($pid) {
+		# Sanitize and set variables
 		$pid = (((int)$pid) -1);
 		$dbh = $this->dbh;
 		
+		# Query the database for the post data
 		$this->result = $dbh->query("SELECT * FROM 'posts' LIMIT ".$pid.", 1");
 	}
-
+	
+	# Function to obtain multiple posts, depending on page and limit
   	public function obtain_posts($start = 0, $limit = 10) {
+		# Sanitize and set variables
     	$start = (int)$start;
     	$limit = (int)$limit;
     	$start = $start * $limit;
 		$dbh = $this->dbh;
 
+		# Query the database for post data
     	$this->result = $dbh->query("SELECT * FROM 'posts' ORDER BY id desc LIMIT ".$start.", ".$limit);
   	}
 
+	# Loop function to check for posts
   	public function has_posts() {
+		# Do we have any posts?
     	if(!empty($this->result)) {
+			# Convert query results into something usable
       		$this->cur_result = $this->result->fetchObject();
+      		# This while loop will remain true until we run out of posts
 			while($post = $this->cur_result) {
 				return true;
 			}
+			# At which point it turns false, ending the loop in the template file
       		return false;
     	}
+    	# We don't have any posts :(
    		else {
+			# Erase our useless query results
       		$this->result = null;
       		$this->cur_result = null;
+      		# Send the bad news (aka end the while loop)
       		return false;
     	}
   	}
 
+	# Function to echo the post's permalink
   	public function permalink() {
-    	if(!empty($this->cur_result))
+		# We didn't screw up and keep an empty query, did we?
+    	if(!empty($this->cur_result)) {
+			# Nope, so return the post's permalink
       		echo bloginfo('url', 'return'). 'post.php?id='. $this->cur_result->id;
-    	else
+      	}
+    	else {
+			# Looks like we messed up, end the loop
       		return false;
+      	}
   	}
 
+	# Function to echo the post's title
   	public function title() {
-    	if(!empty($this->cur_result))
+		# We didn't screw up and keep an empty query, did we?
+    	if(!empty($this->cur_result)) {
+			# Nope, so remove all sanitation and echo it out
       		echo unescapeString($this->cur_result->title);
-    	else
+      	}
+    	else {
+			# Looks like we messed up, end the loop
       		return false;
+      	}
   	}
-
+	
+	# Function to output full content and excerpts
   	public function content($excerpt = '') {
     	if(!empty($this->cur_result)) {
 			if($excerpt !== '') {
