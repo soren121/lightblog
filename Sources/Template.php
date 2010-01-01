@@ -138,7 +138,7 @@ class PostLoop {
       		echo bloginfo('url', 'return'). 'post.php?id='. $this->cur_result->id;
       	}
     	else {
-			# Looks like we messed up, end the loop
+			# Looks like we messed up, send nothing
       		return false;
       	}
   	}
@@ -151,31 +151,45 @@ class PostLoop {
       		echo unescapeString($this->cur_result->title);
       	}
     	else {
-			# Looks like we messed up, end the loop
+			# Looks like we messed up, send nothing
       		return false;
       	}
   	}
 	
-	# Function to output full content and excerpts
+	# Function to output the full content of a post and excerpts
   	public function content($excerpt = '') {
+		# We didn't screw up and keep an empty query, did we?
     	if(!empty($this->cur_result)) {
+			# Was an excerpt suffix specified?
 			if($excerpt !== '') {
+				# Let's set a default length
 				$length = 360;
+				# Open FunctionReplacements incase the mb_ functions aren't available
+				include_once(ABSPATH .'/Sources/FunctionReplacements.php');
+				# Take out any ellipsises
 				$length -= mb_strlen('...');
+				# Do we need to shorten the post?
 				if(mb_strlen(unescapeString($this->cur_result->post)) > $length) {
+					# Echo the shortened post content along with our suffix
       				echo mb_substr(unescapeString($this->cur_result->post), 0, $length).' ... <a href="post.php?id='. $this->cur_result->id.'">'.$excerpt.'</a>';
 				}
+				# It's short enough already, unsanitize & echo it now
 				else { echo unescapeString($this->cur_result->post); }
 			}
+			# Looks like we're echoing the full post
 			else {
+				# Unsanitize it and echo it
 				echo unescapeString($this->cur_result->post);
 			}
 		}
+		# Oh no, we screwed up :(
     	else {
+			# Send nothing back
       		return false;
 		}
   	}
 
+	# Function to output a post's creation date
   	public function date($format = null) {
     	if(!empty($this->cur_result))
       		echo date(!empty($format) ? $format : 'F jS, Y', $this->cur_result->date);
