@@ -7,7 +7,7 @@
 	* New config file
 	* New Core file
 	* Included FeedWriter class for RSS2/Atom feeds
-    * Removed OpenID library due to bad implementation
+	* Removed OpenID library due to bad implementation
 	* Patched XSS vulnerabilities
 	* Patched SQL injection vulnerabilities
 	* Greatly improved session security

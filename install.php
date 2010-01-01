@@ -122,7 +122,7 @@ if(isset($_POST['dbsubmit'])) {
 	// Unset variables
 	unset($dbpath, $dbh, $sqlfile, $sql, $sqlh, $exconfig, $exconfigfile, $config, $configdata);
 	// Respond
-	echo "OK";
+	echo "All OK";
 	// Prevent the rest of the page from loading
 	die();
 }
@@ -148,7 +148,7 @@ if(isset($_POST['isubmit'])) {
 	// Unset variables
 	unset($username, $password, $email, $displayname, $ip, $dbh);
 	// Respond
-	echo "OK";
+	echo "All OK";
 	// Prevent the rest of the page from loading
 	die();
 }
