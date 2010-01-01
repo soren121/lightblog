@@ -7,13 +7,13 @@
 	
 	admin/create.php
 	
-	©2009 soren121. All rights reserved.
-	Released under the GNU General
-	Public License. For all licensing
-	information, please see the
-	LICENSE.txt document included in this
-	distribution.
-
+	©2009-2010 The LightBlog Team. All 
+	rights reserved. Released under the 
+	GNU General Public License 3. For 
+	all licensing information, please 
+	see the LICENSE.txt document 
+	included in this distribution.
+	
 *********************************************/
 
 // Require config file
