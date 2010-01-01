@@ -141,7 +141,6 @@ class PostLoop {
 
   	public function date($format = null) {
     	if(!empty($this->cur_result))
-			
       		echo date(!empty($format) ? $format : 'F jS, Y', $this->cur_result->date);
     	else
       		return false;

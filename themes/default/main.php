@@ -11,11 +11,11 @@
 					<div class="postdata">
 						<span class="postdata">
 							<img src="<?php bloginfo('themeurl') ?>/style/date.png" alt="" />
-							<?php echo $posts->date() ?>
+							<?php $posts->date() ?>
 						</span>
 						<span class="postdata">
 							<img src="<?php bloginfo('themeurl') ?>/style/user.png" alt="" />
-							<?php echo $posts->author() ?>
+							<?php $posts->author() ?>
 						</span>
 						<span class="postdata">
 							<img src="<?php bloginfo('themeurl') ?>/style/comment.png" alt="" />
