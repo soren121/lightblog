@@ -99,7 +99,7 @@ if(!function_exists('json_encode')) {
 
 	function __json_sanitize($value) {
 		# Sanitize and /
-		$value = strtr($value, array("\\" => "", "/" => "/"));
+		$value = strtr($value, array('\\' => '\\\\', '/' => '/'));
 		# Now line breaks and what not...
 		$value = strtr($value, array(" " => ' ', " " => ' ', " " => ' '));
 		# Now escape ONLY "
