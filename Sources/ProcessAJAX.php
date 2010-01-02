@@ -27,7 +27,12 @@ if(isset($_POST['create'])) {
 	$text = sqlite_escape_string(cleanHTML($_POST['text']));
 	$date = time();
 	$author = sqlite_escape_string(userFetch('displayname', 'r'));
-	$type = $_POST['type'];
+	if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) {
+		$type = 'post';
+	}
+	else {
+		$type = $_POST['type'];
+	}
 	# Insert post/page into database
 	$dbh->query("INSERT INTO ".$type."s (title,".$type.",date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die(sqlite_error_string($dbh->lastError));
 	# Fetch post ID from database
@@ -45,7 +50,12 @@ if(isset($_POST['edit'])) {
 	# Grab data from form and escape the text
 	$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
 	$text = sqlite_escape_string(cleanHTML($_POST['text']));
-	$type = $_POST['type'];
+	if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) {
+		$type = 'post';
+	}
+	else {
+		$type = $_POST['type'];
+	}
 	$id = (int)$_POST['id'];
 	# Query for previous data
 	$result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".$id) or die(sqlite_error_string($dbh->lastError));
@@ -79,25 +89,30 @@ if(isset($_POST['edit'])) {
 # Process post/page deletion
 if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
 	# Execute query to delete post/page
-	$dbh->query("DELETE FROM ".sqlite_escape_string($_POST['type'])."s WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError));
+	$dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags(cleanHTML($_POST['type'])))."s WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError));
 }
 
 # Process theme change
 if(isset($_POST['themesubmit'])) {
-	# Execute query to change theme
-	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['changetheme'])."' WHERE variable='theme'");
+	if(permissions(3)) {
+		# Execute query to change theme
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetheme'])))."' WHERE variable='theme'");
+	}
 }
 
 # Process title change
 if(isset($_POST['changetitle'])) {
-	# Execute query to change title
-	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['changetitle'])."' WHERE variable='title'");
+	# Check permissions
+	if(permissions(3)) {
+		# Execute query to change title
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetitle'])))."' WHERE variable='title'");
+	}
 }
 
 # Process URL change
 if(isset($_POST['changeurl'])) {
 	# Execute query to change url
-	$dbh->query("UPDATE core SET value='".sqlite_escape_string($_POST['changeurl'])."' WHERE variable='url'");
+	$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changeurl'])))."' WHERE variable='url'");
 }
 
 // User creation
