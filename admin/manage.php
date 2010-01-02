@@ -107,8 +107,13 @@ else {
 					<td><?php echo $post->title ?></td>
 					<td><?php echo $post->author ?></td>
 					<td><?php echo date('n/j/Y', $post->date) ?></td>
-					<td class="c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $post->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
-					<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $post->id.', \''.$post->title.'\'' ?>);" style="cursor:pointer;" /></td>
+					<?php if((permissions(1) && userFetch('username',1) == $post->author) or (permissions(2))): ?>
+						<td class="c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $post->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
+						<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $post->id.', \''.$post->title.'\'' ?>);" style="cursor:pointer;" /></td>
+					<?php else: ?>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					<?php endif; ?>
 				</tr>
 				<?php endwhile; ?>
 				<!-- End row loop -->
