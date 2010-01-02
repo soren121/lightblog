@@ -36,14 +36,14 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.InputHint.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
 	<script type="text/javascript">	
 		$(document).ready(function(){
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
 			$('.hint').hint();
-			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',buttonList:['bold','italic','underline','strikethrough','ol','ul','subscript','superscript','indent','hr','image','upload','forecolor','bgcolor','link','unlink','removeformat'],xhtml:true}).panelInstance('wysiwyg');
+			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');
 		});
 		$(function() {
 			$('#create').submit(function() {
@@ -67,8 +67,8 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						var out = r;
-						$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + out + '">View <?php echo $type ?></' + 'a>').css("background", "#CFEBF7").slideDown("normal");
+						var out = r.replace("/\s+?<!--.*>$/gi", "");
+						$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + out + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
 						$('.hint').val('');
 						nicEditors.findEditor('wysiwyg').setContent('');
 					}
@@ -102,7 +102,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 		</div>
 		<div id="footer" class="roundedb">		
 			Powered by LightBlog <?php LightyVersion() ?>    
-	    </div>
+		</div>
 	</div>
 </body>
 </html>
