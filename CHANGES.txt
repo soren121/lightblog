@@ -1,15 +1,12 @@
-[07.12.09] Changes in 0.9.2
+[02.23.10] Changes in 0.9.2
 	* Theme support
-	* Rewritten AJAX installer
+	* Rewritten installer
 	* Rewritten AJAX administration panel
 	* Rewritten Core
-	* Absolute path system
-	* New config file
-	* New Core file
+	* New permissions system
 	* Included FeedWriter class for RSS2/Atom feeds
 	* Removed OpenID library due to bad implementation
 	* Patched XSS vulnerabilities
 	* Patched SQL injection vulnerabilities
 	* Greatly improved session security
 	* Improved database security
-	* New feed system
