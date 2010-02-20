@@ -1,4 +1,13 @@
-CREATE TABLE core (
+CREATE TABLE 'categories' (
+	'id' INTEGER PRIMARY KEY DEFAULT '0',
+	'shortname' TEXT NOT NULL,
+	'fullname' TEXT NOT NULL,
+	'info' TEXT
+);
+
+INSERT INTO categories VALUES(1,'uncategorized','Uncategorized','Posts with no appropriate category are filed here.');
+
+CREATE TABLE 'core' (
 	'variable' TEXT NOT NULL,
 	'value' TEXT
 );
@@ -28,17 +37,18 @@ CREATE TABLE 'pages' (
 	'author' VARCHAR(20) NOT NULL
 );
 
-INSERT INTO pages VALUES('1','About','This is a page. It works like a post, but it lives outside of the hierarchic world of posts. You can edit and delete it in the admin panel.','1247356860','LightBlog Devs');
+INSERT INTO pages VALUES(1,'About','This is a page. It works like a post, but it lives outside of the hierarchic world of posts. You can edit and delete it in the admin panel.','1247356860','LightBlog Devs');
 
 CREATE TABLE 'posts' (
 	'id' INTEGER PRIMARY KEY NOT NULL DEFAULT '0',
 	'title' VARCHAR(100) NOT NULL,
 	'post' TEXT NOT NULL,
 	'date' INT(10) NOT NULL,
-	'author' VARCHAR(20) NOT NULL
+	'author' INTEGER NOT NULL,
+	'category' INTEGER NOT NULL
 );
 
-INSERT INTO 'posts' VALUES(1,'Hello world!','Thank you for choosing LightBlog to manage your website. We hope you like it! Feel free to delete this post after you''re all set up. :)<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1261264790,'LightBlog Devs');
+INSERT INTO posts VALUES(1,'Hello world!','Thank you for choosing LightBlog to manage your website. We hope you like it! Feel free to delete this post after you''re all set up. :)<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1267920001,'LightBlog Devs',1);
 
 CREATE TABLE 'users' (
 	'id' INTEGER PRIMARY KEY NOT NULL DEFAULT '0',

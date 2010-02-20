@@ -1,4 +1,4 @@
-<?php
+<?php error_reporting(E_ALL|E_NOTICE);
 
 /***********************************************
 
@@ -25,7 +25,7 @@ date_default_timezone_set('UTC');
 // Function to output the current version of LightBlog
 function LightyVersion($output = 'e') {
 	# DON'T TOUCH!
-	$version = '0.9.2 Beta 3';
+	$version = '0.9.3 SVN';
 	# Are we echoing or returning?
 	if($output == 'e') { echo $version; }
 	# Returning!

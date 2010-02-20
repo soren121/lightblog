@@ -388,6 +388,22 @@ function list_pages($start_tag = '<li>', $end_tag = '</li>', $limit = 5) {
 	}
 }
 
+// Function to list categories
+function list_categories($tag) {
+	// Grab the database handle
+	global $dbh;
+	// Get category data from database
+	$result = $dbh->query("SELECT * FROM categories") or die(sqlite_error_string($dbh->lastError));
+	// What tag are we using?
+	if($tag == 'option') {
+		$arg = 'value="'.$row->shortname.'"';
+	}
+	// Sort through and create list items
+	while($row = $result->fetchObject()) {
+		echo '<'.$tag.' '.$arg.'>'.unescapeString($row->fullname).'</'.$tag.'>';
+	}
+}
+
 # Function to return simple pagination links
 function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "?page=") {
 	# Global the database handle so we can use it in this function
