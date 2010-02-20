@@ -67,8 +67,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						var out = r.replace("/\s+?<!--.*>$/gi", "");
-						$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + out + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
+						$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
 						$('.hint').val('');
 						nicEditors.findEditor('wysiwyg').setContent('');
 					}
@@ -93,10 +92,15 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 			<h2 class="title"><img class="textmid" src="style/create.png" alt="" />Add New <?php echo ucwords($type) ?></h2>
 			<div id="notifybox"></div>
 			<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="create">
-				<p><input class="hint textfield cf" name="title" type="text" title="Title" /></p>
-				<p><textarea rows="12" cols="36" name="text" id="wysiwyg"></textarea></p>
-				<p><input class="cf" type="hidden" name="type" value="<?php echo $type ?>" /></p>
-				<p><input class="cf submit" name="create" type="submit" value="Publish" /></p>
+				<div>
+					<input class="hint textfield cf" name="title" type="text" title="Title" /><br />
+					<textarea rows="12" cols="36" name="text" id="wysiwyg"></textarea><br />
+					<input class="cf" type="hidden" name="type" value="<?php echo $type ?>" />
+					<div style="width:465px;">
+						<input class="cf submit" name="create" type="submit" value="Publish" style="float:left;" />
+						<div style="float:right;">Category: <select name="category"><?php list_categories() ?></select></div>
+					</div>
+				</div>
 			</form>
 			<?php endif; endif; ?>
 		</div>

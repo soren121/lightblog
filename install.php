@@ -18,7 +18,6 @@
 
 // Shutdown Magic Quotes automatically
 // Highly inefficient, but there isn't much we can do about it
-// PHP 6 can't come fast enough (Magic Quotes is gone in PHP6)
 if(get_magic_quotes_gpc()) {
 	function stripslashes_gpc(&$value) {
 		$value = stripslashes($value);
@@ -70,13 +69,7 @@ function randomString($length) {
 	}
 }
 
-function normalize_path($path){
-	$s = DIRECTORY_SEPARATOR;
-	$path = preg_replace('/[\/\\\]/', $s, $path);
-	$path = preg_replace('/'.$s.'$/', '', $path).$s;
-	return $path;
-}
-
+// Adds trailing slash if needed
 function endslash($path) {
 	$last_char = substr($path, strlen($path) - 1, 1);
 	if($last_char != DIRECTORY_SEPARATOR) {
@@ -85,6 +78,7 @@ function endslash($path) {
 	return $path;
 }
 
+// Gets directory URL
 function baseurl() {
 	$site_url = explode('/', $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
 	unset($site_url[count($site_url)-1]);
@@ -105,8 +99,6 @@ function dbsetup() {
 	if($_POST['dbpath'] == null || $_POST['dbpath'] == '') {
 		return 'No database path given.';
 	}
-	// Correct path
-	normalize_path($_POST['dbpath']);
 	// Create database path
 	$dbpath = endslash($_POST['dbpath']).randomString(rand(9, 16)).'.db';
 	if(!is_dir($_POST['dbpath'])) {
@@ -138,31 +130,50 @@ function dbsetup() {
 	$dbh->queryExec($sql);
 	unset($dbh);
 	// Open, read, and close example config file
-	$excfgh = fopen('config-example.php', 'r');
-	$excfg = fread($excfgh, filesize('config-example.php'));
-	fclose($excfgh);
+	if(is_readable('config-example.php')) {
+		$excfgh = fopen('config-example.php', 'r');
+		$excfg = fread($excfgh, filesize('config-example.php'));
+		fclose($excfgh);
+	}
+	else {
+		if(!chmod('config-example.php', 0644)) {
+			return 'Failed to open install.sql. Please chmod it to 644 and try again.';
+		}
+		else {
+			$excfgh = fopen('config-example.php', 'r');
+			$excfg = fread($excfgh, filesize('config-example.php'));
+			fclose($excfgh);
+		}
+	}
 	// Prepare config file data
 	$excfg = str_replace("absolute path to database here", $dbpath, $excfg);
 	// Create, write to, and close config file
-	$cfgh = fopen('config.php', 'w');
-	fwrite($cfgh, $excfg);
-	fclose($cfgh);
+	//if(is_writable(dirname(__FILE__))) {
+		$cfgh = fopen('config.php', 'w');
+		fwrite($cfgh, $excfg);
+		fclose($cfgh);
+	//}
+	//else {
+	//	return 'LightBlog\'s main directory is not writable. Please chmod it to 760 and try again.';
+	//}
 }
 
 // Will process after Step 2
 if(isset($_POST['dbsetup'])) {
 	$return = dbsetup();
+	// Check for errors
 	if(!$return == null) {
 		$error = $return;
 		$page = "dbsetup";
 	}
 	else {
 		// Set new installer page
-		$page = "blogsetup";
+		$page = "bsetup";
 		menuClass(3, 1);
 	}
 }
 
+// Processing for step 3
 function bsetup() {
 	// Require config file
 	// We need it to open the database
@@ -173,9 +184,10 @@ function bsetup() {
 	$vpassword = $_POST['bsvpassword'];
 	$email = sqlite_escape_string($_POST['bsemail']);
 	$dname = sqlite_escape_string($_POST['bsdname']);
-	$ip = $_SERVER['REMOTE_ADDR'];
 	$title = sqlite_escape_string($_POST['bstitle']);
 	$url = sqlite_escape_string($_POST['bsurl']);
+	// Correct bad IP when installing on localhost
+	$ip = !strstr($_SERVER['REMOTE_ADDR'], "127.0.0.1") ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 	// Match passwords
 	if($password !== $vpassword) {
 		return 'Passwords don\'t match. Please try again.';
@@ -196,11 +208,18 @@ function bsetup() {
 	unset($dbh);
 }
 
+// Will process after Step 3
 if(isset($_POST['bsetup'])) {
-	bsetup();
-	// Set new installer page
-	$page = "finish";
-	menuClass(4, 1);
+	$return = bsetup();
+	if(!$return == null) {
+		$error = $return;
+		$page = "bsetup";
+	}
+	else {
+		// Set new installer page
+		$page = "finish";
+		menuClass(4, 1);
+	}
 }
 
 ?>
@@ -285,11 +304,16 @@ if(isset($_POST['bsetup'])) {
 		#content th {
 			background: #DCE8F2;
 		}
+		#content span#error {
+			margin: 15px 0 0 25px;
+			color: #9C0606;
+			font-size: .9em;
+		}
 		form {
 			margin: 20px 0 0 25px;
 		}
 		button {
-			margin: 15px 0 0 30px;
+			margin: 15px 0 0 25px;
 		}
 		div#bsleft {
 			float: left;
@@ -381,7 +405,7 @@ if(isset($_POST['bsetup'])) {
 					<div>
 						<input type="submit" name="reqmet" value="Continue" onclick="setTimeout('this.disabled=true', 250);" <?php echo $disable; ?> />
 					</div>			
-				</form>
+				</form>	
 			<?php endif; if($page == 'dbsetup'): ?>
 				<h2>Database setup</h2>
 				<p>Now we're going to setup your SQLite database. This<br />
@@ -389,15 +413,16 @@ if(isset($_POST['bsetup'])) {
 				password hashes and other sensitive data. We recommend you<br />
 				place the database outside of your web root if possible, or<br />
 				place it in a non-public-readable folder. If the path does not<br />
-				exist, the installer will try to create it.</p>				
+				exist, the installer will try to create it.</p>		
 				<form action="<?php echo basename($_SERVER['SCRIPT_FILENAME']); ?>" method="post">
 					<label for="dbpath">Database Path</label><br />
 					<div>
-						<input type="text" name="dbpath" id="dbpath" value="<?php echo dirname($_SERVER['SCRIPT_FILENAME']); ?>" style="width:350px;" />
+						<input type="text" name="dbpath" id="dbpath" value="<?php echo dirname(__FILE__); ?>" style="width:350px;" />
 						<input type="submit" name="dbsetup" value="Continue" onclick="setTimeout('this.disabled=true', 250);" />
 					</div>		
 				</form>
-			<?php endif; if($page == 'blogsetup'): ?>
+				<span id="error"><?php if(!isset($error)){$error=null;}echo $error; ?></span>		
+			<?php endif; if($page == 'bsetup'): ?>
 				<script type="text/javascript">
 					// Password strength meter v2.0
 					// Matthew R. Miller - 2007
@@ -470,9 +495,8 @@ if(isset($_POST['bsetup'])) {
 						<input type="password" name="bsvpassword" id="bsvpassword" style="width:200px;" onkeyup="matchPasswords();" />
 						<label for="bsemail">Email</label><br />
 						<input type="text" name="bsemail" id="bsemail" style="width:200px;" /><br />
-						<label for="bsdname" title="This name will be used to identify you in posts, etc.">Display Name</label><br />
+						<label for="bsdname" title="This name will be used to identify you in posts and in areas around LightBlog.">Display Name</label><br />
 						<input type="text" name="bsdname" id="bsdname" style="width:200px;" /><br /><br />
-						<input type="submit" name="bsetup" value="Continue" onclick="setTimeout('this.disabled=true', 250);" />
 					</div>
 					<div id="bsright">
 						<label for="bstitle">Blog Title</label><br />
@@ -480,7 +504,11 @@ if(isset($_POST['bsetup'])) {
 						<label for="bsurl">Blog URL</label><br />
 						<input type="text" name="bsurl" id="bsurl" value="<?php echo baseurl(); ?>" style="width:200px;" />
 					</div>
+					<div style="width:100%;clear:both;">
+						<input type="submit" name="bsetup" value="Continue" onclick="setTimeout('this.disabled=true', 250);" />
+					</div>
 				</form>
+				<span id="error"><?php if(!isset($error)){$error=null;}echo $error; ?></span>
 			<?php endif; if($page == 'finish'): ?>
 				<h2>You're done!</h2>
 				<p>Click the Finish button to see your new blog! :)</p>
