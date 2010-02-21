@@ -16,13 +16,37 @@
 
 ***********************************************/
 
+// Shutdown Magic Quotes automatically
+// Highly inefficient, but there isn't much we can do about it
+if(get_magic_quotes_gpc()) {
+	function stripslashes_gpc(&$value) {
+		$value = stripslashes($value);
+	}
+	array_walk_recursive($_GET, 'stripslashes_gpc');
+    array_walk_recursive($_POST, 'stripslashes_gpc');
+    array_walk_recursive($_COOKIE, 'stripslashes_gpc');
+    array_walk_recursive($_REQUEST, 'stripslashes_gpc');
+}
+
 // Open database if not open
 $dbh = new SQLiteDatabase( DBH );
 
 // Set default timezone
 date_default_timezone_set('UTC');
 
-// Function to output the current version of LightBlog
+/*
+	Function: LightyVersion
+	
+	Returns the installed version number of LightBlog.
+	
+	Parameters:
+	
+		output - Specifies whether the version will be echoed or returned.
+		
+	Returns:
+	
+		The installed version number.
+*/
 function LightyVersion($output = 'e') {
 	# DON'T TOUCH!
 	$version = '0.9.3 SVN';
@@ -32,8 +56,20 @@ function LightyVersion($output = 'e') {
 	else { return $version; }
 }
 
-// Bloginfo function
-// Retrieves general info stored in core
+/*
+	Function: bloginfo
+	
+	Returns the value of a given row.
+	
+	Parameters:
+	
+		var - Row to obtain value from.
+		output - Specifies whether the version will be echoed or returned.
+		
+	Returns:
+	
+		The value of the given row.
+*/
 function bloginfo($var, $output = 'e') {
 	# Global the database handle
 	global $dbh;
@@ -54,7 +90,21 @@ function bloginfo($var, $output = 'e') {
 	else { return !empty($bloginfo[$var]) ? $bloginfo[$var] : false; }	
 }
 
-// Function to fetch Gravatars
+/*
+	Function: fetchGravatar
+	
+	Obtains the URL for a user's Gravatar <http://www.gravatar.com/> based on their email address.
+	
+	Parameters:
+		
+		email - The user's email address.
+		size - The dimensions (in pixels) to output the Gravatar in.
+		output - Specifies whether the version will be echoed or returned.
+		
+	Returns:
+	
+		The full URL for the user's Gravatar.
+*/
 function fetchGravatar($email, $size = 32, $output = 'e') {
 	# Is the Gravatar being echoed?
 	if($output == 'e') {
@@ -67,7 +117,20 @@ function fetchGravatar($email, $size = 32, $output = 'e') {
 	}
 }
 
-// Function to fetch user data
+/*
+	Function: userFetch
+	
+	Safely obtains a piece of information about the user currently logged in.
+	
+	Parameters:
+	
+		var - The name of the info we are getting.
+		output - Specifies whether the version will be echoed or returned.
+		
+	Returns:
+	
+		The requested information about the user (e.g. their email address.)
+*/
 function userFetch($var, $output = 'e') {
 	# Does that value exist?
 	if(!isset($_SESSION[$var])) { 
@@ -86,7 +149,19 @@ function userFetch($var, $output = 'e') {
 }
 
 
-// Function to retrieve directory names
+/*
+	Function: dirlist
+	
+	Reads a directory and outputs its directories into a sorted array.
+	
+	Parameters:
+		
+		input - The path of the directory to inspect.
+	
+	Returns:
+	
+		An array sorted in ascending order by values containing the directories in the given path.
+*/
 function dirlist($input) {
 	# Start foreach loop and set search pattern
 	foreach(glob($input.'/*', GLOB_ONLYDIR) as $dir) {
@@ -130,7 +205,20 @@ function undoMagicArray($array, $max_depth = 1, $cur_depth = 0) {
 	}
 }
 
-# Function to return an advanced Digg-style pagination thingy
+/*
+	Function: advancedPagination
+	
+	Creates a more advanced pagination that is more efficient for handling large amounts of data.
+	
+	Parameters:
+	
+		type - Type of content being processed.
+		target - URL of the page that the pagination will be displayed on.
+		page - The page the user is currently on.
+		limit - Defines how many items are in a page.
+		adjacents - Number of items in the pagination on either side of the current page? (not entirely sure)
+		pagestring - GET argument to be used for the current page.
+*/
 function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 1, $pagestring = "&page=") {
 	# Global the database handle so we can use it in this function
 	global $dbh;	
@@ -217,8 +305,8 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 			# We're close to the end, so only hide the early pages
 			else {
 				# Add the first few pages
-				$pagination .= "<a href=\"" . $target . $pagestring . "1\">1</a>";
-				$pagination .= "<a href=\"" . $target . $pagestring . "2\">2</a>";
+				$pagination .= "<a href=\"".$target.$pagestring."1\">1</a>";
+				$pagination .= "<a href=\"".$target.$pagestring."2\">2</a>";
 				# Add the dots
 				$pagination .= "<span class=\"elipses\">...</span>";
 				for ($counter = $lastpage - (1 + ($adjacents * 3)); $counter <= $lastpage; $counter++) {
@@ -233,7 +321,7 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 		}		
 		# Add the next button
 		if ($page < $counter - 1) {
-			$pagination .= "<a href=\"" . $target . $pagestring . $next . "\">next »</a>";
+			$pagination .= "<a href=\"".$target.$pagestring.$next."\">next »</a>";
 		}
 		else {
 			$pagination .= "<span class=\"disabled\">next »</span>";
@@ -245,7 +333,19 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 	return $pagination;
 }
 
-// Function to generate a random string of specified length
+/*
+	Function: randomString
+	
+	Returns a random alphanumeric string.
+	
+	Parameters:
+	
+		length - Length of string to make.
+		
+	Returns:
+	
+		A completely random string.
+*/
 function randomString($length) {
 	if((is_numeric($length)) && ($length > 0) && (!is_null($length))) {
 		// Start with a blank string
@@ -261,7 +361,19 @@ function randomString($length) {
 	}
 }
 
-// Login function
+/*
+	Function: login
+	
+	Logs in a user.
+	
+	Parameters:
+	
+		method - Method used to login the user. Will be used more when 0.9.4 rolls around.
+		
+	Returns:
+	
+		An error message if something failed. Nothing if everything worked.
+*/
 function login($method) {
 	// Global the database handle so we can use it
 	global $dbh;
@@ -311,7 +423,15 @@ function login($method) {
 	}
 }
 
-// Function to get a real IP
+/*
+	Function: get_ip
+	
+	Attempts to find the user's real IP address.
+
+	Returns:
+	
+		Our best guess at the user's real IP address.
+*/
 function get_ip() {
 	// Look for an IP address
 	if(!empty($_SERVER['REMOTE_ADDR'])) {
@@ -347,7 +467,19 @@ function get_ip() {
 	return $client_ip;
 }
 
-// Function to clean form input to reduce the risk of XSS attacks
+/*
+	Function: cleanHTML
+	
+	Cleans HTML input to reduce the risk of XSS attacks.
+	
+	Parameters:
+	
+		str - HTML code to clean.
+		
+	Returns:
+	
+		Clean HTML code.
+*/
 function cleanHTML($str) {
 	// Remove empty space
 	$str = trim($str);
@@ -376,7 +508,19 @@ function cleanHTML($str) {
 	return $str;
 }
 
-// User permissions function
+/*
+	Function: permissions
+	
+	Determines if the user can do something.
+	
+	Parameters:
+	
+		group - Minimum group, or role level, required to use feature.
+		
+	Returns:
+	
+		Boolean value based on the user's role level. (e.g. true/false)
+*/
 function permissions($group) {
 	# Fetch the session info
 	if(userFetch('role', 1) >= $group) {

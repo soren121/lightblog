@@ -22,8 +22,20 @@ $dbh = new SQLiteDatabase( DBH );
 // Set default timezone
 date_default_timezone_set('UTC');
 
-// Bloginfo function
-// Retrieves general info stored in core
+/*
+	Function: bloginfo
+	
+	Returns the value of a given row.
+	
+	Parameters:
+	
+		var - Row to obtain value from.
+		output - Specifies whether the version will be echoed or returned.
+		
+	Returns:
+	
+		The value of the given row.
+*/
 function bloginfo($var, $output = 'e') {
 	# Global the database handle
 	global $dbh;
@@ -61,19 +73,35 @@ function unescapeString($str) {
 	}
 }
 
-// The PostLoop class, which loops through posts for display
+/*
+	Class: PostLoop
+	
+	Provides an easy method to display a list of posts, for example, on the front page.
+*/
 class PostLoop {
 	# Set private database variables
 	private $dbh = null;
 	private $result = null;
 	private $cur_result = null;
 	
-	# Set database handle for all functions in our class
+	/*
+		Constructor: __construct
+		
+		Sets the database handle for all functions in our class.
+	*/
 	public function __construct() {
     	$this->set_dbh($GLOBALS['dbh']);
   	}
 
-	# Function for setting database handle
+	/*
+		Function: set_dbh
+		
+		Sets the database handle.
+		
+		Parameters:
+		
+			dbh - Database handle object.
+	*/
   	public function set_dbh($dbh) {
 		# Is this a valid handle?
     	if(is_object($dbh) && $dbh instanceof SQLiteDatabase) {
@@ -85,7 +113,15 @@ class PostLoop {
       	}
   	}
 	
-	# Function to obtain single post
+	/*
+		Function: obtain_post
+		
+		Obtains the data for a single post from the database.
+		
+		Parameters:
+		
+			pid - The post's ID.
+	*/
 	public function obtain_post($pid) {
 		# Sanitize and set variables
 		$pid = (((int)$pid) -1);
@@ -95,7 +131,16 @@ class PostLoop {
 		$this->result = $dbh->query("SELECT * FROM 'posts' LIMIT ".$pid.", 1");
 	}
 	
-	# Function to obtain multiple posts, depending on page and limit
+	/*
+		Function: obtain_posts
+		
+		Obtains the data for multiple posts from the database.
+		
+		Parameters:
+		
+			start - The ID of the first row to retrieve data from.
+			limit - The number of rows to retrieve data from, starting from the ID specified in start. 
+	*/
   	public function obtain_posts($start = 0, $limit = 10) {
 		# Sanitize and set variables
     	$start = (int)$start;
@@ -107,7 +152,15 @@ class PostLoop {
     	$this->result = $dbh->query("SELECT * FROM 'posts' ORDER BY id desc LIMIT ".$start.", ".$limit);
   	}
 
-	# Loop function to check for posts
+	/*
+		Function: has_posts
+		
+		Checks if the query result we got contained any posts.
+		
+		Returns:
+		
+			Boolean value (e.g. true/false.)
+	*/
   	public function has_posts() {
 		# Do we have any posts?
     	if(!empty($this->result)) {
@@ -130,7 +183,11 @@ class PostLoop {
     	}
   	}
 
-	# Function to echo the post's permalink
+	/*
+		Function: permalink
+		
+		Outputs the permanent URL (or permalink) to the current post.
+	*/
   	public function permalink() {
 		# We didn't screw up and keep an empty query, did we?
     	if(!empty($this->cur_result)) {
@@ -143,7 +200,11 @@ class PostLoop {
       	}
   	}
 
-	# Function to echo the post's title
+	/*
+		Function: title
+		
+		Outputs the title of the current post.
+	*/
   	public function title() {
 		# We didn't screw up and keep an empty query, did we?
     	if(!empty($this->cur_result)) {
@@ -191,24 +252,34 @@ class PostLoop {
 
 	# Function to output a post's creation date
   	public function date($format = null) {
-    	if(!empty($this->cur_result))
+  		# We didn't screw up and keep an empty query, did we?
+    	if(!empty($this->cur_result)) {
+    		# Nope, so output the date in the right format
       		echo date(!empty($format) ? $format : 'F jS, Y', $this->cur_result->date);
-    	else
+      	}
+      	# Oh no, we screwed up :(
+    	else {
+    		# Send nothing back
       		return false;
+      	}
   	}
 
   	public function author() {
-    	if(!empty($this->cur_result))
+    	if(!empty($this->cur_result)) {
       		echo $this->cur_result->author;
-    	else
+      	}
+    	else {
       		return false;
+      	}
   	}
 
 	public function commentNum() {
-		if(!empty($this->cur_result))
+		if(!empty($this->cur_result)) {
 			return commentNum($this->cur_result->id);
-		else
+		}
+		else {
 			return false;
+		}
 	}
 }
 

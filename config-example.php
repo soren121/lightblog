@@ -16,13 +16,16 @@
 
 *********************************************/
 
-// Set SQLite connection information
+// Constant: DBH
+// Defines the path to the SQLite database
 define('DBH', 'absolute path to database here');
 
 /*-------DO NOT EDIT BELOW THIS LINE!---------*/
 
 // Define absolute path of main directory here
 if(!defined('ABSPATH')) {
+	// Constant: ABSPATH
+	// Defines the absolute path to LightBlog's main directory
 	define('ABSPATH', dirname(__FILE__));
 }
 
