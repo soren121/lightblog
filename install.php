@@ -126,8 +126,12 @@ function dbsetup() {
 		}
 	}
 	// Create, write to, and close database
-	$dbh = new SQLiteDatabase($dbpath);
-	$dbh->queryExec($sql);
+	if(!$dbh = new SQLiteDatabase($dbpath)) {
+		return 'Failed to create the database. Please chmod its directory to 760 and try again.';
+	}
+	if(!$dbh->queryExec($sql, $errormsg)) {
+		return 'Failed to write to the database because: '.$errormsg.'.';
+	}
 	unset($dbh);
 	// Open, read, and close example config file
 	if(is_readable('config-example.php')) {
@@ -147,15 +151,9 @@ function dbsetup() {
 	}
 	// Prepare config file data
 	$excfg = str_replace("absolute path to database here", $dbpath, $excfg);
-	// Create, write to, and close config file
-	//if(is_writable(dirname(__FILE__))) {
-		$cfgh = fopen('config.php', 'w');
-		fwrite($cfgh, $excfg);
-		fclose($cfgh);
-	//}
-	//else {
-	//	return 'LightBlog\'s main directory is not writable. Please chmod it to 760 and try again.';
-	//}
+	$cfgh = fopen('config.php', 'w');
+	fwrite($cfgh, $excfg);
+	fclose($cfgh);
 }
 
 // Will process after Step 2
