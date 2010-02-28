@@ -16,62 +16,16 @@
 
 ***********************************************/
 
+// Include the extra user, database, and string functions
+require(ABSPATH .'/Sources/DatabaseFunctions.php');
+require(ABSPATH .'/Sources/UserFunctions.php');
+require(ABSPATH .'/Sources/StringFunctions.php');
+
 // Open database
 $dbh = new SQLiteDatabase( DBH );
 
 // Set default timezone
 date_default_timezone_set('UTC');
-
-/*
-	Function: bloginfo
-	
-	Returns the value of a given row.
-	
-	Parameters:
-	
-		var - Row to obtain value from.
-		output - Specifies whether the version will be echoed or returned.
-		
-	Returns:
-	
-		The value of the given row.
-*/
-function bloginfo($var, $output = 'e') {
-	# Global the database handle
-	global $dbh;
-	# Make PHP remember $bloginfo next time
-	static $bloginfo = null;
-	# If this is the first time bloginfo's been called...
-	if($bloginfo == null) {
-		# Fetch all the info from our core
-		$result = $dbh->query('SELECT * FROM core') or die(sqlite_error_string($dbh->lastError));
-		# Let's make an array!
-		$bloginfo = array();
-		# For each row, set a key with the value
-		while($row = $result->fetchObject()) {
-			$bloginfo[$row->variable] = $row->value;
-		}
-		// Set the theme URL
-		$bloginfo['themeurl'] = $bloginfo['url'].'themes/'.$bloginfo['theme'];
-	}   		
-	# Are we echoing or returning?
-	if($output == 'e') { echo !empty($bloginfo[$var]) ? $bloginfo[$var] : false; }
-	# Looks like we're returning...
-	else { return !empty($bloginfo[$var]) ? $bloginfo[$var] : false; }	
-}
-
-// Function to undo Magic Quotes in strings
-function unescapeString($str) {
-	# Is Magic Quotes on?
-	if(function_exists('magic_quotes_gpc') && magic_quotes_gpc() == 1) {
-		# It is, so undo its filthy mess
-		return stripslashes(stripslashes($str));
-	}
-	else {
-		# Magic Quotes is off, so leave it as is
-		return stripslashes($str);
-	}
-}
 
 /*
 	Class: PostLoop
@@ -209,7 +163,7 @@ class PostLoop {
 		# We didn't screw up and keep an empty query, did we?
     	if(!empty($this->cur_result)) {
 			# Nope, so remove all sanitation and echo it out
-      		echo unescapeString($this->cur_result->title);
+      		echo stripslashes($this->cur_result->title);
       	}
     	else {
 			# Looks like we messed up, send nothing
@@ -230,17 +184,17 @@ class PostLoop {
 				# Take out any ellipsises
 				$length -= mb_strlen('...');
 				# Do we need to shorten the post?
-				if(mb_strlen(unescapeString($this->cur_result->post)) > $length) {
+				if(mb_strlen(stripslashes($this->cur_result->post)) > $length) {
 					# Echo the shortened post content along with our suffix
-      				echo mb_substr(unescapeString($this->cur_result->post), 0, $length).' ... <a href="post.php?id='. $this->cur_result->id.'">'.$excerpt.'</a>';
+      				echo mb_substr(stripslashes($this->cur_result->post), 0, $length).' ... <a href="post.php?id='. $this->cur_result->id.'">'.$excerpt.'</a>';
 				}
 				# It's short enough already, unsanitize & echo it now
-				else { echo unescapeString($this->cur_result->post); }
+				else { echo stripslashes($this->cur_result->post); }
 			}
 			# Looks like we're echoing the full post
 			else {
 				# Unsanitize it and echo it
-				echo unescapeString($this->cur_result->post);
+				echo stripslashes($this->cur_result->post);
 			}
 		}
 		# Oh no, we screwed up :(
@@ -339,14 +293,14 @@ class PageLoop {
 
   	public function title() {
     	if(!empty($this->cur_result))
-      		echo unescapeString($this->cur_result->title);
+      		echo stripslashes($this->cur_result->title);
     	else
       		return false;
   	}
 
   	public function page() {
     	if(!empty($this->cur_result))
-      		echo unescapeString($this->cur_result->page);
+      		echo stripslashes($this->cur_result->page);
     	else
       		return false;
   	}
@@ -405,7 +359,7 @@ class CommentLoop {
 
 	public function comment() {
 		if(!empty($this->cur_result))
-			echo unescapeString($this->cur_result->text);
+			echo stripslashes($this->cur_result->text);
 		else
 			return false;
 	}
@@ -419,7 +373,7 @@ class CommentLoop {
 
   	public function website() {
     	if(!empty($this->cur_result))
-      		echo unescapeString($this->cur_result->website);
+      		echo stripslashes($this->cur_result->website);
     	else
       		return false;
   	}
@@ -471,7 +425,7 @@ function list_categories($tag) {
 	}
 	// Sort through and create list items
 	while($row = $result->fetchObject()) {
-		echo '<'.$tag.' '.$arg.'>'.unescapeString($row->fullname).'</'.$tag.'>';
+		echo '<'.$tag.' '.$arg.'>'.stripslashes($row->fullname).'</'.$tag.'>';
 	}
 }
 
@@ -542,18 +496,6 @@ function alternateColor($class1, $class2) {
 	}
 	# Increase $count by 1 for next time
 	$count++;
-}
-
-// Function to correct plurals and such on dynamic numbers, mainly comment numbers
-function grammarFix($number, $singular, $plural) {
-	if($number == 1) {
-		// The number is 1, so we will use the singular form of the word
-		echo $number.' '.$singular;
-	}
-	else {
-		// The number is something other than 1, so we'll use the plural form
-		echo $number.' '.$plural;
-	}
 }
 
 ?>
