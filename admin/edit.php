@@ -103,8 +103,8 @@ while($past = $result->fetchObject()) {
 			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Edit <?php echo ucwords($type) ?></h2>
 			<div id="notifybox"></div>
 			<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="edit">
-				<p><input class="hint textfield ef" name="title" type="text" title="Title" value="<?php echo unescapeString($title) ?>" /></p>
-				<p><textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo unescapeString($text) ?></textarea></p>
+				<p><input class="hint textfield ef" name="title" type="text" title="Title" value="<?php echo stripslashes($title) ?>" /></p>
+				<p><textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo stripslashes($text) ?></textarea></p>
 				<p><input class="ef" type="hidden" name="type" value="<?php echo $type ?>" /></p>
 				<p><input class="ef" type="hidden" name="id" value="<?php echo (int)$_GET['id'] ?>" /></p>
 				<p><input class="ef submit" name="edit" type="submit" value="Save" /></p>

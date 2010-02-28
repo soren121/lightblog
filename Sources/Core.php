@@ -16,17 +16,10 @@
 
 ***********************************************/
 
-// Shutdown Magic Quotes automatically
-// Highly inefficient, but there isn't much we can do about it
-if(get_magic_quotes_gpc()) {
-	function stripslashes_gpc(&$value) {
-		$value = stripslashes($value);
-	}
-	array_walk_recursive($_GET, 'stripslashes_gpc');
-    array_walk_recursive($_POST, 'stripslashes_gpc');
-    array_walk_recursive($_COOKIE, 'stripslashes_gpc');
-    array_walk_recursive($_REQUEST, 'stripslashes_gpc');
-}
+// Include the extra user, database, and string functions
+require(ABSPATH .'/Sources/DatabaseFunctions.php');
+require(ABSPATH .'/Sources/UserFunctions.php');
+require(ABSPATH .'/Sources/StringFunctions.php');
 
 // Open database if not open
 $dbh = new SQLiteDatabase( DBH );
@@ -57,99 +50,6 @@ function LightyVersion($output = 'e') {
 }
 
 /*
-	Function: bloginfo
-	
-	Returns the value of a given row.
-	
-	Parameters:
-	
-		var - Row to obtain value from.
-		output - Specifies whether the version will be echoed or returned.
-		
-	Returns:
-	
-		The value of the given row.
-*/
-function bloginfo($var, $output = 'e') {
-	# Global the database handle
-	global $dbh;
-	# Make PHP remember $bloginfo next time
-	static $bloginfo = null;
-	# If this is the first time bloginfo's been called...
-	if($bloginfo == null) {
-		$result = $dbh->query('SELECT * FROM core') or die(sqlite_error_string($dbh->lastError));
-		# Let's make an array!
-		$bloginfo = array();
-		# For each row, set a key with the value
-		while($row = $result->fetchObject()) {
-			$bloginfo[$row->variable] = $row->value;
-		}
-	}
-	# Are we echoing or returning?
-	if($output == 'e') { echo !empty($bloginfo[$var]) ? $bloginfo[$var] : false; }
-	else { return !empty($bloginfo[$var]) ? $bloginfo[$var] : false; }	
-}
-
-/*
-	Function: fetchGravatar
-	
-	Obtains the URL for a user's Gravatar <http://www.gravatar.com/> based on their email address.
-	
-	Parameters:
-		
-		email - The user's email address.
-		size - The dimensions (in pixels) to output the Gravatar in.
-		output - Specifies whether the version will be echoed or returned.
-		
-	Returns:
-	
-		The full URL for the user's Gravatar.
-*/
-function fetchGravatar($email, $size = 32, $output = 'e') {
-	# Is the Gravatar being echoed?
-	if($output == 'e') {
-		# Yep, so echo the URL
-		echo "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".(int)$size;
-	}
-	else {
-		# It's not being echoed, so return the URL
-		return "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".(int)$size;
-	}
-}
-
-/*
-	Function: userFetch
-	
-	Safely obtains a piece of information about the user currently logged in.
-	
-	Parameters:
-	
-		var - The name of the info we are getting.
-		output - Specifies whether the version will be echoed or returned.
-		
-	Returns:
-	
-		The requested information about the user (e.g. their email address.)
-*/
-function userFetch($var, $output = 'e') {
-	# Does that value exist?
-	if(!isset($_SESSION[$var])) { 
-		# Nope, so return nothing
-		return null;
-	}
-	else {
-		# It exists, so echo/return it
-		if($output == 'e') {
-			echo $_SESSION[$var];
-		}
-		else {
-			return $_SESSION[$var];
-		}
-	}
-}
-
-
-/*
 	Function: dirlist
 	
 	Reads a directory and outputs its directories into a sorted array.
@@ -176,35 +76,6 @@ function dirlist($input) {
 	return $array;
 }
 
-// Function to undo Magic Quotes in strings
-function unescapeString($str) {
-		# Is Magic Quotes on?
-		if(function_exists('magic_quotes_gpc') && magic_quotes_gpc() == 1) {
-				# It is, so undo its filthy mess
-				return stripslashes(stripslashes($str));
-		}
-		else {
-				# Magic Quotes is off, so leave it as is
-				return stripslashes($str);
-		}
-}
-
-// Function to undo Magic Quotes in arrays
-function undoMagicArray($array, $max_depth = 1, $cur_depth = 0) {
-	if($cur_depth > $max_depth)
-		return $array;
-	else {
-		$new_array = array();
-		foreach($array as $key => $value) {
-			if(!is_array($value))
-				$new_array[stripslashes($key)] = stripslashes($value);
-			else
-				$new_array[stripslashes($key)] = undoMagic($value, $max_depth, $cur_depth + 1);
-		}
-		return $new_array;
-	}
-}
-
 /*
 	Function: advancedPagination
 	
@@ -218,6 +89,10 @@ function undoMagicArray($array, $max_depth = 1, $cur_depth = 0) {
 		limit - Defines how many items are in a page.
 		adjacents - Number of items in the pagination on either side of the current page? (not entirely sure)
 		pagestring - GET argument to be used for the current page.
+		
+	Returns:
+	
+		HTML code for a full pagination menu.
 */
 function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 1, $pagestring = "&page=") {
 	# Global the database handle so we can use it in this function
@@ -276,7 +151,7 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 						$pagination .= "<a href=\"" . $target . $pagestring. $counter . "\">$counter</a>";					
 					}
 				}
-				# Add the dots
+				# Add the ellipses
 				$pagination .= "<span class=\"elipses\">...</span>";
 				$pagination .= "<a href=\"" . $target . $pagestring . $lpm1 . "\">$lpm1</a>";
 				$pagination .= "<a href=\"" . $target . $pagestring . $lastpage . "\">$lastpage</a>";		
@@ -286,7 +161,7 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 				# Add the first two links
 				$pagination .= "<a href=\"" . $target . $pagestring . "1\">1</a>";
 				$pagination .= "<a href=\"" . $target . $pagestring . "2\">2</a>";
-				# Add the dots
+				# Add the ellipses
 				$pagination .= "<span class=\"elipses\">...</span>";
 				# Start the for loop to make the page links
 				for($counter = $page - $adjacents; $counter <= $page + $adjacents; $counter++) {
@@ -297,7 +172,7 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 						$pagination .= "<a href=\"" . $target . $target . $pagestring . $counter . "\">$counter</a>";	
 					}
 				}
-				# Add the dots and the last few pages
+				# Add the ellipses and the last few pages
 				$pagination .= "...";
 				$pagination .= "<a href=\"" . $target . $pagestring . $lpm1 . "\">$lpm1</a>";
 				$pagination .= "<a href=\"" . $target . $pagestring . $lastpage . "\">$lastpage</a>";		
@@ -307,7 +182,7 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 				# Add the first few pages
 				$pagination .= "<a href=\"".$target.$pagestring."1\">1</a>";
 				$pagination .= "<a href=\"".$target.$pagestring."2\">2</a>";
-				# Add the dots
+				# Add the ellipses
 				$pagination .= "<span class=\"elipses\">...</span>";
 				for ($counter = $lastpage - (1 + ($adjacents * 3)); $counter <= $lastpage; $counter++) {
 					if ($counter == $page) {
@@ -331,34 +206,6 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 	}
 	# Return the final pagination div
 	return $pagination;
-}
-
-/*
-	Function: randomString
-	
-	Returns a random alphanumeric string.
-	
-	Parameters:
-	
-		length - Length of string to make.
-		
-	Returns:
-	
-		A completely random string.
-*/
-function randomString($length) {
-	if((is_numeric($length)) && ($length > 0) && (!is_null($length))) {
-		// Start with a blank string
-		$string = '';
-		$accepted_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,';
-		// Loop through and make a string
-		for($i=0;$i<=$length;$i++) {
-			$random_number = rand(0, (strlen($accepted_chars) -1));
-			$string .= $accepted_chars[$random_number];
-		}
-		// Return the final string
-		return $string;
-	}
 }
 
 /*
@@ -465,73 +312,6 @@ function get_ip() {
 	}
 	// Return what we think the IP is
 	return $client_ip;
-}
-
-/*
-	Function: cleanHTML
-	
-	Cleans HTML input to reduce the risk of XSS attacks.
-	
-	Parameters:
-	
-		str - HTML code to clean.
-		
-	Returns:
-	
-		Clean HTML code.
-*/
-function cleanHTML($str) {
-	// Remove empty space
-	$str = trim($str);
-	// Prevent Unicode codec problems
-	$str = utf8_decode($str);
-	// Strip out CDATA
-	preg_match_all('/<!\[cdata\[(.*?)\]\]>/is', $str, $matches);
-    $str = str_replace($matches[0], $matches[1], $str);
-	// Strip out all JavaScript
-    $str = preg_replace("/href=(['\"]).*?javascript:(.*)?\\1/i", "onclick=' $2 '", $str);
-    while(preg_match("/<(.*)?javascript.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", $str))
-        $str = preg_replace("/<(.*)?javascript.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", "<$1$3$4$5>", $str);
-    // Remove all expressions
-	$str = preg_replace("/:expression\(.*?((?>[^(.*?)]+)|(?R)).*?\)\)/i", "", $str);
-    while(preg_match("/<(.*)?:expr.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", $str))
-        $str = preg_replace("/<(.*)?:expr.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", "<$1$3$4$5>", $str);
-	// Remove all on* attributes
-    while(preg_match("/<(.*)?\s?on.+?=?\s?.+?(['\"]).*?\\2\s?(.*)?>/i", $str))
-       $str = preg_replace("/<(.*)?\s?on.+?=?\s?.+?(['\"]).*?\\2\s?(.*)?>/i", "<$1$3>", $str);
-	// Strip all but allowed tags
-	$str = strip_tags($str, "<b><strong><i><em><u><a><img><quote><div><span><br><ol><ul><li>");
-	// Convert symbols to HTML entities to kill hex attacks
-	$str = str_replace("#", "&#35;", $str);
-	$str = str_replace("%", "&#37;", $str);
-	// Return the final string
-	return $str;
-}
-
-/*
-	Function: permissions
-	
-	Determines if the user can do something.
-	
-	Parameters:
-	
-		group - Minimum group, or role level, required to use feature.
-		
-	Returns:
-	
-		Boolean value based on the user's role level. (e.g. true/false)
-*/
-function permissions($group) {
-	# Fetch the session info
-	if(userFetch('role', 1) >= $group) {
-		# Return true if they're allowed
-		return true;
-	}
-	
-	else {
-		# Return false if they aren't
-		return false;
-	}
 }
 
 ?>

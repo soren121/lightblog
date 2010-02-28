@@ -17,7 +17,7 @@
 ***********************************************/
 
 // Require Core.php if it isn't already loaded
-require_once('Core.php');
+require_once(ABSPATH .'/Core.php');
 
 // Similar IP lock
 	// Get first 3 octets of current IP
