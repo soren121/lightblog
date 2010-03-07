@@ -17,8 +17,8 @@
 				<div>
 					<h4>Feeds</h4>
 					<ul>
-						<li><img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/rss.png" alt="" class="feed" /><a href="<?php bloginfo('url') ?>feed.php">RSS Feed</a></li>
-						<li><img src="<?php bloginfo('url') ?>themes/<?php bloginfo('theme') ?>/style/atom.png" alt="" class="feed" /><a href="<?php bloginfo('url') ?>feed.php?type=atom">Atom Feed</a></li>
+						<li><img src="<?php bloginfo('themeurl') ?>/style/rss.png" alt="" class="feed" /><a href="<?php bloginfo('url') ?>feed.php">RSS Feed</a></li>
+						<li><img src="<?php bloginfo('themeurl') ?>/style/atom.png" alt="" class="feed" /><a href="<?php bloginfo('url') ?>feed.php?type=atom">Atom Feed</a></li>
 					</ul>
 				</div>
 				<div class="clear"></div>

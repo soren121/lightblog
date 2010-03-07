@@ -235,6 +235,17 @@ class PostLoop {
 			return false;
 		}
 	}
+	
+	public function category() {
+		if(!empty($this->cur_result)) {
+			$dbh = $this->dbh;
+			$result = $dbh->query("SELECT fullname FROM categories WHERE id=".(int)$this->cur_result->category);
+			echo $result->fetchSingle();
+		}
+		else {
+			return false;
+		}
+	}
 }
 
 class PageLoop {
