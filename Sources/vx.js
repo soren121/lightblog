@@ -28,7 +28,7 @@ _.query=_.Q=function(j,y,x){y='';for(x in j)y+='&'+x+'='+encodeURIComponent(j[x]
 _.queue=_.U=function(l,n){(n=function(){eval(l.splice(0,1)[0])})();return l}
 _.ready=_.R=function(f){"\v"=="v"?setTimeout(f,0):_.E(_.d,'DOMContentLoaded',f)}
 _.remove=_.V=function(e,o,x){x=_.I(e,o);x>0?o.splice(x,1):0}
-_.removeclass=_.RC=function(e,c){if(_.HC(e,c)){return e.className=e.className.replace(c,' ')}}
+_.removeclass=_.RC=function(e,c){_.HC(e,c)?e.className=e.className.replace(c,' ')}
 _.d=document
 _.slide=function(d,e,o,f,i,q){q=_.P(e).h;_.A(f?f:15,i?i:10,function(a){a=(d?0:1)+(d?1:-1)*a;e.style.height=(a*q)+'px'},o)}
 _.json=_.S=function(j,d,t){if(d)return eval('('+j+')');if(!j)return j+'';t=[];if(j.pop){for(x in j)t.push(_.S(j[x]));j='['+t.join(',')+']'}else if(typeof j=='object'){for(x in j)t.push(x+':'+_.S(j[x]));j='{'+t.join(',')+'}'}else if(j.split)j="'"+j.replace(/\'/g,"\\'")+"'";return j}
