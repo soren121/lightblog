@@ -29,33 +29,6 @@ if(get_magic_quotes_gpc()) {
 }
 
 /*
-	Function: fetchGravatar
-	
-	Obtains the URL for a user's Gravatar <http://www.gravatar.com/> based on their email address.
-	
-	Parameters:
-		
-		email - The user's email address.
-		size - The dimensions (in pixels) to output the Gravatar in.
-		output - Specifies whether the version will be echoed or returned.
-		
-	Returns:
-	
-		The full URL for the user's Gravatar.
-*/
-function fetchGravatar($email, $size = 32, $output = 'e') {
-	# Is the Gravatar being echoed?
-	if($output == 'e') {
-		# Yep, so echo the URL
-		echo "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".(int)$size;
-	}
-	else {
-		# It's not being echoed, so return the URL
-		return "http://www.gravatar.com/avatar.php?gravatar_id=".md5($email)."&amp;size=".(int)$size;
-	}
-}
-
-/*
 	Function: userFetch
 	
 	Safely obtains a piece of information about the user currently logged in.

@@ -171,7 +171,15 @@ class PostLoop {
       	}
   	}
 	
-	# Function to output the full content of a post and excerpts
+	/*
+		Function: content
+		
+		Outputs the content, in full form or as an excerpt.
+		
+		Parameters:
+		
+			excerpt - The excerpt suffix. If set, this function will output an excerpt. (e.g. Read More...)
+	*/
   	public function content($excerpt = '') {
 		# We didn't screw up and keep an empty query, did we?
     	if(!empty($this->cur_result)) {
@@ -204,7 +212,15 @@ class PostLoop {
 		}
   	}
 
-	# Function to output a post's creation date
+	/*
+		Function: date
+		
+		Outputs the published date of the post.
+		
+		Parameters:
+		
+			format - The format, in PHP's date() format, in which to display the date. (e.g. F js, Y)
+	*/
   	public function date($format = null) {
   		# We didn't screw up and keep an empty query, did we?
     	if(!empty($this->cur_result)) {
@@ -218,6 +234,11 @@ class PostLoop {
       	}
   	}
 
+	/*
+		Function: author
+
+		Outputs the author of the current post.
+	*/
   	public function author() {
     	if(!empty($this->cur_result)) {
       		echo $this->cur_result->author;
@@ -227,6 +248,11 @@ class PostLoop {
       	}
   	}
 
+	/*
+		Function: commentNum
+
+		Outputs the number of comments on the current post.
+	*/
 	public function commentNum() {
 		if(!empty($this->cur_result)) {
 			return commentNum($this->cur_result->id);
@@ -236,6 +262,11 @@ class PostLoop {
 		}
 	}
 	
+	/*
+		Function: category
+		
+		Outputs the category the post was filed under.
+	*/
 	public function category() {
 		if(!empty($this->cur_result)) {
 			$dbh = $this->dbh;
@@ -248,22 +279,55 @@ class PostLoop {
 	}
 }
 
+/*
+	Class: PageLoop
+	
+	Provides an easy way for theme developers to display pages.
+*/
 class PageLoop {
+	# Set private database variables
 	private $dbh = null;
 	private $result = null;
 	private $cur_result = null;
+	
+	/*
+		Constructor: __construct
 
+		Sets the database handle for all functions in our class.
+	*/
 	public function __construct() {
     	$this->set_dbh($GLOBALS['dbh']);
   	}
 
-  	public function set_dbh($dbh) {
-    	if(is_object($dbh) && $dbh instanceof SQLiteDatabase)
-      		$this->dbh = $dbh;
-    	else
-      		trigger_error('Invalid object supplied.');
-  	}
+	/*
+		Function: set_dbh
 
+		Sets the database handle.
+
+		Parameters:
+
+			dbh - Database handle object.
+	*/
+	public function set_dbh($dbh) {
+		# Is this a valid handle?
+		if(is_object($dbh) && $dbh instanceof SQLiteDatabase) {
+			$this->dbh = $dbh;
+		}
+		else {
+			# It's not a valid database :(
+			trigger_error('Invalid object supplied.');
+		}
+	}
+
+	/*
+		Function: obtain_page
+
+		Obtains the data for a page from the database.
+
+		Parameters:
+
+			pid - The page's ID.
+	*/
 	public function obtain_page($pid) {
 		$pid = (((int)$pid) -1);
 		$dbh = $this->dbh;
@@ -271,15 +335,15 @@ class PageLoop {
 		$this->result = $dbh->query("SELECT * FROM 'pages' LIMIT ".$pid.", 1");
 	}
 
-  	public function obtain_pages($start = 0, $limit = 10) {
-    	$start = (int)$start;
-    	$limit = (int)$limit;
-    	$start = $start * $limit;
-		$dbh = $this->dbh;
+	/*
+		Function: has_pages
+		
+		Checks if the query result we got contained any pages.
 
-    	$this->result = $dbh->query("SELECT * FROM 'pages' ORDER BY id desc LIMIT ".$start.", ".$limit);
-  	}
+		Returns:
 
+			Boolean value (e.g. true/false.)
+	*/
   	public function has_pages() {
     	if(!empty($this->result)) {
       		$this->cur_result = $this->result->fetchObject();
@@ -295,13 +359,23 @@ class PageLoop {
     	}
   	}
 
+	/*
+		Function: permalink
+		
+		Outputs a permanent link to the page.
+	*/
   	public function permalink() {
     	if(!empty($this->cur_result))
-      		echo bloginfo('url', 'return'). 'page.php?id='. $this->cur_result->id;
+      		echo bloginfo('url', 'return').'page.php?id='.(int)$this->cur_result->id;
     	else
       		return false;
   	}
 
+	/*
+		Function: title
+		
+		Outputs the title of the page.
+	*/
   	public function title() {
     	if(!empty($this->cur_result))
       		echo stripslashes($this->cur_result->title);
@@ -309,23 +383,14 @@ class PageLoop {
       		return false;
   	}
 
-  	public function page() {
+	/*
+		Function: content
+		
+		Outputs the content of the page.
+	*/
+  	public function content() {
     	if(!empty($this->cur_result))
       		echo stripslashes($this->cur_result->page);
-    	else
-      		return false;
-  	}
-
-  	public function date($format = null) {
-    	if(!empty($this->cur_result))
-      		echo date(!empty($format) ? $format : 'F jS, Y', $this->cur_result->date);
-    	else
-      		return false;
-  	}
-
-  	public function author() {
-    	if(!empty($this->cur_result))
-      		echo $this->cur_result->author;
     	else
       		return false;
   	}
@@ -415,12 +480,26 @@ class CommentLoop {
 	}
 }
 
-function list_pages($start_tag = '<li>', $end_tag = '</li>', $limit = 5) {
+/*
+	Function: list_pages
+	
+	Lists pages as HTML list items.
+	
+	Parameters:
+	
+		tag - The HTML tag that will contain the link (e.g. li)
+		limit - The maximum number of pages to list.
+	
+	Returns:
+	
+		An HTML list item for however many pages were requested.
+*/
+function list_pages($tag = 'li', $limit = 5) {
 	global $dbh;
 	$limit = intval($limit);
 	$result = $dbh->query("SELECT * FROM pages ORDER BY id desc LIMIT 0, ".$limit);
 	while($pages = $result->fetchObject()) {
-		echo $start_tag.'<a href="'.bloginfo('url',2).'page.php?id='.$pages->id.'">'.$pages->title.'</a>'.$end_tag;
+		echo '<'.$tag.' '.$arg.'><a href="'.bloginfo('url',2).'page.php?id='.$pages->id.'">'.$pages->title.'</a>'.'</'.$tag.'>';
 	}
 }
 
@@ -490,7 +569,20 @@ function commentNum($id, $output = 'r') {
 	}
 }
 
-// Function to alternate row colors
+/*
+	Function: alternateColor
+	
+	Alternates colors using CSS classes. Technically, it could alternate anything.
+	
+	Parameters:
+	
+		class1 - Name of the first class.
+		class2 - Name of the second class.
+		
+	Returns:
+	
+		The appropriate class name.
+*/
 function alternateColor($class1, $class2) {
 	# If $count isn't set, set it as 1
 	if(!isset($count)) { $count = 1; }

@@ -98,7 +98,9 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 					<input class="cf" type="hidden" name="type" value="<?php echo $type ?>" />
 					<div style="width:465px;">
 						<input class="cf submit" name="create" type="submit" value="Publish" style="float:left;" />
-						<div style="float:right;">Category: <select name="category"><?php list_categories() ?></select></div>
+						<?php if($type == 'post'): ?>
+							<div style="float:right;">Category: <select name="category"><?php list_categories() ?></select></div>
+						<?php endif; ?>
 					</div>
 				</div>
 			</form>
