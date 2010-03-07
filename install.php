@@ -1,4 +1,4 @@
-<?php error_reporting(E_ALL|E_NOTICE);
+<?php
 
 /*********************************************
 
@@ -510,7 +510,7 @@ if(isset($_POST['bsetup'])) {
 			<?php endif; if($page == 'finish'): ?>
 				<h2>You're done!</h2>
 				<p>Click the Finish button to see your new blog! :)</p>
-				<button onclick="window.location='<?php echo baseurl(); ?>'">Finish</button>
+				<button onclick="window.location='<?php echo baseurl(); ?>?install=true'">Finish</button>
 			<?php endif; ?>
 			<div class="clear"></div>
 		</div>

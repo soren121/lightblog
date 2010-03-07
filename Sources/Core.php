@@ -25,7 +25,7 @@ date_default_timezone_set('UTC');
 // Function to output the current version of LightBlog
 function LightyVersion($output = 'e') {
 	# DON'T TOUCH!
-	$version = '0.9.2 Beta 3';
+	$version = '0.9.2';
 	# Are we echoing or returning?
 	if($output == 'e') { echo $version; }
 	# Returning!
@@ -297,8 +297,8 @@ function login($method) {
 					$dbh->query("UPDATE users SET password='$passhash', salt='$salt' WHERE username='$username'");
 					// Does the user want to remember their data?
 					if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
-						setcookie(strtolower(bloginfo('title','r')).'user', $user->username, time()+60*60*24*30, "/");
-						setcookie(strtolower(bloginfo('title','r')).'pass', $_POST['password'], time()+60*60*24*30, "/");
+						setcookie('username', $user->username, time()+60*60*24*30, "/");
+						setcookie('password', $_POST['password'], time()+60*60*24*30, "/");
 					}
 					// Send the user to the dashboard
 					header('Location: '.bloginfo('url','r').'admin/dashboard.php');
