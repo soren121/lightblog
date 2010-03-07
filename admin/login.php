@@ -21,10 +21,10 @@ require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
 // Check for cookies
-if(isset($_COOKIE[bloginfo('title','r').'user']) && isset($_COOKIE[bloginfo('title','r').'pass'])) {
+if(isset($_COOKIE['username']) && isset($_COOKIE['password'])) {
 	// set cookie info
-	$c_username = $_COOKIE[strtolower(bloginfo('title','r')).'user'];
-	$c_password = $_COOKIE[strtolower(bloginfo('title','r')).'pass'];
+	$c_username = $_COOKIE['username'];
+	$c_password = $_COOKIE['password'];
 }
 
 // Process normal login
