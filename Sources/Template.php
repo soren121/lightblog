@@ -295,7 +295,7 @@ class PageLoop {
 
 		Sets the database handle for all functions in our class.
 	*/
-	public function __construct() {
+	private function __construct() {
     	$this->set_dbh($GLOBALS['dbh']);
   	}
 
@@ -308,7 +308,7 @@ class PageLoop {
 
 			dbh - Database handle object.
 	*/
-	public function set_dbh($dbh) {
+	private function set_dbh($dbh) {
 		# Is this a valid handle?
 		if(is_object($dbh) && $dbh instanceof SQLiteDatabase) {
 			$this->dbh = $dbh;
@@ -329,9 +329,11 @@ class PageLoop {
 			pid - The page's ID.
 	*/
 	public function obtain_page($pid) {
+		# Sanitize and set variables
 		$pid = (((int)$pid) -1);
 		$dbh = $this->dbh;
 		
+		# Query the database for the page data
 		$this->result = $dbh->query("SELECT * FROM 'pages' LIMIT ".$pid.", 1");
 	}
 
@@ -345,30 +347,42 @@ class PageLoop {
 			Boolean value (e.g. true/false.)
 	*/
   	public function has_pages() {
-    	if(!empty($this->result)) {
-      		$this->cur_result = $this->result->fetchObject();
-			while($page = $this->cur_result) {
+		# Do we have any pages?
+		if(!empty($this->result)) {
+			# Convert query results into something usable
+			$this->cur_result = $this->result->fetchObject();
+			# This while loop will remain true until we run out of pages
+			while($post = $this->cur_result) {
 				return true;
 			}
-      		return false;
-    	}
-   		else {
-      		$this->result = null;
-      		$this->cur_result = null;
-      		return false;
-    	}
-  	}
-
+			# At which point it turns false, ending the loop in the template file
+			return false;
+		}
+		# We don't have any pages :(
+		else {
+			# Erase our useless query results
+			$this->result = null;
+			$this->cur_result = null;
+			# Send the bad news (aka end the while loop)
+			return false;
+		}
+	}
+	
 	/*
 		Function: permalink
 		
 		Outputs a permanent link to the page.
 	*/
   	public function permalink() {
-    	if(!empty($this->cur_result))
+		# We didn't screw up and keep an empty query, did we?
+		if(!empty($this->cur_result)) {
       		echo bloginfo('url', 'return').'page.php?id='.(int)$this->cur_result->id;
-    	else
-      		return false;
+		}
+		# Oh no, we screwed up :(
+		else {
+			# Send nothing back
+			return false;
+		}
   	}
 
 	/*
@@ -377,10 +391,15 @@ class PageLoop {
 		Outputs the title of the page.
 	*/
   	public function title() {
-    	if(!empty($this->cur_result))
+		# We didn't screw up and keep an empty query, did we?
+		if(!empty($this->cur_result)) {
       		echo stripslashes($this->cur_result->title);
-    	else
-      		return false;
+		}
+		# Oh no, we screwed up :(
+		else {
+			# Send nothing back
+			return false;
+		}
   	}
 
 	/*
@@ -389,94 +408,210 @@ class PageLoop {
 		Outputs the content of the page.
 	*/
   	public function content() {
-    	if(!empty($this->cur_result))
+		# We didn't screw up and keep an empty query, did we?
+		if(!empty($this->cur_result)) {
       		echo stripslashes($this->cur_result->page);
-    	else
-      		return false;
+		}
+		# Oh no, we screwed up :(
+		else {
+			# Send nothing back
+			return false;
+		}
   	}
 }
 
 class CommentLoop {
+	# Set private database variables
 	private $dbh = null;
 	private $result = null;
 	private $cur_result = null;
 
-	public function __construct() {
-    	$this->set_dbh($GLOBALS['dbh']);
-  	}
+	/*
+		Constructor: __construct
 
-  	public function set_dbh($dbh) {
-    	if(is_object($dbh) && $dbh instanceof SQLiteDatabase)
-      		$this->dbh = $dbh;
-    	else
-      		trigger_error('Invalid object supplied.');
-  	}
+		Sets the database handle for all functions in our class.
+	*/
+	private function __construct() {
+		$this->set_dbh($GLOBALS['dbh']);
+	}
 
+	/*
+		Function: set_dbh
+
+		Sets the database handle.
+
+		Parameters:
+
+			dbh - Database handle object.
+	*/
+	private function set_dbh($dbh) {
+		# Is this a valid handle?
+		if(is_object($dbh) && $dbh instanceof SQLiteDatabase) {
+			$this->dbh = $dbh;
+		}
+		else {
+			# It's not a valid database :(
+			trigger_error('Invalid object supplied.');
+		}
+	}
+
+	/*
+		Function: obtain_comments
+
+		Obtains the data for comments associated with a post.
+
+		Parameters:
+
+			pid - The post ID associated with the comment.
+	*/
   	public function obtain_comments($pid) {
 		$dbh = $this->dbh;
 		$pid = (int)$pid;
     	$this->result = $dbh->query("SELECT * FROM 'comments' WHERE pid='$pid'");
   	}
 
+	/*
+		Function: has_comments
+
+		Checks if the query result we got contained any comments for that post.
+
+		Returns:
+
+			Boolean value (e.g. true/false.)
+	*/
   	public function has_comments() {
-    	if(!empty($this->result)) {
-      		$this->cur_result = $this->result->fetchObject();
+		# Do we have any comments?
+		if(!empty($this->result)) {
+			# Convert query results into something usable
+			$this->cur_result = $this->result->fetchObject();
+			# This while loop will remain true until we run out of comments
 			while($post = $this->cur_result) {
 				return true;
 			}
-      		return false;
-    	}
-   		else {
-      		$this->result = null;
-      		$this->cur_result = null;
-      		return false;
-    	}
+			# At which point it turns false, ending the loop in the template file
+			return false;
+		}
+		# We don't have any comments :(
+		else {
+			# Erase our useless query results
+			$this->result = null;
+			$this->cur_result = null;
+			# Send the bad news (aka end the while loop)
+			return false;
+		}
   	}
 
-	public function comment() {
-		if(!empty($this->cur_result))
+	/*
+		Function: content
+
+		Outputs the content of the comment.
+	*/
+	public function content() {
+		# We didn't screw up and keep an empty query, did we?
+		if(!empty($this->cur_result)) {
 			echo stripslashes($this->cur_result->text);
-		else
+		}
+		# Oh no, we screwed up :(
+		else {
+			# Send nothing back
 			return false;
+		}
 	}
 
+	/*
+		Function: name
+		
+		Outputs the comment author's name.
+	*/
   	public function name() {
-    	if(!empty($this->cur_result))
-      		echo $this->cur_result->name;
-    	else
-      		return false;
-  	}
-
-  	public function website() {
-    	if(!empty($this->cur_result))
-      		echo stripslashes($this->cur_result->website);
-    	else
-      		return false;
-  	}
-
-  	public function date($format = null) {
-    	if(!empty($this->cur_result))
-      		echo date(!empty($format) ? $format : 'F jS, Y', $this->cur_result->date);
-    	else
-      		return false;
-  	}
-
-	public function id() {
-		if(!empty($this->cur_result))
-			echo $this->cur_result->id;
-		else
+		# We didn't screw up and keep an empty query, did we?
+		if(!empty($this->cur_result)) {
+      		echo stripslashes($this->cur_result->name);
+		}
+		# Oh no, we screwed up :(
+		else {
+			# Send nothing back
 			return false;
+		}
+  	}
+
+	/*
+		Function: website
+		
+		Outputs the comment author's website URL, if specified.
+	*/
+  	public function website() {
+		# We didn't screw up and keep an empty query, did we?
+		if(!empty($this->cur_result)) {
+      		echo stripslashes($this->cur_result->website);
+		}
+		# Oh no, we screwed up :(
+		else {
+			# Send nothing back
+			return false;
+		}
+  	}
+
+	/*
+		Function: date
+
+		Outputs the submittal date of the comment.
+
+		Parameters:
+
+			format - The format, in PHP's date() format, in which to display the date. (e.g. F js, Y)
+	*/
+	public function date($format = null) {
+		# We didn't screw up and keep an empty query, did we?
+		if(!empty($this->cur_result)) {
+			# Nope, so output the date in the right format
+			echo date(!empty($format) ? $format : 'F jS, Y', $this->cur_result->date);
+		}
+		# Oh no, we screwed up :(
+		else {
+			# Send nothing back
+			return false;
+		}
+	}
+
+	/*
+		Function: id
+		
+		Outputs the ID of the comment.
+	*/
+	public function id() {
+		# We didn't screw up and keep an empty query, did we?
+		if(!empty($this->cur_result)) {
+			echo (int)$this->cur_result->id;
+		}
+		# Oh no, we screwed up :(
+		else {
+			# Send nothing back
+			return false;
+		}
 	}
 	
+	/*
+		Function: gravatar
+		
+		Outputs the user's Gravatar, derived from their email address.
+		
+		Parameters:
+		
+			size - The square pixel size to display the Gravatar (e.g. 32 == 32x32.) Defaults to 32.
+	*/
 	public function gravatar($size = 32) {
+		# We didn't screw up and keep an empty query, did we?
 		if(!empty($this->cur_result)) {
 			$email = md5($this->cur_result->email);
 			$size = (int)$size;
 			echo "http://www.gravatar.com/avatar.php?gravatar_id=".$email."&amp;size=".$size;
 		}
+		# Oh no, we screwed up :(
 		else {
-			return false;	
-		}		
+			# Send nothing back
+			return false;
+		}	
 	}
 }
 
@@ -492,7 +627,7 @@ class CommentLoop {
 	
 	Returns:
 	
-		An HTML list item for however many pages were requested.
+		HTML list items for however many pages were requested.
 */
 function list_pages($tag = 'li', $limit = 5) {
 	global $dbh;
@@ -503,12 +638,25 @@ function list_pages($tag = 'li', $limit = 5) {
 	}
 }
 
-// Function to list categories
-function list_categories($tag) {
+/*
+	Function: list_categories
+
+	Lists categories as HTML list items.
+
+	Parameters:
+
+		tag - The HTML tag that will contain the link (e.g. li or option)
+		limit - The maximum number of pages to list.
+
+	Returns:
+
+		HTML list items for however many pages were requested.
+*/
+function list_categories($tag, $limit = 5) {
 	// Grab the database handle
 	global $dbh;
 	// Get category data from database
-	$result = $dbh->query("SELECT * FROM categories") or die(sqlite_error_string($dbh->lastError));
+	$result = $dbh->query("SELECT * FROM categories ORDER BY id desc LIMIT 0, ".$limit) or die(sqlite_error_string($dbh->lastError));
 	// What tag are we using?
 	if($tag == 'option') {
 		$arg = 'value="'.$row->shortname.'"';
@@ -519,7 +667,23 @@ function list_categories($tag) {
 	}
 }
 
-# Function to return simple pagination links
+/*
+	Function: simplePagination
+	
+	Paginates a list of data using simple Previous/Next links.
+	
+	Parameters:
+	
+		type - Type of content (e.g. post.)
+		target - Base URL of executing file (e.g. http://localhost/lighty/.)
+		page - The current page.
+		limit - Number of items on a single page.
+		pagestring - Argument string for our page GET.
+		
+	Returns:
+	
+		Previous/Next HTML anchor links when applicable.
+*/
 function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "?page=") {
 	# Global the database handle so we can use it in this function
 	global $dbh;
@@ -552,7 +716,20 @@ function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "
 	echo $pagination;
 }
 
-// Function for identifying the number of comments
+/*
+	Function: commentNum
+	
+	Outputs the number of comments on a post.
+	
+	Parameters:
+	
+		id - The ID of the post that the comments are associated with.
+		output - Specifies whether to echo the number or return it. Default is to return it.
+		
+	Returns:
+	
+		The number of comments as an integer.
+*/
 function commentNum($id, $output = 'r') {
 	// Make the database handle available here
 	global $dbh;
