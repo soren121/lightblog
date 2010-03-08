@@ -420,6 +420,11 @@ class PageLoop {
   	}
 }
 
+/*
+	Class: CommentLoop
+	
+	Provides an easy method to display a list of comments associated with a post.
+*/
 class CommentLoop {
 	# Set private database variables
 	private $dbh = null;
