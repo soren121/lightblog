@@ -35,7 +35,8 @@ CREATE TABLE 'pages' (
 	'title' VARCHAR(100) NOT NULL,
 	'page' TEXT NOT NULL,
 	'date' INT(10) NOT NULL,
-	'author' VARCHAR(20) NOT NULL
+	'author' VARCHAR(20) NOT NULL,
+	'published' BOOLEAN DEFAULT '1'
 );
 
 INSERT INTO pages VALUES(1,'About','This is a page. It works like a post, but it lives outside of the hierarchic world of posts. You can edit and delete it in the admin panel.','1247356860','LightBlog Devs');
@@ -51,7 +52,7 @@ CREATE TABLE 'posts' (
 	'comments' BOOLEAN DEFAULT '1'
 );
 
-INSERT INTO posts VALUES(1,'Hello world!','Thank you for choosing LightBlog to manage your website. We hope you like it! Feel free to delete this post after you''re all set up. :)<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1267920001,'LightBlog Devs',1);
+INSERT INTO posts VALUES(1,'Hello world!','Thank you for choosing LightBlog to manage your website. We hope you like it! Feel free to delete this post after you''re all set up. :)<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1267920001,'LightBlog Devs',1,1,1);
 
 CREATE TABLE 'users' (
 	'id' INTEGER PRIMARY KEY NOT NULL DEFAULT '0',
