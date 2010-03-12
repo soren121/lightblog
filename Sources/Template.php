@@ -103,7 +103,7 @@ class PostLoop {
 		$dbh = $this->dbh;
 
 		# Query the database for post data
-    	$this->result = $dbh->query("SELECT * FROM 'posts' ORDER BY id desc WHERE published=1 LIMIT ".$start.", ".$limit);
+    	$this->result = $dbh->query("SELECT * FROM 'posts' ORDER BY id desc LIMIT ".$start.", ".$limit);
   	}
 
 	/*
@@ -295,7 +295,7 @@ class PageLoop {
 
 		Sets the database handle for all functions in our class.
 	*/
-	private function __construct() {
+	public function __construct() {
     	$this->set_dbh($GLOBALS['dbh']);
   	}
 
@@ -308,7 +308,7 @@ class PageLoop {
 
 			dbh - Database handle object.
 	*/
-	private function set_dbh($dbh) {
+	public function set_dbh($dbh) {
 		# Is this a valid handle?
 		if(is_object($dbh) && $dbh instanceof SQLiteDatabase) {
 			$this->dbh = $dbh;
@@ -436,7 +436,7 @@ class CommentLoop {
 
 		Sets the database handle for all functions in our class.
 	*/
-	private function __construct() {
+	public function __construct() {
 		$this->set_dbh($GLOBALS['dbh']);
 	}
 
@@ -449,7 +449,7 @@ class CommentLoop {
 
 			dbh - Database handle object.
 	*/
-	private function set_dbh($dbh) {
+	public function set_dbh($dbh) {
 		# Is this a valid handle?
 		if(is_object($dbh) && $dbh instanceof SQLiteDatabase) {
 			$this->dbh = $dbh;
