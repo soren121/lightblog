@@ -103,7 +103,7 @@ class PostLoop {
 		$dbh = $this->dbh;
 
 		# Query the database for post data
-    	$this->result = $dbh->query("SELECT * FROM 'posts' ORDER BY id desc LIMIT ".$start.", ".$limit);
+    	$this->result = $dbh->query("SELECT * FROM 'posts' ORDER BY id desc WHERE published=1 LIMIT ".$start.", ".$limit);
   	}
 
 	/*

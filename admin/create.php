@@ -92,17 +92,25 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 			<h2 class="title"><img class="textmid" src="style/create.png" alt="" />Add New <?php echo ucwords($type) ?></h2>
 			<div id="notifybox"></div>
 			<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="create">
-				<div>
+				<div style="float:left;width:480px;">
 					<input class="hint textfield cf" name="title" type="text" title="Title" /><br />
 					<textarea rows="12" cols="36" name="text" id="wysiwyg"></textarea><br />
 					<input class="cf" type="hidden" name="type" value="<?php echo $type ?>" />
-					<div style="width:465px;">
-						<input class="cf submit" name="create" type="submit" value="Publish" style="float:left;" />
-						<?php if($type == 'post'): ?>
-							<div style="float:right;">Category: <select name="category"><?php list_categories() ?></select></div>
-						<?php endif; ?>
-					</div>
 				</div>
+				<div class="settings" style="float:left;width:170px;margin:8px 0 10px;padding:15px;">
+					<?php if($type == 'post'): ?>
+						<label for="category">Category:</label><br />
+						<select id="category">
+							<option value="uncategorized">Uncategorized</option>
+						</select><br /><br />
+					<?php endif; ?>
+					<label for="published">Published?</label>
+					<input class="cf" type="checkbox" name="published" id="published" checked="checked" value="1" /><br />
+					<label for="comments">Comments on?</label>
+					<input class="cf" type="checkbox" name="comments" id="comments" checked="checked" value="1" /><br /><br />
+					<input class="cf submit" name="create" type="submit" value="Publish" />
+				</div>
+				<div style="clear:both;"></div>
 			</form>
 			<?php endif; endif; ?>
 		</div>

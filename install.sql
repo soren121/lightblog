@@ -18,6 +18,7 @@ INSERT INTO core VAlUES('akismet_key','');
 
 CREATE TABLE 'comments' (
 	'id' INTEGER PRIMARY KEY DEFAULT '0',
+	'published' BOOLEAN DEFAULT '1',
 	'pid' INTEGER NOT NULL,
 	'name' VARCHAR(35) NOT NULL,
 	'email' VARCHAR(255) NOT NULL,
@@ -45,7 +46,9 @@ CREATE TABLE 'posts' (
 	'post' TEXT NOT NULL,
 	'date' INT(10) NOT NULL,
 	'author' INTEGER NOT NULL,
-	'category' INTEGER NOT NULL
+	'category' INTEGER NOT NULL,
+	'published' BOOLEAN DEFAULT '1',
+	'comments' BOOLEAN DEFAULT '1'
 );
 
 INSERT INTO posts VALUES(1,'Hello world!','Thank you for choosing LightBlog to manage your website. We hope you like it! Feel free to delete this post after you''re all set up. :)<br /><br />-The LightBlog Team<br />http://lightblog.googlecode.com/',1267920001,'LightBlog Devs',1);
