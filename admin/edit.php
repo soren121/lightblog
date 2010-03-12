@@ -126,7 +126,7 @@ while($past = $result->fetchObject()) {
 					<?php endif; ?>
 					<label for="published">Published?</label>
 					<input class="ef" type="checkbox" name="published" id="published" <?php echo $ps_checked; ?> value="1" /><br /><br />
-					<input class="ef submit" name="create" type="submit" value="Publish" />
+					<input class="ef submit" name="edit" type="submit" value="Save" />
 				</div>
 				<div style="clear:both;"></div>
 			</form>

@@ -93,20 +93,26 @@ else {
 			<table class="managelist">
 				<!-- Add table headings -->
 				<tr>
-					<th class="managelist">ID</th>
 					<th class="managelist">Title</th>
 					<th class="managelist">Author</th>
 					<th class="managelist">Date</th>
+					<th class="managelist">Published</th>
 					<th class="managelist">Edit</th>
 					<th class="managelist">Delete</th>
 				</tr>		
 				<!-- Start row loop -->
 				<?php while($post = $result->fetchObject()): ?>	
 				<tr id="tr<?php echo $post->id ?>">
-					<td><?php echo $post->id ?></td>
-					<td><?php echo $post->title ?></td>
+					<td style="width:160px;"><?php echo $post->title ?></td>
 					<td><?php echo $post->author ?></td>
 					<td><?php echo date('n/j/Y', $post->date) ?></td>
+					<td class="c">
+						<?php if($post->published == 1): ?>
+							<img src="style/check.png" alt="Published" />
+						<?php else: ?>
+							<img src="style/cross.png" alt="Not published" />
+						<?php endif; ?>
+					</td>
 					<?php if((permissions(1) && userFetch('username',1) == $post->author) or (permissions(2))): ?>
 						<td class="c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $post->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
 						<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $post->id.', \''.$post->title.'\'' ?>);" style="cursor:pointer;" /></td>
