@@ -179,15 +179,19 @@ a:link, a:visited {
 	font-weight: bold;
 }
 
-#content div.settings p select {
+#content div.settings select {
 	width: 150px;
 }
 
-#content div.settings p input {
+#content div.settings input {
 	margin: 6px 0 6px 0;
 }
 
-#content div.settings p input[type=submit] {
+#content div.settings input[type=checkbox] {
+	margin-bottom: 2px;
+}
+
+#content div.settings input[type=submit] {
 	margin-top: 10px;
 }
 

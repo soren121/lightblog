@@ -30,6 +30,9 @@ $result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".(int)$_GET['id']) or 
 # Get post data and set it
 while($past = $result->fetchObject()) {
 	$title = $past->title;
+	if($past->published == 1) {
+		$ps_checked = 'checked="checked"';
+	}
 	if($type == 'post') { $text = $past->post; }
 	elseif($type == 'page') { $text = $past->page; }
 }
@@ -103,11 +106,24 @@ while($past = $result->fetchObject()) {
 			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Edit <?php echo ucwords($type) ?></h2>
 			<div id="notifybox"></div>
 			<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="edit">
-				<p><input class="hint textfield ef" name="title" type="text" title="Title" value="<?php echo stripslashes($title) ?>" /></p>
-				<p><textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo stripslashes($text) ?></textarea></p>
-				<p><input class="ef" type="hidden" name="type" value="<?php echo $type ?>" /></p>
-				<p><input class="ef" type="hidden" name="id" value="<?php echo (int)$_GET['id'] ?>" /></p>
-				<p><input class="ef submit" name="edit" type="submit" value="Save" /></p>
+				<div style="float:left;width:480px;">
+					<input class="hint textfield ef" name="title" type="text" title="Title" value="<?php echo stripslashes($title) ?>" />
+					<textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo stripslashes($text) ?></textarea>
+					<input class="ef" type="hidden" name="type" value="<?php echo $type ?>" />
+					<input class="ef" type="hidden" name="id" value="<?php echo (int)$_GET['id'] ?>" />
+				</div>
+				<div class="settings" style="float:left;width:170px;margin:8px 0 10px;padding:15px;">
+					<?php if($type == 'post'): ?>
+						<label for="category">Category:</label><br />
+						<select id="category">
+							<option value="uncategorized">Uncategorized</option>
+						</select><br /><br />
+					<?php endif; ?>
+					<label for="published">Published?</label>
+					<input class="ef" type="checkbox" name="publish_status" id="published" <?php echo $ps_checked; ?> value="1" /><br /><br />
+					<input class="ef submit" name="create" type="submit" value="Publish" />
+				</div>
+				<div style="clear:both;"></div>
 			</form>
 			<?php endif; ?>
 		</div>

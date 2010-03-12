@@ -27,6 +27,9 @@ if(isset($_POST['create'])) {
 	$text = sqlite_escape_string(cleanHTML($_POST['text']));
 	$date = time();
 	$author = sqlite_escape_string(userFetch('displayname', 'r'));
+	$category = sqlite_escape_string(strip_tags($_POST['title']));
+	$published = (int)$_POST['published'];
+	$comments = (int)$_POST['comments'];
 	if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) {
 		$type = 'post';
 	}
@@ -34,7 +37,7 @@ if(isset($_POST['create'])) {
 		$type = $_POST['type'];
 	}
 	# Insert post/page into database
-	$dbh->query("INSERT INTO ".$type."s (title,".$type.",date,author) VALUES('".$title."','".$text."','".$date."','".$author."')") or die(sqlite_error_string($dbh->lastError));
+	$dbh->query("INSERT INTO ".$type."s (title,".$type.",date,author,category,published,comments) VALUES('$title','$text','$date','$author', '$category', $published, $comments)") or die(sqlite_error_string($dbh->lastError));
 	# Fetch post ID from database
 	$id = $dbh->lastInsertRowid();
 	# Return full url to post to jQuery
@@ -68,10 +71,10 @@ if(isset($_POST['edit'])) {
 	# Set default query
 	$update = "UPDATE ".$type."s SET title='".$title."', ".$type."='".$text."' WHERE id=".$id;
 	# Run through possible change scenarios and update query
-	if($title == $ptitle and $text !== $ptext) { str_replace("title='".$title."',", "title='".$title."'", $update); }
-	if($title == $ptitle) { str_replace("title='".$title."'", "", $update); }
-	if($text == $ptext) { str_replace($type."='".$text."'", "", $update); }
-	if($title == $ptitle and $text == $ptext) {
+	if($title === $ptitle and $text !== $ptext) { str_replace("title='".$title."',", "title='".$title."'", $update); }
+	if($title === $ptitle) { str_replace("title='".$title."'", "", $update); }
+	if($text === $ptext) { str_replace($type."='".$text."'", "", $update); }
+	if($title === $ptitle and $text === $ptext) {
 		# Nothing changed, so forget the query and send them the URL
 		echo bloginfo('url', 'r').$type.".php?id=".$id;
 		die();
