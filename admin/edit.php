@@ -33,6 +33,9 @@ while($past = $result->fetchObject()) {
 	if($past->published == 1) {
 		$ps_checked = 'checked="checked"';
 	}
+	if($past->comments == 1) {
+		$cs_checked = 'checked="checked"';
+	}
 	if($type == 'post') { $text = $past->post; }
 	elseif($type == 'page') { $text = $past->page; }
 }
@@ -118,9 +121,11 @@ while($past = $result->fetchObject()) {
 						<select id="category">
 							<option value="uncategorized">Uncategorized</option>
 						</select><br /><br />
+						<label for="comments">Comments on?</label>
+						<input class="ef" type="checkbox" name="comments" id="comments" <?php echo $cs_checked; ?> value="1" /><br />
 					<?php endif; ?>
 					<label for="published">Published?</label>
-					<input class="ef" type="checkbox" name="publish_status" id="published" <?php echo $ps_checked; ?> value="1" /><br /><br />
+					<input class="ef" type="checkbox" name="published" id="published" <?php echo $ps_checked; ?> value="1" /><br /><br />
 					<input class="ef submit" name="create" type="submit" value="Publish" />
 				</div>
 				<div style="clear:both;"></div>

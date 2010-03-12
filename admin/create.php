@@ -103,11 +103,11 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 						<select id="category">
 							<option value="uncategorized">Uncategorized</option>
 						</select><br /><br />
+						<label for="comments">Comments on?</label>
+						<input class="cf" type="checkbox" name="comments" id="comments" checked="checked" value="1" /><br />
 					<?php endif; ?>
 					<label for="published">Published?</label>
-					<input class="cf" type="checkbox" name="published" id="published" checked="checked" value="1" /><br />
-					<label for="comments">Comments on?</label>
-					<input class="cf" type="checkbox" name="comments" id="comments" checked="checked" value="1" /><br /><br />
+					<input class="cf" type="checkbox" name="published" id="published" checked="checked" value="1" /><br /><br />
 					<input class="cf submit" name="create" type="submit" value="Publish" />
 				</div>
 				<div style="clear:both;"></div>
