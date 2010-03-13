@@ -29,6 +29,7 @@ $result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".(int)$_GET['id']) or 
 # Get post data and set it
 while($past = $result->fetchObject()) {
 	$title = $past->title;
+	$s_category = (int)$past->category;
 	if($past->published == 1) {
 		$ps_checked = 'checked="checked"';
 	}
@@ -117,8 +118,8 @@ while($past = $result->fetchObject()) {
 				<div class="settings" style="float:left;width:170px;margin:8px 0 10px;padding:15px;">
 					<?php if($type == 'post'): ?>
 						<label for="category">Category:</label><br />
-						<select id="category">
-							<option value="uncategorized">Uncategorized</option>
+						<select id="category" name="category">
+							<?php list_categories($s_category) ?>
 						</select><br /><br />
 						<label for="comments">Comments on?</label>
 						<input class="ef" type="checkbox" name="comments" id="comments" <?php echo $cs_checked; ?> value="1" /><br />
