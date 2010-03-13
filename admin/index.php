@@ -16,9 +16,8 @@
 
 ***********************************************/
 
-// Require config file
-require('../config.php');
-require(ABSPATH .'/Sources/Core.php');
+// Require user functions file
+require(ABSPATH .'/Sources/UserFunctions.php');
 
 # check user status
 if(userFetch('username', 'r') != false && permissions(1)) {

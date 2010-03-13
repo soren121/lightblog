@@ -270,48 +270,30 @@ function login($method) {
 	}
 }
 
-/*
-	Function: get_ip
-	
-	Attempts to find the user's real IP address.
-
-	Returns:
-	
-		Our best guess at the user's real IP address.
-*/
-function get_ip() {
-	// Look for an IP address
-	if(!empty($_SERVER['REMOTE_ADDR'])) {
-		$client_ip = $_SERVER['REMOTE_ADDR'];
-	}
-	// Look for proxies
-	if(isset($_SERVER['HTTP_CLIENT_IP'])) {
-		$proxy_ip = $_SERVER['HTTP_CLIENT_IP'];
-	}
-	elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-		$proxy_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-	}
-	// Look for a real IP underneath a proxy
-	if(isset($proxy_ip)) {
-		if(preg_match("/^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/", $proxy_ip, $ip_list)) {
-				$private_ip = array(
-					'/^0\./',
-					'/^127\.0\.0\.1/',
-					'/^192\.168\..*/',
-					'/^172\.16\..*/',
-					'/^10.\.*/',
-					'/^224.\.*/',
-					'/^240.\.*/');
-				// A generic private IP is useless to us, so don't use those
-				$client_ip = preg_replace($private_ip, $client_ip, $ip_list[1]);
+// Function to list themes in a drop-down box
+function list_themes() {
+	// List directories
+	$dir = dirlist(ABSPATH .'/themes'); 
+	foreach($dir as $k => $v) {
+		if(bloginfo('theme','r') == $k) {
+			echo '<option selected="selected" value="'.$k.'">'.$v.'</option>';
 		}
+		else {
+			echo '<option value="'.$k.'">'.$v.'</option>';
+		}		
 	}
-	// Fix a strange localhost IP problem
-	if($client_ip == '::1') {
-		$client_ip = '127.0.0.1';
+}
+
+// Function to list categories
+function list_categories() {
+	// Grab the database handle
+	global $dbh;
+	// Get category data from database
+	$result = $dbh->query("SELECT * FROM categories") or die(sqlite_error_string($dbh->lastError));
+	// Sort through and create list items
+	while($row = $result->fetchObject()) {
+		echo '<option value="'.$row->id.'">'.stripslashes($row->fullname).'</option>';
 	}
-	// Return what we think the IP is
-	return $client_ip;
 }
 
 ?>

@@ -19,7 +19,6 @@
 // Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
-require(ABSPATH .'/Sources/Admin.php');
 
 if((int)$_GET['type'] == 1) { $type = 'post'; }
 elseif((int)$_GET['type'] == 2) { $type = 'page'; }
@@ -101,7 +100,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 					<?php if($type == 'post'): ?>
 						<label for="category">Category:</label><br />
 						<select id="category">
-							<option value="uncategorized">Uncategorized</option>
+							<?php list_categories() ?>
 						</select><br /><br />
 						<label for="comments">Comments on?</label>
 						<input class="cf" type="checkbox" name="comments" id="comments" checked="checked" value="1" /><br />
