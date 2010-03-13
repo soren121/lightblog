@@ -1,3 +1,25 @@
+---------------------------------------------------
+LightBlog LICENSE.txt
+---------------------------------------------------
+
+Some files included within LightBlog are licensed
+under different open-source licenses than our
+official license, the GNU General Public License 3.
+They are listed below.
+
+The Silk icons included in various places inside
+LightBlog were made by Mark James of famfamfam.com.
+The icons are licensed under the CC Attribution 2.5
+license.
+
+The NicEdit WYSIWYG editor, written by Brian Kirchoff,
+is licensed under the MIT License.
+
+What follows is the official GNU GPL version 3 license:
+
+----------------------------------------------------
+
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
