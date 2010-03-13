@@ -285,14 +285,19 @@ function list_themes() {
 }
 
 // Function to list categories
-function list_categories() {
+function list_categories($selected = null) {
 	// Grab the database handle
 	global $dbh;
 	// Get category data from database
 	$result = $dbh->query("SELECT * FROM categories") or die(sqlite_error_string($dbh->lastError));
 	// Sort through and create list items
 	while($row = $result->fetchObject()) {
-		echo '<option value="'.$row->id.'">'.stripslashes($row->fullname).'</option>';
+		if($selected == $row->id) {
+			echo '<option value="'.$row->id.'" selected="selected">'.stripslashes($row->fullname).'</option>';
+		}
+		else {
+			echo '<option value="'.$row->id.'">'.stripslashes($row->fullname).'</option>';
+		}
 	}
 }
 
