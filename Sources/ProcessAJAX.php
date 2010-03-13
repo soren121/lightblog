@@ -1,4 +1,4 @@
-<?php session_start();
+<?php session_start(); error_reporting(E_ALL|E_NOTICE);
 
 /*********************************************
 
@@ -28,30 +28,21 @@ if(isset($_POST['create'])) {
 	$date = time();
 	$author = sqlite_escape_string(userFetch('displayname', 'r'));
 	$category = (int)$_POST['category'];
-	if(isset($_POST['published']) && $_POST['published'] == 1) {
-		$published = 1;
-	}
-	else {
-		$published = 0;
-	}
-	if(isset($_POST['comments']) && $_POST['comments'] == 1) {
-		$comments = 1;
-	}
-	else {
-		$comments = 0;
-	}
-	if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) {
-		$type = 'post';
-	}
-	else {
-		$type = $_POST['type'];
-	}
+	# Check published checkbox
+	if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
+	else { $published = 0; }
+	# Check comments checkbox
+	if(isset($_POST['comments']) && $_POST['comments'] == 1) { $comments = 1; }
+	else { $comments = 0; }
+	# Check submission type
+	if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) { $type = 'post'; }
+	else { $type = $_POST['type']; }
 	# Insert post/page into database
 	if($type == 'post') {
-		$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(sqlite_error_string($dbh->lastError));
+		$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(sqlite_error_string($dbh->lastError()));
 	}
 	else {
-		$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(sqlite_error_string($dbh->lastError));
+		$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(sqlite_error_string($dbh->lastError()));
 	}
 	# Fetch post ID from database
 	$id = $dbh->lastInsertRowid();
@@ -68,66 +59,68 @@ if(isset($_POST['edit'])) {
 	# Grab data from form and escape the text
 	$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
 	$text = sqlite_escape_string(cleanHTML($_POST['text']));
-	if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) {
-		$type = 'post';
-	}
-	else {
-		$type = $_POST['type'];
-	}
-	$category = (int)$_POST['category'];
-	if(isset($_POST['published']) && $_POST['published'] == 1) {
-		$published = 1;
-	}
-	else {
-		$published = 0;
-	}
-	if(isset($_POST['comments']) && $_POST['comments'] == 1) {
-		$comments = 1;
-	}
-	else {
-		$comments = 0;
-	}
 	$id = (int)$_POST['id'];
+	# Check submission type
+	if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) { $type = 'post'; }
+	else { $type = $_POST['type']; }
+	# Check published checkbox
+	if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
+	else { $published = 0; }
+	# For posts only
+	if($type == 'post') {
+		# Check comments checkbox
+		if(isset($_POST['comments']) && $_POST['comments'] == 1) { $comments = 1; }
+		else { $comments = 0; }
+		# Check category
+		$category = (int)$_POST['category'];
+	}
 	# Query for previous data
-	$result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".$id) or die(sqlite_error_string($dbh->lastError));
+	$result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".$id) or die(sqlite_error_string($dbh->lastError()));
 	# Fetch previous data
 	while($past = $result->fetchObject()) {
 		$ptitle = $past->title;
-		if($type == 'post') { $ptext = $past->post; }
-		elseif($type == 'page') { $ptext = $past->page; }
+		$ppublished = $past->published;
+		if($type == 'post') { 
+			$ptext = $past->post;
+			$pcategory = $past->category;
+			$pcomments = $past->comments;
+		}
+		elseif($type == 'page') {
+			$ptext = $past->page; 
+		}
 	}
-	# Set default query
-	$update = "UPDATE ".$type."s SET title='".$title."', ".$type."='".$text."' WHERE id=".$id;
-	# Run through possible change scenarios and update query
-	if($title === $ptitle and $text !== $ptext) { str_replace("title='".$title."',", "title='".$title."'", $update); }
-	if($title === $ptitle) { str_replace("title='".$title."'", "", $update); }
-	if($text === $ptext) { str_replace($type."='".$text."'", "", $update); }
-	if($title === $ptitle and $text === $ptext) {
-		# Nothing changed, so forget the query and send them the URL
-		echo bloginfo('url', 'r').$type.".php?id=".$id;
-		die();
+	# Set a base query to modify
+	$base = "UPDATE ".$type."s SET ";
+	# Run through scenarios
+	if(stripslashes($ptitle) !== $title) { $base .= "title='".sqlite_escape_string($title)."', "; }
+	if(stripslashes($ptext) !== $text) { $base .= "text='".sqlite_escape_string($text)."', "; }
+	if((int)$ppublished !== $published) { $base .= "published='".(int)$published."', "; }
+	if($type == 'post') {
+		if((int)$pcategory !== $category) { $base .= "category='".(int)$category."', "; }
+		if((int)$pcomments !== $comments) { $base .= "comments='".(int)$comments."', "; }
 	}
-	else {
-		# Execute modified query
-		$dbh->query($update) or die(sqlite_error_string($dbh->lastError));		
-		# Return full url to page to jQuery
-		echo bloginfo('url', 'r').$type.".php?id=".$id;
-		# Prevent the rest of the page from loading
-		die();
-	}
+	# Remove last comma & space
+	$base = substr($base, 0, -2);
+	$base .= " WHERE id=".(int)$id;
+	# Execute modified query
+	$dbh->query($base) or die(sqlite_error_string($dbh->lastError));		
+	# Return full url to page to jQuery
+	echo bloginfo('url', 'r').$type.".php?id=".$id;
+	# Prevent the rest of the page from loading
+	die();
 }
 
 # Process post/page deletion
 if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
 	# Execute query to delete post/page
-	$dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags(cleanHTML($_POST['type'])))."s WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError));
+	$dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags(cleanHTML($_POST['type'])))."s WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError()));
 }
 
 # Process theme change
 if(isset($_POST['themesubmit'])) {
 	if(permissions(3)) {
 		# Execute query to change theme
-		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetheme'])))."' WHERE variable='theme'");
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetheme'])))."' WHERE variable='theme'") or die(sqlite_error_string($dbh->lastError()));
 	}
 }
 
@@ -136,14 +129,14 @@ if(isset($_POST['changetitle'])) {
 	# Check permissions
 	if(permissions(3)) {
 		# Execute query to change title
-		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetitle'])))."' WHERE variable='title'");
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetitle'])))."' WHERE variable='title'") or die(sqlite_error_string($dbh->lastError()));
 	}
 }
 
 # Process URL change
 if(isset($_POST['changeurl'])) {
 	# Execute query to change url
-	$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changeurl'])))."' WHERE variable='url'");
+	$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changeurl'])))."' WHERE variable='url'") or die(sqlite_error_string($dbh->lastError()));
 }
 
 // User creation
@@ -158,7 +151,7 @@ if(isset($_POST['addusersubmit'])) {
 		if(!isset($_POST['displayname'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$displayname = $_POST['displayname'];}
 		if(!isset($_POST['role'])){die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: ALL fields need to be filled in.");}else{$role = $_POST['role'];}
 		// Does that username exist already?		
-		$result = $dbh->query("SELECT * FROM users WHERE username='$username';") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">".sqlite_error_string($dbh->lastError));
+		$result = $dbh->query("SELECT * FROM users WHERE username='$username';") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">".sqlite_error_string($dbh->lastError()));
 		if($result->numRows() < 0) { die("span style=\"color:red;margin-left:5px;\" class=\"inform\">Fatal error: Username already in use."); }
 		unset($result);
 		// I guess not, let's verify the password
@@ -174,7 +167,7 @@ if(isset($_POST['addusersubmit'])) {
 		$displayname = sqlite_escape_string(strip_tags($displayname));
 		$role = sqlite_escape_string($role);
 		// Create the user!
-		$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$passhash','$email','$displayname','$role', '".get_ip()."', '$salt');") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">".sqlite_error_string($dbh->lastError));
+		$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$passhash','$email','$displayname','$role', '".get_ip()."', '$salt');") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">".sqlite_error_string($dbh->lastError()));
 		echo "span style=\"color:green;margin-left:5px;\" class=\"inform\">User ".$username." created successfully.";
 	}
 	else {
@@ -228,7 +221,7 @@ if(isset($_POST['deleteusersubmit'])) {
 	// Can the user do this?
 	if(permissions(2)) {
 		# Execute query to delete user
-		$dbh->query("DELETE FROM users WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError));
+		$dbh->query("DELETE FROM users WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError()));
 	}
 }
 

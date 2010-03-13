@@ -87,11 +87,7 @@ while($past = $result->fetchObject()) {
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						var out = r.replace(/<.*?>/g, '');
-						if(out.match("Powered by 110MB Hosting")) {
-							var out2 = out.replace("Powered by 110MB Hosting", '');
-						}
-						$('#notifybox').html('<?php echo ucwords($type) ?> edited. | <' + 'a href="' + out2 + '">View <?php echo $type ?></' + 'a>').css("background", "#CFEBF7").slideDown("normal");
+						$('#notifybox').html('<?php echo ucwords($type) ?> edited. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').css("background", "#CFEBF7").slideDown("normal");
 					}
 				})
 				return false;
