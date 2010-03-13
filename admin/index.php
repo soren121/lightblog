@@ -16,7 +16,8 @@
 
 ***********************************************/
 
-// Require user functions file
+// Require config file
+require('../config.php');
 require(ABSPATH .'/Sources/UserFunctions.php');
 
 # check user status

@@ -248,7 +248,7 @@ function login($method) {
 					$_SESSION['email'] = $user->email;
 					$_SESSION['displayname'] = $user->displayname;
 					$_SESSION['role'] = $user->role;
-					$_SESSION['ip'] = get_ip();
+					$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
 					// Resalt password
 					$salt = substr(md5(uniqid(rand(), true)), 0, 9);
 					$passhash = sha1($salt.$password);

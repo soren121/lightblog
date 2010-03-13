@@ -74,6 +74,19 @@ if(isset($_POST['edit'])) {
 	else {
 		$type = $_POST['type'];
 	}
+	$category = (int)$_POST['category'];
+	if(isset($_POST['published']) && $_POST['published'] == 1) {
+		$published = 1;
+	}
+	else {
+		$published = 0;
+	}
+	if(isset($_POST['comments']) && $_POST['comments'] == 1) {
+		$comments = 1;
+	}
+	else {
+		$comments = 0;
+	}
 	$id = (int)$_POST['id'];
 	# Query for previous data
 	$result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".$id) or die(sqlite_error_string($dbh->lastError));
