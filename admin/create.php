@@ -50,7 +50,12 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 				var inputs = [];
 				var wysiwygtext = nicEditors.findEditor('wysiwyg').getContent();
 				$('.cf', this).each(function() {
-					inputs.push(this.name + '=' + escape(this.value));
+					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
+						void(0);
+					}
+					else {
+						inputs.push(this.name + '=' + escape(this.value));
+					}
 				})
 				$('#wysiwyg', this).each(function() {
 					inputs.push(this.name + '=' + escape(wysiwygtext));
@@ -99,7 +104,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 				<div class="settings" style="float:left;width:170px;margin:8px 0 10px;padding:15px;">
 					<?php if($type == 'post'): ?>
 						<label for="category">Category:</label><br />
-						<select id="category" name="category">
+						<select class="cf" id="category" name="category">
 							<?php list_categories() ?>
 						</select><br /><br />
 						<label for="comments">Comments on?</label>
