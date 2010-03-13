@@ -19,7 +19,6 @@
 // Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
-require(ABSPATH .'/Sources/Admin.php');
 
 # Functions to find the start for a query based on the page number
 function findStart($input) { $input = $input - 1; return $input * 8; }

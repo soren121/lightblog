@@ -27,14 +27,19 @@ if(isset($_POST['create'])) {
 	$text = sqlite_escape_string(cleanHTML($_POST['text']));
 	$date = time();
 	$author = sqlite_escape_string(userFetch('displayname', 'r'));
-	$category = sqlite_escape_string(strip_tags($_POST['title']));
-	if($_POST['published'] != 1) {
-		$published = 0; 
+	$category = (int)$_POST['category'];
+	if(isset($_POST['published']) && $_POST['published'] == 1) {
+		$published = 1;
 	}
 	else {
-		$published = 1; 
+		$published = 0;
 	}
-	$comments = (int)$_POST['comments'];
+	if(isset($_POST['comments']) && $_POST['comments'] == 1) {
+		$comments = 1;
+	}
+	else {
+		$comments = 0;
+	}
 	if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) {
 		$type = 'post';
 	}
@@ -42,7 +47,12 @@ if(isset($_POST['create'])) {
 		$type = $_POST['type'];
 	}
 	# Insert post/page into database
-	$dbh->query("INSERT INTO ".$type."s (title,$type,date,author,category,published,comments) VALUES('$title','$text','$date','$author', '$category', $published, $comments)") or die(sqlite_error_string($dbh->lastError));
+	if($type == 'post') {
+		$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(sqlite_error_string($dbh->lastError));
+	}
+	else {
+		$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(sqlite_error_string($dbh->lastError));
+	}
 	# Fetch post ID from database
 	$id = $dbh->lastInsertRowid();
 	# Return full url to post to jQuery
