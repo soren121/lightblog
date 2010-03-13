@@ -66,7 +66,12 @@ while($past = $result->fetchObject()) {
 				var inputs = [];
 				var wysiwygtext = nicEditors.findEditor('wysiwyg').getContent();
 				$('.ef', this).each(function() {
-					inputs.push(this.name + '=' + escape(this.value));
+					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
+						void(0);
+					}
+					else {
+						inputs.push(this.name + '=' + escape(this.value));
+					}
 				})
 				$('#wysiwyg', this).each(function() {
 					inputs.push(this.name + '=' + unescape(wysiwygtext));
@@ -118,7 +123,7 @@ while($past = $result->fetchObject()) {
 				<div class="settings" style="float:left;width:170px;margin:8px 0 10px;padding:15px;">
 					<?php if($type == 'post'): ?>
 						<label for="category">Category:</label><br />
-						<select id="category" name="category">
+						<select class="ef" id="category" name="category">
 							<?php list_categories($s_category) ?>
 						</select><br /><br />
 						<label for="comments">Comments on?</label>
