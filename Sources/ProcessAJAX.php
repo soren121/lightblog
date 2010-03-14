@@ -1,4 +1,4 @@
-<?php session_start(); error_reporting(E_ALL|E_NOTICE);
+<?php session_start();
 
 /*********************************************
 
@@ -60,9 +60,7 @@ if(isset($_POST['edit'])) {
 	$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
 	$text = sqlite_escape_string(cleanHTML($_POST['text']));
 	$id = (int)$_POST['id'];
-	# Check submission type
-	if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) { $type = 'post'; }
-	else { $type = $_POST['type']; }
+	$type = sqlite_escape_string($_POST['type']);
 	# Check published checkbox
 	if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
 	else { $published = 0; }
@@ -93,7 +91,7 @@ if(isset($_POST['edit'])) {
 	$base = "UPDATE ".$type."s SET ";
 	# Run through scenarios
 	if(stripslashes($ptitle) !== $title) { $base .= "title='".sqlite_escape_string($title)."', "; }
-	if(stripslashes($ptext) !== $text) { $base .= "text='".sqlite_escape_string($text)."', "; }
+	if(stripslashes($ptext) !== $text) { $base .= $type."='".sqlite_escape_string($text)."', "; }
 	if((int)$ppublished !== $published) { $base .= "published='".(int)$published."', "; }
 	if($type == 'post') {
 		if((int)$pcategory !== $category) { $base .= "category='".(int)$category."', "; }

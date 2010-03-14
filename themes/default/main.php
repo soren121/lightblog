@@ -1,8 +1,7 @@
 <?php include('head.php')?>
 <?php include('sidebar.php')?>
 			<div id="content">
-				<!-- Start the loop -->
-				<?php $posts = new PostLoop(); $posts->obtain_posts($page, 8); while($posts->has_posts()): ?>
+				<?php $posts = new PostLoop(); $posts->obtain_posts($page, 8); if($posts->has_posts()): while($posts->loop()): ?>
 				<div class="postbox">
 					<h4 class="postname">
 						<a class="postname" href="<?php $posts->permalink() ?>"><?php $posts->title() ?></a>
@@ -27,8 +26,9 @@
 						</span>
 					</div>
 				</div>
-				<?php endwhile; ?>
-				<!-- End the loop -->
+				<?php endwhile; else: ?>
+				<p>Sorry, no posts are available for display.</p>
+				<?php endif; ?>
 				
 				<div class="pagination">
 					<?php simplePagination('post', $file, $page); ?>

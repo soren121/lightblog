@@ -105,9 +105,21 @@ class PostLoop {
 		# Query the database for post data
     	$this->result = $dbh->query("SELECT * FROM 'posts' WHERE published='1' ORDER BY id desc LIMIT ".$start.", ".$limit);
   	}
+  	
+  	public function has_posts() {
+  		if($this->result->numRows() > 0) {
+  			return true;
+  		}
+  		else {
+  			# Erase our useless query results
+      		$this->result = null;
+      		$this->cur_result = null;
+  			return false;
+  		}
+  	}
 
 	/*
-		Function: has_posts
+		Function: loop
 		
 		Checks if the query result we got contained any posts.
 		
@@ -115,7 +127,7 @@ class PostLoop {
 		
 			Boolean value (e.g. true/false.)
 	*/
-  	public function has_posts() {
+  	public function loop() {
 		# Do we have any posts?
     	if(!empty($this->result)) {
 			# Convert query results into something usable
@@ -129,11 +141,7 @@ class PostLoop {
     	}
     	# We don't have any posts :(
    		else {
-			# Erase our useless query results
-      		$this->result = null;
-      		$this->cur_result = null;
-      		# Send the bad news (aka end the while loop)
-      		return false;
+			return false;
     	}
   	}
 
