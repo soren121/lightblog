@@ -1,8 +1,7 @@
 <?php include('head.php')?>
 <?php include('sidebar.php')?>
 			<div id="content">
-				<!-- Start the loop -->
-				<?php $posts = new PostLoop(); $posts->obtain_post($pid); while($posts->has_posts()): ?>
+				<?php $posts = new PostLoop(); $posts->obtain_post($pid); if($posts->has_posts()): while($posts->loop()): ?>
 				<div class="postbox">
 					<h4 class="postnamealt">
 						<?php $posts->title() ?>
@@ -18,9 +17,10 @@
 							<?php $posts->author() ?>
 						</span>
 					</div>
-				</div>
-				<!-- End the loop -->			
-				<?php endwhile; ?>
+				</div>			
+				<?php endwhile; else: ?>
+				<p>Sorry, no posts are available for display.</p>
+				<?php endif; ?>
 				
 				<h4 class="commenthead"><?php grammarFix(commentNum($pid), 'Comment', 'Comments') ?></h4><br />
 				<!-- Start comment loop -->
