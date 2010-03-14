@@ -106,6 +106,15 @@ class PostLoop {
     	$this->result = $dbh->query("SELECT * FROM 'posts' WHERE published='1' ORDER BY id desc LIMIT ".$start.", ".$limit);
   	}
   	
+	/*
+		Function: has_posts
+		
+		Checks if there are any posts available for us to show.
+		
+		Returns:
+		
+			Boolean value (true/false).
+	*/
   	public function has_posts() {
   		if($this->result->numRows() > 0) {
   			return true;
@@ -121,7 +130,7 @@ class PostLoop {
 	/*
 		Function: loop
 		
-		Checks if the query result we got contained any posts.
+		Loops through our post query until we have no more posts.
 		
 		Returns:
 		
@@ -678,6 +687,9 @@ function list_categories($tag, $limit = 5) {
 	// What tag are we using?
 	if($tag == 'option') {
 		$arg = 'value="'.$row->shortname.'"';
+	}
+	else {
+		$arg = '';
 	}
 	// Sort through and create list items
 	while($row = $result->fetchObject()) {
