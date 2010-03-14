@@ -22,7 +22,7 @@ if(!file_exists('config.php')){
 	header('Location: install.php');
 }
 
-if($_GET['install'] === 'true' && file_exists('install.php')) {
+if(isset($_GET['install']) && $_GET['install'] === 'true' && file_exists('install.php')) {
 	unlink('install.php');
 	if(file_exists('install.sql')) {
 		unlink('install.sql'); 
