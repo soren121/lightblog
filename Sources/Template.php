@@ -646,8 +646,13 @@ function list_pages($tag = 'li', $limit = 5) {
 	global $dbh;
 	$limit = intval($limit);
 	$result = $dbh->query("SELECT * FROM pages ORDER BY id desc LIMIT 0, ".$limit);
-	while($pages = $result->fetchObject()) {
-		echo '<'.$tag.' '.$arg.'><a href="'.bloginfo('url',2).'page.php?id='.$pages->id.'">'.$pages->title.'</a>'.'</'.$tag.'>';
+	if($result->numRows() > 0) {
+		while($pages = $result->fetchObject()) {
+			echo '<'.$tag.'><a href="'.bloginfo('url',2).'page.php?id='.$pages->id.'">'.$pages->title.'</a>'.'</'.$tag.'>';
+		}
+	}
+	else {
+		echo 'No pages to list.';
 	}
 }
 
