@@ -13,6 +13,7 @@ CREATE TABLE 'core' (
 );
 
 INSERT INTO core VALUES('theme','default');
+INSERT INTO core VALUES('comment_moderation', 'none');
 
 CREATE TABLE 'comments' (
 	'id' INTEGER PRIMARY KEY DEFAULT '0',

@@ -79,7 +79,7 @@ function dirlist($input) {
 /*
 	Function: advancedPagination
 	
-	Creates a more advanced pagination that is more efficient for handling large amounts of data.
+	Creates a more advanced pagination that is more efficient for handling large amounts of data than <simplePagination>.
 	
 	Parameters:
 	
@@ -219,7 +219,7 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 		
 	Returns:
 	
-		An error message if something failed. Nothing if everything worked.
+		An error message if something failed. If it worked, it will send the user to the admin dashboard.
 */
 function login($method) {
 	// Global the database handle so we can use it
@@ -270,7 +270,11 @@ function login($method) {
 	}
 }
 
-// Function to list themes in a drop-down box
+/*
+	Function: list_themes
+	
+	Outputs a list of themes in HTML <option> tags.
+*/
 function list_themes() {
 	// List directories
 	$dir = dirlist(ABSPATH .'/themes'); 
@@ -284,7 +288,15 @@ function list_themes() {
 	}
 }
 
-// Function to list categories
+/*
+	Function: list_categories
+	
+	Outputs a list of categories in HTML <option> tags.
+	
+	Parameters:
+	
+		selected - The category ID that will be selected by default in the drop-down list. Not required.
+*/
 function list_categories($selected = null) {
 	// Grab the database handle
 	global $dbh;
