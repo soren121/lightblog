@@ -37,6 +37,21 @@ require(ABSPATH .'/Sources/Template.php');
 if(isset($_GET['page'])){if((int)$_GET['page']>1){$page=(int)$_GET['page'];}}else{$page=0;}
 $file = $_SERVER['SCRIPT_FILENAME'];
 
+// Display the right post view
+if(isset($_GET['archive'])) {
+	$GLOBALS['postquery']['type'] = 'archive';
+	$GLOBALS['postquery']['date'] = (int)$_GET['date'];
+}
+
+if(isset($_GET['category'])) {
+	$GLOBALS['postquery']['type'] = 'category';
+	$GLOBALS['postquery']['catid'] = (int)$_GET['category'];
+}
+
+else {
+	$GLOBALS['postquery']['type'] = 'latest';
+}
+
 // Include theme files
 $themeName = bloginfo('theme', 'r');
 include('themes/'.$themeName.'/main.php');

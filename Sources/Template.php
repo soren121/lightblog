@@ -68,6 +68,39 @@ class PostLoop {
   	}
 	
 	/*
+		Function: parseQuery
+		
+		Parses the very basic query given and turns it in to a full-blown SQL query!
+		
+		Parameters:
+		
+			type - Type of query to build. (e.g. post/page)
+
+		Returns:
+		
+			A complete SQL query.
+	*/
+	private function parseQuery($type) {
+		if($type == 'post') {
+			// Get the view type
+			$querytype = $GLOBALS['postquery']['type'];
+			if($querytype == 'archive') {
+				$queryextra = substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0);
+				$firstdate = (int)strtotime($queryextra.' first day');
+				$lastdate = (int)strtotime($queryextra.' last day');
+				return "SELECT * FROM posts WHERE published='1' AND date BETWEEN $firstdate AND $lastdate ORDER BY id desc";
+			}
+			if($querytype == 'category') {
+				$queryextra = (int)$GLOBALS['postquery']['catid'];
+				return "SELECT * FROM posts WHERE category=$queryextra AND published='1' ORDER BY id desc";
+			}
+			else {
+				return "SELECT * FROM posts WHERE published='1' ORDER BY id desc";
+			}
+		}
+	}
+	
+	/*
 		Function: obtain_post
 		
 		Obtains the data for a single post from the database.
@@ -82,7 +115,7 @@ class PostLoop {
 		$dbh = $this->dbh;
 		
 		# Query the database for the post data
-		$this->result = $dbh->query("SELECT * FROM 'posts' LIMIT ".$pid.", 1");
+		$this->result = $dbh->query($this->parseQuery('post')." LIMIT ".$pid.", 1");
 	}
 	
 	/*
@@ -103,7 +136,7 @@ class PostLoop {
 		$dbh = $this->dbh;
 
 		# Query the database for post data
-    	$this->result = $dbh->query("SELECT * FROM 'posts' WHERE published='1' ORDER BY id desc LIMIT ".$start.", ".$limit);
+    	$this->result = $dbh->query($this->parseQuery('post')." LIMIT ".$start.", ".$limit);
   	}
   	
 	/*
