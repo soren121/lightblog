@@ -1,4 +1,4 @@
-<?php
+<?php error_reporting(E_ALL|E_NOTICE);
 
 /***********************************************
 
@@ -87,9 +87,9 @@ class PostLoop {
 			if($querytype == 'archive') {
 				$queryextra = substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0);
 				$queryextra = explode('-', $queryextra);
-				$firstdate = (int)strtotime($queryextra.' first day');
-				$lastdate = (int)strtotime($queryextra.' last day');
-				return "SELECT * FROM posts WHERE published='1' $where ORDER BY id desc";
+				$firstday = mktime(0, 0, 0, $queryextra[1], 1, $queryextra[0]);
+				$lastday = mktime(0, 0, 0, ($queryextra[1] + 1), 0, $queryextra[0]);
+				return "SELECT * FROM posts WHERE date BETWEEN $firstday AND $lastday AND published='1' $where ORDER BY id desc";
 			}
 			if($querytype == 'category') {
 				$queryextra = (int)$GLOBALS['postquery']['catid'];
@@ -116,7 +116,7 @@ class PostLoop {
 		$dbh = $this->dbh;
 		
 		# Query the database for the post data
-		$this->result = $dbh->query($this->parseQuery('post', "AND id=$pid"));
+		$this->result = $dbh->query($this->parseQuery('post', "AND id=$pid")) or die(sqlite_error_string($dbh->lastError));
 	}
 	
 	/*
@@ -137,7 +137,7 @@ class PostLoop {
 		$dbh = $this->dbh;
 
 		# Query the database for post data
-    	$this->result = $dbh->query($this->parseQuery('post')." LIMIT ".$start.", ".$limit);
+    	$this->result = $dbh->query($this->parseQuery('post')." LIMIT ".$start.", ".$limit)) or die(sqlite_error_string($dbh->lastError));
   	}
   	
 	/*
