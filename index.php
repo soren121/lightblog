@@ -40,7 +40,7 @@ $file = $_SERVER['SCRIPT_FILENAME'];
 // Display the right post view
 if(isset($_GET['archive'])) {
 	$GLOBALS['postquery']['type'] = 'archive';
-	$GLOBALS['postquery']['date'] = (int)$_GET['date'];
+	$GLOBALS['postquery']['date'] = (int)$_GET['archive'];
 }
 
 if(isset($_GET['category'])) {
