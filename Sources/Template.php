@@ -137,7 +137,7 @@ class PostLoop {
 		$dbh = $this->dbh;
 
 		# Query the database for post data
-    	$this->result = $dbh->query($this->parseQuery('post')." LIMIT ".$start.", ".$limit)) or die(sqlite_error_string($dbh->lastError));
+    	$this->result = $dbh->query($this->parseQuery('post')." LIMIT ".$start.", ".$limit) or die(sqlite_error_string($dbh->lastError));
   	}
   	
 	/*
