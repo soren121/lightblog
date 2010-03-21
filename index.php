@@ -43,7 +43,7 @@ if(isset($_GET['archive'])) {
 	$GLOBALS['postquery']['date'] = (int)$_GET['archive'];
 }
 
-if(isset($_GET['category'])) {
+elseif(isset($_GET['category'])) {
 	$GLOBALS['postquery']['type'] = 'category';
 	$GLOBALS['postquery']['catid'] = (int)$_GET['category'];
 }
