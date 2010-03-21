@@ -80,22 +80,23 @@ class PostLoop {
 		
 			A complete SQL query.
 	*/
-	private function parseQuery($type) {
+	private function parseQuery($type, $where = '') {
 		if($type == 'post') {
 			// Get the view type
 			$querytype = $GLOBALS['postquery']['type'];
 			if($querytype == 'archive') {
 				$queryextra = substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0);
+				$queryextra = explode('-', $queryextra);
 				$firstdate = (int)strtotime($queryextra.' first day');
 				$lastdate = (int)strtotime($queryextra.' last day');
-				return "SELECT * FROM posts WHERE published='1' AND date BETWEEN $firstdate AND $lastdate ORDER BY id desc";
+				return "SELECT * FROM posts WHERE published='1' $where ORDER BY id desc";
 			}
 			if($querytype == 'category') {
 				$queryextra = (int)$GLOBALS['postquery']['catid'];
-				return "SELECT * FROM posts WHERE category=$queryextra AND published='1' ORDER BY id desc";
+				return "SELECT * FROM posts WHERE category=$queryextra AND published='1' $where ORDER BY id desc";
 			}
 			else {
-				return "SELECT * FROM posts WHERE published='1' ORDER BY id desc";
+				return "SELECT * FROM posts WHERE published='1' $where ORDER BY id desc";
 			}
 		}
 	}
@@ -111,11 +112,11 @@ class PostLoop {
 	*/
 	public function obtain_post($pid) {
 		# Sanitize and set variables
-		$pid = (((int)$pid) -1);
+		$pid = (int)$pid;
 		$dbh = $this->dbh;
 		
 		# Query the database for the post data
-		$this->result = $dbh->query($this->parseQuery('post')." LIMIT ".$pid.", 1");
+		$this->result = $dbh->query($this->parseQuery('post', "AND id=$pid"));
 	}
 	
 	/*

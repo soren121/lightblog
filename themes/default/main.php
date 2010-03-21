@@ -27,7 +27,7 @@
 					</div>
 				</div>
 				<?php endwhile; else: ?>
-				<p>Sorry, no posts are available for display.</p>
+				<p>Sorry, no posts matched your criteria.</p>
 				<?php endif; ?>
 				
 				<div class="pagination">
