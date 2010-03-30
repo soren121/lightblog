@@ -1,4 +1,4 @@
-<?php error_reporting(E_ALL|E_NOTICE);
+<?php
 
 /***********************************************
 
@@ -75,6 +75,7 @@ class PostLoop {
 		Parameters:
 		
 			type - Type of query to build. (e.g. post/page)
+			where - Optional parameter. You can use this to add an extra condition to the WHERE selector in the query.
 
 		Returns:
 		
@@ -91,7 +92,7 @@ class PostLoop {
 				$lastday = mktime(0, 0, 0, ($queryextra[1] + 1), 0, $queryextra[0]);
 				return "SELECT * FROM posts WHERE date BETWEEN $firstday AND $lastday AND published='1' $where ORDER BY id desc";
 			}
-			if($querytype == 'category') {
+			elseif($querytype == 'category') {
 				$queryextra = (int)$GLOBALS['postquery']['catid'];
 				return "SELECT * FROM posts WHERE category=$queryextra AND published='1' $where ORDER BY id desc";
 			}
@@ -116,7 +117,7 @@ class PostLoop {
 		$dbh = $this->dbh;
 		
 		# Query the database for the post data
-		$this->result = $dbh->query($this->parseQuery('post', "AND id=$pid")) or die(sqlite_error_string($dbh->lastError));
+		$this->result = $dbh->query($this->parseQuery('post', "AND id=$pid"));
 	}
 	
 	/*
@@ -137,7 +138,7 @@ class PostLoop {
 		$dbh = $this->dbh;
 
 		# Query the database for post data
-    	$this->result = $dbh->query($this->parseQuery('post')." LIMIT ".$start.", ".$limit) or die(sqlite_error_string($dbh->lastError));
+    	$this->result = $dbh->query($this->parseQuery('post')." LIMIT ".$start.", ".$limit);
   	}
   	
 	/*
@@ -729,6 +730,15 @@ function list_categories($tag, $limit = 5) {
 	while($row = $result->fetchObject()) {
 		echo '<'.$tag.' '.$arg.'>'.stripslashes($row->fullname).'</'.$tag.'>';
 	}
+}
+
+/*
+	Function: list_archives
+	
+	Outputs a multi-level HTML list containing links for monthly post archives.
+*/
+function list_archives() {
+	
 }
 
 /*
