@@ -737,8 +737,23 @@ function list_categories($tag, $limit = 5) {
 	
 	Outputs a multi-level HTML list containing links for monthly post archives.
 */
-function list_archives() {
-	
+function list_archives($limit = 10) {
+	// Grab the database handle
+	global $dbh;
+	// Get archive data
+	$result = $dbh->query("SELECT date FROM posts ORDER BY desc WHERE published=1 LIMIT 0, ".(int)$limit);
+	// Echo the list start tag
+	echo "<ul>";
+	while($row = $result->fetchObject()) {
+		$month = date('m', $row->date);
+		$monthname = date('F', $row->date);
+		$year = date('Y', $row->date);
+		if(!isset($post[$year][$month])) {
+			echo "<li><a href=\"".bloginfo('url')."?archive=".$year.$month."\">".$monthname." ".$year."</a></li>";
+		}
+	}
+	// Close the list
+	echo "</ul>";
 }
 
 /*
