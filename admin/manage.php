@@ -95,7 +95,7 @@ else {
 				<tr>
 					<th class="managelist">Title</th>
 					<?php if($type == 'categories'): ?>
-						<th class="shortname">Short Name</th>
+						<th class="managelist">Info</th>
 					<?php else: ?>
 						<th class="managelist">Author</th>
 						<th class="managelist">Date</th>
@@ -108,8 +108,8 @@ else {
 				<?php while($row = $result->fetchObject()): ?>	
 				<tr id="tr<?php echo $row->id ?>">
 					<?php if($type == 'categories'): ?>
-						<td style="width:160px;"><?php echo $row->fullname ?></td>
-						<td><?php echo $row->shortname ?></td>
+						<td style="width:150px;"><?php echo $row->fullname ?></td>
+						<td><?php echo implode(' ', array_slice(explode(' ', $row->info), 0, 7)); ?></td>
 					<?php else: ?>
 						<td style="width:160px;"><?php echo $row->title ?></td>
 						<td><?php echo $row->author ?></td>
