@@ -20,17 +20,18 @@
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
-if((int)$_GET['type'] == 1) { $type = 'post'; }
-elseif((int)$_GET['type'] == 2) { $type = 'page'; }
+if((int)$_GET['type'] == 1) { $type = 'posts'; }
+elseif((int)$_GET['type'] == 2) { $type = 'pages'; }
+elseif((int)$_GET['type'] == 3) { $type = 'categories'; }
 
 # Functions to find the start for a query based on the page number
 function findStart($input) { $input = $input - 1; return $input * 8; }
 
 if(isset($_GET['page']) && $_GET['page'] > 1) {
-		$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
+		$result = $dbh->query("SELECT * FROM ".$type." ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
 }
 else {
-	$result = $dbh->query("SELECT * FROM ".$type."s ORDER BY id desc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
+	$result = $dbh->query("SELECT * FROM ".$type." ORDER BY id desc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
 }
 
 
@@ -39,7 +40,7 @@ else {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<title>Manage <?php echo ucwords($type) ?>s - <?php bloginfo('title') ?></title>
+	<title>Manage <?php echo ucwords($type) ?> - <?php bloginfo('title') ?></title>
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
 	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style></script><![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
@@ -86,35 +87,44 @@ else {
 			use the navigation bar above to choose the correct type.</p>
 			<!-- They were, so continue -->
 			<?php else: ?>
-			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Manage <?php echo ucwords($type) ?>s</h2>
+			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Manage <?php echo ucwords($type) ?></h2>
 			<!-- Check if any posts/pages exist -->
 			<?php if($result->numRows() > 0): ?>
 			<table class="managelist">
 				<!-- Add table headings -->
 				<tr>
 					<th class="managelist">Title</th>
-					<th class="managelist">Author</th>
-					<th class="managelist">Date</th>
-					<th class="managelist">Published</th>
+					<?php if($type == 'categories'): ?>
+						<th class="shortname">Short Name</th>
+					<?php else: ?>
+						<th class="managelist">Author</th>
+						<th class="managelist">Date</th>
+						<th class="managelist">Published</th>
+					<?php endif; ?>
 					<th class="managelist">Edit</th>
 					<th class="managelist">Delete</th>
 				</tr>		
 				<!-- Start row loop -->
-				<?php while($post = $result->fetchObject()): ?>	
-				<tr id="tr<?php echo $post->id ?>">
-					<td style="width:160px;"><?php echo $post->title ?></td>
-					<td><?php echo $post->author ?></td>
-					<td><?php echo date('n/j/Y', $post->date) ?></td>
-					<td class="c">
-						<?php if($post->published == 1): ?>
-							<img src="style/check.png" alt="Published" />
-						<?php else: ?>
-							<img src="style/cross.png" alt="Not published" />
-						<?php endif; ?>
-					</td>
-					<?php if((permissions(1) && userFetch('username',1) == $post->author) or (permissions(2))): ?>
-						<td class="c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $post->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
-						<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $post->id.', \''.$post->title.'\'' ?>);" style="cursor:pointer;" /></td>
+				<?php while($row = $result->fetchObject()): ?>	
+				<tr id="tr<?php echo $row->id ?>">
+					<?php if($type == 'categories'): ?>
+						<td style="width:160px;"><?php echo $row->fullname ?></td>
+						<td><?php echo $row->shortname ?></td>
+					<?php else: ?>
+						<td style="width:160px;"><?php echo $row->title ?></td>
+						<td><?php echo $row->author ?></td>
+						<td><?php echo date('n/j/Y', $row->date) ?></td>
+						<td class="c">
+							<?php if($row->published == 1): ?>
+								<img src="style/check.png" alt="Published" />
+							<?php else: ?>
+								<img src="style/cross.png" alt="Not published" />
+							<?php endif; ?>
+						</td>
+					<?php endif; ?>
+					<?php if(($type !== 'categories') && (permissions(1) && userFetch('username',1) == $row->author) || (permissions(2))): ?>
+						<td class="c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $row->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
+						<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $row->id.', \''.(($type == 'categories') ? $row->fullname : $row->title).'\'' ?>);" style="cursor:pointer;" /></td>
 					<?php else: ?>
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
@@ -126,7 +136,7 @@ else {
 			<?php echo advancedPagination($type, $_SERVER['PHP_SELF'].'?type='.(int)$_GET['type'], (int)$_GET['page']); ?>
 			<!-- None exist error message -->
 			<?php else: ?>
-			<p>Sorry, no <?php echo $type ?>s exist to manage.</p>
+			<p>Sorry, no <?php echo $type ?> exist to manage.</p>
 			<!-- End all ifs -->
 			<?php endif; endif; endif; ?>
 		</div>
