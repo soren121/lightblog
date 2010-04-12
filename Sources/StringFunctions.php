@@ -60,8 +60,6 @@ function randomString($length) {
 function cleanHTML($str) {
 	// Remove empty space
 	$str = trim($str);
-	// Prevent Unicode codec problems
-	$str = utf8_decode($str);
 	// Strip out CDATA
 	preg_match_all('/<!\[cdata\[(.*?)\]\]>/is', $str, $matches);
     $str = str_replace($matches[0], $matches[1], $str);
