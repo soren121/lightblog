@@ -36,8 +36,8 @@ if(!function_exists('mt_rand')) {
 }
 
 // Operates the side menu selectors
-// First options specifies page
-// Second option defines if we're changing the page or just reading it
+// First parameter specifies page
+// Second parameter defines if we're changing the page or just reading it
 function menuClass($item, $op = 0) {
 	static $cur_item = 1;
 	if($op == 1) {
