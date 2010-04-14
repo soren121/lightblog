@@ -38,8 +38,8 @@ function baseurl() {
 }
 
 // Operates the side menu selectors
-// First options specifies page
-// Second option defines if we're changing the page or just reading it
+// First parameter specifies page
+// Second parameter defines if we're changing the page or just reading it
 function menuClass($item, $op = 0) {
 	static $cur_item = 1;
 	if($op == 1) {
@@ -56,13 +56,6 @@ function menuClass($item, $op = 0) {
 			echo "notdone";
 		}
 	}
-}
-
-// Will process after Step 1
-if(isset($_POST['reqmet'])) {
-	// Set new installer page
-	$page = 'dbsetup';
-	menuClass(2, 1);
 }
 
 function update() {
@@ -94,7 +87,7 @@ if(isset($_POST['update'])) {
 		$page = null;
 	}
 	else {
-		// Set new installer page
+		// Set new updater page
 		$page = "finish";
 		menuClass(2, 1);
 	}
@@ -168,20 +161,6 @@ if(isset($_POST['update'])) {
 			margin: 10px 0 0 25px;
 			font-size: .98em;
 		}
-		#content table {
-			margin: 20px 0 0 25px;
-			border-right: 1px solid #CBE1F2;
-			border-bottom: 1px solid #CBE1F2;
-			border-collapse: collapse;
-		}
-		#content td, #content th {
-			padding: 3px 20px 3px 7px;
-			border-top: 1px solid #CBE1F2;
-			border-left: 1px solid #CBE1F2;
-		}
-		#content th {
-			background: #DCE8F2;
-		}
 		#content span#error {
 			margin: 15px 0 0 25px;
 			color: #9C0606;
@@ -189,9 +168,6 @@ if(isset($_POST['update'])) {
 		}
 		form {
 			margin: 20px 0 0 25px;
-		}
-		button {
-			margin: 15px 0 0 25px;
 		}
 		label {
 			font-size: .9em;
@@ -204,19 +180,12 @@ if(isset($_POST['update'])) {
 			clear: both;
 		}
 	</style>
-	<script type="text/javascript">
-		/* vX JavaScript library by Antimatter15, inportb, and paul.wratt */
-		var _=_?_:{}
-		_.fx=_.A=function(v,n,c,f,u,y){u=0;(y=function(){u++<v&&c(u/v)!==0?setTimeout(y,n):(f?f():0)})()}
-		_.pos=_.P=function(e,a){a={l:0,t:0,w:e.offsetWidth,h:e.offsetHeight};do{a.l+=e.offsetLeft;a.t+=e.offsetTop}while(e=e.offsetParent)return a}
-		_.slide=function(d,e,o,f,i,q){q=_.P(e).h;_.A(f?f:15,i?i:10,function(a){a=(d?0:1)+(d?1:-1)*a;e.style.height=(a*q)+'px'},o)}
-	</script>
 </head>
 
 <body>
 	<div id="wrapper">
 		<div id="header">
-			<h3>LightBlog Installer</h3>
+			<h3>LightBlog Updater</h3>
 		</div>
 		<div id="sidebar">
 			<ul>
