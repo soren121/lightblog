@@ -51,14 +51,12 @@ while($past = $result->fetchObject()) {
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.InputHint.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
 	<script type="text/javascript">	
 		$(document).ready(function(){
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
-			$('.hint').hint();
 			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');
 		});
 		$(function() {
@@ -110,13 +108,15 @@ while($past = $result->fetchObject()) {
 			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Edit <?php echo ucwords($type) ?></h2>
 			<div id="notifybox"></div>
 			<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="edit">
-				<div style="float:left;width:480px;">
-					<input class="hint textfield ef" name="title" type="text" title="Title" value="<?php echo stripslashes($title) ?>" />
+				<div style="float:left;width:480px;margin-top:3px;">
+					<label class="tfl" for="title">Title</label>
+					<input class="textfield ef" name="title" type="text" id="title" title="Title" value="<?php echo stripslashes($title) ?>" />
+					<label class="tfl" for="wysiwyg">Body</label>
 					<textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo stripslashes($text) ?></textarea>
 					<input class="ef" type="hidden" name="type" value="<?php echo $type ?>" />
 					<input class="ef" type="hidden" name="id" value="<?php echo (int)$_GET['id'] ?>" />
 				</div>
-				<div class="settings" style="float:left;width:170px;margin:8px 0 10px;padding:15px;">
+				<div class="settings" style="float:left;width:170px;margin:16px 0 10px;padding:15px;">
 					<?php if($type == 'post'): ?>
 						<label for="category">Category:</label><br />
 						<select class="ef" id="category" name="category">

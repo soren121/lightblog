@@ -34,14 +34,12 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.InputHint.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
 	<script type="text/javascript">	
 		$(document).ready(function(){
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
-			$('.hint').hint();
 			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');
 		});
 		$(function() {
@@ -96,12 +94,14 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 			<h2 class="title"><img class="textmid" src="style/create.png" alt="" />Add New <?php echo ucwords($type) ?></h2>
 			<div id="notifybox"></div>
 			<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="create">
-				<div style="float:left;width:480px;">
-					<input class="hint textfield cf" name="title" type="text" title="Title" /><br />
+				<div style="float:left;width:480px;margin-top:3px;">
+					<label class="tfl" for="title">Title</label>
+					<input id="title" class="textfield cf" name="title" type="text" title="Title" /><br />
+					<label class="tfl" for="wysiwyg">Body</label>
 					<textarea rows="12" cols="36" name="text" id="wysiwyg"></textarea><br />
 					<input class="cf" type="hidden" name="type" value="<?php echo $type ?>" />
 				</div>
-				<div class="settings" style="float:left;width:170px;margin:8px 0 10px;padding:15px;">
+				<div class="settings" style="float:left;width:170px;margin:16px 0 10px;padding:15px;">
 					<?php if($type == 'post'): ?>
 						<label for="category">Category:</label><br />
 						<select class="cf" id="category" name="category">

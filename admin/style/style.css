@@ -66,6 +66,13 @@ a:link, a:visited {
 	z-index: 1;
 }
 
+#content label.tfl {
+	text-transform: uppercase;
+	color: #aaa;
+	margin-top: 8px !important;
+	font-weight: bold;
+}
+
 #content h2.title {
 	color: #000;
 	font: italic 2.1em Times,Verdana,Arial,Sans;
@@ -87,7 +94,7 @@ a:link, a:visited {
 }
 
 #content input.textfield {
-	margin: 8px 0 8px 0;
+	margin: 0 0 8px 0;
 	padding: 3px;
 	width: 460px;
 	height: 25px;
