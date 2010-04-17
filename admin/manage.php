@@ -109,7 +109,7 @@ else {
 				<tr id="tr<?php echo $row->id ?>">
 					<?php if($type == 'categories'): ?>
 						<td style="width:150px;"><?php echo $row->fullname ?></td>
-						<td><?php echo implode(' ', array_slice(explode(' ', $row->info), 0, 7)); ?></td>
+						<td><?php echo implode(' ', array_slice(explode(' ', $row->info), 0, 8)); ?></td>
 					<?php else: ?>
 						<td style="width:160px;"><?php echo $row->title ?></td>
 						<td><?php echo $row->author ?></td>

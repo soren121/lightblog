@@ -88,7 +88,7 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
-			<?php if(permissions(1)): if(!isset($type)): ?>
+			<?php if($type !== 'category' && permissions(1) || $type === 'category' && permissions(2)): if(!isset($type)): ?>
 			<p>The type of content to add was not specified. You must have taken a bad link. Please
 			use the navigation bar above to choose the correct type.</p>
 			<?php else: ?>

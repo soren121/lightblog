@@ -1,15 +1,8 @@
-[07.12.09] Changes in 0.9.2
-	* Theme support
-	* Rewritten AJAX installer
-	* Rewritten AJAX administration panel
-	* Rewritten Core
-	* Absolute path system
-	* New config file
-	* New Core file
-	* Included FeedWriter class for RSS2/Atom feeds
-	* Removed OpenID library due to bad implementation
-	* Patched XSS vulnerabilities
-	* Patched SQL injection vulnerabilities
-	* Greatly improved session security
-	* Improved database security
-	* New feed system
+[04.18.10] Changes in 0.9.3
+	* Comment moderation added
+	* Category support added
+	* Support for archive and category views
+	* Database update script added
+	* Switched to elite.js from jQuery
+	* New, clean function documentation
+	* Fixed security and usability bugs
