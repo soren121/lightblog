@@ -48,7 +48,7 @@ if(isset($_POST['create'])) {
 		# Fetch post ID from database
 		$id = $dbh->lastInsertRowid();
 		# Return full url to post to jQuery
-		echo bloginfo('url', 'r').$type.".php?id=".$id;
+		echo bloginfo('url', 'r')."?".$type."=".$id;
 	}
 	else {
 		$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
@@ -78,27 +78,45 @@ if(isset($_POST['edit'])) {
 		# Check category
 		$category = (int)$_POST['category'];
 	}
+	# For categories only
+	if($type == 'category') {
+		$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15));
+	}
 	# Query for previous data
 	$result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".$id) or die(sqlite_error_string($dbh->lastError()));
 	# Fetch previous data
 	while($past = $result->fetchObject()) {
-		$ptitle = $past->title;
-		$ppublished = $past->published;
 		if($type == 'post') { 
+			$ptitle = $past->title;
+			$ppublished = $past->published;
 			$ptext = $past->post;
 			$pcategory = $past->category;
 			$pcomments = $past->comments;
 		}
 		elseif($type == 'page') {
+			$ptitle = $past->title;
+			$ppublished = $past->published;
 			$ptext = $past->page; 
 		}
+		elseif($type == 'category') {
+			$ptitle = $past->fullname;
+			$ptext = $past->info;
+			$pshortname = $past->shortname;
+		}	
 	}
 	# Set a base query to modify
-	$base = "UPDATE ".$type."s SET ";
+	$base = "UPDATE ".($type == 'category' ? 'categorie' : $type)."s SET ";
 	# Run through scenarios
-	if(stripslashes($ptitle) !== $title) { $base .= "title='".sqlite_escape_string($title)."', "; }
-	if(stripslashes($ptext) !== $text) { $base .= $type."='".sqlite_escape_string($text)."', "; }
-	if((int)$ppublished !== $published) { $base .= "published='".(int)$published."', "; }
+	if($type !== 'category') {
+		if(stripslashes($ptitle) !== $title) { $base .= "title='".sqlite_escape_string($title)."', "; }
+		if(stripslashes($ptext) !== $text) { $base .= $type."='".sqlite_escape_string($text)."', "; }
+		if((int)$ppublished !== $published) { $base .= "published='".(int)$published."', "; }
+	}
+	else {
+		if(stripslashes($ptitle) !== $title) { $base .= "fullname='".sqlite_escape_string($title)."', "; }
+		if(stripslashes($pshortname) !== $shortname { $base .= "shortname='".sqlite_escape_string($title)."', "; }
+		if(stripslashes($ptext) !== $text) { $base .= "info='".sqlite_escape_string($text)."', "; }
+	}
 	if($type == 'post') {
 		if((int)$pcategory !== $category) { $base .= "category='".(int)$category."', "; }
 		if((int)$pcomments !== $comments) { $base .= "comments='".(int)$comments."', "; }
@@ -109,7 +127,7 @@ if(isset($_POST['edit'])) {
 	# Execute modified query
 	$dbh->query($base) or die(sqlite_error_string($dbh->lastError));		
 	# Return full url to page to jQuery
-	echo bloginfo('url', 'r').$type.".php?id=".$id;
+	echo bloginfo('url', 'r')."?".$type."=".$id;
 	# Prevent the rest of the page from loading
 	die();
 }

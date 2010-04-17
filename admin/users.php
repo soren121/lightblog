@@ -110,7 +110,7 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
-			<?php echo advancedPagination('user', $_SERVER['PHP_SELF'], (int)$_GET['page']); ?>
+			<?php echo advancedPagination('users', $_SERVER['PHP_SELF'], (int)$_GET['page']); ?>
 			<?php endif; endif; ?>
 		</div>
 		<div id="footer" class="roundedb">		

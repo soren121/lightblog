@@ -198,7 +198,7 @@ class PostLoop {
 		# We didn't screw up and keep an empty query, did we?
     	if(!empty($this->cur_result)) {
 			# Nope, so return the post's permalink
-      		echo bloginfo('url', 'return'). 'post.php?id='. $this->cur_result->id;
+      		echo bloginfo('url', 'return'). '?post='. $this->cur_result->id;
       	}
     	else {
 			# Looks like we messed up, send nothing
@@ -428,7 +428,7 @@ class PageLoop {
   	public function permalink() {
 		# We didn't screw up and keep an empty query, did we?
 		if(!empty($this->cur_result)) {
-      		echo bloginfo('url', 'return').'page.php?id='.(int)$this->cur_result->id;
+      		echo bloginfo('url', 'return').'?page='.(int)$this->cur_result->id;
 		}
 		# Oh no, we screwed up :(
 		else {
@@ -692,7 +692,7 @@ function list_pages($tag = 'li', $limit = 5) {
 	$result = $dbh->query("SELECT * FROM pages ORDER BY id desc LIMIT 0, ".$limit);
 	if($result->numRows() > 0) {
 		while($pages = $result->fetchObject()) {
-			echo '<'.$tag.'><a href="'.bloginfo('url',2).'page.php?id='.$pages->id.'">'.$pages->title.'</a>'.'</'.$tag.'>';
+			echo '<'.$tag.'><a href="'.bloginfo('url',2).'?page='.$pages->id.'">'.$pages->title.'</a>'.'</'.$tag.'>';
 		}
 	}
 	else {
