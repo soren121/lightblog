@@ -129,7 +129,7 @@ while($past = $result->fetchObject()) {
 						</select><br /><br />
 						<label for="comments">Comments on?</label>
 						<input class="ef" type="checkbox" name="comments" id="comments" <?php echo $cs_checked; ?> value="1" /><br />
-					<?php elseif($type == 'post' || $type == 'page'): ?>
+					<?php endif; if($type != 'category'): ?>
 						<label for="published">Published?</label>
 						<input class="ef" type="checkbox" name="published" id="published" <?php echo $ps_checked; ?> value="1" /><br /><br />
 					<?php endif; ?>

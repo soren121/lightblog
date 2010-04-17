@@ -110,7 +110,7 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 						</select><br /><br />
 						<label for="comments">Comments on?</label>
 						<input class="cf" type="checkbox" name="comments" id="comments" checked="checked" value="1" /><br />
-					<?php elseif($type == 'post' || $type == 'page'): ?>
+					<?php endif; if($type != 'category'): ?>
 						<label for="published">Published?</label>
 						<input class="cf" type="checkbox" name="published" id="published" checked="checked" value="1" /><br /><br />
 					<?php endif; ?>

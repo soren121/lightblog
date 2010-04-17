@@ -18,8 +18,8 @@
 						</span>
 						<span class="postdata">
 							<img src="<?php bloginfo('themeurl') ?>/style/comment.png" alt="" />
-							<a href="<?php $posts->permalink() ?>#commentform"><?php echo $posts->commentNum() ?></a>				
-						</span>
+							<a href="<?php $posts->permalink() ?>#commentform"><?php grammarFix($posts->commentNum(), 'Comment', 'Comments') ?></a></a>				
+						</span><br />
 						<span class="postdata">
 							<img src="<?php bloginfo('themeurl') ?>/style/category.png" alt="" />
 							<?php $posts->category() ?>
