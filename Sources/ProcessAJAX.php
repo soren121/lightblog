@@ -20,36 +20,42 @@
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
-# Process post/page creation
+# Process post/page/category creation
 if(isset($_POST['create'])) {
-	# Grab data from form and escape the text
-	$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
-	$text = sqlite_escape_string(cleanHTML($_POST['text']));
-	$date = time();
-	$author = sqlite_escape_string(userFetch('displayname', 'r'));
-	$category = (int)$_POST['category'];
-	# Check published checkbox
-	if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
-	else { $published = 0; }
-	# Check comments checkbox
-	if(isset($_POST['comments']) && $_POST['comments'] == 1) { $comments = 1; }
-	else { $comments = 0; }
-	# Check submission type
-	if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) { $type = 'post'; }
-	else { $type = $_POST['type']; }
-	# Insert post/page into database
-	if($type == 'post') {
-		$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(sqlite_error_string($dbh->lastError()));
+	if($_POST['type'] != 'category') {
+		# Grab data from form and escape the text
+		$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
+		$text = sqlite_escape_string(cleanHTML($_POST['text']));
+		$date = time();
+		$author = sqlite_escape_string(userFetch('displayname', 'r'));
+		$category = (int)$_POST['category'];
+		# Check published checkbox
+		if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
+		else { $published = 0; }
+		# Check comments checkbox
+		if(isset($_POST['comments']) && $_POST['comments'] == 1) { $comments = 1; }
+		else { $comments = 0; }
+		# Check submission type
+		if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) { $type = 'post'; }
+		else { $type = $_POST['type']; }
+		# Insert post/page into database
+		if($type == 'post') {
+			$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(sqlite_error_string($dbh->lastError()));
+		}
+		else {
+			$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(sqlite_error_string($dbh->lastError()));
+		}
+		# Fetch post ID from database
+		$id = $dbh->lastInsertRowid();
+		# Return full url to post to jQuery
+		echo bloginfo('url', 'r').$type.".php?id=".$id;
 	}
 	else {
-		$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(sqlite_error_string($dbh->lastError()));
+		$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
+		$info = sqlite_escape_string(cleanHTML($_POST['text']));
+		$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
+		$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('$shortname','$title','$info')");
 	}
-	# Fetch post ID from database
-	$id = $dbh->lastInsertRowid();
-	# Return full url to post to jQuery
-	echo bloginfo('url', 'r').$type.".php?id=".$id;
-	# Unset variables
-	unset($result, $id);
 	# Prevent the rest of the page from loading
 	die();
 }
