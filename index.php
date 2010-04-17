@@ -33,27 +33,43 @@ if(isset($_GET['install']) && $_GET['install'] === 'true' && file_exists('instal
 require('config.php');
 require(ABSPATH .'/Sources/Template.php');
 
-// Pagination variables
-if(isset($_GET['page'])){if((int)$_GET['page']>1){$page=(int)$_GET['page'];}}else{$page=0;}
-$file = $_SERVER['SCRIPT_FILENAME'];
-
-// Display the right post view
-if(isset($_GET['archive'])) {
-	$GLOBALS['postquery']['type'] = 'archive';
-	$GLOBALS['postquery']['date'] = (int)$_GET['archive'];
-}
-
-elseif(isset($_GET['category'])) {
-	$GLOBALS['postquery']['type'] = 'category';
-	$GLOBALS['postquery']['catid'] = (int)$_GET['category'];
-}
-
-else {
-	$GLOBALS['postquery']['type'] = 'latest';
-}
-
 // Include theme files
 $themeName = bloginfo('theme', 'r');
-include('themes/'.$themeName.'/main.php');
+
+if(!isset($_GET['post']) && !isset($_GET['page'])) {
+	// Pagination variables
+	if(isset($_GET['page'])){if((int)$_GET['page']>1){$page=(int)$_GET['page'];}}else{$page=0;}
+	$file = $_SERVER['SCRIPT_FILENAME'];
+
+	// Display the right post view
+	if(isset($_GET['archive'])) {
+		$GLOBALS['postquery']['type'] = 'archive';
+		$GLOBALS['postquery']['date'] = (int)$_GET['archive'];
+	}
+
+	elseif(isset($_GET['category'])) {
+		$GLOBALS['postquery']['type'] = 'category';
+		$GLOBALS['postquery']['catid'] = (int)$_GET['category'];
+	}
+
+	else {
+		$GLOBALS['postquery']['type'] = 'latest';
+	}
+
+	// Include main theme file
+	include('themes/'.$themeName.'/main.php');
+}
+
+else {	
+	if(isset($_GET['post'])) {		
+		$pid = (int)$_GET['post'];
+		include('themes/'.$themeName.'/post.php');
+	}
+	
+	elseif(isset($_GET['page'])) {
+		$pid = (int)$_GET['page'];
+		include('themes/'.$themeName.'/page.php');
+	}
+}
 
 ?>

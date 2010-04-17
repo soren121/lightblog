@@ -82,7 +82,7 @@ else {
 		<?php include('menu.php'); ?>
 		<div id="content">
 			<!-- Check if parameters were set -->
-			<?php if(permissions(2)): if(!isset($type)): ?>
+			<?php if(permissions(1)): if(!isset($type)): ?>
 			<p>The type of content to manage was not specified. You must have taken a bad link. Please
 			use the navigation bar above to choose the correct type.</p>
 			<!-- They were, so continue -->

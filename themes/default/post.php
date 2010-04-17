@@ -16,6 +16,10 @@
 							<img src="<?php bloginfo('themeurl') ?>/style/user.png" alt="" />
 							<?php $posts->author() ?>
 						</span>
+						<span class="postdata">
+							<img src="<?php bloginfo('themeurl') ?>/style/category.png" alt="" />
+							<?php $posts->category() ?>
+						</span>
 					</div>
 				</div>			
 				<?php endwhile; else: ?>
@@ -30,7 +34,7 @@
 					<a class="comment_name" href="<?php $com->website() ?>"><?php $com->name() ?></a>
 					<span class="comment_says"> says:</span><br />
 					<span class="comment_date"><?php $com->date('F j, Y \a\t g:i A') ?></span><br />
-					<p class="comment_text"><?php $com->comment() ?></p>
+					<p class="comment_text"><?php $com->content() ?></p>
 				</div>
 				<!-- End comment loop -->
 				<?php endwhile; ?>
