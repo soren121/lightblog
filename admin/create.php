@@ -22,6 +22,7 @@ require(ABSPATH .'/Sources/Core.php');
 
 if((int)$_GET['type'] == 1) { $type = 'post'; }
 elseif((int)$_GET['type'] == 2) { $type = 'page'; }
+elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -97,7 +98,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 				<div style="float:left;width:480px;margin-top:3px;">
 					<label class="tfl" for="title">Title</label>
 					<input id="title" class="textfield cf" name="title" type="text" title="Title" /><br />
-					<label class="tfl" for="wysiwyg">Body</label>
+					<label class="tfl" for="wysiwyg"><?php ($type == 'category' ? echo 'Info' : echo 'Body') ?></label>
 					<textarea rows="12" cols="36" name="text" id="wysiwyg"></textarea><br />
 					<input class="cf" type="hidden" name="type" value="<?php echo $type ?>" />
 				</div>
@@ -109,9 +110,10 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 						</select><br /><br />
 						<label for="comments">Comments on?</label>
 						<input class="cf" type="checkbox" name="comments" id="comments" checked="checked" value="1" /><br />
+					<?php elseif($type == 'post' || $type == 'page'): ?>
+						<label for="published">Published?</label>
+						<input class="cf" type="checkbox" name="published" id="published" checked="checked" value="1" /><br /><br />
 					<?php endif; ?>
-					<label for="published">Published?</label>
-					<input class="cf" type="checkbox" name="published" id="published" checked="checked" value="1" /><br /><br />
 					<input class="cf submit" name="create" type="submit" value="Publish" />
 				</div>
 				<div style="clear:both;"></div>
