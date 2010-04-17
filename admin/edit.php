@@ -22,7 +22,7 @@ require(ABSPATH .'/Sources/Core.php');
 
 if((int)$_GET['type'] == 1) { $type = 'post'; }
 elseif((int)$_GET['type'] == 2) { $type = 'page'; }
-elseif((int)$_GET['type'] == 3) { $type = 'category' }
+elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 
 # Query for past content
 $result = $dbh->query("SELECT * FROM ".($type == 'category' ? 'categorie' : $type)."s WHERE id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
@@ -106,7 +106,7 @@ while($past = $result->fetchObject()) {
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
-			<?php if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $author === userFetch('displayname','r') || $type === 'category' && permissions(2)): if(!isset($type)): ?>
+			<?php if(!isset($type)): ?>
 			<p>The type of content to add was not specified. You must have taken a bad link. Please
 			use the navigation bar above to choose the correct type.</p>
 			<?php else: ?>
@@ -116,7 +116,7 @@ while($past = $result->fetchObject()) {
 				<div style="float:left;width:480px;margin-top:3px;">
 					<label class="tfl" for="title">Title</label>
 					<input class="textfield ef" name="title" type="text" id="title" title="Title" value="<?php echo stripslashes($title) ?>" />
-					<label class="tfl" for="wysiwyg"><?php ($type == 'category' ? echo 'Info' : echo 'Body') ?></label>
+					<label class="tfl" for="wysiwyg"><?php echo $type == 'category' ? 'Info' : 'Body'; ?></label>
 					<textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo stripslashes($text) ?></textarea>
 					<input class="ef" type="hidden" name="type" value="<?php echo $type ?>" />
 					<input class="ef" type="hidden" name="id" value="<?php echo (int)$_GET['id'] ?>" />

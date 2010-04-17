@@ -88,7 +88,7 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
-			<?php if($type !== 'category' && permissions(1) || $type === 'category' && permissions(2)): if(!isset($type)): ?>
+			<?php if(permissions(1)): if(!isset($type)): ?>
 			<p>The type of content to add was not specified. You must have taken a bad link. Please
 			use the navigation bar above to choose the correct type.</p>
 			<?php else: ?>
@@ -98,7 +98,7 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 				<div style="float:left;width:480px;margin-top:3px;">
 					<label class="tfl" for="title">Title</label>
 					<input id="title" class="textfield cf" name="title" type="text" title="Title" /><br />
-					<label class="tfl" for="wysiwyg"><?php ($type == 'category' ? echo 'Info' : echo 'Body') ?></label>
+					<label class="tfl" for="wysiwyg"><?php echo $type == 'category' ? 'Info' : 'Body'; ?></label>
 					<textarea rows="12" cols="36" name="text" id="wysiwyg"></textarea><br />
 					<input class="cf" type="hidden" name="type" value="<?php echo $type ?>" />
 				</div>
