@@ -22,22 +22,27 @@ require(ABSPATH .'/Sources/Core.php');
 
 if((int)$_GET['type'] == 1) { $type = 'post'; }
 elseif((int)$_GET['type'] == 2) { $type = 'page'; }
+elseif((int)$_GET['type'] == 3) { $type = 'category' }
 
-# Query for post
-$result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
+# Query for past content
+$result = $dbh->query("SELECT * FROM ".($type == 'category' ? 'categorie' : $type)."s WHERE id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
 
-# Get post data and set it
+# Get past data and set it
 while($past = $result->fetchObject()) {
 	$title = $past->title;
-	$s_category = (int)$past->category;
-	if($past->published == 1) {
-		$ps_checked = 'checked="checked"';
-	}
-	if($past->comments == 1) {
-		$cs_checked = 'checked="checked"';
+	if($type !== 'category') {
+		$author = $past->author;
+		$s_category = (int)$past->category;
+		if($past->published == 1) {
+			$ps_checked = 'checked="checked"';
+		}
+		if($past->comments == 1) {
+			$cs_checked = 'checked="checked"';
+		}
 	}
 	if($type == 'post') { $text = $past->post; }
 	elseif($type == 'page') { $text = $past->page; }
+	elseif($type == 'category') { $text  = $past->info; }
 }
 
 ?>
@@ -80,7 +85,7 @@ while($past = $result->fetchObject()) {
 					url: this.getAttribute('action'),
 					timeout: 2000,
 					error: function() {
-						$('#notifybox').text('Failed to submit <?php echo ucwords($type) ?>.').css("background","#b20000").slideDown("normal");
+						$('#notifybox').text('Failed to submit <?php echo $type ?>.').css("background","#b20000").slideDown("normal");
 						console.log("Failed to submit");
 						alert("Failed to submit.");
 					},
@@ -101,7 +106,7 @@ while($past = $result->fetchObject()) {
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
-			<?php if(!isset($type)): ?>
+			<?php if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $author === userFetch('displayname','r') || $type === 'category' && permissions(2)): if(!isset($type)): ?>
 			<p>The type of content to add was not specified. You must have taken a bad link. Please
 			use the navigation bar above to choose the correct type.</p>
 			<?php else: ?>
@@ -111,7 +116,7 @@ while($past = $result->fetchObject()) {
 				<div style="float:left;width:480px;margin-top:3px;">
 					<label class="tfl" for="title">Title</label>
 					<input class="textfield ef" name="title" type="text" id="title" title="Title" value="<?php echo stripslashes($title) ?>" />
-					<label class="tfl" for="wysiwyg">Body</label>
+					<label class="tfl" for="wysiwyg"><?php ($type == 'category' ? echo 'Info' : echo 'Body') ?></label>
 					<textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo stripslashes($text) ?></textarea>
 					<input class="ef" type="hidden" name="type" value="<?php echo $type ?>" />
 					<input class="ef" type="hidden" name="id" value="<?php echo (int)$_GET['id'] ?>" />
@@ -124,9 +129,10 @@ while($past = $result->fetchObject()) {
 						</select><br /><br />
 						<label for="comments">Comments on?</label>
 						<input class="ef" type="checkbox" name="comments" id="comments" <?php echo $cs_checked; ?> value="1" /><br />
+					<?php elseif($type == 'post' || $type == 'page'): ?>
+						<label for="published">Published?</label>
+						<input class="ef" type="checkbox" name="published" id="published" <?php echo $ps_checked; ?> value="1" /><br /><br />
 					<?php endif; ?>
-					<label for="published">Published?</label>
-					<input class="ef" type="checkbox" name="published" id="published" <?php echo $ps_checked; ?> value="1" /><br /><br />
 					<input class="ef submit" name="edit" type="submit" value="Save" />
 				</div>
 				<div style="clear:both;"></div>
