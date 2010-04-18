@@ -59,7 +59,7 @@ require(ABSPATH .'/Sources/Core.php');
 							if($rpresult->numRows() == 0): ?>
 								No posts to display.
 							<?php else: while($rp = $rpresult->fetch(SQLITE_ASSOC)): ?>
-								<li><a href="<?php bloginfo('url')?>post.php?id=<?php echo $rp['id']; ?>"><?php echo $rp['title']?></a></li>
+								<li><a href="<?php bloginfo('url')?>?post=<?php echo $rp['id']; ?>"><?php echo $rp['title']?></a></li>
 							<?php endwhile; endif; ?>
 						</ul>
 					</div>
@@ -71,7 +71,7 @@ require(ABSPATH .'/Sources/Core.php');
 							if($rcresult->numRows() == 0): ?>
 								No comments to display.
 							<?php else: while($rp = $rcresult->fetch(SQLITE_ASSOC)): $rcpresult = $dbh->query("SELECT title FROM posts WHERE id=".(int)$rp['pid']) ?>
-								<li><a href="<?php bloginfo('url')?>post.php?id=<?php echo $rp['pid']; ?>#comment-<?php echo $rp['id']; ?>"><?php echo $rp['name']?></a> on <a href="<?php bloginfo('url')?>post.php?id=<?php echo $rp['pid']; ?>"><?php echo $rcpresult->fetchSingle(); ?></a></li>
+								<li><a href="<?php bloginfo('url')?>?post=<?php echo $rp['pid']; ?>#comment-<?php echo $rp['id']; ?>"><?php echo $rp['name']?></a> on <a href="<?php bloginfo('url')?>?post=<?php echo $rp['pid']; ?>"><?php echo $rcpresult->fetchSingle(); ?></a></li>
 							<?php endwhile; endif; ?>
 						</ul>
 					</div>

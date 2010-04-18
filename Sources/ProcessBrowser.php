@@ -35,7 +35,7 @@ if(isset($_POST['comment_submit'])) {
 				$dbh->query("INSERT INTO comments (pid,name,email,website,date,text) VALUES($comment_pid,'$comment_name','$comment_email','$comment_website',$comment_date,'$comment_text')") or die(sqlite_error_string($dbh->lastError));
 		}
 		// Send the user back to the page they came from
-		header('Location: '.bloginfo('url',2).'post.php?id='.(int)$_POST['comment_pid']);
+		header('Location: '.bloginfo('url',2).'?post='.(int)$_POST['comment_pid']);
 	}
 	if(bloginfo('comment_moderation', 1) === 'approval') {
 	
