@@ -45,17 +45,18 @@ if(isset($_POST['create'])) {
 		else {
 			$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(sqlite_error_string($dbh->lastError()));
 		}
-		# Fetch post ID from database
-		$id = $dbh->lastInsertRowid();
-		# Return full url to post to jQuery
-		echo bloginfo('url', 'r')."?".$type."=".$id;
 	}
 	else {
 		$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
 		$info = sqlite_escape_string(cleanHTML($_POST['text']));
 		$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
+		$type = "category";
 		$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('$shortname','$title','$info')");
 	}
+	# Fetch post ID from database
+	$id = $dbh->lastInsertRowid();
+	# Return full url to post to jQuery
+	echo bloginfo('url', 'r')."?".$type."=".$id;
 	# Prevent the rest of the page from loading
 	die();
 }
@@ -78,15 +79,14 @@ if(isset($_POST['edit'])) {
 		# Check category
 		$category = (int)$_POST['category'];
 	}
-	# For categories only
-	if($type == 'category') {
-		$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15));
+	elseif($type == 'category') {
+		$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
 	}
 	# Query for previous data
-	$result = $dbh->query("SELECT * FROM ".$type."s WHERE id=".$id) or die(sqlite_error_string($dbh->lastError()));
+	$result = $dbh->query("SELECT * FROM ".($type == 'category' ? 'categorie' : $type)."s WHERE id=".$id) or die(sqlite_error_string($dbh->lastError()));
 	# Fetch previous data
 	while($past = $result->fetchObject()) {
-		if($type == 'post') { 
+		if($type == 'post') {
 			$ptitle = $past->title;
 			$ppublished = $past->published;
 			$ptext = $past->post;
@@ -96,30 +96,30 @@ if(isset($_POST['edit'])) {
 		elseif($type == 'page') {
 			$ptitle = $past->title;
 			$ppublished = $past->published;
-			$ptext = $past->page; 
+			$ptext = $past->page;
 		}
 		elseif($type == 'category') {
 			$ptitle = $past->fullname;
 			$ptext = $past->info;
 			$pshortname = $past->shortname;
-		}	
+		}
 	}
 	# Set a base query to modify
 	$base = "UPDATE ".($type == 'category' ? 'categorie' : $type)."s SET ";
 	# Run through scenarios
-	if($type !== 'category') {
+	if($type == 'post' || $type == 'page') {
 		if(stripslashes($ptitle) !== $title) { $base .= "title='".sqlite_escape_string($title)."', "; }
 		if(stripslashes($ptext) !== $text) { $base .= $type."='".sqlite_escape_string($text)."', "; }
 		if((int)$ppublished !== $published) { $base .= "published='".(int)$published."', "; }
+		if($type == 'post') {
+			if((int)$pcategory !== $category) { $base .= "category='".(int)$category."', "; }
+			if((int)$pcomments !== $comments) { $base .= "comments='".(int)$comments."', "; }
+		}
 	}
 	else {
 		if(stripslashes($ptitle) !== $title) { $base .= "fullname='".sqlite_escape_string($title)."', "; }
-		if(stripslashes($pshortname) !== $shortname { $base .= "shortname='".sqlite_escape_string($title)."', "; }
+		if(stripslashes($pshortname) !== $shortname) { $base .= "shortname='".sqlite_escape_string($shortname)."', "; }
 		if(stripslashes($ptext) !== $text) { $base .= "info='".sqlite_escape_string($text)."', "; }
-	}
-	if($type == 'post') {
-		if((int)$pcategory !== $category) { $base .= "category='".(int)$category."', "; }
-		if((int)$pcomments !== $comments) { $base .= "comments='".(int)$comments."', "; }
 	}
 	# Remove last comma & space
 	$base = substr($base, 0, -2);
