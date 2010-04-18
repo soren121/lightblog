@@ -1,3 +1,4 @@
+
 <?php session_start();
 
 /*********************************************
@@ -58,15 +59,15 @@ while($row = $result->fetch(SQLITE_ASSOC)) {
 		
 	// Add elements to the feed item    
 	$newItem->setTitle(stripslashes($row['title']));
-	$newItem->setLink(bloginfo('url', 'r').'post.php?id='.$row['id']);
+	$newItem->setLink(bloginfo('url', 'r').'?post='.$row['id']);
 	$newItem->setDescription(stripslashes($row['post']));
 	$newItem->setDate(date("D, d M Y h:i:s O", $row['date']));
 	// Add RSS-unique elements
 	if($type == 'rss'):
-		$newItem->addElement('guid', bloginfo('url', 'r').'post.php?id='.$row['id'], array('isPermaLink'=>'true'));
+		$newItem->addElement('guid', bloginfo('url', 'r').'?post='.$row['id'], array('isPermaLink'=>'true'));
 	// Add Atom-unique elements
 	elseif($type == 'atom'):
-		$newItem->addElement('id', bloginfo('url', 'r').'post.php?id='.$row['id']);
+		$newItem->addElement('id', bloginfo('url', 'r').'?post='.$row['id']);
 	endif;
 	// Now add the feed item
 	$TestFeed->addItem($newItem);
