@@ -36,11 +36,19 @@ require(ABSPATH .'/Sources/Template.php');
 // Include theme files
 $themeName = bloginfo('theme', 'r');
 
+// If it isn't a post or page we're showing...
 if(!isset($_GET['post']) && !isset($_GET['page'])) {
 	// Pagination variables
-	if(isset($_GET['page'])){if((int)$_GET['page']>1){$page=(int)$_GET['page'];}}else{$page=0;}
 	$file = $_SERVER['SCRIPT_FILENAME'];
-
+	if(isset($_GET['page'])) {
+		if((int)$_GET['page'] > 1) {
+			$page = (int)$_GET['page'];
+		}
+	}
+	else {
+		$page = 0;
+	}
+	
 	// Display the right post view
 	if(isset($_GET['archive'])) {
 		$GLOBALS['postquery']['type'] = 'archive';
@@ -60,14 +68,19 @@ if(!isset($_GET['post']) && !isset($_GET['page'])) {
 	include('themes/'.$themeName.'/main.php');
 }
 
+// Looks like it is a post or page
 else {	
-	if(isset($_GET['post'])) {		
+	if(isset($_GET['post'])) {
+		// Get post ID	
 		$pid = (int)$_GET['post'];
+		// Display appropriate theme file
 		include('themes/'.$themeName.'/post.php');
 	}
 	
 	elseif(isset($_GET['page'])) {
+		// Get post ID
 		$pid = (int)$_GET['page'];
+		// Display appropriate theme file
 		include('themes/'.$themeName.'/page.php');
 	}
 }
