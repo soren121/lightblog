@@ -30,6 +30,10 @@ elseif($_GET['type'] == 'atom'):
 	$TestFeed = new FeedWriter(ATOM);
 endif;
 
+if(isset($_GET['category'])) {
+	$category = (int)$_GET['category'];
+}
+
 // Setting the channel elements
 // Use wrapper functions for common elements
 $TestFeed->setTitle('Syndication feed for '.bloginfo('title', 'r'));
@@ -50,7 +54,8 @@ elseif($type == 'rss'):
 endif;
 
 // Adding items to feed. Generally this portion will be in a loop and add all feeds.
-$result = $dbh->query("SELECT * FROM posts ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
+$where = (isset($category)) ? "AND category=".$category." " : "";
+$result = $dbh->query("SELECT * FROM posts WHERE published=1 $where ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
 
 while($row = $result->fetch(SQLITE_ASSOC)) {
 	// Create a FeedItem
