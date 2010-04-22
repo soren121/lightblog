@@ -2,7 +2,21 @@
 				<div>
 					<h4>Pages</h4>
 					<ul>
-					<?php list_pages() ?>
+						<?php list_pages() ?>
+					</ul>
+				</div>
+				
+				<div>
+					<h4>Categories</h4>
+					<ul>
+						<?php list_categories() ?>
+					</ul>
+				</div>
+				
+				<div>
+					<h4>Archives</h4>
+					<ul>
+						<?php list_archives() ?>
 					</ul>
 				</div>
 				

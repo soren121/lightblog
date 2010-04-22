@@ -197,9 +197,10 @@ if(isset($_POST['update'])) {
 		<div id="content">
 			<?php if(!isset($page) || $page == null): $disable = null; $page = null; ?>
 				<h2>Updating your database</h2>
-				<p>You will need to update your LightBlog site's database before you<br />
-				   can continue to use your site. Click the Update button below to start<br />
-				   the process. Please note that if you have a lot of content on your site<br />
+				<p>This updater <strong>only</strong> works for LightBlog sites being upgraded from version<br />
+				   0.9.2 to 0.9.3. You will need to update your LightBlog site's database <br />
+				   before you can continue to use your site. Click the Update button below to <br />
+				   start the process. Please note that if you have a lot of content on your site<br />
 				   it will take more time, so please be patient. DO NOT click the back button<br />
 				   or close your browser before the update is complete.</p>		
 				<form action="<?php echo basename($_SERVER['SCRIPT_FILENAME']); ?>" method="post">

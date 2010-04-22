@@ -714,22 +714,25 @@ function list_pages($tag = 'li', $limit = 5) {
 
 		HTML list items for however many pages were requested.
 */
-function list_categories($tag, $limit = 5) {
+function list_categories($tag = 'li', $limit = 5) {
 	// Grab the database handle
 	global $dbh;
 	// Get category data from database
 	$result = $dbh->query("SELECT * FROM categories ORDER BY id desc LIMIT 0, ".$limit) or die(sqlite_error_string($dbh->lastError));
 	// What tag are we using?
 	if($tag == 'option') {
-		$arg = 'value="'.$row->shortname.'"';
+		// Sort through and create list items
+		while($row = $result->fetchObject()) {
+			echo '<option value="'.$row->shortname.'">'.stripslashes($row->fullname).'</option>';
+		}
 	}
 	else {
-		$arg = '';
+		// Sort through and create list items
+		while($row = $result->fetchObject()) {
+			echo '<li><a href="'.bloginfo('url','r').'?category='.(int)$row->id.'">'.stripslashes($row->fullname).'</a></li>';
+		}
 	}
-	// Sort through and create list items
-	while($row = $result->fetchObject()) {
-		echo '<'.$tag.' '.$arg.'>'.stripslashes($row->fullname).'</'.$tag.'>';
-	}
+
 }
 
 /*
@@ -741,19 +744,17 @@ function list_archives($limit = 10) {
 	// Grab the database handle
 	global $dbh;
 	// Get archive data
-	$result = $dbh->query("SELECT date FROM posts ORDER BY desc WHERE published=1 LIMIT 0, ".(int)$limit);
-	// Echo the list start tag
-	echo "<ul>";
+	$result = $dbh->query("SELECT date FROM posts WHERE published=1 ORDER BY id desc LIMIT 0, ".(int)$limit);
+	// Sort through and create list items
 	while($row = $result->fetchObject()) {
 		$month = date('m', $row->date);
 		$monthname = date('F', $row->date);
 		$year = date('Y', $row->date);
 		if(!isset($post[$year][$month])) {
-			echo "<li><a href=\"".bloginfo('url')."?archive=".$year.$month."\">".$monthname." ".$year."</a></li>";
+			echo "<li><a href=\"".bloginfo('url','r')."?archive=".$year.$month."\">".$monthname." ".$year."</a></li>";
 		}
+		$post[$year][$month] = true;
 	}
-	// Close the list
-	echo "</ul>";
 }
 
 /*
@@ -773,7 +774,7 @@ function list_archives($limit = 10) {
 	
 		Previous/Next HTML anchor links when applicable.
 */
-function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "?page=") {
+function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "?p=") {
 	# Global the database handle so we can use it in this function
 	global $dbh;
 	# Set defaults
@@ -792,13 +793,13 @@ function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "
 	$pagination = "";
 	# Do we have more than one page?
 	if($totalitems > $limit) {
-		# Add the previous link
-		if($page > 1) {
-			$pagination .= "<a href=\"" . $target . $pagestring . $prev . "\" class=\"prev\">&laquo; Older Posts</a>";
-		}
 		# Add the next link
+		if($page > 1) {
+			$pagination .= "<a href=\"" . $target . $pagestring . $prev . "\" class=\"next\">Newer Posts &raquo;</a>";
+		}
+		# Add the previous link
 		if($page < $lastpage) {
-			$pagination .= "<a href=\"" . $target . $pagestring . $next . "\" class=\"next\">Newer Posts &raquo;</a>";
+			$pagination .= "<a href=\"" . $target . $pagestring . $next . "\" class=\"prev\">&laquo; Older Posts</a>";
 		}
 	}
 	# Return the links! Duh!

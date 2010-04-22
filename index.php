@@ -39,10 +39,10 @@ $themeName = bloginfo('theme', 'r');
 // If it isn't a post or page we're showing...
 if(!isset($_GET['post']) && !isset($_GET['page'])) {
 	// Pagination variables
-	$file = $_SERVER['SCRIPT_FILENAME'];
-	if(isset($_GET['page'])) {
-		if((int)$_GET['page'] > 1) {
-			$page = (int)$_GET['page'];
+	$file = basename($_SERVER['SCRIPT_FILENAME']);
+	if(isset($_GET['p'])) {
+		if((int)$_GET['p'] > 1) {
+			$page = (int)$_GET['p'];
 		}
 	}
 	else {
