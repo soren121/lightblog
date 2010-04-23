@@ -74,31 +74,28 @@ class PostLoop {
 		
 		Parameters:
 		
-			type - Type of query to build. (e.g. post/page)
 			where - Optional parameter. You can use this to add an extra condition to the WHERE selector in the query.
 
 		Returns:
 		
 			A complete SQL query.
 	*/
-	private function parseQuery($type, $where = '') {
-		if($type == 'post') {
-			// Get the view type
-			$querytype = $GLOBALS['postquery']['type'];
-			if($querytype == 'archive') {
-				$queryextra = substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0);
-				$queryextra = explode('-', $queryextra);
-				$firstday = mktime(0, 0, 0, $queryextra[1], 1, $queryextra[0]);
-				$lastday = mktime(0, 0, 0, ($queryextra[1] + 1), 0, $queryextra[0]);
-				return "SELECT * FROM posts WHERE date BETWEEN $firstday AND $lastday AND published='1' $where ORDER BY id desc";
-			}
-			elseif($querytype == 'category') {
-				$queryextra = (int)$GLOBALS['postquery']['catid'];
+	private function parseQuery($where = '') {
+		// Get the view type
+		$querytype = $GLOBALS['postquery']['type'];
+		if($querytype == 'archive') {
+			$queryextra = substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0);
+			$queryextra = explode('-', $queryextra);
+			$firstday = mktime(0, 0, 0, $queryextra[1], 1, $queryextra[0]);
+			$lastday = mktime(0, 0, 0, ($queryextra[1] + 1), 0, $queryextra[0]);
+			return "SELECT * FROM posts WHERE date BETWEEN $firstday AND $lastday AND published='1' $where ORDER BY id desc";
+		}
+		elseif($querytype == 'category') {
+			$queryextra = (int)$GLOBALS['postquery']['catid'];
 				return "SELECT * FROM posts WHERE category=$queryextra AND published='1' $where ORDER BY id desc";
-			}
-			else {
-				return "SELECT * FROM posts WHERE published='1' $where ORDER BY id desc";
-			}
+		}
+		else {
+			return "SELECT * FROM posts WHERE published='1' $where ORDER BY id desc";
 		}
 	}
 	
@@ -774,14 +771,14 @@ function list_archives($limit = 10) {
 	
 		Previous/Next HTML anchor links when applicable.
 */
-function simplePagination($type, $target, $page = 1, $limit = 6, $pagestring = "?p=") {
+function simplePagination($type, $target, $page = 1, $limit = 8, $pagestring = "?p=") {
 	# Global the database handle so we can use it in this function
 	global $dbh;
 	# Set defaults
-	if(!$limit) $limit = 6;
+	if(!$limit) $limit = 8;
 	if(!$page) $page = 1;
 	# Set the query to retrieve the number of rows
-	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($type)."s") or die(sqlite_error_string($dbh->lastError));
+	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($type)."s WHERE published=1") or die(sqlite_error_string($dbh->lastError));
 	# Query the database
 	@list($totalitems) = $query->fetch(SQLITE_NUM);	
 	# Set various required variables
