@@ -1,5 +1,0 @@
-/******************************************************************************************
-	elite.slidemenu.js; written by the LightBlog Team
-	based on code by Michael Leigeber <http://www.leigeber.com/2008/11/drop-down-menu/>
-******************************************************************************************/
-$.fn.menu=function(b){this.h=[];this.c=[];var k=c,o=$(b).tag("ul"),e=$(o).length,f=0,n=15,j=50;for(f;f<e;f++){var g=o[f].parentNode;this.h[f]=g;this.c[f]=o[f];g.onmouseover=m("+i+",true);g.onmouseout=m("+i+")}function m(a,l){var r=this.c[a],i=this.h[a],q=$(i).tag("a")[0];clearInterval(r.t);r.style.overflow="hidden";if(l){$(q).addClass(k);if(!r.mh){r.style.display="block";r.style.height="";r.mh=r.offsetHeight;r.style.height=0}if(r.mh==r.offsetHeight){r.style.overflow="visible"}else{r.style.zIndex=j;j++;r.t=setInterval(function(){d(r,1)},n)}}else{$(q).removeClass(k);r.t=setInterval(function(){d(r,-1)},n)}}function d(l,i){var a=l.offsetHeight;if((a<=0&&i!=1)||(a>=l.mh&&i==1)){if(i==1){$(l).show()}clearInterval(l.t);return}if(i==1){$(l).fade(1).slide(1)}else{$(l).fade(0).slide(0)}}};
