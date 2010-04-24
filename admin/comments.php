@@ -94,7 +94,7 @@ else {
 				<!-- Start row loop -->
 				<?php while($row = $result->fetchObject()): ?>	
 				<tr id="tr<?php echo $row->id ?>">
-					<td style="width:128px;"><img src="http://www.gravatar.com/avatar.php?gravatar_id=<?php echo md5($row->email) ?>&amp;size=24" style="vertical-align:middle;margin-right:5px;" /><?php echo $row->name ?></td>
+					<td style="white-space:nowrap;"><img src="http://www.gravatar.com/avatar.php?gravatar_id=<?php echo md5($row->email) ?>&amp;size=24" style="vertical-align:middle;margin-right:5px;" /><?php echo $row->name ?></td>
 					<td><?php echo implode(' ', array_slice(explode(' ', $row->text), 0, 10)); ?></td>
 					<td><?php echo date('n/j/Y \a\t h:i a', $row->date) ?></td>
 					<td class="c"><img src="style/check.png" alt="Published" /></td>
