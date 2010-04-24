@@ -37,8 +37,11 @@
 							<li><a href="manage.php?type=1">Post</a></li>
 							<li><a href="manage.php?type=2">Page</a></li>
 							<li><a href="manage.php?type=3">Category</a></li>
+							<li><a href="manage.php?type=4">Comments</a></li>
 						</ul>
 					</li>
+				<?php endif; if(permissions(1) && !permissions(2)): ?>
+					<li><a href="manage.php?type=1">Manage Post</a></li>
 				<?php endif; if(permissions(3)): ?>
 					<li><a href="design.php">Design</a></li>
 				<?php endif; if(permissions(1) && !permissions(2)): ?>

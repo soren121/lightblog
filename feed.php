@@ -55,7 +55,7 @@ endif;
 
 // Adding items to feed. Generally this portion will be in a loop and add all feeds.
 $where = (isset($category)) ? "AND category=".$category." " : "";
-$result = $dbh->query("SELECT * FROM posts WHERE published=1 $where ORDER BY id desc") or die(sqlite_error_string($dbh->lastError));
+$result = $dbh->query("SELECT * FROM posts WHERE published=1 $where ORDER BY id desc LIMIT 0, 10") or die(sqlite_error_string($dbh->lastError));
 
 while($row = $result->fetch(SQLITE_ASSOC)) {
 	// Create a FeedItem
