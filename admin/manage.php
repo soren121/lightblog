@@ -123,8 +123,8 @@ else {
 						<td class="c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $row->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
 						<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $row->id.', \''.(($type == 'categories') ? $row->fullname : $row->title).'\'' ?>);" style="cursor:pointer;" /></td>
 					<?php else: ?>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
+						<td class="c"><img src="style/edit-d.png" alt="" title="You aren't allowed to edit this <?php echo substr($type, 0, -1); ?>." /></td>
+						<td class="c"><img src="style/delete-d.png" alt="" title="You aren't allowed to delete this <?php echo substr($type, 0, -1); ?>." /></td>
 					<?php endif; ?>
 				</tr>
 				<?php endwhile; ?>
