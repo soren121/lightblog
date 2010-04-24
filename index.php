@@ -70,14 +70,16 @@ if(!isset($_GET['post']) && !isset($_GET['page'])) {
 else {	
 	if(isset($_GET['post'])) {
 		// Get post ID	
-		$pid = (int)$_GET['post'];
+		$GLOBALS['pid'] = (int)$_GET['post'];
+		$GLOBALS['postquery']['type'] = 'post';
 		// Display appropriate theme file
 		include('themes/'.$themeName.'/post.php');
 	}
 	
 	elseif(isset($_GET['page'])) {
 		// Get page ID
-		$pid = (int)$_GET['page'];
+		$GLOBALS['pid'] = (int)$_GET['page'];
+		$GLOBALS['postquery']['type'] = 'page';
 		// Display appropriate theme file
 		include('themes/'.$themeName.'/page.php');
 	}

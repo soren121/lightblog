@@ -108,9 +108,9 @@ class PostLoop {
 		
 			pid - The post's ID.
 	*/
-	public function obtain_post($pid) {
+	public function obtain_post() {
 		# Sanitize and set variables
-		$pid = (int)$pid;
+		$pid = (int)$GLOBALS['pid'];
 		$dbh = $this->dbh;
 		
 		# Query the database for the post data
@@ -377,13 +377,13 @@ class PageLoop {
 
 			pid - The page's ID.
 	*/
-	public function obtain_page($pid) {
+	public function obtain_page() {
 		# Sanitize and set variables
-		$pid = (((int)$pid) -1);
+		$pid = (int)$GLOBALS['pid'];
 		$dbh = $this->dbh;
 		
 		# Query the database for the page data
-		$this->result = $dbh->query("SELECT * FROM 'pages' LIMIT ".$pid.", 1");
+		$this->result = $dbh->query("SELECT * FROM 'pages' WHERE id=".$pid);
 	}
 
 	/*
@@ -510,17 +510,34 @@ class CommentLoop {
 	}
 
 	/*
+		Function: comments_open
+		
+		Checks if comments are enabled.
+
+		Returns:
+
+			Boolean value (e.g. true/false.)
+	*/
+	public function comments_open() {
+		$dbh = $this->dbh;
+		$pid = (int)$GLOBALS['pid'];
+		$query = $dbh->query("SELECT comments FROM 'posts' WHERE id='$pid'");
+		if($query->fetchSingle() == 1) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	/*
 		Function: obtain_comments
 
 		Obtains the data for comments associated with a post.
-
-		Parameters:
-
-			pid - The post ID associated with the comment.
 	*/
-  	public function obtain_comments($pid) {
+  	public function obtain_comments() {
 		$dbh = $this->dbh;
-		$pid = (int)$pid;
+		$pid = (int)$GLOBALS['pid'];
     	$this->result = $dbh->query("SELECT * FROM 'comments' WHERE pid='$pid'");
   	}
 
@@ -762,7 +779,7 @@ function list_archives($limit = 10) {
 	Parameters:
 	
 		type - Type of content (e.g. post.)
-		target - Base URL of executing file (e.g. http://localhost/lighty/.)
+		target - Base URL of executing file (e.g. http://localhost/lighty/)
 		page - The current page.
 		limit - Number of items on a single page.
 		pagestring - Argument string for our page GET.
@@ -781,7 +798,7 @@ function simplePagination($type, $target, $page = 1, $limit = 8, $pagestring = "
 	# Set various required variables
 	$prev = $page - 1;						# Previous page is page - 1
 	$next = $page + 1;						# Next page is page + 1
-	$lastpage = ceil($totalitems/$limit);	# Last page is = total items / items per page, rounded up.	
+	$lastpage = ceil($totalitems/$limit);	# Last page is = total items / items per page, rounded up.
 	# Clear $pagination
 	$pagination = "";
 	# Do we have more than one page?

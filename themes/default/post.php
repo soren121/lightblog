@@ -26,9 +26,11 @@
 				<p>Sorry, no posts are available for display.</p>
 				<?php endif; ?>
 				
-				<h4 class="commenthead"><?php grammarFix(commentNum($pid), 'Comment', 'Comments') ?></h4><br />
+				<!-- Check if comments are enabled -->
+				<?php $com = new CommentLoop(); if($com->comments_open()): ?>
+				<h4 class="commenthead"><?php grammarFix(commentNum($pid), 'Comment', 'Comments') ?></h4><br />				
 				<!-- Start comment loop -->
-				<?php $com = new CommentLoop(); $com->obtain_comments($pid); while($com->has_comments()): ?>
+				<?php $com->obtain_comments(); while($com->has_comments()): ?>
 				<div class="comment <?php alternateColor('c1','c2') ?>" id="comment-<?php $com->id() ?>">
 					<img class="comment_gravatar" src="<?php $com->gravatar() ?>" alt="" />
 					<a class="comment_name" href="<?php $com->website() ?>"><?php $com->name() ?></a>
@@ -52,6 +54,11 @@
 					<p><input name="comment_submit" type="submit" value="Submit" id="cfsubmit" /></p>
 					<p><input name="comment_pid" type="hidden" value="<?php echo $pid; ?>" /></p>
 				</form>
+				<?php else: ?>
+				<!-- If comments are disabled, this message is shown -->
+				<p>Comments have been disabled on this post.</p>
+				<!-- End message -->
+				<?php endif; ?>
 				<div class="clear"></div>
 			</div>
 <?php include('footer.php')?>

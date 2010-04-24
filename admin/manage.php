@@ -24,11 +24,8 @@ if((int)$_GET['type'] == 1) { $type = 'posts'; }
 elseif((int)$_GET['type'] == 2) { $type = 'pages'; }
 elseif((int)$_GET['type'] == 3) { $type = 'categories'; }
 
-# Functions to find the start for a query based on the page number
-function findStart($input) { $input = $input - 1; return $input * 8; }
-
 if(isset($_GET['page']) && $_GET['page'] > 1) {
-		$result = $dbh->query("SELECT * FROM ".$type." ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
+		$result = $dbh->query("SELECT * FROM ".$type." ORDER BY id desc LIMIT ".(($_GET['page'] - 1) * 8).",8") or die(sqlite_error_string($dbh->lastError));
 }
 else {
 	$result = $dbh->query("SELECT * FROM ".$type." ORDER BY id desc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
@@ -122,7 +119,7 @@ else {
 							<?php endif; ?>
 						</td>
 					<?php endif; ?>
-					<?php if(($type !== 'categories') && (permissions(1) && userFetch('username',1) == $row->author) || (permissions(2))): ?>
+					<?php if(($type !== 'categories') && (permissions(1) && userFetch('displayname',1) == $row->author) || (permissions(2))): ?>
 						<td class="c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $row->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
 						<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $row->id.', \''.(($type == 'categories') ? $row->fullname : $row->title).'\'' ?>);" style="cursor:pointer;" /></td>
 					<?php else: ?>
@@ -133,7 +130,7 @@ else {
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
-			<?php echo advancedPagination($type, $_SERVER['PHP_SELF'].'?type='.(int)$_GET['type'], (int)$_GET['page']); ?>
+			<?php echo advancedPagination($type, $_SERVER['PHP_SELF'].$_SERVER['REQUEST_URI'], (int)$_GET['page']); ?>
 			<!-- None exist error message -->
 			<?php else: ?>
 			<p>Sorry, no <?php echo $type ?> exist to manage.</p>

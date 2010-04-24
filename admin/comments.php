@@ -20,11 +20,8 @@
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
-# Functions to find the start for a query based on the page number
-function findStart($input) { return (($input * 8) - 1); }
-
 if(isset($_GET['page']) && $_GET['page'] > 1) {
-		$result = $dbh->query("SELECT * FROM comments ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
+		$result = $dbh->query("SELECT * FROM comments ORDER BY id desc LIMIT ".((($_GET['page']) - 1) * 8).",8") or die(sqlite_error_string($dbh->lastError));
 }
 else {
 	$result = $dbh->query("SELECT * FROM comments ORDER BY id desc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
@@ -78,7 +75,7 @@ else {
 		<?php include('menu.php'); ?>
 		<div id="content">
 			<!-- Check if parameters were set -->
-			<?php if(permissions(1)): ?>
+			<?php if(permissions(2)): ?>
 			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Manage Comments</h2>
 			<!-- Check if any posts/pages exist -->
 			<?php if($result->numRows() > 0): ?>
@@ -95,7 +92,7 @@ else {
 				<?php while($row = $result->fetchObject()): ?>	
 				<tr id="tr<?php echo $row->id ?>">
 					<td style="white-space:nowrap;"><img src="http://www.gravatar.com/avatar.php?gravatar_id=<?php echo md5($row->email) ?>&amp;size=24" style="vertical-align:middle;margin-right:5px;" /><?php echo $row->name ?></td>
-					<td><?php echo implode(' ', array_slice(explode(' ', $row->text), 0, 10)); ?></td>
+					<td><?php echo implode(' ', array_slice(explode(' ', $row->text), 0, 6)); ?></td>
 					<td><?php echo date('n/j/Y \a\t h:i a', $row->date) ?></td>
 					<td class="c"><img src="style/check.png" alt="Published" /></td>
 					<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $row->id ?>);" style="cursor:pointer;" /></td>
