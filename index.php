@@ -41,12 +41,10 @@ if(!isset($_GET['post']) && !isset($_GET['page'])) {
 	// Pagination variables
 	$file = basename($_SERVER['SCRIPT_FILENAME']);
 	if(isset($_GET['p'])) {
-		if((int)$_GET['p'] > 1) {
-			$page = (int)$_GET['p'];
-		}
+		$page = (int)$_GET['p'];
 	}
 	else {
-		$page = 0;
+		$page = 1;
 	}
 	
 	// Display the right post view
@@ -78,7 +76,7 @@ else {
 	}
 	
 	elseif(isset($_GET['page'])) {
-		// Get post ID
+		// Get page ID
 		$pid = (int)$_GET['page'];
 		// Display appropriate theme file
 		include('themes/'.$themeName.'/page.php');

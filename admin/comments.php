@@ -21,7 +21,7 @@ require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
 # Functions to find the start for a query based on the page number
-function findStart($input) { $input = $input - 1; return $input * 8; }
+function findStart($input) { return (($input * 8) - 1); }
 
 if(isset($_GET['page']) && $_GET['page'] > 1) {
 		$result = $dbh->query("SELECT * FROM comments ORDER BY id desc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));

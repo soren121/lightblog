@@ -114,7 +114,7 @@ class PostLoop {
 		$dbh = $this->dbh;
 		
 		# Query the database for the post data
-		$this->result = $dbh->query($this->parseQuery('post', "AND id=$pid"));
+		$this->result = $dbh->query($this->parseQuery("AND id=$pid"));
 	}
 	
 	/*
@@ -127,15 +127,15 @@ class PostLoop {
 			start - The ID of the first row to retrieve data from.
 			limit - The number of rows to retrieve data from, starting from the ID specified in start. 
 	*/
-  	public function obtain_posts($start = 0, $limit = 10) {
+  	public function obtain_posts($start = 1, $limit = 8) {
 		# Sanitize and set variables
     	$start = (int)$start;
     	$limit = (int)$limit;
-    	$start = $start * $limit;
+    	$start = ($start - 1) * $limit;
 		$dbh = $this->dbh;
 
 		# Query the database for post data
-    	$this->result = $dbh->query($this->parseQuery('post')." LIMIT ".$start.", ".$limit);
+    	$this->result = $dbh->query($this->parseQuery()." LIMIT ".$start.", ".$limit);
   	}
   	
 	/*
@@ -774,9 +774,6 @@ function list_archives($limit = 10) {
 function simplePagination($type, $target, $page = 1, $limit = 8, $pagestring = "?p=") {
 	# Global the database handle so we can use it in this function
 	global $dbh;
-	# Set defaults
-	if(!$limit) $limit = 8;
-	if(!$page) $page = 1;
 	# Set the query to retrieve the number of rows
 	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($type)."s WHERE published=1") or die(sqlite_error_string($dbh->lastError));
 	# Query the database
@@ -784,8 +781,7 @@ function simplePagination($type, $target, $page = 1, $limit = 8, $pagestring = "
 	# Set various required variables
 	$prev = $page - 1;						# Previous page is page - 1
 	$next = $page + 1;						# Next page is page + 1
-	$lastpage = ceil($totalitems/$limit);	# Last page is = total items / items per page, rounded up.
-	
+	$lastpage = ceil($totalitems/$limit);	# Last page is = total items / items per page, rounded up.	
 	# Clear $pagination
 	$pagination = "";
 	# Do we have more than one page?
