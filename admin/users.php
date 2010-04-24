@@ -104,7 +104,7 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 					<?php if(userFetch('username', 'r') !== $user->username): ?>
 						<td class="c"><img src="style/delete-user.png" onclick="deleteUser('<?php echo $user->id ?>', '<?php echo $user->username ?>');" alt="Delete User" style="cursor:pointer;" /></td>
 					<?php else: ?>
-						<td>&nbsp;</td>
+						<td class="c"><img src="style/delete-user-d.png" alt="" title="You can't delete yourself!" /></td>
 					<?php endif; ?>
 				</tr>
 				<?php endwhile; ?>
