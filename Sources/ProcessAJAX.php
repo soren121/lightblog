@@ -188,8 +188,9 @@ if(isset($_POST['addusersubmit'])) {
 		$email = sqlite_escape_string($email);
 		$displayname = sqlite_escape_string(strip_tags($displayname));
 		$role = sqlite_escape_string($role);
+		$ip = $_SERVER['REMOTE_ADDR'];
 		// Create the user!
-		$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$passhash','$email','$displayname','$role', '".get_ip()."', '$salt');") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">".sqlite_error_string($dbh->lastError()));
+		$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$passhash','$email','$displayname','$role', '$ip', '$salt');") or die("span style=\"color:red;margin-left:5px;\" class=\"inform\">".sqlite_error_string($dbh->lastError()));
 		echo "span style=\"color:green;margin-left:5px;\" class=\"inform\">User ".$username." created successfully.";
 	}
 	else {

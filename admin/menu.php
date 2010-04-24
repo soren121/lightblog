@@ -37,7 +37,7 @@
 							<li><a href="manage.php?type=1">Post</a></li>
 							<li><a href="manage.php?type=2">Page</a></li>
 							<li><a href="manage.php?type=3">Category</a></li>
-							<li><a href="manage.php?type=4">Comments</a></li>
+							<li><a href="comments.php">Comments</a></li>
 						</ul>
 					</li>
 				<?php endif; if(permissions(1) && !permissions(2)): ?>
