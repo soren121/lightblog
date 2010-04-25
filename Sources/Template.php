@@ -822,19 +822,18 @@ function simplePagination($type, $target, $page = 1, $limit = 8, $pagestring = "
 	Outputs the number of comments on a post.
 	
 	Parameters:
-	
-		id - The ID of the post that the comments are associated with.
+
 		output - Specifies whether to echo the number or return it. Default is to return it.
 		
 	Returns:
 	
 		The number of comments as an integer.
 */
-function commentNum($id, $output = 'r') {
+function commentNum($output = 'r') {
 	// Make the database handle available here
 	global $dbh;
 	// Set the query
-	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE pid=".(int)$id) or die(sqlite_error_string($dbh->lastError));
+	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE pid=".(int)$GLOBALS['pid']) or die(sqlite_error_string($dbh->lastError));
 	// Query the database
 	@list($commentnum) = $query->fetch(SQLITE_NUM);
 	// Return or echo data
