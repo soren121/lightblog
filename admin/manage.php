@@ -130,7 +130,7 @@ else {
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
-			<?php echo advancedPagination($type, $_SERVER['PHP_SELF'].$_SERVER['REQUEST_URI'], (int)$_GET['page']); ?>
+			<?php echo advancedPagination($type, ($_SERVER['HTTPS'] == 'on' ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], (int)$_GET['page']); ?>
 			<!-- None exist error message -->
 			<?php else: ?>
 			<p>Sorry, no <?php echo $type ?> exist to manage.</p>

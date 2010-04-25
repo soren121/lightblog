@@ -100,7 +100,7 @@ else {
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
-			<?php echo advancedPagination('comments', $_SERVER['PHP_SELF'].$_SERVER['REQUEST_URI'], (int)$_GET['page']); ?>
+			<?php echo advancedPagination('comments', ($_SERVER['HTTPS'] == 'on' ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], (int)$_GET['page']); ?>
 			<!-- None exist error message -->
 			<?php else: ?>
 			<p>Sorry, there are no comments to manage.</p>

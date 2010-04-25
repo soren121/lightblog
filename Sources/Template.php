@@ -331,7 +331,7 @@ class PostLoop {
 	/*
 		Destructor: __destruct
 		
-		Calls the simplePagination() function when the PostLoop class is destroyed with unset().
+		Displays simple paginations links when the PostLoop class is destroyed with unset().
 	*/
 	public function __destruct() {
 		if($GLOBALS['postquery']['type'] != 'post' || $GLOBALS['postquery']['type'] != 'page') {

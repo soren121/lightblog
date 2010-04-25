@@ -136,10 +136,8 @@ a:link, a:visited {
 
 #content div.pagination {
 	padding: 3px 3px 3px 2px;
-	margin: 5px 0 5px 0;
+	margin: 10px 0 5px 1px;
 	width: 550px;
-	position: absolute;
-	bottom: 10px;
 }
 
 #content div.pagination a {
