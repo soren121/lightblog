@@ -133,6 +133,7 @@ class PostLoop {
     	$limit = (int)$limit;
     	$start = ($start - 1) * $limit;
 		$dbh = $this->dbh;
+		$this->limit = $limit;
 
 		# Query the database for post data
     	$this->result = $dbh->query($this->parseQuery()." LIMIT ".$start.", ".$limit);
@@ -324,6 +325,43 @@ class PostLoop {
 		}
 		else {
 			return false;
+		}
+	}
+	
+	/*
+		Destructor: __destruct
+		
+		Calls the simplePagination() function when the PostLoop class is destroyed with unset().
+	*/
+	public function __destruct() {
+		if($GLOBALS['postquery']['type'] != 'post' || $GLOBALS['postquery']['type'] != 'page') {
+			global $file, $page;
+			$dbh = $this->dbh;
+			$limit = $this->limit;
+			echo '<div class="pagination">';
+			# Set the query to retrieve the number of rows
+			$query = $dbh->query(str_replace(" * ", " COUNT(*) ", $this->parseQuery())) or die(sqlite_error_string($dbh->lastError));
+			# Query the database
+			@list($totalitems) = $query->fetch(SQLITE_NUM);	
+			# Set various required variables
+			$prev = $page - 1;						# Previous page is page - 1
+			$next = $page + 1;						# Next page is page + 1
+			$lastpage = ceil($totalitems/$limit);	# Last page is = total items / items per page, rounded up.
+			# Set $pagination
+			$pagination = "";
+			# Do we have more than one page?
+			if($totalitems > $limit) {
+				# Add the next link
+				if($page > 1) {
+					$pagination .= "<a href=\"".$file."?p=".$prev."\" class=\"next\">Newer Posts &raquo;</a>";
+				}
+				# Add the previous link
+				if($page < $lastpage) {
+					$pagination .= "<a href=\"".$target."?p=".$next."\" class=\"prev\">&laquo; Older Posts</a>";
+				}
+			}
+			# Return the links! Duh!
+			echo $pagination.'</div>';
 		}
 	}
 }
@@ -769,51 +807,6 @@ function list_archives($limit = 10) {
 		}
 		$post[$year][$month] = true;
 	}
-}
-
-/*
-	Function: simplePagination
-	
-	Paginates a list of data using simple Previous/Next links.
-	
-	Parameters:
-	
-		type - Type of content (e.g. post.)
-		target - Base URL of executing file (e.g. http://localhost/lighty/)
-		page - The current page.
-		limit - Number of items on a single page.
-		pagestring - Argument string for our page GET.
-		
-	Returns:
-	
-		Previous/Next HTML anchor links when applicable.
-*/
-function simplePagination($type, $target, $page = 1, $limit = 8, $pagestring = "?p=") {
-	# Global the database handle so we can use it in this function
-	global $dbh;
-	# Set the query to retrieve the number of rows
-	$query = $dbh->query("SELECT COUNT(*) FROM ".sqlite_escape_string($type)."s WHERE published=1") or die(sqlite_error_string($dbh->lastError));
-	# Query the database
-	@list($totalitems) = $query->fetch(SQLITE_NUM);	
-	# Set various required variables
-	$prev = $page - 1;						# Previous page is page - 1
-	$next = $page + 1;						# Next page is page + 1
-	$lastpage = ceil($totalitems/$limit);	# Last page is = total items / items per page, rounded up.
-	# Clear $pagination
-	$pagination = "";
-	# Do we have more than one page?
-	if($totalitems > $limit) {
-		# Add the next link
-		if($page > 1) {
-			$pagination .= "<a href=\"" . $target . $pagestring . $prev . "\" class=\"next\">Newer Posts &raquo;</a>";
-		}
-		# Add the previous link
-		if($page < $lastpage) {
-			$pagination .= "<a href=\"" . $target . $pagestring . $next . "\" class=\"prev\">&laquo; Older Posts</a>";
-		}
-	}
-	# Return the links! Duh!
-	echo $pagination;
 }
 
 /*
