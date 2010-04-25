@@ -26,13 +26,9 @@
 						</span>
 					</div>
 				</div>
-				<?php endwhile; else: ?>
+				<?php endwhile; unset($posts); else: ?>
 				<p>Sorry, no posts matched your criteria.</p>
 				<?php endif; ?>
-				
-				<div class="pagination">
-					<?php simplePagination('post', $file, $page); ?>
-				</div>
 		      
 			   <div class="clear"></div>
 			</div>
