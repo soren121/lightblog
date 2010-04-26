@@ -46,10 +46,15 @@ else {
 			$('.roundedb').corner("round bottom 10px");
 			$('.nApproved').hover(
 				function() {
-					$(this).css('cursor', 'pointer').empty().html('<span style="color:green;">Approve?</span>');		
+					if(window.ajaxr == 'yes') {
+						void(0);
+					}
+					else {
+						$(this).css('cursor', 'pointer').empty().html('<span style="color:green;">Approve?</span>');	
+					}	
 				},
 				function() {
-					if(typeof(ajaxr) == 'undefined') {
+					if(typeof(window.ajaxr) == 'undefined') {
 						$(this).empty().html('<img src="style/cross.png" alt="Not approved" />');
 					}
 				}
@@ -67,8 +72,8 @@ else {
 						$('.nApproved').empty().html('<img src="style/cross.png" alt="Not approved" />');
 					},
 					success: function() {
-						$('.nApproved').removeClass('nApproved').addClass('approved').empty().html('<img src="style/check.png" alt="Approved" />');
-						var ajaxr = 'yes';
+						$('.nApproved').removeClass('nApproved').addClass('approved').css('cursor', 'default').empty().html('<img src="style/check.png" alt="Approved" />');
+						window.ajaxr = 'yes';
 					}
 				});
 			});
