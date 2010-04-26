@@ -46,7 +46,7 @@ require(ABSPATH .'/Sources/Core.php');
 					inputs.push(this.name + '=' + escape(this.value));
 				})
 				$('.inform').remove();
-				$('#themesubmit').attr('disabled','disabled').after('<' + 'img src="style/loadingsmall.gif" alt="" class="loader" style="margin-left:5px;" />');
+				$('#themesubmit').attr('disabled','disabled').after('<' + 'img src="style/loading.gif" alt="" class="loader" style="margin-left:5px;" />');
 				jQuery.ajax({
 					data: inputs.join('&'),
 					type: "POST",

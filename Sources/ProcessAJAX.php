@@ -164,6 +164,15 @@ if(isset($_POST['changeurl'])) {
 	}
 }
 
+# Process comment moderation setting change
+if(isset($_POST['commentmoderation'])) {
+	# Check permissions
+	if(permissions(3)) {
+		# Execute query to change setting
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['commentmoderation'])))."' WHERE variable='comment_moderation'") or die(sqlite_error_string($dbh->lastError()));
+	}
+}
+
 // User creation
 if(isset($_POST['addusersubmit'])) {
 	// Can the user do this?
@@ -255,7 +264,7 @@ if(isset($_POST['deleteusersubmit'])) {
 if(isset($_POST['approvecomment'])) {
 	if(permissions(2)) {
 		# Execute query to approve comment
-		$dbh->query("UPDATE comments SET value='1' WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError()));
+		$dbh->query("UPDATE comments SET published='1' WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError()));
 	}
 }
 

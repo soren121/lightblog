@@ -28,7 +28,7 @@
 				
 				<!-- Check if comments are enabled -->
 				<?php $com = new CommentLoop(); if($com->comments_open()): ?>
-				<h4 class="commenthead"><?php grammarFix(commentNum(), 'Comment', 'Comments') ?></h4><br />				
+				<h4 class="commenthead"><?php grammarFix(commentNum(null), 'Comment', 'Comments') ?></h4><br />				
 				<!-- Start comment loop -->
 				<?php $com->obtain_comments(); while($com->has_comments()): ?>
 				<div class="comment <?php alternateColor('c1','c2') ?>" id="comment-<?php $com->id() ?>">

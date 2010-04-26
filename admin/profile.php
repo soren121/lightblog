@@ -57,7 +57,7 @@ require(ABSPATH .'/Sources/Core.php');
 					}
 				})
 				$('.inform').remove();
-				$('input[type=submit]').attr('disabled','disabled').after('<' + 'img src="style/loadingsmall.gif" alt="" class="loader" style="margin-left:5px;" />');
+				$('input[type=submit]').attr('disabled','disabled').after('<' + 'img src="style/loading.gif" alt="" class="loader" style="margin-left:5px;" />');
 				jQuery.ajax({
 					data: inputs.join('&'),
 					type: "POST",
