@@ -39,18 +39,42 @@ else {
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
-	<script type="text/javascript">			
+	<script type="text/javascript">
 		$(document).ready(function(){ 
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
+			$('.nApproved').hover(
+				function() {
+					$(this).css('cursor', 'pointer').empty().html('<span style="color:green;">Approve?</span>').click(function() {
+						$(this).empty().html('<img src="style/loadingsmall.gif" alt="" class="loader" />');
+						var id = $(this).parent().attr('id');
+						jQuery.ajax({
+							data: "approvecomment=true&id=" + id.substring(2),
+							type: "POST",
+							url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
+							timeout: 3000,
+							error: function() {
+								alert("Failed to approve comment.");
+							},
+							success: function() {
+								$(this).removeClass('nApproved').addClass('approved').empty().html('<img src="style/check.png" alt="Approved" />');
+							}
+						})
+					});				
+				},
+				function() {
+					$(this).empty().html('<img src="style/cross.png" alt="Not approved" />');
+				}
+			);
+			$('.nApproved')		
 		});
 
 		function deleteItem(id) {
 			var answer = confirm("Really delete comment #" + id + "?");
 			if(answer) {
 				jQuery.ajax({
-					data: "delete=true&type=comment&id=" + id,
+					data: "delete=true&type=comments&id=" + id,
 					type: "POST",
 					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
 					timeout: 3000,
@@ -94,7 +118,11 @@ else {
 					<td style="white-space:nowrap;"><img src="http://www.gravatar.com/avatar.php?gravatar_id=<?php echo md5($row->email) ?>&amp;size=24" style="vertical-align:middle;margin-right:5px;" /><?php echo $row->name ?></td>
 					<td><?php echo implode(' ', array_slice(explode(' ', $row->text), 0, 6)); ?></td>
 					<td><?php echo date('n/j/Y \a\t h:i a', $row->date) ?></td>
-					<td class="c"><img src="style/check.png" alt="Published" /></td>
+					<?php if($row->published == 1): ?>
+						<td class="c approved"><img src="style/check.png" alt="Approved" /></td>
+					<?php else: ?>
+						<td class="c nApproved"><img src="style/cross.png" alt="Not approved" /></td>
+					<?php endif; ?>
 					<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $row->id ?>);" style="cursor:pointer;" /></td>
 				</tr>
 				<?php endwhile; ?>
