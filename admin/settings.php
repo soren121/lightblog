@@ -20,6 +20,9 @@
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
+if(bloginfo('comment_moderation','r') == 'none') { $cmno = 'checked="checked"';  }
+if(bloginfo('comment_moderation','r') == 'approval') { $cmapvl = 'checked="checked"';  }
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -41,10 +44,15 @@ require(ABSPATH .'/Sources/Core.php');
 			$('form').submit(function() {
 				var inputs = [];
 				$(':input', this).each(function() {
-					inputs.push(this.name + '=' + escape(this.value));
+					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
+						void(0);
+					}
+					else {
+						inputs.push(this.name + '=' + escape(this.value));
+					}
 				})
 				$('.inform').remove();
-				$('input[type=submit]').attr('disabled','disabled').after('<' + 'img src="style/loadingsmall.gif" alt="" class="loader" style="margin-left:5px;" />');
+				$('input[type=submit]').attr('disabled','disabled').after('<' + 'img src="style/loading.gif" alt="" class="loader" style="margin-left:5px;" />');
 				jQuery.ajax({
 					data: inputs.join('&'),
 					type: "POST",
@@ -75,17 +83,25 @@ require(ABSPATH .'/Sources/Core.php');
 			<?php if(permissions(3)): ?>
 			<h2 class="title"><img class="textmid" src="style/settings.png" alt="" />General Settings</h2>
 			<div class="settings">
-				<p style="margin-bottom:10px;">You can find core settings like the title of your blog here.</p>
+				<p style="margin-bottom:10px;">You can find all available settings on your blog here.</p>
 				
 				<form action="" method="post" style="margin-bottom:5px;">
 					<p class="label"><label for="title">Blog title</label></p>
-					<p style="margin-top:-5px;">
+					<p style="margin-top:-5px;margin-bottom:5px;">
 						<input type="text" name="changetitle" id="title" value="<?php bloginfo('title') ?>" />
 					</p>
 					
 					<p class="label"><label for="url">Blog URL</label></p>
-					<p style="margin-top:-5px;">
+					<p style="margin-top:-5px;margin-bottom:5px;">
 						<input type="text" name="changeurl" id="url" value="<?php bloginfo('url') ?>" />
+					</p>
+					
+					<p class="label"><label>Comment moderation</label></p>
+					<p>
+						<input type="radio" name="commentmoderation" id="cm-no" value="none" <?php echo $cmno; ?> />None
+					</p>
+					<p>
+						<input type="radio" name="commentmoderation" id="cm-apvl" value="approval" <?php echo $cmapvl; ?> />Approval
 					</p>
 					
 					<p><input type="submit" value="Save" /></p>

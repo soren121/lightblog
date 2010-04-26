@@ -46,28 +46,32 @@ else {
 			$('.roundedb').corner("round bottom 10px");
 			$('.nApproved').hover(
 				function() {
-					$(this).css('cursor', 'pointer').empty().html('<span style="color:green;">Approve?</span>').click(function() {
-						$(this).empty().html('<img src="style/loadingsmall.gif" alt="" class="loader" />');
-						var id = $(this).parent().attr('id');
-						jQuery.ajax({
-							data: "approvecomment=true&id=" + id.substring(2),
-							type: "POST",
-							url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
-							timeout: 3000,
-							error: function() {
-								alert("Failed to approve comment.");
-							},
-							success: function() {
-								$(this).removeClass('nApproved').addClass('approved').empty().html('<img src="style/check.png" alt="Approved" />');
-							}
-						})
-					});				
+					$(this).css('cursor', 'pointer').empty().html('<span style="color:green;">Approve?</span>');		
 				},
 				function() {
-					$(this).empty().html('<img src="style/cross.png" alt="Not approved" />');
+					if(typeof(ajaxr) == 'undefined') {
+						$(this).empty().html('<img src="style/cross.png" alt="Not approved" />');
+					}
 				}
-			);
-			$('.nApproved')		
+			);	
+			$('.nApproved').click(function() {
+				$(this).empty().html('<img src="style/loading.gif" alt="" class="loader" />');
+				var id = $(this).parent().attr('id').substr(2);
+				jQuery.ajax({
+					data: "approvecomment=true&id=" + id,
+					type: "POST",
+					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
+					timeout: 3000,
+					error: function() {
+						alert("Failed to approve comment.");
+						$('.nApproved').empty().html('<img src="style/cross.png" alt="Not approved" />');
+					},
+					success: function() {
+						$('.nApproved').removeClass('nApproved').addClass('approved').empty().html('<img src="style/check.png" alt="Approved" />');
+						var ajaxr = 'yes';
+					}
+				});
+			});
 		});
 
 		function deleteItem(id) {

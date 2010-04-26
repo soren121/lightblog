@@ -202,6 +202,10 @@ a:link, a:visited {
 	padding: 3px 15px 3px 15px;
 }
 
+#content div.settings input[type=radio] {
+	margin-right: 5px;
+}
+
 #content div.settings form {
 	margin-top: 8px;
 }

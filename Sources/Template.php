@@ -346,7 +346,6 @@ class PostLoop {
 			# Set various required variables
 			$prev = $page - 1;						# Previous page is page - 1
 			$next = $page + 1;						# Next page is page + 1
-			$lastpage = ceil($totalitems/$limit);	# Last page is = total items / items per page, rounded up.
 			# Set $pagination
 			$pagination = "";
 			# Do we have more than one page?
@@ -822,11 +821,13 @@ function list_archives($limit = 10) {
 	
 		The number of comments as an integer.
 */
-function commentNum($output = 'r') {
+function commentNum($id, $output = 'r') {
 	// Make the database handle available here
 	global $dbh;
+	// If it's null, use the global
+	if($id == null) $id = $GLOBALS['pid'];
 	// Set the query
-	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE published=1 AND pid=".(int)$GLOBALS['pid']) or die(sqlite_error_string($dbh->lastError));
+	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE published=1 AND pid=".(int)$id) or die(sqlite_error_string($dbh->lastError));
 	// Query the database
 	@list($commentnum) = $query->fetch(SQLITE_NUM);
 	// Return or echo data
