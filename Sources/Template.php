@@ -576,7 +576,7 @@ class CommentLoop {
   	public function obtain_comments() {
 		$dbh = $this->dbh;
 		$pid = (int)$GLOBALS['pid'];
-    	$this->result = $dbh->query("SELECT * FROM 'comments' WHERE pid='$pid'");
+    	$this->result = $dbh->query("SELECT * FROM 'comments' WHERE published=1 AND pid='$pid'");
   	}
 
 	/*
@@ -826,7 +826,7 @@ function commentNum($output = 'r') {
 	// Make the database handle available here
 	global $dbh;
 	// Set the query
-	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE pid=".(int)$GLOBALS['pid']) or die(sqlite_error_string($dbh->lastError));
+	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE published=1 AND pid=".(int)$GLOBALS['pid']) or die(sqlite_error_string($dbh->lastError));
 	// Query the database
 	@list($commentnum) = $query->fetch(SQLITE_NUM);
 	// Return or echo data

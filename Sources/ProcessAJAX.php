@@ -157,8 +157,11 @@ if(isset($_POST['changetitle'])) {
 
 # Process URL change
 if(isset($_POST['changeurl'])) {
-	# Execute query to change url
-	$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changeurl'])))."' WHERE variable='url'") or die(sqlite_error_string($dbh->lastError()));
+	# Check permissions
+	if(permissions(3)) {
+		# Execute query to change url
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changeurl'])))."' WHERE variable='url'") or die(sqlite_error_string($dbh->lastError()));
+	}
 }
 
 // User creation
@@ -245,6 +248,14 @@ if(isset($_POST['deleteusersubmit'])) {
 	if(permissions(2)) {
 		# Execute query to delete user
 		$dbh->query("DELETE FROM users WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError()));
+	}
+}
+
+# Process comment approval
+if(isset($_POST['approvecomment'])) {
+	if(permissions(2)) {
+		# Execute query to approve comment
+		$dbh->query("UPDATE comments SET value='1' WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError()));
 	}
 }
 

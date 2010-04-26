@@ -51,6 +51,7 @@
 					<p><input name="comment_website" type="text" id="cfwebsite" maxlength="255" />
 					<label for="cfwebsite"><small>Website</small></label></p>
 					<p><textarea cols="41" rows="10" name="comment_text" id="wysiwyg"></textarea></p>
+					<p><input name="comment_pid" type="hidden" value="<?php echo $GLOBALS['pid']; ?>" /></p>
 					<p><input name="comment_submit" type="submit" value="Submit" id="cfsubmit" /></p>
 				</form>
 				<?php else: ?>
