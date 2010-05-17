@@ -42,7 +42,7 @@
 				<?php endwhile; ?>
 				
 				<h4 class="commentform-title">Post a comment</h4><br />
-				<div id="notifybox"></div>
+				<?php $com->messageHook('<div id="notifybox">') ?>
 				<form action="<?php bloginfo('url') ?>Sources/ProcessBrowser.php" method="post" id="commentform">
 					<p><input name="comment_name" type="text" id="cfname" maxlength="35" />
 					<label for="cfname"><small>Name (required)</small></label></p>
