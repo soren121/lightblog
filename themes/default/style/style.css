@@ -216,6 +216,7 @@ body {
 	height: 15px;
 	color: #000;
 	margin: 0px 0 5px 0;
+	cursor: pointer;
 }
 
 #content div.pagination {
