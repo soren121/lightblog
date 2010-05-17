@@ -62,6 +62,7 @@ else {
 			$('.nApproved').click(function() {
 				$(this).empty().html('<img src="style/loading.gif" alt="" class="loader" />');
 				var id = $(this).parent().attr('id').substr(2);
+				var thisa = this;
 				jQuery.ajax({
 					data: "approvecomment=true&id=" + id,
 					type: "POST",
@@ -69,10 +70,10 @@ else {
 					timeout: 3000,
 					error: function() {
 						alert("Failed to approve comment.");
-						$('.nApproved').empty().html('<img src="style/cross.png" alt="Not approved" />');
+						$(thisa).empty().html('<img src="style/cross.png" alt="Not approved" />');
 					},
 					success: function() {
-						$('.nApproved').removeClass('nApproved').addClass('approved').css('cursor', 'default').empty().html('<img src="style/check.png" alt="Approved" />');
+						$(thisa).removeClass('nApproved').addClass('approved').css('cursor', 'default').empty().html('<img src="style/check.png" alt="Approved" />');
 						window.ajaxr = 'yes';
 					}
 				});
