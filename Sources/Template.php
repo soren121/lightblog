@@ -721,6 +721,14 @@ class CommentLoop {
 			return false;
 		}	
 	}
+	
+	public function messageHook($tag = '<div>') {
+		if(isset($_SESSION['cmessage'])) {
+			$endtag = explode(' ', str_replace('<', '</', $tag));
+			echo $tag.$_SESSION['cmessage'].$endtag[0];
+			unset($_SESSION['cmessage']);
+		}
+	}
 }
 
 /*

@@ -210,13 +210,12 @@ body {
 
 #content #notifybox {
 	background: #CFEBF7;
-	width: 455px;
+	width: 100%;
 	border: 1px solid #2580B2;
 	padding: 5px;
 	height: 15px;
 	color: #000;
-	display: none;
-	margin: 0px 0 10px 0;
+	margin: 0px 0 5px 0;
 }
 
 #content div.pagination {

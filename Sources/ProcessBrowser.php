@@ -33,6 +33,8 @@ if(isset($_POST['comment_submit'])) {
 		if(bloginfo('comment_moderation','r') == 'approval') {
 			// Submit the comment
 			$dbh->query("INSERT INTO comments (published,pid,name,email,website,date,text) VALUES(0,$comment_pid,'$comment_name','$comment_email','$comment_website',$comment_date,'$comment_text')") or die(sqlite_error_string($dbh->lastError));
+			// Set message
+			$_SESSION['cmessage'] = 'Your comment will appear as soon as it is approved by a moderator.';
 		}
 		if(bloginfo('comment_moderation','r') == 'none') {
 			// Submit the comment
@@ -40,7 +42,7 @@ if(isset($_POST['comment_submit'])) {
 		}
 	}
 	// Send the user back to the page they came from
-	header('Location: '.bloginfo('url',2).'?post='.$comment_pid);
+	header('Location: '.bloginfo('url',2).'?post='.$comment_pid.'#commentform');
 }
 
 ?>
