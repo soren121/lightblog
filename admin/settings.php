@@ -28,7 +28,7 @@ if(bloginfo('comment_moderation','r') == 'approval') { $cmapvl = 'checked="check
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<title>General Settings - <?php bloginfo('title') ?></title>
+	<title>Settings - <?php bloginfo('title') ?></title>
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
 	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
@@ -81,7 +81,7 @@ if(bloginfo('comment_moderation','r') == 'approval') { $cmapvl = 'checked="check
 		<?php include('menu.php'); ?>
 		<div id="content">
 			<?php if(permissions(3)): ?>
-			<h2 class="title"><img class="textmid" src="style/settings.png" alt="" />General Settings</h2>
+			<h2 class="title"><img class="textmid" src="style/settings.png" alt="" />Settings</h2>
 			<div class="settings">
 				<p style="margin-bottom:10px;">You can find all available settings on your blog here.</p>
 				
@@ -101,7 +101,7 @@ if(bloginfo('comment_moderation','r') == 'approval') { $cmapvl = 'checked="check
 						<input type="radio" name="commentmoderation" id="cm-no" value="none" <?php echo $cmno; ?> />None
 					</p>
 					<p>
-						<input type="radio" name="commentmoderation" id="cm-apvl" value="approval" <?php echo $cmapvl; ?> />Approval
+						<input type="radio" name="commentmoderation" id="cm-apvl" value="approval" <?php echo $cmapvl; ?> />Approval required
 					</p>
 					
 					<p><input type="submit" value="Save" /></p>
