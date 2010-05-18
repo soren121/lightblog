@@ -722,11 +722,26 @@ class CommentLoop {
 		}	
 	}
 	
-	public function messageHook($tag = '<div>') {
+	/*
+		Function: messageHook
+	
+		Outputs a response, if any, from the comment processor.
+		
+		Parameters:
+		
+			tag - The HTML tag to wrap the message in.
+	*/
+	public function messageHook($tag = '') {
 		if(isset($_SESSION['cmessage'])) {
+			// Get the end tag by removing attributes and adding a slash
 			$endtag = explode(' ', str_replace('<', '</', $tag));
+			// Put it all together
 			echo $tag.$_SESSION['cmessage'].$endtag[0];
+			// Destroy the message, we're done with it now
 			unset($_SESSION['cmessage']);
+		}
+		else {
+			return false;
 		}
 	}
 }
