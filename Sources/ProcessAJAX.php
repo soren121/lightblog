@@ -22,7 +22,8 @@ require(ABSPATH .'/Sources/Core.php');
 
 # Process post/page/category creation
 if(isset($_POST['create'])) {
-	if($_POST['type'] != 'category') {
+	$type = $_POST['type'];
+	if($type !== 'category') {
 		# Grab data from form and escape the text
 		$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
 		$text = sqlite_escape_string(cleanHTML($_POST['text']));
@@ -35,9 +36,6 @@ if(isset($_POST['create'])) {
 		# Check comments checkbox
 		if(isset($_POST['comments']) && $_POST['comments'] == 1) { $comments = 1; }
 		else { $comments = 0; }
-		# Check submission type
-		if(($_POST['type'] !== 'post') or ($_POST['type'] !== 'page')) { $type = 'post'; }
-		else { $type = $_POST['type']; }
 		# Insert post/page into database
 		if($type == 'post') {
 			$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(sqlite_error_string($dbh->lastError()));

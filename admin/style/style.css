@@ -34,7 +34,7 @@ a:link, a:visited {
 	font: normal 2.1em Times,Verdana,Arial,Sans;
 }
 
-#header a:visited, a:link {
+#header a:visited, #header a:link {
 	color: #fff;
 	text-decoration: none;
 }
