@@ -81,7 +81,6 @@
 	*/ 
 	public function generateFeed()
 	{
-		header("Content-type: text/xml");		
 		$this->printHead();		
 		$this->printChannels();
 		$this->printItems();

@@ -31,15 +31,9 @@
 				<h4 class="commenthead"><?php grammarFix(commentNum(null), 'Comment', 'Comments') ?></h4><br />				
 				<!-- Start comment loop -->
 				<?php $com->obtain_comments(); while($com->has_comments()): ?>
-				<div class="comment <?php alternateColor('c1','c2') ?>" id="comment-<?php $com->id() ?>">
-					<img class="comment_gravatar" src="<?php $com->gravatar() ?>" alt="" />
-					<a class="comment_name" href="<?php $com->website() ?>"><?php $com->name() ?></a>
-					<span class="comment_says"> says:</span><br />
-					<span class="comment_date"><?php $com->date('F j, Y \a\t g:i A') ?></span><br />
-					<p class="comment_text"><?php $com->content() ?></p>
-				</div>
-				<!-- End comment loop -->
+					<?php $com->list_comments() ?>
 				<?php endwhile; ?>
+				<!-- End comment loop -->
 				
 				<h4 class="commentform-title">Post a comment</h4><br />
 				<?php $com->messageHook('<div id="notifybox">') ?>
