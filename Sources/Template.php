@@ -608,95 +608,36 @@ class CommentLoop {
 			return false;
 		}
   	}
-
+	
 	/*
-		Function: content
-
-		Outputs the content of the comment.
-	*/
-	public function content() {
-		# We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result)) {
-			echo stripslashes($this->cur_result->text);
-		}
-		# Oh no, we screwed up :(
-		else {
-			# Send nothing back
-			return false;
-		}
-	}
-
-	/*
-		Function: name
+		Function: list_comments
 		
-		Outputs the comment author's name.
-	*/
-  	public function name() {
-		# We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result)) {
-      		echo stripslashes($this->cur_result->name);
-		}
-		# Oh no, we screwed up :(
-		else {
-			# Send nothing back
-			return false;
-		}
-  	}
-
-	/*
-		Function: website
+		Outputs a list of comments.
 		
-		Outputs the comment author's website URL, if specified.
-	*/
-  	public function website() {
-		# We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result)) {
-      		echo stripslashes($this->cur_result->website);
-		}
-		# Oh no, we screwed up :(
-		else {
-			# Send nothing back
-			return false;
-		}
-  	}
-
-	/*
-		Function: date
-
-		Outputs the submittal date of the comment.
-
 		Parameters:
-
-			format - The format, in PHP's date() format, in which to display the date. (e.g. F js, Y)
-	*/
-	public function date($format = null) {
-		# We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result)) {
-			# Nope, so output the date in the right format
-			echo date(!empty($format) ? $format : 'F jS, Y', $this->cur_result->date);
-		}
-		# Oh no, we screwed up :(
-		else {
-			# Send nothing back
-			return false;
-		}
-	}
-
-	/*
-		Function: id
 		
-		Outputs the ID of the comment.
-	*/
-	public function id() {
-		# We didn't screw up and keep an empty query, did we?
+			tag - The HTML tag to wrap the comment in.
+	*/	
+	public function list_comments($tag = 'div') {
 		if(!empty($this->cur_result)) {
-			echo (int)$this->cur_result->id;
+			echo '<'.$tag.' class="comment " id="comment-'.(int)$this->cur_result->id.'">
+					<img class="comment_gravatar" src="'.$this->gravatar().'" alt="" />';
+					if(stripslashes($this->cur_result->website) == '') {
+						echo '<span class="comment_name">'.stripslashes($this->cur_result->name).'</span>';
+					}
+					else {
+						echo '<a class="comment_name" href="'.stripslashes($this->cur_result->website).'">'.stripslashes($this->cur_result->name).'</a>';
+					}					
+					echo '<span class="comment_says"> says:</span><br />
+					<span class="comment_date">'.date('F j, Y \a\t g:i A', (int)$this->cur_result->date).'</span><br />
+					<p class="comment_text">'.stripslashes($this->cur_result->text).'</p>
+			</'.$tag.'>';
 		}
 		# Oh no, we screwed up :(
 		else {
 			# Send nothing back
 			return false;
-		}
+		}	
 	}
 	
 	/*
@@ -708,12 +649,12 @@ class CommentLoop {
 		
 			size - The square pixel size to display the Gravatar (e.g. 32 == 32x32.) Defaults to 32.
 	*/
-	public function gravatar($size = 32) {
+	private function gravatar($size = 32) {
 		# We didn't screw up and keep an empty query, did we?
 		if(!empty($this->cur_result)) {
 			$email = md5($this->cur_result->email);
 			$size = (int)$size;
-			echo "http://www.gravatar.com/avatar.php?gravatar_id=".$email."&amp;size=".$size;
+			return "http://www.gravatar.com/avatar.php?gravatar_id=".$email."&amp;size=".$size;
 		}
 		# Oh no, we screwed up :(
 		else {

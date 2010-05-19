@@ -95,7 +95,7 @@ if(bloginfo('comment_moderation','r') == 'approval') { $cmapvl = 'checked="check
 					<p style="margin-top:-5px;margin-bottom:5px;">
 						<input type="text" name="changeurl" id="url" value="<?php bloginfo('url') ?>" />
 					</p>
-					
+										
 					<p class="label"><label>Comment moderation</label></p>
 					<p>
 						<input type="radio" name="commentmoderation" id="cm-no" value="none" <?php echo $cmno; ?> />None

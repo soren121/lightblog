@@ -69,9 +69,11 @@ while($row = $result->fetch(SQLITE_ASSOC)) {
 	// Add RSS-unique elements
 	if($type == 'rss'):
 		$newItem->addElement('guid', bloginfo('url', 'r').'?post='.$row['id'], array('isPermaLink'=>'true'));
+		header('Content-Type: application/rss+xml');
 	// Add Atom-unique elements
 	elseif($type == 'atom'):
 		$newItem->addElement('id', bloginfo('url', 'r').'?post='.$row['id']);
+		header('Content-Type: application/atom+xml');
 	endif;
 	// Now add the feed item
 	$TestFeed->addItem($newItem);
