@@ -24,9 +24,6 @@ require(ABSPATH .'/Sources/StringFunctions.php');
 // Open database
 $dbh = new SQLiteDatabase( DBH );
 
-// Set default timezone
-date_default_timezone_set('UTC');
-
 /*
 	Class: PostLoop
 	

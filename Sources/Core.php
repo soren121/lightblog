@@ -24,9 +24,6 @@ require(ABSPATH .'/Sources/StringFunctions.php');
 // Open database if not open
 $dbh = new SQLiteDatabase( DBH );
 
-// Set default timezone
-date_default_timezone_set('UTC');
-
 /*
 	Function: LightyVersion
 	
@@ -42,7 +39,7 @@ date_default_timezone_set('UTC');
 */
 function LightyVersion($output = 'e') {
 	# DON'T TOUCH!
-	$version = '0.9.3 SVN';
+	$version = '0.9.3 Beta 1';
 	# Are we echoing or returning?
 	if($output == 'e') { echo $version; }
 	# Returning!
