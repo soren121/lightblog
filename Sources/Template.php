@@ -24,6 +24,9 @@ require(ABSPATH .'/Sources/StringFunctions.php');
 // Open database
 $dbh = new SQLiteDatabase( DBH );
 
+// Set default timezone
+date_default_timezone_set('UTC');
+
 /*
 	Class: PostLoop
 	
@@ -100,10 +103,6 @@ class PostLoop {
 		Function: obtain_post
 		
 		Obtains the data for a single post from the database.
-		
-		Parameters:
-		
-			pid - The post's ID.
 	*/
 	public function obtain_post() {
 		# Sanitize and set variables
@@ -406,10 +405,6 @@ class PageLoop {
 		Function: obtain_page
 
 		Obtains the data for a page from the database.
-
-		Parameters:
-
-			pid - The page's ID.
 	*/
 	public function obtain_page() {
 		# Sanitize and set variables
