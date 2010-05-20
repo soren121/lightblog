@@ -20,11 +20,8 @@
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
-# Functions to find the start for a query based on the page number
-function findStart($input) { $input = $input - 1; return $input * 8; }
-
 if(isset($_GET['page']) && $_GET['page'] > 1) {
-		$result = $dbh->query("SELECT * FROM users ORDER BY id asc LIMIT ".findStart($_GET['page']).",8") or die(sqlite_error_string($dbh->lastError));
+		$result = $dbh->query("SELECT * FROM users ORDER BY id asc LIMIT ".(($_GET['page'] - 1) * 8).",8") or die(sqlite_error_string($dbh->lastError));
 }
 else {
 	$result = $dbh->query("SELECT * FROM users ORDER BY id asc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
@@ -62,7 +59,6 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 						alert("Failed to delete user " + user + ".");
 					},
 					success: function(r) {
-						alert(r);
 						var tr = '#tr' + id;
 						$(tr).hide();
 					}
