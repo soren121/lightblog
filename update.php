@@ -78,7 +78,7 @@ function update() {
 	}
 }
 
-// Will process after Step 2
+// Will process after Step 1
 if(isset($_POST['update'])) {
 	$return = update();
 	// Check for errors

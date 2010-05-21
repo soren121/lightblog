@@ -93,7 +93,7 @@ require(ABSPATH .'/Sources/Core.php');
 						<ul>
 						<?php
 							include(ABSPATH .'/Sources/FeedReader.php');
-							$reader = new Reader('http://lightblognews.wordpress.com/feed/', ABSPATH .'/Sources/feedcache');
+							$reader = new Reader('http://www.sorenstudios.com/blog/feed.php?category=2', ABSPATH .'/Sources/feedcache');
 							$items = $reader->return_items(5);
 							foreach($items as $news): ?>
 								<li><a href="<?php echo $news['link'] ?>"><?php echo $news['title'] ?></a></li>
