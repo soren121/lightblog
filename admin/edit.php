@@ -56,18 +56,17 @@ while($past = $result->fetchObject()) {
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.wysiwyg.js"></script>
 	<script type="text/javascript">	
 		$(document).ready(function(){
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
-			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');
+			$('#wysiwyg').wysiwyg();
 		});
 		$(function() {
 			$('#edit').submit(function() {
 				var inputs = [];
-				var wysiwygtext = nicEditors.findEditor('wysiwyg').getContent();
 				$('.ef', this).each(function() {
 					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
 						void(0);
@@ -77,6 +76,7 @@ while($past = $result->fetchObject()) {
 					}
 				})
 				$('#wysiwyg', this).each(function() {
+					var wysiwygtext = $('#wysiwyg').val();
 					inputs.push(this.name + '=' + unescape(wysiwygtext));
 				})
 				jQuery.ajax({

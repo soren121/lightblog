@@ -24,9 +24,6 @@ require(ABSPATH .'/Sources/StringFunctions.php');
 // Open database
 $dbh = new SQLiteDatabase( DBH );
 
-// Set default timezone
-date_default_timezone_set('UTC');
-
 /*
 	Class: PostLoop
 	
@@ -612,7 +609,7 @@ class CommentLoop {
 	*/	
 	public function list_comments($tag = 'div') {
 		if(!empty($this->cur_result)) {
-			echo '<'.$tag.' class="comment " id="comment-'.(int)$this->cur_result->id.'">
+			echo '<'.$tag.' class="comment '; alternateColor('c1', 'c2'); echo '" id="comment-'.(int)$this->cur_result->id.'">
 					<img class="comment_gravatar" src="'.$this->gravatar().'" alt="" />';
 					if(stripslashes($this->cur_result->website) == '') {
 						echo '<span class="comment_name">'.stripslashes($this->cur_result->name).'</span>';
