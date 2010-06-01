@@ -22,27 +22,30 @@ require(ABSPATH .'/Sources/Core.php');
 
 // Process comment submission
 if(isset($_POST['comment_submit'])) {
-	if(strlen($_POST['comment_name']) && strlen($_POST['comment_email']) > 0) {
-		// Escape values
-		$comment_pid = (int)$_POST['comment_pid'];
-		$comment_name = sqlite_escape_string(strip_tags(cleanHTML($_POST['comment_name'])));
-		$comment_email = sqlite_escape_string(strip_tags(cleanHTML($_POST['comment_email'])));
-		$comment_website = sqlite_escape_string(strip_tags(cleanHTML($_POST['comment_website'])));
-		$comment_date = time();
-		$comment_text = sqlite_escape_string(cleanHTML($_POST['comment_text']));
-		if(bloginfo('comment_moderation','r') == 'approval') {
-			// Submit the comment
-			$dbh->query("INSERT INTO comments (published,pid,name,email,website,date,text) VALUES(0,$comment_pid,'$comment_name','$comment_email','$comment_website',$comment_date,'$comment_text')") or die(sqlite_error_string($dbh->lastError));
-			// Set message
-			$_SESSION['cmessage'] = 'Your comment will appear as soon as it is approved by a moderator.';
+	$comment_pid = (int)$_POST['comment_pid'];
+	$query = $dbh->query("SELECT comments FROM posts WHERE id=".$comment_pid) or die(sqlite_error_string($dbh->lastError()));
+	if($query->fetchSingle() == '1') {
+		if(strlen($_POST['comment_name']) && strlen($_POST['comment_email']) > 0) {
+			// Escape values
+			$comment_name = sqlite_escape_string(strip_tags(cleanHTML($_POST['comment_name'])));
+			$comment_email = sqlite_escape_string(strip_tags(cleanHTML($_POST['comment_email'])));
+			$comment_website = sqlite_escape_string(strip_tags(cleanHTML($_POST['comment_website'])));
+			$comment_date = time();
+			$comment_text = sqlite_escape_string(cleanHTML($_POST['comment_text']));
+			if(bloginfo('comment_moderation','r') == 'approval') {
+				// Submit the comment
+				$dbh->query("INSERT INTO comments (published,pid,name,email,website,date,text) VALUES(0,$comment_pid,'$comment_name','$comment_email','$comment_website',$comment_date,'$comment_text')") or die(sqlite_error_string($dbh->lastError));
+				// Set message
+				$_SESSION['cmessage'] = 'Your comment will appear as soon as it is approved by a moderator.';
+			}
+			if(bloginfo('comment_moderation','r') == 'none') {
+				// Submit the comment
+				$dbh->query("INSERT INTO comments (pid,name,email,website,date,text) VALUES($comment_pid,'$comment_name','$comment_email','$comment_website',$comment_date,'$comment_text')") or die(sqlite_error_string($dbh->lastError));
+			}
 		}
-		if(bloginfo('comment_moderation','r') == 'none') {
-			// Submit the comment
-			$dbh->query("INSERT INTO comments (pid,name,email,website,date,text) VALUES($comment_pid,'$comment_name','$comment_email','$comment_website',$comment_date,'$comment_text')") or die(sqlite_error_string($dbh->lastError));
-		}
+		// Send the user back to the page they came from
+		header('Location: '.bloginfo('url',2).'?post='.$comment_pid.'#commentform');
 	}
-	// Send the user back to the page they came from
-	header('Location: '.bloginfo('url',2).'?post='.$comment_pid.'#commentform');
 }
 
 ?>

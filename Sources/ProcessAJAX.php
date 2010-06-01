@@ -23,40 +23,42 @@ require(ABSPATH .'/Sources/Core.php');
 # Process post/page/category creation
 if(isset($_POST['create'])) {
 	$type = $_POST['type'];
-	if($type !== 'category') {
-		# Grab data from form and escape the text
-		$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
-		$text = sqlite_escape_string(cleanHTML($_POST['text']));
-		$date = time();
-		$author = sqlite_escape_string(userFetch('displayname', 'r'));
-		$category = (int)$_POST['category'];
-		# Check published checkbox
-		if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
-		else { $published = 0; }
-		# Check comments checkbox
-		if(isset($_POST['comments']) && $_POST['comments'] == 1) { $comments = 1; }
-		else { $comments = 0; }
-		# Insert post/page into database
-		if($type == 'post') {
-			$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(sqlite_error_string($dbh->lastError()));
+	if($type !== 'category' && permissions(1) || $type === 'category' && permissions(2)) {
+		if($type !== 'category') {
+			# Grab data from form and escape the text
+			$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
+			$text = sqlite_escape_string(cleanHTML($_POST['text']));
+			$date = time();
+			$author = sqlite_escape_string(userFetch('displayname', 'r'));
+			$category = (int)$_POST['category'];
+			# Check published checkbox
+			if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
+			else { $published = 0; }
+			# Check comments checkbox
+			if(isset($_POST['comments']) && $_POST['comments'] == 1) { $comments = 1; }
+			else { $comments = 0; }
+			# Insert post/page into database
+			if($type == 'post') {
+				$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(sqlite_error_string($dbh->lastError()));
+			}
+			else {
+				$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(sqlite_error_string($dbh->lastError()));
+			}
 		}
 		else {
-			$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(sqlite_error_string($dbh->lastError()));
+			$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
+			$info = sqlite_escape_string(cleanHTML($_POST['text']));
+			$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
+			$type = "category";
+			$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('$shortname','$title','$info')");
 		}
+		# Fetch post ID from database
+		$id = $dbh->lastInsertRowid();
+		# Return full url to post to jQuery
+		echo bloginfo('url', 'r')."?".$type."=".$id;
+		# Prevent the rest of the page from loading
+		die();
 	}
-	else {
-		$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
-		$info = sqlite_escape_string(cleanHTML($_POST['text']));
-		$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
-		$type = "category";
-		$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('$shortname','$title','$info')");
-	}
-	# Fetch post ID from database
-	$id = $dbh->lastInsertRowid();
-	# Return full url to post to jQuery
-	echo bloginfo('url', 'r')."?".$type."=".$id;
-	# Prevent the rest of the page from loading
-	die();
 }
 
 # Process post/page editing
@@ -130,10 +132,14 @@ if(isset($_POST['edit'])) {
 	die();
 }
 
-# Process post/page deletion
+# Process post/page/category deletion
 if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
-	# Execute query to delete post/page
+	# Execute query to delete post/page/category
 	$dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags(cleanHTML($_POST['type'])))." WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError()));
+	if($_POST['type'] == 'posts') {
+		# Delete comments associated with this post
+		$dbh->query("DELETE FROM comments WHERE pid=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError()));
+	}
 }
 
 # Process theme change
