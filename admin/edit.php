@@ -1,6 +1,4 @@
-
-<!-- saved from url=(0069)http://lightblog.googlecode.com/svn-history/r447/trunk/admin/edit.php -->
-<HTML><BODY><PRE style="word-wrap: break-word; white-space: pre-wrap;">&lt;?php session_start();
+<?php session_start();
 
 /*********************************************
 
@@ -27,51 +25,51 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 
 # Query for past content
-$result = $dbh-&gt;query("SELECT * FROM ".($type == 'category' ? 'categorie' : $type)."s WHERE id=".(int)$_GET['id']) or die(sqlite_error_string($dbh-&gt;lastError));
+$result = $dbh->query("SELECT * FROM ".($type == 'category' ? 'categorie' : $type)."s WHERE id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
 
 # Get past data and set it
-while($past = $result-&gt;fetchObject()) {
-	$title = $past-&gt;title;
+while($past = $result->fetchObject()) {
+	$title = $past->title;
 	if($type !== 'category') {
-		$author = $past-&gt;author;
-		$s_category = (int)$past-&gt;category;
-		if($past-&gt;published == 1) {
+		$author = $past->author;
+		$s_category = (int)$past->category;
+		if($past->published == 1) {
 			$ps_checked = 'checked="checked"';
 		}
-		if($past-&gt;comments == 1) {
+		if($past->comments == 1) {
 			$cs_checked = 'checked="checked"';
 		}
 	}
-	if($type == 'post') { $text = $past-&gt;post; }
-	elseif($type == 'page') { $text = $past-&gt;page; }
-	elseif($type == 'category') { $text  = $past-&gt;info; }
+	if($type == 'post') { $text = $past->post; }
+	elseif($type == 'page') { $text = $past->page; }
+	elseif($type == 'category') { $text  = $past->info; }
 }
 
-?&gt;
-&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
-&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
-&lt;head&gt;
-	&lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /&gt;
-	&lt;title&gt;Edit &lt;?php echo ucwords($type) ?&gt; - &lt;?php bloginfo('title') ?&gt;&lt;/title&gt;
-	&lt;link rel="stylesheet" type="text/css" href="&lt;?php bloginfo('url') ?&gt;admin/style/style.css" /&gt;
-	&lt;!--[if lte IE 7]&gt;&lt;style type="text/css"&gt;html.jqueryslidemenu { height: 1%; }&lt;/style&gt;&lt;![endif]--&gt;
-	&lt;script type="text/javascript" src="&lt;?php bloginfo('url') ?&gt;Sources/jQuery.js"&gt;&lt;/script&gt;
-	&lt;script type="text/javascript" src="&lt;?php bloginfo('url') ?&gt;Sources/jQuery.SlideMenu.js"&gt;&lt;/script&gt;
-	&lt;script type="text/javascript" src="&lt;?php bloginfo('url') ?&gt;Sources/jQuery.Corners.js"&gt;&lt;/script&gt;
-	&lt;script type="text/javascript" src="&lt;?php bloginfo('url') ?&gt;Sources/nicEdit.js"&gt;&lt;/script&gt; 
-	&lt;script type="text/javascript"&gt;	
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>Edit <?php echo ucwords($type) ?> - <?php bloginfo('title') ?></title>
+	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
+	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
+	<script type="text/javascript">	
 		$(document).ready(function(){
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
-			new nicEditor({iconsPath:'&lt;?php bloginfo('url') ?&gt;Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');
+			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');
 		});
 		$(function() {
 			$('#edit').submit(function() {
 				var inputs = [];
 				var wysiwygtext = nicEditors.findEditor('wysiwyg').getContent();
 				$('.ef', this).each(function() {
-					if($(this).is(':checkbox') &amp;&amp; $(this).is(':not(:checked)')) {
+					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
 						void(0);
 					}
 					else {
@@ -82,69 +80,68 @@ while($past = $result-&gt;fetchObject()) {
 					inputs.push(this.name + '=' + unescape(wysiwygtext));
 				})
 				jQuery.ajax({
-					data: inputs.join('&amp;'),
+					data: inputs.join('&'),
 					type: "POST",
 					url: this.getAttribute('action'),
 					timeout: 2000,
 					error: function() {
-						$('#notifybox').text('Failed to submit &lt;?php echo $type ?&gt;.').css("background","#b20000").slideDown("normal");
+						$('#notifybox').text('Failed to submit <?php echo $type ?>.').css("background","#b20000").slideDown("normal");
 						console.log("Failed to submit");
 						alert("Failed to submit.");
 					},
 					success: function(r) {
-						$('#notifybox').html('&lt;?php echo ucwords($type) ?&gt; edited. | &lt;' + 'a href="' + r + '"&gt;View &lt;?php echo $type ?&gt;&lt;/' + 'a&gt;').css("background", "#CFEBF7").slideDown("normal");
+						$('#notifybox').html('<?php echo ucwords($type) ?> edited. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').css("background", "#CFEBF7").slideDown("normal");
 					}
 				})
 				return false;
 			})
 		});
-	&lt;/script&gt;
-&lt;/head&gt;
+	</script>
+</head>
 
-&lt;body&gt;
-	&lt;div id="wrapper"&gt;
-		&lt;div id="header" class="roundedt"&gt;
-			&lt;a href="&lt;?php bloginfo('url') ?&gt;"&gt;&lt;?php bloginfo('title') ?&gt;&lt;/a&gt;	 
-		&lt;/div&gt;
-		&lt;?php include('menu.php'); ?&gt;
-		&lt;div id="content"&gt;
-			&lt;?php if($type !== 'category' &amp;&amp;  permissions(2) || $type !== 'category' &amp;&amp;  permissions(1) &amp;&amp; $author === userFetch('displayname','r') || $type === 'category' &amp;&amp; permissions(2)): if(!isset($type)): ?&gt;
-			&lt;p&gt;The type of content to add was not specified. You must have taken a bad link. Please
-			use the navigation bar above to choose the correct type.&lt;/p&gt;
-			&lt;?php else: ?&gt;
-			&lt;h2 class="title"&gt;&lt;img class="textmid" src="style/manage.png" alt="" /&gt;Edit &lt;?php echo ucwords($type) ?&gt;&lt;/h2&gt;
-			&lt;div id="notifybox"&gt;&lt;/div&gt;
-			&lt;form action="&lt;?php bloginfo('url') ?&gt;Sources/ProcessAJAX.php" method="post" id="edit"&gt;
-				&lt;div style="float:left;width:480px;margin-top:3px;"&gt;
-					&lt;label class="tfl" for="title"&gt;Title&lt;/label&gt;
-					&lt;input class="textfield ef" name="title" type="text" id="title" title="Title" value="&lt;?php echo stripslashes($title) ?&gt;" /&gt;
-					&lt;label class="tfl" for="wysiwyg"&gt;&lt;?php echo $type == 'category' ? 'Info' : 'Body'; ?&gt;&lt;/label&gt;
-					&lt;textarea rows="12" cols="36" name="text" id="wysiwyg"&gt;&lt;?php echo stripslashes($text) ?&gt;&lt;/textarea&gt;
-					&lt;input class="ef" type="hidden" name="type" value="&lt;?php echo $type ?&gt;" /&gt;
-					&lt;input class="ef" type="hidden" name="id" value="&lt;?php echo (int)$_GET['id'] ?&gt;" /&gt;
-				&lt;/div&gt;
-				&lt;div class="settings" style="float:left;width:170px;margin:16px 0 10px;padding:15px;"&gt;
-					&lt;?php if($type == 'post'): ?&gt;
-						&lt;label for="category"&gt;Category:&lt;/label&gt;&lt;br /&gt;
-						&lt;select class="ef" id="category" name="category"&gt;
-							&lt;?php list_categories($s_category) ?&gt;
-						&lt;/select&gt;&lt;br /&gt;&lt;br /&gt;
-						&lt;label for="comments"&gt;Comments on?&lt;/label&gt;
-						&lt;input class="ef" type="checkbox" name="comments" id="comments" &lt;?php echo $cs_checked; ?&gt; value="1" /&gt;&lt;br /&gt;
-					&lt;?php endif; if($type != 'category'): ?&gt;
-						&lt;label for="published"&gt;Published?&lt;/label&gt;
-						&lt;input class="ef" type="checkbox" name="published" id="published" &lt;?php echo $ps_checked; ?&gt; value="1" /&gt;&lt;br /&gt;&lt;br /&gt;
-					&lt;?php endif; ?&gt;
-					&lt;input class="ef submit" name="edit" type="submit" value="Save" /&gt;
-				&lt;/div&gt;
-				&lt;div style="clear:both;"&gt;&lt;/div&gt;
-			&lt;/form&gt;
-			&lt;?php endif; endif; ?&gt;
-		&lt;/div&gt;
-		&lt;div id="footer" class="roundedb"&gt;		
-			Powered by LightBlog &lt;?php LightyVersion() ?&gt;    
-	    &lt;/div&gt;
-	&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</PRE></BODY></HTML>
+<body>
+	<div id="wrapper">
+		<div id="header" class="roundedt">
+			<a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>	 
+		</div>
+		<?php include('menu.php'); ?>
+		<div id="content">
+			<?php if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $author === userFetch('displayname','r') || $type === 'category' && permissions(2)): if(!isset($type)): ?>
+			<p>The type of content to add was not specified. You must have taken a bad link. Please
+			use the navigation bar above to choose the correct type.</p>
+			<?php else: ?>
+			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Edit <?php echo ucwords($type) ?></h2>
+			<div id="notifybox"></div>
+			<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="edit">
+				<div style="float:left;width:480px;margin-top:3px;">
+					<label class="tfl" for="title">Title</label>
+					<input class="textfield ef" name="title" type="text" id="title" title="Title" value="<?php echo stripslashes($title) ?>" />
+					<label class="tfl" for="wysiwyg"><?php echo $type == 'category' ? 'Info' : 'Body'; ?></label>
+					<textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo stripslashes($text) ?></textarea>
+					<input class="ef" type="hidden" name="type" value="<?php echo $type ?>" />
+					<input class="ef" type="hidden" name="id" value="<?php echo (int)$_GET['id'] ?>" />
+				</div>
+				<div class="settings" style="float:left;width:170px;margin:16px 0 10px;padding:15px;">
+					<?php if($type == 'post'): ?>
+						<label for="category">Category:</label><br />
+						<select class="ef" id="category" name="category">
+							<?php list_categories($s_category) ?>
+						</select><br /><br />
+						<label for="comments">Comments on?</label>
+						<input class="ef" type="checkbox" name="comments" id="comments" <?php echo $cs_checked; ?> value="1" /><br />
+					<?php endif; if($type != 'category'): ?>
+						<label for="published">Published?</label>
+						<input class="ef" type="checkbox" name="published" id="published" <?php echo $ps_checked; ?> value="1" /><br /><br />
+					<?php endif; ?>
+					<input class="ef submit" name="edit" type="submit" value="Save" />
+				</div>
+				<div style="clear:both;"></div>
+			</form>
+			<?php endif; endif; ?>
+		</div>
+		<div id="footer" class="roundedb">		
+			Powered by LightBlog <?php LightyVersion() ?>    
+	    </div>
+	</div>
+</body>
+</html>
