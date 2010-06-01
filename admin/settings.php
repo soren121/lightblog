@@ -20,8 +20,18 @@
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
-if(bloginfo('comment_moderation','r') == 'none') { $cmno = 'checked="checked"';  }
-if(bloginfo('comment_moderation','r') == 'approval') { $cmapvl = 'checked="checked"';  }
+if(bloginfo('comment_moderation','r') == 'none') { 
+	$cmno = 'checked="checked"';  
+} 
+else {
+	$cmno = '';
+}
+if(bloginfo('comment_moderation','r') == 'approval') { 
+	$cmapvl = 'checked="checked"';  
+} 
+else {
+	$cmapvl = '';
+}
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -44,7 +54,7 @@ if(bloginfo('comment_moderation','r') == 'approval') { $cmapvl = 'checked="check
 			$('form').submit(function() {
 				var inputs = [];
 				$(':input', this).each(function() {
-					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
+					if($(this).is('input:radio') && $(this).is(':not(:checked)')) {
 						void(0);
 					}
 					else {
