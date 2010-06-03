@@ -30,11 +30,15 @@ class InputFilter {
 	  */
 	public function __construct($tagsArray = array(), $attrArray = array(), $tagsMethod = 0, $attrMethod = 0, $xssAuto = 1) {		
 		// make sure user defined arrays are in lowercase
-		for ($i = 0; $i < count($tagsArray); $i++) $tagsArray[$i] = strtolower($tagsArray[$i]);
-		for ($i = 0; $i < count($attrArray); $i++) $attrArray[$i] = strtolower($attrArray[$i]);
+		for($i = 0; $i < count($tagsArray); $i++) {
+			$tagsArray[$i] = strtolower($tagsArray[$i]);
+		}
+		for($i = 0; $i < count($attrArray); $i++) {
+			$attrArray[$i] = strtolower($attrArray[$i]);
+		}
 		// assign to member vars
-		$this->tagsArray = (array) $tagsArray;
-		$this->attrArray = (array) $attrArray;
+		$this->tagsArray = (array)$tagsArray;
+		$this->attrArray = (array)$attrArray;
 		$this->tagsMethod = $tagsMethod;
 		$this->attrMethod = $attrMethod;
 		$this->xssAuto = $xssAuto;
@@ -51,7 +55,9 @@ class InputFilter {
 		if(is_array($source)) {
 			foreach($source as $key => $value) {
 				// filter element for XSS and other 'bad' code etc.
-				if (is_string($value)) $source[$key] = $this->remove($this->decode($value));
+				if (is_string($value)) {
+					$source[$key] = $this->remove($this->decode($value));
+				}
 			}
 			return $source;
 		}
@@ -90,7 +96,7 @@ class InputFilter {
 	  */
 	protected function filterTags($source) {
 		// filter pass setup
-		$preTag = NULL;
+		$preTag = null;
 		$postTag = $source;
 		// find initial tag's position
 		$tagOpen_start = strpos($source, '<');
@@ -102,12 +108,14 @@ class InputFilter {
 			$fromTagOpen = substr($postTag, 1);
 			// end of tag
 			$tagOpen_end = strpos($fromTagOpen, '>');
-			if($tagOpen_end === false) break;
+			if($tagOpen_end === false) {
+				break;
+			}
 			// next start of tag (for nested tag assessment)
 			$tagOpen_nested = strpos($fromTagOpen, '<');
 			if(($tagOpen_nested !== false) && ($tagOpen_nested < $tagOpen_end)) {
-				$preTag .= substr($postTag, 0, ($tagOpen_nested+1));
-				$postTag = substr($postTag, ($tagOpen_nested+1));
+				$preTag .= substr($postTag, 0, ($tagOpen_nested + 1));
+				$postTag = substr($postTag, ($tagOpen_nested + 1));
 				$tagOpen_start = strpos($postTag, '<');
 				continue;
 			} 
@@ -124,7 +132,7 @@ class InputFilter {
 			$currentSpace = strpos($tagLeft, ' ');
 			// is end tag
 			if(substr($currentTag, 0, 1) == "/") {
-				$isCloseTag = TRUE;
+				$isCloseTag = true;
 				list($tagName) = explode(' ', $currentTag);
 				$tagName = substr($tagName, 1);
 			}
@@ -178,11 +186,11 @@ class InputFilter {
 				// reconstruct tag with allowed attributes
 				if(!$isCloseTag) {
 					$attrSet = $this->filterAttr($attrSet);
-					$preTag .= '<' . $tagName;
+					$preTag .= '<'.$tagName;
 					for ($i = 0; $i < count($attrSet); $i++)
-						$preTag .= ' ' . $attrSet[$i];
+						$preTag .= ' '.$attrSet[$i];
 					// reformat single tags to XHTML
-					if(strpos($fromTagOpen, "</" . $tagName)) {
+					if(strpos($fromTagOpen, "</".$tagName)) {
 						$preTag .= '>';
 					}
 					else {
@@ -191,7 +199,7 @@ class InputFilter {
 				}
 				// just the tagname
 			    else {
-			    	$preTag .= '</' . $tagName . '>';
+			    	$preTag .= '</'.$tagName.'>';
 			    }
 			}
 			// find next tag's start
@@ -233,8 +241,9 @@ class InputFilter {
 				// strip double quotes
 				$attrSubSet[1] = str_replace('"', '', $attrSubSet[1]);
 				// [requested feature] convert single quotes from either side to doubles (Single quotes shouldn't be used to pad attr value)
-				if ((substr($attrSubSet[1], 0, 1) == "'") && (substr($attrSubSet[1], (strlen($attrSubSet[1]) - 1), 1) == "'"))
+				if((substr($attrSubSet[1], 0, 1) == "'") && (substr($attrSubSet[1], (strlen($attrSubSet[1]) - 1), 1) == "'")) {
 					$attrSubSet[1] = substr($attrSubSet[1], 1, (strlen($attrSubSet[1]) - 2));
+				}
 				// strip slashes
 				$attrSubSet[1] = stripslashes($attrSubSet[1]);
 			}
@@ -253,15 +262,15 @@ class InputFilter {
 			if((!$attrFound && $this->attrMethod) || ($attrFound && !$this->attrMethod)) {
 				// attr has value
 				if($attrSubSet[1]) {
-					$newSet[] = $attrSubSet[0] . '="' . $attrSubSet[1] . '"';
+					$newSet[] = $attrSubSet[0].'="'.$attrSubSet[1].'"';
 				}
 				// attr has decimal zero as value
 				elseif($attrSubSet[1] == "0") {
-					$newSet[] = $attrSubSet[0] . '="0"';
+					$newSet[] = $attrSubSet[0].'="0"';
 				}
 				// reformat single attributes to XHTML
 				else {
-					$newSet[] = $attrSubSet[0] . '="' . $attrSubSet[0] . '"';
+					$newSet[] = $attrSubSet[0].'="'.$attrSubSet[0].'"';
 				}
 			}	
 		}
@@ -278,9 +287,9 @@ class InputFilter {
 		// url decode
 		$source = html_entity_decode($source, ENT_QUOTES, "ISO-8859-1");
 		// convert decimal
-		$source = preg_replace('/&#(\d+);/me',"chr(\\1)", $source);
+		$source = preg_replace('/&#(\d+);/me', "chr(\\1)", $source);
 		// convert hex
-		$source = preg_replace('/&#x([a-f0-9]+);/mei',"chr(0x\\1)", $source);
+		$source = preg_replace('/&#x([a-f0-9]+);/mei', "chr(0x\\1)", $source);
 		return $source;
 	}
 }
