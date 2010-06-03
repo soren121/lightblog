@@ -28,7 +28,7 @@ if(isset($_POST['create'])) {
 			# Require the HTML filter class
 			require('Class.InputFilter.php');
 			# Set allowed tags
-			$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'div', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br');
+			$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br');
 			$allowed_attr = array('id', 'class', 'href', 'title', 'alt', 'style');
 			# Initialize class
 			$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
@@ -70,9 +70,16 @@ if(isset($_POST['create'])) {
 
 # Process post/page editing
 if(isset($_POST['edit'])) {
-	# Grab data from form and escape the text
+	# Require the HTML filter class
+	require('Class.InputFilter.php');
+	# Set allowed tags
+	$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br');
+	$allowed_attr = array('id', 'class', 'href', 'title', 'alt', 'style');
+	# Initialize class
+	$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
+	# Grab the data from form and escape the text
 	$title = sqlite_escape_string(strip_tags($_POST['title']));
-	$text = sqlite_escape_string(cleanHTML($_POST['text']));
+	$text = sqlite_escape_string($filter->process($_POST['text']));
 	$id = (int)$_POST['id'];
 	$type = sqlite_escape_string($_POST['type']);
 	# Check published checkbox
