@@ -227,7 +227,7 @@ class PostLoop {
 		# We didn't screw up and keep an empty query, did we?
     	if(!empty($this->cur_result)) {
 			# Was an excerpt suffix specified?
-			if($excerpt !== '') {
+			if(!empty($excerpt)) {
 				# Let's set a default length
 				$length = 360;
 				# Open FunctionReplacements incase the mb_ functions aren't available
@@ -237,7 +237,7 @@ class PostLoop {
 				# Do we need to shorten the post?
 				if(mb_strlen(stripslashes($this->cur_result->post)) > $length) {
 					# Echo the shortened post content along with our suffix
-      				echo mb_substr(stripslashes($this->cur_result->post), 0, $length).' ... <a href="post.php?id='. $this->cur_result->id.'">'.$excerpt.'</a>';
+      				echo mb_substr(stripslashes($this->cur_result->post), 0, $length).'... <a href="?post='.$this->cur_result->id.'">'.$excerpt.'</a>';
 				}
 				# It's short enough already, unsanitize & echo it now
 				else { echo stripslashes($this->cur_result->post); }
