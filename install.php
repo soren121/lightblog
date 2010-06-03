@@ -481,8 +481,8 @@ if(isset($_POST['bsetup'])) {
 				</script>
 				<h2>Blog setup</h2>
 				<p>Before we show you your new blog, we need to setup an<br />
-				administrator account so you can get in to the admin panel. All<br />
-				the fields below need to be filled.</p>
+				administrator account so you can get into the admin panel.<br />
+				All the fields below need to be filled.</p>
 				<form action="<?php echo basename($_SERVER['SCRIPT_FILENAME']); ?>" method="post">
 					<div id="bsleft">
 						<label for="bsusername">Username</label><br />

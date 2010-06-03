@@ -97,7 +97,7 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 					<td><?php echo $user->email ?></td>
 					<td><?php echo $user->displayname ?></td>
 					<td><?php echo $user->ip ?></td>
-					<?php if(userFetch('username', 'r') !== $user->username): ?>
+					<?php if(userFetch('username', 'r') !== $user->username || userFetch('role', 2) >= $user->role): ?>
 						<td class="c"><img src="style/delete-user.png" onclick="deleteUser('<?php echo $user->id ?>', '<?php echo $user->username ?>');" alt="Delete User" style="cursor:pointer;" /></td>
 					<?php else: ?>
 						<td class="c"><img src="style/delete-user-d.png" alt="" title="You can't delete yourself!" /></td>
