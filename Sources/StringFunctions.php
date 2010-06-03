@@ -44,45 +44,6 @@ function randomString($length) {
 	}
 }
 
-/*
-	Function: cleanHTML
-	
-	Cleans HTML input to reduce the risk of XSS attacks.
-	
-	Parameters:
-	
-		str - HTML code to clean.
-		
-	Returns:
-	
-		Clean HTML code.
-*/
-function cleanHTML($str) {
-	// Remove empty space
-	$str = trim($str);
-	// Strip out CDATA
-	preg_match_all('/<!\[cdata\[(.*?)\]\]>/is', $str, $matches);
-    $str = str_replace($matches[0], $matches[1], $str);
-	// Strip out all JavaScript
-    $str = preg_replace("/href=(['\"]).*?javascript:(.*)?\\1/i", "onclick=' $2 '", $str);
-    while(preg_match("/<(.*)?javascript.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", $str))
-        $str = preg_replace("/<(.*)?javascript.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", "<$1$3$4$5>", $str);
-    // Remove all expressions
-	$str = preg_replace("/:expression\(.*?((?>[^(.*?)]+)|(?R)).*?\)\)/i", "", $str);
-    while(preg_match("/<(.*)?:expr.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", $str))
-        $str = preg_replace("/<(.*)?:expr.*?\(.*?((?>[^()]+)|(?R)).*?\)?\)(.*)?>/i", "<$1$3$4$5>", $str);
-	// Remove all on* attributes
-    while(preg_match("/<(.*)?\s?on.+?=?\s?.+?(['\"]).*?\\2\s?(.*)?>/i", $str))
-       $str = preg_replace("/<(.*)?\s?on.+?=?\s?.+?(['\"]).*?\\2\s?(.*)?>/i", "<$1$3>", $str);
-	// Strip all but allowed tags
-	$str = strip_tags($str, "<b><strong><i><em><u><a><img><quote><div><span><br><ol><ul><li>");
-	// Convert symbols to HTML entities to kill hex attacks
-	$str = str_replace("#", "&#35;", $str);
-	$str = str_replace("%", "&#37;", $str);
-	// Return the final string
-	return $str;
-}
-
 // Function to correct plurals and such on dynamic numbers, mainly comment numbers
 function grammarFix($number, $singular, $plural) {
 	if($number == 1) {
