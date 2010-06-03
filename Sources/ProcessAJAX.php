@@ -25,9 +25,16 @@ if(isset($_POST['create'])) {
 	$type = $_POST['type'];
 	if($type !== 'category' && permissions(1) || $type === 'category' && permissions(2)) {
 		if($type !== 'category') {
-			# Grab data from form and escape the text
-			$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
-			$text = sqlite_escape_string(cleanHTML($_POST['text']));
+			# Require the HTML filter class
+			require('Class.InputFilter.php');
+			# Set allowed tags
+			$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'div', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br');
+			$allowed_attr = array('id', 'class', 'href', 'title', 'alt', 'style');
+			# Initialize class
+			$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
+			# Grab the data from form and escape the text
+			$title = sqlite_escape_string(strip_tags($_POST['title']));
+			$text = sqlite_escape_string($filter->process($_POST['text']));
 			$date = time();
 			$author = sqlite_escape_string(userFetch('displayname', 'r'));
 			$category = (int)$_POST['category'];
@@ -46,7 +53,7 @@ if(isset($_POST['create'])) {
 			}
 		}
 		else {
-			$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
+			$title = sqlite_escape_string(strip_tags($_POST['title']));
 			$info = sqlite_escape_string(cleanHTML($_POST['text']));
 			$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
 			$type = "category";
@@ -64,7 +71,7 @@ if(isset($_POST['create'])) {
 # Process post/page editing
 if(isset($_POST['edit'])) {
 	# Grab data from form and escape the text
-	$title = sqlite_escape_string(strip_tags(cleanHTML($_POST['title'])));
+	$title = sqlite_escape_string(strip_tags($_POST['title']));
 	$text = sqlite_escape_string(cleanHTML($_POST['text']));
 	$id = (int)$_POST['id'];
 	$type = sqlite_escape_string($_POST['type']);
@@ -135,7 +142,7 @@ if(isset($_POST['edit'])) {
 # Process post/page/category deletion
 if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
 	# Execute query to delete post/page/category
-	$dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags(cleanHTML($_POST['type'])))." WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError()));
+	$dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags($_POST['type']))." WHERE id=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError()));
 	if($_POST['type'] == 'posts') {
 		# Delete comments associated with this post
 		$dbh->query("DELETE FROM comments WHERE pid=".(int)$_POST['id']) or die(sqlite_error_string($dbh->lastError()));
@@ -146,7 +153,7 @@ if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
 if(isset($_POST['themesubmit'])) {
 	if(permissions(3)) {
 		# Execute query to change theme
-		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetheme'])))."' WHERE variable='theme'") or die(sqlite_error_string($dbh->lastError()));
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changetheme']))."' WHERE variable='theme'") or die(sqlite_error_string($dbh->lastError()));
 	}
 }
 
@@ -155,7 +162,7 @@ if(isset($_POST['changetitle'])) {
 	# Check permissions
 	if(permissions(3)) {
 		# Execute query to change title
-		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changetitle'])))."' WHERE variable='title'") or die(sqlite_error_string($dbh->lastError()));
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changetitle']))."' WHERE variable='title'") or die(sqlite_error_string($dbh->lastError()));
 	}
 }
 
@@ -164,7 +171,7 @@ if(isset($_POST['changeurl'])) {
 	# Check permissions
 	if(permissions(3)) {
 		# Execute query to change url
-		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['changeurl'])))."' WHERE variable='url'") or die(sqlite_error_string($dbh->lastError()));
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changeurl']))."' WHERE variable='url'") or die(sqlite_error_string($dbh->lastError()));
 	}
 }
 
@@ -173,7 +180,7 @@ if(isset($_POST['commentmoderation'])) {
 	# Check permissions
 	if(permissions(3)) {
 		# Execute query to change setting
-		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags(cleanHTML($_POST['commentmoderation'])))."' WHERE variable='comment_moderation'") or die(sqlite_error_string($dbh->lastError()));
+		$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['commentmoderation']))."' WHERE variable='comment_moderation'") or die(sqlite_error_string($dbh->lastError()));
 	}
 }
 
