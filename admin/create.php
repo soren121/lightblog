@@ -65,14 +65,17 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 					url: this.getAttribute('action'),
 					timeout: 2000,
 					error: function() {
-						$('#notifybox').text('Failed to submit <?php echo ucwords($type) ?>.').css("background","#b20000").slideDown("normal");
-						console.log("Failed to submit");
-						alert("Failed to submit.");
+						$('#notifybox').text('Failed to submit <?php echo $type; ?>.').css("background","#E36868").css("border-color","#a40000").slideDown("normal");
 					},
-					success: function(r) {
-						$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
-						$('.hint').val('');
-						nicEditors.findEditor('wysiwyg').setContent('');
+					success: function(json) {
+						var r = jQuery.parseJSON(json);
+						if(r.result == 'success') {
+							$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + r.response + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
+							nicEditors.findEditor('wysiwyg').setContent('');
+						}
+						else {
+							$('#notifybox').text('Failed to submit <?php echo $type; ?>; ' + r.response).css("background","#E36868").css("border-color","#a40000").slideDown("normal");
+						}
 					}
 				})
 				return false;
@@ -101,8 +104,9 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 					<label class="tfl" for="wysiwyg"><?php echo $type == 'category' ? 'Info' : 'Body'; ?></label>
 					<textarea rows="12" cols="36" name="text" id="wysiwyg"></textarea><br />
 					<input class="cf" type="hidden" name="type" value="<?php echo $type ?>" />
+					<input class="cf" type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
 				</div>
-				<div class="settings" style="float:left;width:170px;margin:16px 0 10px;padding:15px;">
+				<div class="settings" style="float:left;width:170px;margin:19px 0 10px;padding:15px;">
 					<?php if($type == 'post'): ?>
 						<label for="category">Category:</label><br />
 						<select class="cf" id="category" name="category">

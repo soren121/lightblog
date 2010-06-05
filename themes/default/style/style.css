@@ -78,6 +78,7 @@ body {
 	font-family: Georgia,Times,serif,sans-serif;
 	font-size: 1.0em;
 	font-weight: normal;
+	word-wrap: break-word;
 }
 
 #content p.post img {
@@ -164,6 +165,7 @@ body {
 
 #content p.comment_text {
 	margin: 10px 0 10px 0;
+	word-wrap: break-word;
 }
 
 #content div.c1 {

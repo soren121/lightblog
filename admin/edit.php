@@ -85,12 +85,17 @@ while($past = $result->fetchObject()) {
 					url: this.getAttribute('action'),
 					timeout: 2000,
 					error: function() {
-						$('#notifybox').text('Failed to submit <?php echo $type ?>.').css("background","#b20000").slideDown("normal");
-						console.log("Failed to submit");
-						alert("Failed to submit.");
+						$('#notifybox').text('Failed to submit <?php echo $type; ?>.').css("background","#E36868").css("border-color","#a40000").slideDown("normal");
 					},
-					success: function(r) {
-						$('#notifybox').html('<?php echo ucwords($type) ?> edited. | <' + 'a href="' + r + '">View <?php echo $type ?></' + 'a>').css("background", "#CFEBF7").slideDown("normal");
+					success: function(json) {
+						var r = jQuery.parseJSON(json);
+						if(r.result == 'success') {
+							$('#notifybox').html('<?php echo ucwords($type) ?> edited. | <' + 'a href="' + r.response + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
+							nicEditors.findEditor('wysiwyg').setContent('');
+						}
+						else {
+							$('#notifybox').text('Failed to submit <?php echo $type; ?>; ' + r.response).css("background","#E36868").css("border-color","#a40000").slideDown("normal");
+						}
 					}
 				})
 				return false;
@@ -120,8 +125,9 @@ while($past = $result->fetchObject()) {
 					<textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo stripslashes($text) ?></textarea>
 					<input class="ef" type="hidden" name="type" value="<?php echo $type ?>" />
 					<input class="ef" type="hidden" name="id" value="<?php echo (int)$_GET['id'] ?>" />
+					<input class="ef" type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
 				</div>
-				<div class="settings" style="float:left;width:170px;margin:16px 0 10px;padding:15px;">
+				<div class="settings" style="float:left;width:170px;margin:19px 0 10px;padding:15px;">
 					<?php if($type == 'post'): ?>
 						<label for="category">Category:</label><br />
 						<select class="ef" id="category" name="category">

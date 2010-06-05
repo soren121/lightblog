@@ -258,6 +258,8 @@ function login($method) {
 					$_SESSION['displayname'] = $user->displayname;
 					$_SESSION['role'] = $user->role;
 					$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
+					// Set CSRF token
+					$_SESSION['csrf_token'] = sha1('csrf'.session_id().randomString(9));
 					// Resalt password
 					$salt = substr(md5(uniqid(rand(), true)), 0, 9);
 					$passhash = sha1($salt.$password);
