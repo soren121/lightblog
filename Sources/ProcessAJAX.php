@@ -19,12 +19,74 @@
 // Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
+require(ABSPATH .'/Sources/FunctionReplacements.php');
 
 # Process post/page/category creation
 if(isset($_POST['create'])) {
-	$type = $_POST['type'];
-	if($type !== 'category' && permissions(1) || $type === 'category' && permissions(2)) {
-		if($type !== 'category') {
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+		echo json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing."));
+		die();
+	}
+	else {
+		$type = $_POST['type'];
+		if($type !== 'category' && permissions(1) || $type === 'category' && permissions(2)) {
+			if($type !== 'category') {
+				# Require the HTML filter class
+				require('Class.InputFilter.php');
+				# Set allowed tags
+				$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br');
+				$allowed_attr = array('id', 'class', 'href', 'title', 'alt', 'style');
+				# Initialize class
+				$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
+				# Grab the data from form and escape the text
+				$title = sqlite_escape_string(strip_tags($_POST['title']));
+				$text = sqlite_escape_string($filter->process($_POST['text']));
+				$date = time();
+				$author = sqlite_escape_string(userFetch('displayname', 'r'));
+				$category = (int)$_POST['category'];
+				# Check published checkbox
+				if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
+				else { $published = 0; }
+				# Check comments checkbox
+				if(isset($_POST['comments']) && $_POST['comments'] == 1) { $comments = 1; }
+				else { $comments = 0; }
+				# Insert post/page into database
+				if($type == 'post') {
+					$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+				}
+				else {
+					$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+				}
+			}
+			else {
+				$title = sqlite_escape_string(strip_tags($_POST['title']));
+				$info = sqlite_escape_string(cleanHTML($_POST['text']));
+				$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
+				$type = "category";
+				$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('$shortname','$title','$info')") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+			}
+			# Fetch post ID from database
+			$id = $dbh->lastInsertRowid();
+			# Create URL to return to jQuery
+			$url = bloginfo('url', 'r')."?".$type."=".$id;
+			# Return JSON-encoded response
+			echo json_encode(array("result" => "success", "response" => "$url"));
+			# Prevent the rest of the page from loading
+			die();
+		}
+	}
+}
+
+# Process post/page editing
+if(isset($_POST['edit'])) {
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+		echo json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing."));
+		die();
+	}
+	else {
+		$id = (int)$_POST['id'];
+		$query = $dbh->query("SELECT author FROM posts WHERE id=".$id) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+		if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $query->fetchSingle() === userFetch('displayname','r') || $type === 'category' && permissions(2)) {
 			# Require the HTML filter class
 			require('Class.InputFilter.php');
 			# Set allowed tags
@@ -35,117 +97,72 @@ if(isset($_POST['create'])) {
 			# Grab the data from form and escape the text
 			$title = sqlite_escape_string(strip_tags($_POST['title']));
 			$text = sqlite_escape_string($filter->process($_POST['text']));
-			$date = time();
-			$author = sqlite_escape_string(userFetch('displayname', 'r'));
-			$category = (int)$_POST['category'];
+			$type = sqlite_escape_string($_POST['type']);
 			# Check published checkbox
 			if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
 			else { $published = 0; }
-			# Check comments checkbox
-			if(isset($_POST['comments']) && $_POST['comments'] == 1) { $comments = 1; }
-			else { $comments = 0; }
-			# Insert post/page into database
+			# For posts only
 			if($type == 'post') {
-				$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(sqlite_error_string($dbh->lastError()));
-			}
-			else {
-				$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(sqlite_error_string($dbh->lastError()));
-			}
-		}
-		else {
-			$title = sqlite_escape_string(strip_tags($_POST['title']));
-			$info = sqlite_escape_string(cleanHTML($_POST['text']));
-			$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
-			$type = "category";
-			$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('$shortname','$title','$info')");
-		}
-		# Fetch post ID from database
-		$id = $dbh->lastInsertRowid();
-		# Return full url to post to jQuery
-		echo bloginfo('url', 'r')."?".$type."=".$id;
-		# Prevent the rest of the page from loading
-		die();
-	}
-}
-
-# Process post/page editing
-if(isset($_POST['edit'])) {
-	$id = (int)$_POST['id'];
-	$query = $dbh->query("SELECT author FROM posts WHERE id=".$id) or die(sqlite_error_string($dbh->lastError()));
-	if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $query->fetchSingle() === userFetch('displayname','r') || $type === 'category' && permissions(2)) {
-		# Require the HTML filter class
-		require('Class.InputFilter.php');
-		# Set allowed tags
-		$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br');
-		$allowed_attr = array('id', 'class', 'href', 'title', 'alt', 'style');
-		# Initialize class
-		$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
-		# Grab the data from form and escape the text
-		$title = sqlite_escape_string(strip_tags($_POST['title']));
-		$text = sqlite_escape_string($filter->process($_POST['text']));
-		$type = sqlite_escape_string($_POST['type']);
-		# Check published checkbox
-		if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
-		else { $published = 0; }
-		# For posts only
-		if($type == 'post') {
-			# Check comments checkbox
-			if(isset($_POST['comments']) && $_POST['comments'] == 1) { $comments = 1; }
-			else { $comments = 0; }
-			# Check category
-			$category = (int)$_POST['category'];
-		}
-		elseif($type == 'category') {
-			$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
-		}
-		# Query for previous data
-		$result = $dbh->query("SELECT * FROM ".($type == 'category' ? 'categorie' : $type)."s WHERE id=".$id) or die(sqlite_error_string($dbh->lastError()));
-		# Fetch previous data
-		while($past = $result->fetchObject()) {
-			if($type == 'post') {
-				$ptitle = $past->title;
-				$ppublished = $past->published;
-				$ptext = $past->post;
-				$pcategory = $past->category;
-				$pcomments = $past->comments;
-			}
-			elseif($type == 'page') {
-				$ptitle = $past->title;
-				$ppublished = $past->published;
-				$ptext = $past->page;
+				# Check comments checkbox
+				if(isset($_POST['comments']) && $_POST['comments'] == 1) { $comments = 1; }
+				else { $comments = 0; }
+				# Check category
+				$category = (int)$_POST['category'];
 			}
 			elseif($type == 'category') {
-				$ptitle = $past->fullname;
-				$ptext = $past->info;
-				$pshortname = $past->shortname;
+				$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
 			}
-		}
-		# Set a base query to modify
-		$base = "UPDATE ".($type == 'category' ? 'categorie' : $type)."s SET ";
-		# Run through scenarios
-		if($type == 'post' || $type == 'page') {
-			if(stripslashes($ptitle) !== $title) { $base .= "title='".sqlite_escape_string($title)."', "; }
-			if(stripslashes($ptext) !== $text) { $base .= $type."='".sqlite_escape_string($text)."', "; }
-			if((int)$ppublished !== $published) { $base .= "published='".(int)$published."', "; }
-			if($type == 'post') {
-				if((int)$pcategory !== $category) { $base .= "category='".(int)$category."', "; }
-				if((int)$pcomments !== $comments) { $base .= "comments='".(int)$comments."', "; }
+			# Query for previous data
+			$result = $dbh->query("SELECT * FROM ".($type == 'category' ? 'categorie' : $type)."s WHERE id=".$id) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+			# Fetch previous data
+			while($past = $result->fetchObject()) {
+				if($type == 'post') {
+					$ptitle = $past->title;
+					$ppublished = $past->published;
+					$ptext = $past->post;
+					$pcategory = $past->category;
+					$pcomments = $past->comments;
+				}
+				elseif($type == 'page') {
+					$ptitle = $past->title;
+					$ppublished = $past->published;
+					$ptext = $past->page;
+				}
+				elseif($type == 'category') {
+					$ptitle = $past->fullname;
+					$ptext = $past->info;
+					$pshortname = $past->shortname;
+				}
 			}
+			# Set a base query to modify
+			$base = "UPDATE ".($type == 'category' ? 'categorie' : $type)."s SET ";
+			# Run through scenarios
+			if($type == 'post' || $type == 'page') {
+				if(stripslashes($ptitle) !== $title) { $base .= "title='".sqlite_escape_string($title)."', "; }
+				if(stripslashes($ptext) !== $text) { $base .= $type."='".sqlite_escape_string($text)."', "; }
+				if((int)$ppublished !== $published) { $base .= "published='".(int)$published."', "; }
+				if($type == 'post') {
+					if((int)$pcategory !== $category) { $base .= "category='".(int)$category."', "; }
+					if((int)$pcomments !== $comments) { $base .= "comments='".(int)$comments."', "; }
+				}
+			}
+			else {
+				if(stripslashes($ptitle) !== $title) { $base .= "fullname='".sqlite_escape_string($title)."', "; }
+				if(stripslashes($pshortname) !== $shortname) { $base .= "shortname='".sqlite_escape_string($shortname)."', "; }
+				if(stripslashes($ptext) !== $text) { $base .= "info='".sqlite_escape_string($text)."', "; }
+			}
+			# Remove last comma & space
+			$base = substr($base, 0, -2);
+			$base .= " WHERE id=".(int)$id;
+			# Execute modified query
+			$dbh->query($base) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));		
+			# Create URL to return to jQuery
+			$url = bloginfo('url', 'r')."?".$type."=".$id;
+			# Return JSON-encoded response
+			echo json_encode(array("result" => "success", "response" => "$url"));
+			# Prevent the rest of the page from loading
+			die();
 		}
-		else {
-			if(stripslashes($ptitle) !== $title) { $base .= "fullname='".sqlite_escape_string($title)."', "; }
-			if(stripslashes($pshortname) !== $shortname) { $base .= "shortname='".sqlite_escape_string($shortname)."', "; }
-			if(stripslashes($ptext) !== $text) { $base .= "info='".sqlite_escape_string($text)."', "; }
-		}
-		# Remove last comma & space
-		$base = substr($base, 0, -2);
-		$base .= " WHERE id=".(int)$id;
-		# Execute modified query
-		$dbh->query($base) or die(sqlite_error_string($dbh->lastError));		
-		# Return full url to page to jQuery
-		echo bloginfo('url', 'r')."?".$type."=".$id;
-		# Prevent the rest of the page from loading
-		die();
 	}
 }
 
