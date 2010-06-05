@@ -245,13 +245,13 @@ class PostLoop {
 				}
 				$output = substr($text, 0, $length = min(strlen($text),  $length + $i)).(count($tags = array_reverse($tags)) ? '</' . implode('></', $tags) . '>' : '');		
 				// Get everything until last space
-				$one = substr($output, 0, strrpos($output, " ")).'...<a href="?post='.$this->cur_result->id.'">'.$excerpt.'</a>';
+				$one = substr($output, 0, strrpos($output, " "));
 				// Get the rest
 				$two = substr($output, strrpos($output, " "), (strlen($output) - strrpos($output, " ")));
 				// Extract all tags from the last bit
 				preg_match_all('/<(.*?)>/s', $two, $tags);
 				// Re-attach tags
-				$output = $one.implode($tags[0]);
+				$output = $one.implode($tags[0]).'... <a href="?post='.$this->cur_result->id.'">'.$excerpt.'</a>';
 				// Return final string
 				echo $output;
 			}
