@@ -226,21 +226,34 @@ class PostLoop {
   	public function content($excerpt = '') {
 		# We didn't screw up and keep an empty query, did we?
     	if(!empty($this->cur_result)) {
+  			$text = stripslashes($this->cur_result->post);
+			$length = 360;
 			# Was an excerpt suffix specified?
-			if(!empty($excerpt)) {
-				# Let's set a default length
-				$length = 360;
-				# Open FunctionReplacements incase the mb_ functions aren't available
-				include_once(ABSPATH .'/Sources/FunctionReplacements.php');
-				# Take out any ellipsises
-				$length -= mb_strlen('...');
-				# Do we need to shorten the post?
-				if(mb_strlen(stripslashes($this->cur_result->post)) > $length) {
-					# Echo the shortened post content along with our suffix
-      				echo mb_substr(stripslashes($this->cur_result->post), 0, $length).'... <a href="?post='.$this->cur_result->id.'">'.$excerpt.'</a>';
+			if(!empty($excerpt) && strlen($text) > $length) {
+				$i = 0;
+				$tags = array();
+				preg_match_all('/<[^>]+>([^<]*)/', $text, $m, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+				foreach($m as $o){
+					if($o[0][1] - $i >= $length)
+						break;
+					$t = substr(strtok($o[0][0], " \t\n\r\0\x0B>"), 1);
+					if($t[0] != '/')
+						$tags[] = $t;
+					elseif(end($tags) == substr($t, 1))
+						array_pop($tags);
+					$i += $o[1][1] - $o[0][1];
 				}
-				# It's short enough already, unsanitize & echo it now
-				else { echo stripslashes($this->cur_result->post); }
+				$output = substr($text, 0, $length = min(strlen($text),  $length + $i)).(count($tags = array_reverse($tags)) ? '</' . implode('></', $tags) . '>' : '');		
+				// Get everything until last space
+				$one = substr($output, 0, strrpos($output, " ")).'...<a href="?post='.$this->cur_result->id.'">'.$excerpt.'</a>';
+				// Get the rest
+				$two = substr($output, strrpos($output, " "), (strlen($output) - strrpos($output, " ")));
+				// Extract all tags from the last bit
+				preg_match_all('/<(.*?)>/s', $two, $tags);
+				// Re-attach tags
+				$output = $one.implode($tags[0]);
+				// Return final string
+				echo $output;
 			}
 			# Looks like we're echoing the full post
 			else {
@@ -673,6 +686,18 @@ class CommentLoop {
 		else {
 			return false;
 		}
+	}
+	
+	/*
+		Function: formHook
+	
+		Injects form inputs required by LightBlog into the comment form.
+	*/	
+	public function formHook() {
+		// Output the post ID as a hidden form input
+		echo '<p style="display:none;"><input name="comment_pid" type="hidden" value="'.$GLOBALS['pid'].'" /></p>';
+		// Output the CSRF token as a hidden form input
+		echo '<p style="display:none;"><input name="csrf_token" type="hidden" value="'.$_SESSION['csrf_token'].'" /></p>';
 	}
 }
 
