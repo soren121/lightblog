@@ -51,19 +51,25 @@ else {
 		});
 		
 		function deleteItem(id,title) {
-			var answer = confirm("Really delete <?php echo $type ?> \"" + title + "\"?");
+			var answer = confirm("Really delete <?php echo ($type == 'categories' ? 'category' : substr($type, 0, -1)) ?> \"" + title + "\"?");
 			if(answer) {
 				jQuery.ajax({
-					data: "delete=true&type=<?php echo $type ?>&id=" + id,
+					data: "delete=true&csrf_token=<?php echo $_SESSION['csrf_token']; ?>&type=<?php echo $type ?>&id=" + id,
 					type: "POST",
 					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
 					timeout: 3000,
 					error: function() {
-						alert("Failed to delete <?php echo $type ?>.");
+						$('#notifybox').text('Failed to delete <?php echo ($type == 'categories' ? 'category' : substr($type, 0, -1)) ?>.').css("background","#E36868").css("border-color","#a40000").slideDown("normal");
 					},
-					success: function(r) {
-						var tr = '#tr' + id;
-						$(tr).hide();
+					success: function(json) {
+						var r = jQuery.parseJSON(json);
+						if(r.result == 'success') {
+							var tr = '#tr' + id;
+							$(tr).hide();
+						}
+						else {
+							$('#notifybox').text('Failed to delete <?php echo ($type == 'categories' ? 'category' : substr($type, 0, -1)) ?>; ' + r.response).css("background","#E36868").css("border-color","#a40000").slideDown("normal");
+						}
 					}
 				})
 			}
@@ -85,7 +91,7 @@ else {
 			<!-- They were, so continue -->
 			<?php else: ?>
 			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Manage <?php echo ucwords($type) ?></h2>
-			<!-- Check if any posts/pages exist -->
+			<div id="notifybox" style="margin:3px 0 -3px 5px;width:588px;"></div>
 			<?php if($result->numRows() > 0): ?>
 			<table class="managelist">
 				<!-- Add table headings -->
@@ -130,7 +136,7 @@ else {
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
-			<?php echo advancedPagination($type, ($_SERVER['HTTPS'] == 'on' ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], (int)$_GET['page']); ?>
+			<?php echo advancedPagination($type, $_SERVER['PHP_SELF'].'?type='.(int)$_GET['type'], (int)$_GET['page']); ?>
 			<!-- None exist error message -->
 			<?php else: ?>
 			<p>Sorry, no <?php echo $type ?> exist to manage.</p>

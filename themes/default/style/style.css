@@ -81,6 +81,10 @@ body {
 	word-wrap: break-word;
 }
 
+#content p.post * {
+	font-family: Georgia,Times,serif,sans-serif;
+}
+
 #content p.post img {
 	max-width: 455px;
 }

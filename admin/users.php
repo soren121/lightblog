@@ -21,10 +21,10 @@ require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 
 if(isset($_GET['page']) && $_GET['page'] > 1) {
-		$result = $dbh->query("SELECT * FROM users ORDER BY id asc LIMIT ".(($_GET['page'] - 1) * 8).",8") or die(sqlite_error_string($dbh->lastError));
+		$result = $dbh->query("SELECT * FROM users ORDER BY username asc LIMIT ".(($_GET['page'] - 1) * 8).",8") or die(sqlite_error_string($dbh->lastError));
 }
 else {
-	$result = $dbh->query("SELECT * FROM users ORDER BY id asc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
+	$result = $dbh->query("SELECT * FROM users ORDER BY username asc LIMIT 0,8") or die(sqlite_error_string($dbh->lastError));
 }
 
 $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
@@ -51,16 +51,22 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 			var answer = confirm("Really delete user \"" + user + "\"?");
 			if(answer) {
 				jQuery.ajax({
-					data: "deleteusersubmit=true&id=" + id,
+					data: "deleteusersubmit=true&csrf_token=<?php echo $_SESSION['csrf_token']; ?>&id=" + id,
 					type: "POST",
 					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
 					timeout: 3000,
 					error: function() {
-						alert("Failed to delete user " + user + ".");
+						$('#notifybox').text('Failed to delete user.').css("background","#E36868").css("border-color","#a40000").slideDown("normal");
 					},
-					success: function(r) {
-						var tr = '#tr' + id;
-						$(tr).hide();
+					success: function(json) {
+						var r = jQuery.parseJSON(json);
+						if(r.result == 'success') {
+							var tr = '#tr' + id;
+							$(tr).hide();
+						}
+						else {
+							$('#notifybox').text('Failed to delete user; ' + r.response).css("background","#E36868").css("border-color","#a40000").slideDown("normal");
+						}
 					}
 				})
 			}
@@ -77,6 +83,7 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 		<div id="content">
 			<?php if(permissions(2)): ?>
 			<h2 class="title"><img class="textmid" src="style/users.png" alt="" />Manage Users</h2>
+			<div id="notifybox" style="margin:3px 0 -3px 5px;width:588px;"></div>
 			<!-- Check if any posts/pages exist -->
 			<?php if($result->numRows() > 0): ?>
 			<table class="managelist">
@@ -97,7 +104,7 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 					<td><?php echo $user->email ?></td>
 					<td><?php echo $user->displayname ?></td>
 					<td><?php echo $user->ip ?></td>
-					<?php if(userFetch('username', 'r') !== $user->username || userFetch('role', 2) >= $user->role): ?>
+					<?php if(userFetch('username', 'r') !== $user->username && userFetch('role', 2) >= $user->role): ?>
 						<td class="c"><img src="style/delete-user.png" onclick="deleteUser('<?php echo $user->id ?>', '<?php echo $user->username ?>');" alt="Delete User" style="cursor:pointer;" /></td>
 					<?php else: ?>
 						<td class="c"><img src="style/delete-user-d.png" alt="" title="You can't delete yourself!" /></td>

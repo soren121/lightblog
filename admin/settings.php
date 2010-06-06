@@ -22,15 +22,9 @@ require(ABSPATH .'/Sources/Core.php');
 
 if(bloginfo('comment_moderation','r') == 'none') { 
 	$cmno = 'checked="checked"';  
-} 
-else {
-	$cmno = '';
 }
-if(bloginfo('comment_moderation','r') == 'approval') { 
+elseif(bloginfo('comment_moderation','r') == 'approval') { 
 	$cmapvl = 'checked="checked"';  
-} 
-else {
-	$cmapvl = '';
 }
 
 ?>
@@ -69,12 +63,19 @@ else {
 					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
 					timeout: 2000,
 					error: function() {
-						console.log("Failed to submit");
-						alert("Failed to submit.");
+							$('.loader').remove();
+							$('input[type=submit]').removeAttr('disabled').after('<' + 'span style="color:red;margin-left:5px;" class="inform">Failed to submit.<\/' + 'span>');		
 					},
-					success: function(r) {
-						$('.loader').remove();
-						$('input[type=submit]').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">Changes saved.<\/' + 'span>');
+					success: function(json) {
+						var r = jQuery.parseJSON(json);
+						if(r.result == 'success') {
+							$('.loader').remove();
+							$('input[type=submit]').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">Changes saved.<\/' + 'span>');
+						}
+						else {
+							$('.loader').remove();
+							$('input[type=submit]').removeAttr('disabled').after('<' + 'span style="color:red;margin-left:5px;" class="inform">' + r.response + '<\/' + 'span>');						
+						}
 					}
 				})
 				return false;
@@ -114,7 +115,9 @@ else {
 						<input type="radio" name="commentmoderation" id="cm-apvl" value="approval" <?php echo $cmapvl; ?> />Approval required
 					</p>
 					
-					<p><input type="submit" value="Save" /></p>
+					<p><input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" /></p>
+					
+					<p><input type="submit" name="changesettings" value="Save" /></p>
 				</form>
 			</div>
 			<?php endif; ?>
