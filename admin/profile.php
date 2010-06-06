@@ -64,12 +64,18 @@ require(ABSPATH .'/Sources/Core.php');
 					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
 					timeout: 2000,
 					error: function() {
-						console.log("Failed to submit");
-						alert("Failed to submit.");
-					},
-					success: function(r) {
 						$('.loader').remove();
-						$('input[type=submit]').removeAttr('disabled').after('<' + r +'<\/' + 'span>');
+						$('#editprofilesubmit').removeAttr('disabled').after('<' + 'span style="color:red;margin-left:5px;" class="inform">Failed to submit.</' + 'span>');
+					},
+					success: function(json) {
+						$('.loader').remove();
+						var r = jQuery.parseJSON(json);
+						if(r.result == 'success') {
+							$('#editprofilesubmit').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">Success! Changes will appear on next login.</' + 'span>');
+						}
+						else {
+							$('#editprofilesubmit').removeAttr('disabled').after('<' + 'span style="color:red;margin-left:5px;" class="inform">Fatal error; ' + r.response + '</' + 'span>');
+						}
 					}
 				})
 				return false;
@@ -113,8 +119,10 @@ require(ABSPATH .'/Sources/Core.php');
 					<p style="margin-top:0px;">
 						<input type="password" name="vpassword" id="vpassword" value="" />
 					</p>
+					
+					<p><input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" /></p>
 
-					<p><input type="submit" value="Save Changes" name="editprofilesubmit" /></p>
+					<p><input type="submit" value="Save Changes" name="editprofilesubmit" id="editprofilesubmit" /></p>
 				</form>
 			</div>
 			<?php endif; ?>

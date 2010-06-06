@@ -44,19 +44,26 @@ require(ABSPATH .'/Sources/Core.php');
 					inputs.push(this.name + '=' + escape(this.value));
 				})
 				$('.inform').remove();
-				$('input[type=submit]').attr('disabled','disabled').after('<' + 'img src="style/loading.gif" alt="" class="loader" style="margin-left:5px;" />');
+				$('input[type=submit]').attr('disabled','disabled').after('<' + 'img src="style/loading.gif" alt="" class="loader" style="margin-left:5px;" /\>');
 				jQuery.ajax({
 					data: inputs.join('&'),
 					type: "POST",
 					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
 					timeout: 3000,
 					error: function() {
-						console.log("Failed to submit");
-						alert("Failed to submit.");
+							$('.loader').remove();
+							$('input[type=submit]').removeAttr('disabled').after('<span style="color:red;margin-left:5px;" class="inform">Failed to submit.<\/' + 'span>');
 					},
-					success: function(r) {
-						$('.loader').remove();
-						$('input[type=submit]').removeAttr('disabled').after('<' + r +'<\/' + 'span>');
+					success: function(json) {
+						var r = jQuery.parseJSON(json);
+						if(r.result == 'success') {
+							$('.loader').remove();
+							$('input[type=submit]').removeAttr('disabled').after('<span style="color:green;margin-left:5px;" class="inform">' + r.response +'<\/' + 'span>');
+						}
+						else {
+							$('.loader').remove();
+							$('input[type=submit]').removeAttr('disabled').after('<span style="color:red;margin-left:5px;" class="inform">Failed to submit; ' + r.response +'<\/' + 'span>');						
+						}
 					}
 				})
 				return false;
@@ -110,6 +117,8 @@ require(ABSPATH .'/Sources/Core.php');
 							<option value="3">Administrator</option>
 						</select>
 					</p>
+					
+					<p><input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" /></p>
 					
 					<p><input type="submit" value="Add User" name="addusersubmit" /></p>
 				</form>

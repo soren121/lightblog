@@ -53,12 +53,18 @@ require(ABSPATH .'/Sources/Core.php');
 					url: this.getAttribute('action'),
 					timeout: 2000,
 					error: function() {
-						console.log("Failed to submit");
-						alert("Failed to submit.");
-					},
-					success: function(r) {
 						$('.loader').remove();
-						$('#themesubmit').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">Theme changed.</' + 'span>');
+						$('#themesubmit').removeAttr('disabled').after('<' + 'span style="color:red;margin-left:5px;" class="inform">Failed to submit.</' + 'span>');
+					},
+					success: function(json) {
+						$('.loader').remove();
+						var r = jQuery.parseJSON(json);
+						if(r.result == 'success') {
+							$('#themesubmit').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">Theme changed.</' + 'span>');
+						}
+						else {
+							$('#themesubmit').removeAttr('disabled').after('<' + 'span style="color:red;margin-left:5px;" class="inform">' + r.response + '</' + 'span>');
+						}
 					}
 				})
 				return false;
@@ -84,6 +90,7 @@ require(ABSPATH .'/Sources/Core.php');
 					<p><select name="changetheme" id="changetheme">
 							<?php list_themes() ?>
 					</select></p>
+					<p><input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" /></p>
 					<p><input type="submit" name="themesubmit" id="themesubmit" value="Save" /></p>
 				</form>
 			</div>

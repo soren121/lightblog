@@ -250,6 +250,12 @@ class PostLoop {
 				$two = substr($output, strrpos($output, " "), (strlen($output) - strrpos($output, " ")));
 				// Extract all tags from the last bit
 				preg_match_all('/<(.*?)>/s', $two, $tags);
+				// Remove tags that don't need closing
+				foreach($tags[0] as $key => $val) {
+					if($tags[0][$key] == '</br>' || $tags[0][$key] == '</img>') {
+						unset($tags[0][$key]);
+					}
+				}
 				// Re-attach tags
 				$output = $one.implode($tags[0]).'... <a href="?post='.$this->cur_result->id.'">'.$excerpt.'</a>';
 				// Return final string

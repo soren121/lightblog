@@ -64,17 +64,24 @@ else {
 				var id = $(this).parent().attr('id').substr(2);
 				var thisa = this;
 				jQuery.ajax({
-					data: "approvecomment=true&id=" + id,
+					data: "approvecomment=true&csrf_token=<?php echo $_SESSION['csrf_token']; ?>&id=" + id,
 					type: "POST",
 					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
 					timeout: 3000,
 					error: function() {
-						alert("Failed to approve comment.");
+						$('#notifybox').text('Failed to approve comment.').css("background","#E36868").css("border-color","#a40000").slideDown("normal");
 						$(thisa).empty().html('<img src="style/cross.png" alt="Not approved" />');
 					},
-					success: function() {
-						$(thisa).removeClass('nApproved').addClass('approved').css('cursor', 'default').empty().html('<img src="style/check.png" alt="Approved" />');
-						window.ajaxr = 'yes';
+					success: function(json) {
+						var r = jQuery.parseJSON(json);
+						if(r.result == 'success') {
+							$(thisa).removeClass('nApproved').addClass('approved').css('cursor', 'default').empty().html('<img src="style/check.png" alt="Approved" />');
+							window.ajaxr = 'yes';
+						}
+						else {
+							$('#notifybox').text('Failed to approve comment; ' + r.response).css("background","#E36868").css("border-color","#a40000").slideDown("normal");
+							$(thisa).empty().html('<img src="style/cross.png" alt="Not approved" />');							
+						}
 					}
 				});
 			});
@@ -84,16 +91,22 @@ else {
 			var answer = confirm("Really delete comment #" + id + "?");
 			if(answer) {
 				jQuery.ajax({
-					data: "delete=true&type=comments&id=" + id,
+					data: "delete=true&csrf_token=<?php echo $_SESSION['csrf_token']; ?>&type=comments&id=" + id,
 					type: "POST",
 					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
 					timeout: 3000,
 					error: function() {
-						alert("Failed to delete comments.");
+						$('#notifybox').text('Failed to delete comment.').css("background","#E36868").css("border-color","#a40000").slideDown("normal");
 					},
-					success: function(r) {
-						var tr = '#tr' + id;
-						$(tr).hide();
+					success: function(json) {
+						var r = jQuery.parseJSON(json);
+						if(r.result == 'success') {
+							var tr = '#tr' + id;
+							$(tr).hide();
+						}
+						else {
+							$('#notifybox').text('Failed to delete comment; ' + r.response).css("background","#E36868").css("border-color","#a40000").slideDown("normal");
+						}
 					}
 				})
 			}
@@ -111,6 +124,7 @@ else {
 			<!-- Check if parameters were set -->
 			<?php if(permissions(2)): ?>
 			<h2 class="title"><img class="textmid" src="style/manage.png" alt="" />Manage Comments</h2>
+			<div id="notifybox" style="margin:3px 0 -3px 5px;width:588px;"></div>
 			<!-- Check if any posts/pages exist -->
 			<?php if($result->numRows() > 0): ?>
 			<table class="managelist">
