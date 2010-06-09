@@ -56,6 +56,8 @@ if(isset($_POST['create'])) {
 				else {
 					$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 				}
+				# Show 'view' link
+				$showlink = true;
 			}
 			else {
 				$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'a', 'ul', 'ol', 'li', 'span');
@@ -68,13 +70,15 @@ if(isset($_POST['create'])) {
 				$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
 				$type = "category";
 				$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('$shortname','$title','$info')") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+				# Do not show 'view' link
+				$showlink = false;
 			}
 			# Fetch post ID from database
 			$id = $dbh->lastInsertRowid();
 			# Create URL to return to jQuery
 			$url = bloginfo('url', 'r')."?".$type."=".$id;
 			# Return JSON-encoded response
-			echo json_encode(array("result" => "success", "response" => "$url"));
+			echo json_encode(array("result" => "success", "response" => "$url", "showlink" => "$showlink"));
 			# Prevent the rest of the page from loading
 			die();
 		}
@@ -148,11 +152,15 @@ if(isset($_POST['edit'])) {
 					if((int)$pcategory !== $category) { $base .= "category='".(int)$category."', "; }
 					if((int)$pcomments !== $comments) { $base .= "comments='".(int)$comments."', "; }
 				}
+				# Show 'view' link
+				$showlink = true;
 			}
 			else {
 				if(stripslashes($ptitle) !== $title) { $base .= "fullname='".sqlite_escape_string($title)."', "; }
 				if(stripslashes($pshortname) !== $shortname) { $base .= "shortname='".sqlite_escape_string($shortname)."', "; }
 				if(stripslashes($ptext) !== $text) { $base .= "info='".sqlite_escape_string($text)."', "; }
+				# Don't show 'view' link
+				$showlink = false;
 			}
 			# Remove last comma & space
 			$base = substr($base, 0, -2);
@@ -162,7 +170,7 @@ if(isset($_POST['edit'])) {
 			# Create URL to return to jQuery
 			$url = bloginfo('url', 'r')."?".$type."=".$id;
 			# Return JSON-encoded response
-			echo json_encode(array("result" => "success", "response" => "$url"));
+			echo json_encode(array("result" => "success", "response" => "$url", "showlink" => "$showlink"));
 			# Prevent the rest of the page from loading
 			die();
 		}
