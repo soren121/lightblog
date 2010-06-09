@@ -29,8 +29,8 @@ $result = $dbh->query("SELECT * FROM ".($type == 'category' ? 'categorie' : $typ
 
 # Get past data and set it
 while($past = $result->fetchObject()) {
-	$title = $past->title;
 	if($type !== 'category') {
+		$title = $past->title;
 		$author = $past->author;
 		$s_category = (int)$past->category;
 		if($past->published == 1) {
@@ -40,9 +40,16 @@ while($past = $result->fetchObject()) {
 			$cs_checked = 'checked="checked"';
 		}
 	}
-	if($type == 'post') { $text = $past->post; }
-	elseif($type == 'page') { $text = $past->page; }
-	elseif($type == 'category') { $text  = $past->info; }
+	if($type == 'post') {
+		$text = $past->post;
+	}
+	elseif($type == 'page') {
+		$text = $past->page;
+	}
+	elseif($type == 'category') {
+		$title = $past->fullname;
+		$text  = $past->info;
+	}
 }
 
 ?>
@@ -90,8 +97,12 @@ while($past = $result->fetchObject()) {
 					success: function(json) {
 						var r = jQuery.parseJSON(json);
 						if(r.result == 'success') {
-							$('#notifybox').html('<?php echo ucwords($type) ?> edited. | <' + 'a href="' + r.response + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
-							nicEditors.findEditor('wysiwyg').setContent('');
+							if(r.showlink == true) {
+								$('#notifybox').html('<?php echo ucwords($type) ?> edited. | <' + 'a href="' + r.response + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
+							}
+							else {
+								$('#notifybox').html('<?php echo ucwords($type) ?> edited.').slideDown("normal");
+							}
 						}
 						else {
 							$('#notifybox').text('Failed to submit <?php echo $type; ?>; ' + r.response).css("background","#E36868").css("border-color","#a40000").slideDown("normal");

@@ -70,7 +70,12 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 					success: function(json) {
 						var r = jQuery.parseJSON(json);
 						if(r.result == 'success') {
-							$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + r.response + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
+							if(r.showlink == true) {
+								$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + r.response + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
+							}
+							else {
+								$('#notifybox').html('<?php echo ucwords($type) ?> created.').slideDown("normal");
+							}
 							nicEditors.findEditor('wysiwyg').setContent('');
 						}
 						else {
