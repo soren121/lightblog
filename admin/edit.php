@@ -103,6 +103,7 @@ while($past = $result->fetchObject()) {
 							else {
 								$('#notifybox').html('<?php echo ucwords($type) ?> edited.').slideDown("normal");
 							}
+							nicEditors.findEditor('wysiwyg').setContent('');
 						}
 						else {
 							$('#notifybox').text('Failed to submit <?php echo $type; ?>; ' + r.response).css("background","#E36868").css("border-color","#a40000").slideDown("normal");
