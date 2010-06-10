@@ -90,17 +90,17 @@ require(ABSPATH .'/Sources/Core.php');
 					<div class="db_box rounded">
 						<h4>LightBlog News</h4>
 						<ul>
-						<?php if(!function_exists('fsockopen') && !in_array('curl', get_loaded_extensions())): ?>
-								<p>Sorry, but your PHP configuration doesn't support external connections.<br />
-								You can view the news manually <a href="http://sorenstudios.com/blog/?category=2">here</a>.</p>
-						<?php else:
+						<?php if(is_resource(@fsockopen("www.google.com")) || function_exists('curl_init')):
 								include(ABSPATH .'/Sources/FeedReader.php');
 								$reader = new Reader('http://www.sorenstudios.com/blog/feed.php?category=2', ABSPATH .'/Sources/feedcache');
 								$items = $reader->return_items(5);
 								foreach($items as $news): ?>
 									<li><a href="<?php echo $news['link'] ?>"><?php echo $news['title'] ?></a></li>	
 						<?php 	endforeach; 
-							  endif; ?>
+							  else: ?>
+								<p>Sorry, but your PHP configuration doesn't support external connections.<br />
+								You can view the news manually <a href="http://sorenstudios.com/blog/?category=2">here</a>.</p>
+						<?php endif; ?>
 						</ul>
 					</div>
 				</div>
