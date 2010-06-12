@@ -702,8 +702,6 @@ class CommentLoop {
 	public function formHook() {
 		// Output the post ID as a hidden form input
 		echo '<p style="display:none;"><input name="comment_pid" type="hidden" value="'.$GLOBALS['pid'].'" /></p>';
-		// Output the CSRF token as a hidden form input
-		echo '<p style="display:none;"><input name="csrf_token" type="hidden" value="'.$_SESSION['csrf_token'].'" /></p>';
 	}
 }
 
