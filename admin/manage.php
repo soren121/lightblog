@@ -19,6 +19,7 @@
 // Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
+require(ABSPATH .'/Sources/Admin.php');
 
 if((int)$_GET['type'] == 1) { $type = 'posts'; }
 elseif((int)$_GET['type'] == 2) { $type = 'pages'; }
@@ -136,7 +137,7 @@ else {
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
-			<?php echo advancedPagination($type, $_SERVER['PHP_SELF'].'?type='.(int)$_GET['type'], (int)$_GET['page']); ?>
+			<?php echo advancedPagination($type, $_SERVER['PHP_SELF'].'?type='.(int)$_GET['type'], @(int)$_GET['page']); ?>
 			<!-- None exist error message -->
 			<?php else: ?>
 			<p>Sorry, no <?php echo $type ?> exist to manage.</p>
