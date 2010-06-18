@@ -17,7 +17,7 @@
 *********************************************/
 
 // Check if LightBlog is installed
-if(!file_exists('config.php')){ 
+if(!file_exists('config.php')) {
 	// It isn't, so head to the installer
 	header('Location: install.php');
 }
@@ -26,6 +26,12 @@ if(isset($_GET['install']) && $_GET['install'] === 'true' && file_exists('instal
 	unlink('install.php');
 	if(file_exists('install.sql')) {
 		unlink('install.sql'); 
+	}
+	if(file_exists('update.php')) {
+		unlink('update.php');
+	}
+	if(file_exists('update.sql')) {
+		unlink('update.sql');
 	}
 }
 

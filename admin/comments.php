@@ -19,6 +19,7 @@
 // Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
+require(ABSPATH .'/Sources/Admin.php');
 
 if(isset($_GET['page']) && $_GET['page'] > 1) {
 		$result = $dbh->query("SELECT * FROM comments ORDER BY id desc LIMIT ".((($_GET['page']) - 1) * 8).",8") or die(sqlite_error_string($dbh->lastError));
@@ -152,7 +153,7 @@ else {
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
-			<?php echo advancedPagination('comments', ($_SERVER['HTTPS'] == 'on' ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], (int)$_GET['page']); ?>
+			<?php echo advancedPagination('comments', $_SERVER['PHP_SELF'], @(int)$_GET['page']); ?>
 			<!-- None exist error message -->
 			<?php else: ?>
 			<p>Sorry, there are no comments to manage.</p>

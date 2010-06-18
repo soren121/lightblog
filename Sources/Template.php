@@ -71,15 +71,28 @@ class PostLoop {
 		
 		Parameters:
 		
-			where - Optional parameter. You can use this to add an extra condition to the WHERE selector in the query.
+			single - Optional parameter. Used to specify whether to obtain a single post or not.
 
 		Returns:
 		
 			A complete SQL query.
 	*/
-	private function parseQuery($where = '') {
+	private function parseQuery($single = false) {
 		// Get the view type
 		$querytype = $GLOBALS['postquery']['type'];
+		// If we're only showing one post, then we might be able to show it even if it's unpublished...
+		if($single == true) {
+			// Specify post ID
+			$pid = (int)$GLOBALS['pid'];
+			$where = "id=$pid";
+			// If the user is logged in...
+			if(!userFetch('username', 'r') && !permissions(1)) {
+				$where .= " AND published=1";		
+			}
+		}
+		else {
+			$where = "published=1";
+		}
 		if($querytype == 'archive') {
 			$queryextra = substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0);
 			$queryextra = explode('-', $queryextra);
@@ -89,10 +102,10 @@ class PostLoop {
 		}
 		elseif($querytype == 'category') {
 			$queryextra = (int)$GLOBALS['postquery']['catid'];
-				return "SELECT * FROM posts WHERE category=$queryextra AND published='1' $where ORDER BY id desc";
+			return "SELECT * FROM posts WHERE category=$queryextra AND published='1' $where ORDER BY id desc";
 		}
 		else {
-			return "SELECT * FROM posts WHERE published='1' $where ORDER BY id desc";
+			return "SELECT * FROM posts WHERE $where ORDER BY id desc";
 		}
 	}
 	
@@ -103,11 +116,10 @@ class PostLoop {
 	*/
 	public function obtain_post() {
 		# Sanitize and set variables
-		$pid = (int)$GLOBALS['pid'];
 		$dbh = $this->dbh;
-		
+			
 		# Query the database for the post data
-		$this->result = $dbh->query($this->parseQuery("AND id=$pid"));
+		$this->result = $dbh->query($this->parseQuery(true));
 	}
 	
 	/*
@@ -343,10 +355,10 @@ class PostLoop {
 	/*
 		Destructor: __destruct
 		
-		Displays simple paginations links when the PostLoop class is destroyed with unset().
+		Displays simple paginations link when the PostLoop class is destroyed with unset().
 	*/
 	public function __destruct() {
-		if($GLOBALS['postquery']['type'] != 'post' || $GLOBALS['postquery']['type'] != 'page') {
+		if($GLOBALS['postquery']['type'] != 'post' && $GLOBALS['postquery']['type'] != 'page') {
 			global $file, $page;
 			$dbh = $this->dbh;
 			$limit = $this->limit;

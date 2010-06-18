@@ -19,6 +19,7 @@
 // Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
+require(ABSPATH .'/Sources/Admin.php');
 
 if(bloginfo('comment_moderation','r') == 'none') { 
 	$cmno = 'checked="checked"';  
@@ -109,10 +110,10 @@ elseif(bloginfo('comment_moderation','r') == 'approval') {
 										
 					<p class="label"><label>Comment moderation</label></p>
 					<p>
-						<input type="radio" name="commentmoderation" id="cm-no" value="none" <?php echo $cmno; ?> />None
+						<input type="radio" name="commentmoderation" id="cm-no" value="none" <?php echo @$cmno; ?> />None
 					</p>
 					<p>
-						<input type="radio" name="commentmoderation" id="cm-apvl" value="approval" <?php echo $cmapvl; ?> />Approval required
+						<input type="radio" name="commentmoderation" id="cm-apvl" value="approval" <?php echo @$cmapvl; ?> />Approval required
 					</p>
 					
 					<p><input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" /></p>
