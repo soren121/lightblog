@@ -28,7 +28,7 @@ if(isset($_POST['create'])) {
 	}
 	else {
 		$type = $_POST['type'];
-		if($type !== 'category' && permissions(1) || $type === 'category' && permissions(2)) {
+		if(($type !== 'category' && permissions(1)) || ($type === 'category' && permissions(2))) {
 			# Require the HTML filter class
 			require('Class.InputFilter.php');
 			if($type !== 'category') {
@@ -42,7 +42,9 @@ if(isset($_POST['create'])) {
 				$text = sqlite_escape_string($filter->process($_POST['text']));
 				$date = time();
 				$author = sqlite_escape_string(userFetch('displayname', 'r'));
-				$category = (int)$_POST['category'];
+				if($type == 'post') {
+					$category = (int)$_POST['category'];
+				}
 				# Check published checkbox
 				if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
 				else { $published = 0; }
@@ -188,8 +190,8 @@ if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
 		if($_POST['type'] == 'posts') {
 			# Delete comments associated with this post
 			$dbh->query("DELETE FROM comments WHERE pid=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
-			die(json_encode(array("result" => "success")));
 		}
+		die(json_encode(array("result" => "success")));
 	}
 }
 

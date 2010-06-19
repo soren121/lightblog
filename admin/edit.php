@@ -147,10 +147,10 @@ while($past = $result->fetchObject()) {
 							<?php list_categories($s_category) ?>
 						</select><br /><br />
 						<label for="comments">Comments on?</label>
-						<input class="ef" type="checkbox" name="comments" id="comments" <?php echo $cs_checked; ?> value="1" /><br />
+						<input class="ef" type="checkbox" name="comments" id="comments" <?php echo @$cs_checked; ?> value="1" /><br />
 					<?php endif; if($type != 'category'): ?>
 						<label for="published">Published?</label>
-						<input class="ef" type="checkbox" name="published" id="published" <?php echo $ps_checked; ?> value="1" /><br /><br />
+						<input class="ef" type="checkbox" name="published" id="published" <?php echo @$ps_checked; ?> value="1" /><br /><br />
 					<?php endif; ?>
 					<input class="ef submit" name="edit" type="submit" value="Save" />
 				</div>
