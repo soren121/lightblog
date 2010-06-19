@@ -98,11 +98,11 @@ class PostLoop {
 			$queryextra = explode('-', $queryextra);
 			$firstday = mktime(0, 0, 0, $queryextra[1], 1, $queryextra[0]);
 			$lastday = mktime(0, 0, 0, ($queryextra[1] + 1), 0, $queryextra[0]);
-			return "SELECT * FROM posts WHERE date BETWEEN $firstday AND $lastday AND published='1' $where ORDER BY id desc";
+			return "SELECT * FROM posts WHERE $where AND date BETWEEN $firstday AND $lastday ORDER BY id desc";
 		}
 		elseif($querytype == 'category') {
 			$queryextra = (int)$GLOBALS['postquery']['catid'];
-			return "SELECT * FROM posts WHERE category=$queryextra AND published='1' $where ORDER BY id desc";
+			return "SELECT * FROM posts WHERE $where AND category=$queryextra ORDER BY id desc";
 		}
 		else {
 			return "SELECT * FROM posts WHERE $where ORDER BY id desc";

@@ -51,7 +51,7 @@ if(get_magic_quotes_gpc()) {
 */
 function LightyVersion($output = 'e') {
 	# DON'T TOUCH!
-	$version = '0.9.3 Beta 1';
+	$version = '0.9.3 Beta 2';
 	# Are we echoing or returning?
 	if($output == 'e') { echo $version; }
 	# Returning!

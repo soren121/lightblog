@@ -53,10 +53,10 @@ if(isset($_POST['create'])) {
 				else { $comments = 0; }
 				# Insert post/page into database
 				if($type == 'post') {
-					$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+					@$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 				}
 				else {
-					$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+					@$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 				}
 				# Show 'view' link
 				$showlink = true;
@@ -71,7 +71,7 @@ if(isset($_POST['create'])) {
 				$info = sqlite_escape_string($filter->process($_POST['text']));
 				$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
 				$type = "category";
-				$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('$shortname','$title','$info')") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+				@$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('$shortname','$title','$info')") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 				# Do not show 'view' link
 				$showlink = false;
 			}
@@ -94,7 +94,8 @@ if(isset($_POST['edit'])) {
 	}
 	else {
 		$id = (int)$_POST['id'];
-		$query = $dbh->query("SELECT author FROM posts WHERE id=".$id) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+		$type = sqlite_escape_string($_POST['type']);
+		$query = @$dbh->query("SELECT author FROM posts WHERE id=".$id) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 		if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $query->fetchSingle() === userFetch('displayname','r') || $type === 'category' && permissions(2)) {
 			# Require the HTML filter class
 			require('Class.InputFilter.php');
@@ -106,7 +107,6 @@ if(isset($_POST['edit'])) {
 			# Grab the data from form and escape the text
 			$title = sqlite_escape_string(strip_tags($_POST['title']));
 			$text = sqlite_escape_string($filter->process($_POST['text']));
-			$type = sqlite_escape_string($_POST['type']);
 			# Check published checkbox
 			if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
 			else { $published = 0; }
@@ -122,7 +122,7 @@ if(isset($_POST['edit'])) {
 				$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
 			}
 			# Query for previous data
-			$result = $dbh->query("SELECT * FROM ".($type == 'category' ? 'categorie' : $type)."s WHERE id=".$id) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+			$result = @$dbh->query("SELECT * FROM ".($type == 'category' ? 'categorie' : $type)."s WHERE id=".$id) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 			# Fetch previous data
 			while($past = $result->fetchObject()) {
 				if($type == 'post') {
@@ -146,7 +146,7 @@ if(isset($_POST['edit'])) {
 			# Set a base query to modify
 			$base = "UPDATE ".($type == 'category' ? 'categorie' : $type)."s SET ";
 			# Run through scenarios
-			if($type == 'post' || $type == 'page') {
+			if($type != 'category') {
 				if(stripslashes($ptitle) !== $title) { $base .= "title='".sqlite_escape_string($title)."', "; }
 				if(stripslashes($ptext) !== $text) { $base .= $type."='".sqlite_escape_string($text)."', "; }
 				if((int)$ppublished !== $published) { $base .= "published='".(int)$published."', "; }
@@ -168,7 +168,7 @@ if(isset($_POST['edit'])) {
 			$base = substr($base, 0, -2);
 			$base .= " WHERE id=".(int)$id;
 			# Execute modified query
-			$dbh->query($base) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));		
+			@$dbh->query($base) or die(json_encode(array("result" => "error", "response" => $type.sqlite_error_string($dbh->lastError()))));		
 			# Create URL to return to jQuery
 			$url = bloginfo('url', 'r')."?".$type."=".$id;
 			# Return JSON-encoded response
@@ -186,10 +186,10 @@ if(isset($_POST['delete']) && $_POST['delete'] == 'true') {
 	}
 	else {
 		# Execute query to delete post/page/category
-		$dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags($_POST['type']))." WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+		@$dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags($_POST['type']))." WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 		if($_POST['type'] == 'posts') {
 			# Delete comments associated with this post
-			$dbh->query("DELETE FROM comments WHERE pid=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+			@$dbh->query("DELETE FROM comments WHERE pid=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 		}
 		die(json_encode(array("result" => "success")));
 	}
@@ -203,7 +203,7 @@ if(isset($_POST['themesubmit'])) {
 	else {
 		if(permissions(3)) {
 			# Execute query to change theme
-			$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changetheme']))."' WHERE variable='theme'") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+			@$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changetheme']))."' WHERE variable='theme'") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 			# Return result
 			die(json_encode(array("result" => "success")));
 		}
@@ -216,13 +216,13 @@ if(isset($_POST['changesettings'])) {
 	}
 	else {
 		if($_POST['changetitle'] != bloginfo('title', 'r')) {
-			$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changetitle']))."' WHERE variable='title'") or die(json_encode(array("result" => "error", "response" => "Failed to change blog title.")));
+			@$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changetitle']))."' WHERE variable='title'") or die(json_encode(array("result" => "error", "response" => "Failed to change blog title.")));
 		}
 		if($_POST['changeurl'] != bloginfo('url', 'r')) {
-			$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changeurl']))."' WHERE variable='url'") or die(json_encode(array("result" => "error", "response" => "Failed to change blog URL.")));
+			@$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changeurl']))."' WHERE variable='url'") or die(json_encode(array("result" => "error", "response" => "Failed to change blog URL.")));
 		}
 		if($_POST['commentmoderation'] != bloginfo('comment_moderation', 'r')) {
-			$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['commentmoderation']))."' WHERE variable='comment_moderation'") or die(json_encode(array("result" => "error", "response" => "Failed to change blog URL.")));
+			@$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['commentmoderation']))."' WHERE variable='comment_moderation'") or die(json_encode(array("result" => "error", "response" => "Failed to change blog URL.")));
 		}
 		die(json_encode(array("result" => "success")));
 	}
@@ -250,11 +250,11 @@ if(isset($_POST['addusersubmit'])) {
 			if(!isset($_POST['role'])) { $fielderror = true; }
 			else { $role = $_POST['role']; }
 			// Output error if required
-			if($fielderror == true) {
+			if(isset($fielderror) && $fielderror == true) {
 				die(json_encode(array("result" => "error", "response" => "All fields must be filled. Try again.")));
 			}
 			// Does that username exist already?		
-			$result = $dbh->query("SELECT * FROM users WHERE username='$username'") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+			$result = @$dbh->query("SELECT * FROM users WHERE username='$username'") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 			if($result->numRows() < 0) { 
 				die(json_encode(array("result" => "error", "response" => "Username is already taken. Try again."))); 
 			}
@@ -277,7 +277,7 @@ if(isset($_POST['addusersubmit'])) {
 			$role = sqlite_escape_string($role);
 			$ip = $_SERVER['REMOTE_ADDR'];
 			// Create the user!
-			$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$passhash','$email','$displayname','$role', '$ip', '$salt');") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+			@$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$passhash','$email','$displayname','$role', '$ip', '$salt');") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 			die(json_encode(array("result" => "success", "response" => "User $username created.")));
 		}
 		else {
@@ -300,8 +300,8 @@ if(isset($_POST['editprofilesubmit'])) {
 			$vpassword = sqlite_escape_string($_POST['vpassword']);
 			$c_user = sqlite_escape_string(userFetch('username', 1));
 			// Run database query to get current password hash
-			$dbpasshash = $dbh->query("SELECT password FROM users WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "username query failed.")));
-			$dbsalt = $dbh->query("SELECT salt FROM users WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "salt query failed.")));
+			$dbpasshash = @$dbh->query("SELECT password FROM users WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "username query failed.")));
+			$dbsalt = @$dbh->query("SELECT salt FROM users WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "salt query failed.")));
 			// Recreate hash
 			$passhash = sha1($dbsalt->fetchSingle().$vpassword);
 			// Do they match?
@@ -311,15 +311,15 @@ if(isset($_POST['editprofilesubmit'])) {
 					$salt = substr(md5(uniqid(rand(), true)), 0, 9);
 					$passhash = sha1($salt.$password);
 					// Send it up to the mothership...I mean the database!
-					$dbh->query("UPDATE users SET password='$passhash', salt='$salt' WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "password update failed.")));
+					@$dbh->query("UPDATE users SET password='$passhash', salt='$salt' WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "password update failed.")));
 				}
 				if(isset($_POST['em-ck']) && $_POST['em-ck'] == 1) {
 					// Send it to the database
-					$dbh->query("UPDATE users SET email='$email' WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "email update failed.")));
+					@$dbh->query("UPDATE users SET email='$email' WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "email update failed.")));
 				}
 				if(isset($_POST['dn-ck']) && $_POST['dn-ck'] == 1) {
 					// Send it to the database
-					$dbh->query("UPDATE users SET displayname='$displayname' WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "display name update failed.")));
+					@$dbh->query("UPDATE users SET displayname='$displayname' WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "display name update failed.")));
 				}	
 			}
 			else {
@@ -341,10 +341,10 @@ if(isset($_POST['deleteusersubmit'])) {
 		// Can the user do this?
 		if(permissions(2)) {
 			# Check the user level of the user being deleted
-			$query = $dbh->query("SELECT role FROM users WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "could not get the role of the user being deleted.")));
+			$query = @$dbh->query("SELECT role FROM users WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "could not get the role of the user being deleted.")));
 			if(userFetch('role', 2) >= $query->fetchSingle() ) {		
 				# Execute query to delete user
-				$dbh->query("DELETE FROM users WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "user deletion command failed.")));
+				@$dbh->query("DELETE FROM users WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "user deletion command failed.")));
 				die(json_encode(array("result" => "success")));
 			}
 		}
@@ -359,7 +359,7 @@ if(isset($_POST['approvecomment'])) {
 	else {
 		if(permissions(2)) {
 			# Execute query to approve comment
-			$dbh->query("UPDATE comments SET published='1' WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "comment approval command failed.")));
+			@$dbh->query("UPDATE comments SET published='1' WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "comment approval command failed.")));
 			die(json_encode(array("result" => "success")));
 		}
 	}
