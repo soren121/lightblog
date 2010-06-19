@@ -1,8 +1,8 @@
-[04.18.10] Changes in 0.9.3
+[06.21.10] Changes in 0.9.3
 	* Comment moderation added
 	* Category support added
 	* Support for archive and category views
 	* Database update script added
-	* Switched to elite.js from jQuery
 	* New, clean function documentation
+	* CSRF protection in all forms
 	* Fixed security and usability bugs
