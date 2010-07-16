@@ -33,7 +33,7 @@ if(isset($_POST['create'])) {
 			require('Class.InputFilter.php');
 			if($type !== 'category') {
 				# Set allowed tags
-				$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br');
+				$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br', 'div');
 				$allowed_attr = array('id', 'class', 'href', 'title', 'src', 'alt', 'style');
 				# Initialize class
 				$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
@@ -100,7 +100,7 @@ if(isset($_POST['edit'])) {
 			# Require the HTML filter class
 			require('Class.InputFilter.php');
 			# Set allowed tags
-			$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br');
+			$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br', 'div');
 			$allowed_attr = array('id', 'class', 'href', 'title', 'alt', 'style');
 			# Initialize class
 			$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
