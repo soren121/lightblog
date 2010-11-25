@@ -4,14 +4,14 @@
 
 	LightBlog 0.9
 	SQLite blogging platform
-	
+
 	index.php
-	
-	©2009-2010 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+
+	©2009-2010 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 *********************************************/
@@ -20,12 +20,14 @@
 if(!file_exists('config.php')) {
 	// It isn't, so head to the installer
 	header('Location: install.php');
+
+	exit;
 }
 
 if(isset($_GET['install']) && $_GET['install'] === 'true' && file_exists('install.php')) {
 	unlink('install.php');
 	if(file_exists('install.sql')) {
-		unlink('install.sql'); 
+		unlink('install.sql');
 	}
 	if(file_exists('update.php')) {
 		unlink('update.php');
@@ -52,7 +54,7 @@ if(!isset($_GET['post']) && !isset($_GET['page'])) {
 	else {
 		$page = 1;
 	}
-	
+
 	// Display the right post view
 	if(isset($_GET['archive'])) {
 		$GLOBALS['postquery']['type'] = 'archive';
@@ -73,15 +75,15 @@ if(!isset($_GET['post']) && !isset($_GET['page'])) {
 }
 
 // Looks like it is a post or page
-else {	
+else {
 	if(isset($_GET['post'])) {
-		// Get post ID	
+		// Get post ID
 		$GLOBALS['pid'] = (int)$_GET['post'];
 		$GLOBALS['postquery']['type'] = 'post';
 		// Display appropriate theme file
 		include('themes/'.$themeName.'/post.php');
 	}
-	
+
 	elseif(isset($_GET['page'])) {
 		// Get page ID
 		$GLOBALS['pid'] = (int)$_GET['page'];
