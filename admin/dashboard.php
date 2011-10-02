@@ -55,7 +55,7 @@ require(ABSPATH .'/Sources/Admin.php');
 						<h4>Recent Posts</h4>
 						<ul>
 						<?php
-							$rpresult = $dbh->query("SELECT * FROM posts ORDER BY id desc LIMIT 5");
+							$rpresult = $dbh->query("SELECT * FROM posts WHERE published=1 ORDER BY id desc LIMIT 5");
 							if($rpresult->numRows() == 0): ?>
 								No posts to display.
 							<?php else: while($rp = $rpresult->fetch(SQLITE_ASSOC)): ?>
