@@ -6,7 +6,7 @@
 					<h4 class="postnamealt">
 						<?php $posts->title() ?>
 					</h4>
-					<p class="post"><?php $posts->content() ?></p>
+					<div class="post"><?php $posts->content() ?></div>
 					<div class="postdata">
 						<span class="postdata">
 							<img src="<?php bloginfo('themeurl') ?>/style/date.png" alt="" />

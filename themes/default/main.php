@@ -6,7 +6,7 @@
 					<h4 class="postname">
 						<a class="postname" href="<?php $posts->permalink() ?>"><?php $posts->title() ?></a>
 					</h4>
-					<p class="post"><?php $posts->content('Read More &#187;') ?></p>
+					<div class="post"><?php $posts->content('Read More &#187;') ?></div>
 					<div class="postdata">
 						<span class="postdata">
 							<img src="<?php bloginfo('themeurl') ?>/style/date.png" alt="" />
