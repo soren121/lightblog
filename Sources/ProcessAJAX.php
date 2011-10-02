@@ -31,17 +31,18 @@ if(isset($_POST['create'])) {
 		if(($type !== 'category' && permissions(1)) || ($type === 'category' && permissions(2))) {
 			# Require the HTML filter class
 			require('Class.InputFilter.php');
+			# Set allowed tags
+			$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br', 'div');
+			$allowed_attr = array('id', 'class', 'href', 'title', 'src', 'alt', 'style');
+			# Initialize class
+			$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
+			# Grab the data from form and clean things up
+			$title = strip_tags($_POST['title']);
+			$text = $filter->process($_POST['text']);
+			# If you're not a category, you must be...
 			if($type !== 'category') {
-				# Set allowed tags
-				$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br', 'div');
-				$allowed_attr = array('id', 'class', 'href', 'title', 'src', 'alt', 'style');
-				# Initialize class
-				$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
-				# Grab the data from form and escape the text
-				$title = sqlite_escape_string(strip_tags($_POST['title']));
-				$text = sqlite_escape_string($filter->process($_POST['text']));
 				$date = time();
-				$author = sqlite_escape_string(userFetch('displayname', 'r'));
+				$author = userFetch('displayname', 'r');
 				if($type == 'post') {
 					$category = (int)$_POST['category'];
 				}
@@ -53,25 +54,18 @@ if(isset($_POST['create'])) {
 				else { $comments = 0; }
 				# Insert post/page into database
 				if($type == 'post') {
-					@$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".$title."','".$text."',$date,'".$author."',$published,$category,$comments)") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+					@$dbh->query("INSERT INTO posts (title,post,date,author,published,category,comments) VALUES('".sqlite_escape_string($title)."','".sqlite_escape_string($text)."',$date,'".sqlite_escape_string($author)."',$published,$category,$comments)") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 				}
 				else {
-					@$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".$title."','".$text."',$date,'".$author."',$published)") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+					@$dbh->query("INSERT INTO pages (title,page,date,author,published) VALUES('".sqlite_escape_string($title)."','".sqlite_escape_string($text)."',$date,'".sqlite_escape_string($author)."',$published)") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 				}
 				# Show 'view' link
 				$showlink = true;
 			}
+			# ...a category.
 			else {
-				$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'a', 'ul', 'ol', 'li', 'span');
-				$allowed_attr = array('id', 'class', 'href', 'title', 'style');
-				# Initialize class
-				$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
-				# Sanitize
-				$title = sqlite_escape_string(strip_tags($_POST['title']));
-				$info = sqlite_escape_string($filter->process($_POST['text']));
 				$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
-				$type = "category";
-				@$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('$shortname','$title','$info')") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+				@$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('".sqlite_escape_string($shortname)."','".sqlite_escape_string($title)."','".sqlite_escape_string($text)."')") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 				# Do not show 'view' link
 				$showlink = false;
 			}
@@ -101,12 +95,13 @@ if(isset($_POST['edit'])) {
 			require('Class.InputFilter.php');
 			# Set allowed tags
 			$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br', 'div');
-			$allowed_attr = array('id', 'class', 'href', 'title', 'alt', 'style');
+			$allowed_attr = array('id', 'class', 'href', 'title', 'alt', 'style', 'align', 'src');
 			# Initialize class
 			$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
 			# Grab the data from form and escape the text
-			$title = sqlite_escape_string(strip_tags($_POST['title']));
-			$text = sqlite_escape_string($filter->process($_POST['text']));
+			$title = strip_tags($_POST['title']);
+			$text = $filter->process($_POST['text']);
+			//die(json_encode(array("result" => "error", "response" => $_POST['text'].$text)));
 			# Check published checkbox
 			if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
 			else { $published = 0; }
