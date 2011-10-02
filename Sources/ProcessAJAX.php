@@ -64,7 +64,7 @@ if(isset($_POST['create'])) {
 			}
 			# ...a category.
 			else {
-				$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
+				$shortname = substr(preg_replace("/[^a-zA-Z0-9\s]/", "", strtolower($title)), 0, 15);
 				@$dbh->query("INSERT INTO categories (shortname,fullname,info) VALUES('".sqlite_escape_string($shortname)."','".sqlite_escape_string($title)."','".sqlite_escape_string($text)."')") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 				# Do not show 'view' link
 				$showlink = false;
@@ -94,7 +94,7 @@ if(isset($_POST['edit'])) {
 			# Require the HTML filter class
 			require('Class.InputFilter.php');
 			# Set allowed tags
-			$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br', 'div');
+			$allowed_tags = array('p', 'b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br', 'div');
 			$allowed_attr = array('id', 'class', 'href', 'title', 'alt', 'style', 'align', 'src');
 			# Initialize class
 			$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
@@ -114,7 +114,7 @@ if(isset($_POST['edit'])) {
 				$category = (int)$_POST['category'];
 			}
 			elseif($type == 'category') {
-				$shortname = substr(str_replace(array(" ", ".", ","), "", strtolower($title)), 0, 15);
+				$shortname = substr(preg_replace("/[^a-zA-Z0-9]/", "", strtolower($title)), 0, 15);
 			}
 			# Query for previous data
 			$result = @$dbh->query("SELECT * FROM ".($type == 'category' ? 'categorie' : $type)."s WHERE id=".$id) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
@@ -140,6 +140,8 @@ if(isset($_POST['edit'])) {
 			}
 			# Set a base query to modify
 			$base = "UPDATE ".($type == 'category' ? 'categorie' : $type)."s SET ";
+			# Create URL to return to jQuery
+			$url = bloginfo('url', 'r')."?".$type."=".$id;
 			# Run through scenarios
 			if($type != 'category') {
 				if(stripslashes($ptitle) !== $title) { $base .= "title='".sqlite_escape_string($title)."', "; }
@@ -159,13 +161,16 @@ if(isset($_POST['edit'])) {
 				# Don't show 'view' link
 				$showlink = false;
 			}
+			# If nothing's changed, then we don't need to do anything
+			if($base == "UPDATE ".($type == 'category' ? 'categorie' : $type)."s SET ") {
+				echo json_encode(array("result" => "success", "response" => "$url", "showlink" => "$showlink"));
+				die();
+			}
 			# Remove last comma & space
 			$base = substr($base, 0, -2);
 			$base .= " WHERE id=".(int)$id;
 			# Execute modified query
-			@$dbh->query($base) or die(json_encode(array("result" => "error", "response" => $type.sqlite_error_string($dbh->lastError()))));		
-			# Create URL to return to jQuery
-			$url = bloginfo('url', 'r')."?".$type."=".$id;
+			@$dbh->query($base) or die(json_encode(array("result" => "error", "response" => $type.sqlite_error_string($dbh->lastError()))));
 			# Return JSON-encoded response
 			echo json_encode(array("result" => "success", "response" => "$url", "showlink" => "$showlink"));
 			# Prevent the rest of the page from loading

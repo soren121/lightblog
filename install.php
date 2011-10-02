@@ -184,7 +184,7 @@ function bsetup() {
 	$dname = sqlite_escape_string($_POST['bsdname']);
 	$title = sqlite_escape_string($_POST['bstitle']);
 	$url = sqlite_escape_string($_POST['bsurl']);
-	// Correct bad IP when installing on localhost
+	// Correct IPv6 address when installing on localhost
 	$ip = !strstr($_SERVER['REMOTE_ADDR'], "::1") ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 	// Match passwords
 	if($password !== $vpassword) {

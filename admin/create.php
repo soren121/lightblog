@@ -42,13 +42,13 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
-			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');
+			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true,buttonList:['bold','italic','underline','strikethrough','left','center','right','justify','ol','ul','subscript','superscript','hr','image','upload','forecolor','bgcolor','link','unlink','removeformat','fontFormat','fontFamily','fontSize']}).panelInstance('wysiwyg');
 		});
 		$(function() {
 			$('#create').submit(function() {
 				$('#notifybox').slideUp('normal').empty();
 				var inputs = [];
-				var wysiwygtext = nicEditors.findEditor('wysiwyg').getContent();
+				nicEditors.findEditor('wysiwyg').saveContent();
 				$('.cf', this).each(function() {
 					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
 						void(0);
@@ -56,9 +56,6 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 					else {
 						inputs.push(this.name + '=' + escape(this.value));
 					}
-				})
-				$('#wysiwyg', this).each(function() {
-					inputs.push(this.name + '=' + escape(wysiwygtext));
 				})
 				jQuery.ajax({
 					data: inputs.join('&'),
@@ -108,7 +105,7 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 					<label class="tfl" for="title">Title</label>
 					<input id="title" class="textfield cf" name="title" type="text" title="Title" /><br />
 					<label class="tfl" for="wysiwyg"><?php echo $type == 'category' ? 'Info' : 'Body'; ?></label>
-					<textarea rows="12" cols="36" name="text" id="wysiwyg"></textarea><br />
+					<textarea class="cf" rows="12" cols="36" name="text" id="wysiwyg"></textarea><br />
 					<input class="cf" type="hidden" name="type" value="<?php echo $type ?>" />
 					<input class="cf" type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
 				</div>

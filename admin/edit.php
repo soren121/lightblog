@@ -70,12 +70,12 @@ while($past = $result->fetchObject()) {
 			$('.rounded').corner(); 
 			$('.roundedt').corner("round top 10px"); 
 			$('.roundedb').corner("round bottom 10px");
-			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true}).panelInstance('wysiwyg');
+			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true,buttonList:['bold','italic','underline','strikethrough','left','center','right','justify','ol','ul','subscript','superscript','hr','image','upload','forecolor','bgcolor','link','unlink','removeformat','fontFormat','fontFamily','fontSize']}).panelInstance('wysiwyg');
 		});
 		$(function() {
 			$('#edit').submit(function() {
 				var inputs = [];
-				var wysiwygtext = nicEditors.findEditor('wysiwyg').getContent();
+				nicEditors.findEditor('wysiwyg').saveContent();
 				$('.ef', this).each(function() {
 					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
 						void(0);
@@ -83,9 +83,6 @@ while($past = $result->fetchObject()) {
 					else {
 						inputs.push(this.name + '=' + escape(this.value));
 					}
-				})
-				$('#wysiwyg', this).each(function() {
-					inputs.push(this.name + '=' + unescape(wysiwygtext));
 				})
 				jQuery.ajax({
 					data: inputs.join('&'),
@@ -135,7 +132,7 @@ while($past = $result->fetchObject()) {
 					<label class="tfl" for="title">Title</label>
 					<input class="textfield ef" name="title" type="text" id="title" title="Title" value="<?php echo stripslashes($title) ?>" />
 					<label class="tfl" for="wysiwyg"><?php echo $type == 'category' ? 'Info' : 'Body'; ?></label>
-					<textarea rows="12" cols="36" name="text" id="wysiwyg"><?php echo stripslashes($text) ?></textarea>
+					<textarea class="ef" rows="12" cols="36" name="text" id="wysiwyg"><?php echo stripslashes($text) ?></textarea>
 					<input class="ef" type="hidden" name="type" value="<?php echo $type ?>" />
 					<input class="ef" type="hidden" name="id" value="<?php echo (int)$_GET['id'] ?>" />
 					<input class="ef" type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />

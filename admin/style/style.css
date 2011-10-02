@@ -111,6 +111,10 @@ a:link, a:visited {
 	height: 190px;
 }
 
+div.nicEdit-main ul, div.nicEdit-main ol {
+	margin-left: 40px;
+}
+
 #content table.managelist {
 	background: #F3F3F3;
 	width: 600px !important;

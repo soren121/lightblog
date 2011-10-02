@@ -7,7 +7,7 @@
 						<h4 class="postnamealt">
 							<?php $pages->title() ?>
 						</h4>
-						<p class="post"><?php $pages->content() ?></p>
+						<div class="post"><?php $pages->content() ?></div>
 					</div>
 					<!-- End the loop -->			
 				<?php endwhile; ?>

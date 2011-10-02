@@ -73,7 +73,7 @@ body {
 	text-decoration: none;
 }
 
-#content p.post {
+#content div.post {
 	padding-left: 3px;
 	font-family: Georgia,Times,serif,sans-serif;
 	font-size: 1.0em;
@@ -81,12 +81,22 @@ body {
 	word-wrap: break-word;
 }
 
-#content p.post * {
+#content div.post * {
 	font-family: Georgia,Times,serif,sans-serif;
 }
 
-#content p.post img {
+#content div.post img {
 	max-width: 455px;
+}
+
+#content div.post ul, #content div.post ol {
+	margin-left: 40px;
+	list-style-type: circle;
+}
+
+#content div.post li {
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 
 #content div.postdata {
