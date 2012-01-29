@@ -132,17 +132,21 @@ else {
 				<!-- Add table headings -->
 				<tr>
 					<th class="managelist">Author</th>
-					<th class="managelist">Excerpt</th>
 					<th class="managelist">Date</th>
+					<th class="managelist">Excerpt</th>
 					<th class="managelist">Approved</th>
 					<th class="managelist">Delete</th>
 				</tr>		
 				<!-- Start row loop -->
 				<?php while($row = $result->fetchObject()): ?>	
 				<tr id="tr<?php echo $row->id ?>">
-					<td style="white-space:nowrap;"><img src="http://www.gravatar.com/avatar.php?gravatar_id=<?php echo md5($row->email) ?>&amp;size=24" style="vertical-align:middle;margin-right:5px;" /><?php echo $row->name ?></td>
+					<td style="white-space:nowrap;">
+						<img src="http://www.gravatar.com/avatar.php?gravatar_id=<?php echo md5($row->email) ?>&amp;size=24" style="vertical-align:middle;margin-right:5px;" />
+						<a href="mailto:<?php echo $row->email ?>" title="Email the comment author at &quot;<?php echo $row->email ?>&quot;"><?php echo $row->name ?></a></td>
+					<td>
+						<a href="<?php bloginfo('url') ?>?post=<?php echo $row->pid ?>#comment-<?php echo $row->id ?>" title="View the comment"><?php echo date('n/j/Y \a\t h:i a', $row->date) ?></a>
+					</td>
 					<td><?php echo implode(' ', array_slice(explode(' ', $row->text), 0, 6)); ?></td>
-					<td><?php echo date('n/j/Y \a\t h:i a', $row->date) ?></td>
 					<?php if($row->published == 1): ?>
 						<td class="c approved"><img src="style/check.png" alt="Approved" /></td>
 					<?php else: ?>

@@ -171,10 +171,15 @@ body {
 	font-weight: bold;
 }
 
-#content span.comment_date {
+#content a.comment_date {
 	color: #06c;
 	font-size: 0.9em;
 	margin-top: 1px;
+	text-decoration: none;
+}
+
+#content a.comment_date:hover {
+	text-decoration: underline;
 }
 
 #content p.comment_text {
