@@ -1,3 +1,19 @@
+<!--**************************************
+
+	LightBlog 0.9
+	SQLite blogging platform
+
+	themes/default/page.php
+
+	©2008-2012 The LightBlog Team. All 
+	rights reserved. Released under the 
+	GNU General Public License 3. For 
+	all licensing information, please 
+	see the LICENSE.txt document 
+	included in this distribution.
+
+***************************************-->
+
 <?php include('head.php')?>
 <?php include('sidebar.php')?>
 			<div id="content">

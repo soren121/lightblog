@@ -7,11 +7,11 @@
 
 	index.php
 
-	©2009-2010 The LightBlog Team. All
-	rights reserved. Released under the
-	GNU General Public License 3. For
-	all licensing information, please
-	see the LICENSE.txt document
+	©2008-2012 The LightBlog Team. All 
+	rights reserved. Released under the 
+	GNU General Public License 3. For 
+	all licensing information, please 
+	see the LICENSE.txt document 
 	included in this distribution.
 
 *********************************************/
