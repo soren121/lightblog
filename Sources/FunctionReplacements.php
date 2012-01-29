@@ -16,6 +16,13 @@
 
 ***********************************************/
 
+// Replacement for mt_rand
+if(!function_exists('mt_rand')) {
+	function mt_rand($min, $max) {
+		return rand($min, $max);
+	}
+}
+
 // Replacement for mb_strlen
 if(!function_exists('mb_strlen')) {
 	function mb_strlen($string, $encoding = null) {

@@ -649,7 +649,7 @@ class CommentLoop {
 						echo '<a class="comment_name" href="'.stripslashes($this->cur_result->website).'">'.stripslashes($this->cur_result->name).'</a>';
 					}					
 					echo '<span class="comment_says"> says:</span><br />
-					<span class="comment_date">'.date('F j, Y \a\t g:i A', (int)$this->cur_result->date).'</span><br />
+					<a href="'.bloginfo('url','r').'?post='.(int)$this->cur_result->pid.'#comment-'.(int)$this->cur_result->id.'" class="comment_date">'.date('F j, Y \a\t g:i A', (int)$this->cur_result->date).'</a><br />
 					<p class="comment_text">'.stripslashes($this->cur_result->text).'</p>
 			</'.$tag.'>';
 		}

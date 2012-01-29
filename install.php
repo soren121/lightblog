@@ -16,6 +16,10 @@
 
 *********************************************/
 
+// Get some extra functions
+require(dirname(__FILE__).'/Sources/FunctionReplacements.php');
+require(dirname(__FILE__).'/Sources/StringFunctions.php');
+
 // Shutdown Magic Quotes automatically
 // Highly inefficient, but there isn't much we can do about it
 if(get_magic_quotes_gpc()) {
@@ -26,13 +30,6 @@ if(get_magic_quotes_gpc()) {
     array_walk_recursive($_POST, 'stripslashes_gpc');
     array_walk_recursive($_COOKIE, 'stripslashes_gpc');
     array_walk_recursive($_REQUEST, 'stripslashes_gpc');
-}
-
-// mt_rand replacement
-if(!function_exists('mt_rand')) {
-	function mt_rand($min, $max) {
-		return rand($min, $max);
-	}
 }
 
 // Operates the side menu selectors
@@ -53,19 +50,6 @@ function menuClass($item, $op = 0) {
 		if($cur_item < $item) {
 			echo "notdone";
 		}
-	}
-}
-
-// Generate a random string of specified length
-function randomString($length) {
-	if((is_numeric($length)) && ($length > 0) && (!is_null($length))) {
-		$chars = "01234567890bcdfghjklmnpqrstvwxyz_.-";
-		$string = '';
-		for($i = 0; $i <= $length; $i++) {
-			$char = mt_rand(0, (strlen($chars) - 1));
-			$string .= $chars[$char];
-		}
-		return $string;
 	}
 }
 
@@ -264,6 +248,7 @@ if(isset($_POST['bsetup'])) {
 		}
 		#sidebar ul li.selected {
 			color: #000;
+			list-style-type: disc;
 		}
 		#sidebar ul li.done {
 			color: #9BB1CF;
@@ -292,6 +277,7 @@ if(isset($_POST['bsetup'])) {
 		#content p {
 			margin: 10px 0 0 25px;
 			font-size: .98em;
+			line-height: 1.5em;
 		}
 		#content table {
 			margin: 5px 0 0 25px;
@@ -345,13 +331,6 @@ if(isset($_POST['bsetup'])) {
 			clear: both;
 		}
 	</style>
-	<script type="text/javascript">
-		/* vX JavaScript library by Antimatter15, inportb, and paul.wratt */
-		var _=_?_:{}
-		_.fx=_.A=function(v,n,c,f,u,y){u=0;(y=function(){u++<v&&c(u/v)!==0?setTimeout(y,n):(f?f():0)})()}
-		_.pos=_.P=function(e,a){a={l:0,t:0,w:e.offsetWidth,h:e.offsetHeight};do{a.l+=e.offsetLeft;a.t+=e.offsetTop}while(e=e.offsetParent)return a}
-		_.slide=function(d,e,o,f,i,q){q=_.P(e).h;_.A(f?f:15,i?i:10,function(a){a=(d?0:1)+(d?1:-1)*a;e.style.height=(a*q)+'px'},o)}
-	</script>
 </head>
 
 <body>
@@ -371,7 +350,7 @@ if(isset($_POST['bsetup'])) {
 		<div id="content">
 			<?php if(!isset($page) || $page == null): $disable = null; $page = null; ?>
 				<h2>Welcome to the LightBlog installer!</h2>
-				<p>Thanks for choosing LightBlog! Here, we're going to test your<br />server to make sure it can support LightBlog.</p>
+				<p>Thanks for choosing LightBlog! Before we start, the installer<br />needs to be sure that your server can properly run LightBlog.</p>
 
 				<h3>PHP Components</h3>
 				<table>
@@ -470,8 +449,8 @@ if(isset($_POST['bsetup'])) {
 				database will hold all of your blog's information, including<br />
 				password hashes and other sensitive data. We recommend you<br />
 				place the database outside of your web root if possible, or<br />
-				place it in a non-public-readable folder. If the path does not<br />
-				exist, the installer will try to create it.</p>		
+				in a non-public-readable folder. If the path does not exist,<br />
+				the installer will try to create it.</p>		
 				<form action="<?php echo basename($_SERVER['SCRIPT_FILENAME']); ?>" method="post">
 					<label for="dbpath">Database Path</label><br />
 					<div>
@@ -541,8 +520,8 @@ if(isset($_POST['bsetup'])) {
 				</script>
 				<h2>Blog setup</h2>
 				<p>Before we show you your new blog, we need to setup an<br />
-				administrator account so you can get into the admin panel.<br />
-				All the fields below need to be filled.</p>
+				administrator account, so that you can access the admin panel.<br />
+				All of the fields below need to be filled.</p>
 				<form action="<?php echo basename($_SERVER['SCRIPT_FILENAME']); ?>" method="post">
 					<div id="bsleft">
 						<label for="bsusername">Username</label><br />
