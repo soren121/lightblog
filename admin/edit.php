@@ -7,7 +7,7 @@
 	
 	admin/edit.php
 	
-	©2009-2010 The LightBlog Team. All 
+	©2008-2012 The LightBlog Team. All 
 	rights reserved. Released under the 
 	GNU General Public License 3. For 
 	all licensing information, please 
