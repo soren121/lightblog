@@ -105,13 +105,13 @@ function dbsetup() {
 	}
 	else {
 		// Attempt to make it readable
-		if(!chmod('install.sql', 0644)) {
-			return 'Failed to open install.sql. Please chmod it to 644 and try again.';
+		if(!@chmod('install.sql', 0644)) {
+			return 'Failed to open \'install.sql\'. Please <abbr title="change permissions">chmod it</abbr> to 644 and try again.';
 		}
 	}
 	// Create, write to, and close database
 	if(!$dbh = new SQLiteDatabase($dbpath)) {
-		return 'Failed to create the database. Please chmod its directory to 760 and try again.';
+		return 'Failed to create the database. Please <abbr title="change permissions">chmod</abbr> its directory to 760 and try again.';
 	}
 	if(!$dbh->queryExec($sql, $errormsg)) {
 		return 'Failed to write to the database because: '.$errormsg.'.';
@@ -124,8 +124,8 @@ function dbsetup() {
 		fclose($excfgh);
 	}
 	else {
-		if(!chmod('config-example.php', 0644)) {
-			return 'Failed to open install.sql. Please chmod it to 644 and try again.';
+		if(!@chmod('config-example.php', 0644)) {
+			return 'Failed to open \'config-example.php\'. Please <abbr title="change permissions">chmod it</abbr> to 644 and try again.';
 		}
 		else {
 			$excfgh = fopen('config-example.php', 'r');
@@ -147,6 +147,7 @@ if(isset($_POST['dbsetup'])) {
 	if(!$return == null) {
 		$error = $return;
 		$page = "dbsetup";
+		menuClass(2, 1);
 	}
 	else {
 		// Set new installer page
@@ -168,8 +169,7 @@ function bsetup() {
 	$dname = sqlite_escape_string($_POST['bsdname']);
 	$title = sqlite_escape_string($_POST['bstitle']);
 	$url = sqlite_escape_string($_POST['bsurl']);
-	// Correct IPv6 address when installing on localhost
-	$ip = !strstr($_SERVER['REMOTE_ADDR'], "::1") ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
+	$ip = $_SERVER['REMOTE_ADDR'];
 	// Match passwords
 	if($password !== $vpassword) {
 		return 'Passwords don\'t match. Please try again.';
@@ -196,6 +196,7 @@ if(isset($_POST['bsetup'])) {
 	if(!$return == null) {
 		$error = $return;
 		$page = "bsetup";
+		menuClass(3, 1);
 	}
 	else {
 		// Set new installer page
@@ -278,6 +279,7 @@ if(isset($_POST['bsetup'])) {
 			margin: 10px 0 0 25px;
 			font-size: .98em;
 			line-height: 1.5em;
+			width: 450px;
 		}
 		#content table {
 			margin: 5px 0 0 25px;
@@ -318,7 +320,7 @@ if(isset($_POST['bsetup'])) {
 			font-size: .9em;
 			font-weight: bold;
 		}
-		label[for="bsdname"] {
+		label[for="bsdname"], abbr {
 			cursor: help;
 		}
 		input[type="text"], input[type="password"] {
@@ -350,7 +352,8 @@ if(isset($_POST['bsetup'])) {
 		<div id="content">
 			<?php if(!isset($page) || $page == null): $disable = null; $page = null; ?>
 				<h2>Welcome to the LightBlog installer!</h2>
-				<p>Thanks for choosing LightBlog! Before we start, the installer<br />needs to be sure that your server can properly run LightBlog.</p>
+				<p>Thanks for choosing LightBlog! Before we start, the installer 
+				needs to be sure that your server can properly run LightBlog.</p>
 
 				<h3>PHP Components</h3>
 				<table>
@@ -445,21 +448,62 @@ if(isset($_POST['bsetup'])) {
 				</form>	
 			<?php endif; if($page == 'dbsetup'): ?>
 				<h2>Database setup</h2>
-				<p>Now we're going to setup your SQLite database. This<br />
-				database will hold all of your blog's information, including<br />
-				password hashes and other sensitive data. We recommend you<br />
-				place the database outside of your web root if possible, or<br />
-				in a non-public-readable folder. If the path does not exist,<br />
+				<p>The installer will now try to setup your SQLite database. This
+				database will hold all of your blog's information, including
+				password hashes and other sensitive data.
+				<br /><br />
+				The installer will create a database file with a randomly-generated 
+				filename in the path that you select. We recommend you
+				place the database outside of your web root if possible, or 
+				in a non-public-readable folder. If the path does not exist,
 				the installer will try to create it.</p>		
 				<form action="<?php echo basename($_SERVER['SCRIPT_FILENAME']); ?>" method="post">
 					<label for="dbpath">Database Path</label><br />
 					<div>
-						<input type="text" name="dbpath" id="dbpath" value="<?php echo dirname(__FILE__); ?>" style="width:350px;" />
-						<input type="submit" name="dbsetup" value="Continue" onclick="setTimeout('this.disabled=true', 250);" />
+						<input type="text" name="dbpath" id="dbpath" value="<?php echo dirname(__FILE__); ?>" style="width:350px;" onkeyup="checkInput();" />
+						<input type="submit" name="dbsetup" id="dbcontinue" value="Continue" onclick="setTimeout('this.disabled=true', 250);" />
 					</div>		
 				</form>
-				<span id="error"><?php if(!isset($error)){$error=null;}echo $error; ?></span>		
+				<span id="error"><?php if(!isset($error)){$error=null;}echo $error; ?></span>
+				<script type="text/javascript">
+					var submit = document.getElementById('dbcontinue');
+					function checkInput() {
+						var dbpath = document.getElementById('dbpath');
+						if(dbpath.value.length > 0) {
+							submit.disabled = false;}
+						else {
+							submit.disabled = true;}}
+					submit.disabled = false;
+				</script>
 			<?php endif; if($page == 'bsetup'): ?>
+				<h2>Blog setup</h2>
+				<p>Before we show you your new blog, we need to setup an<br />
+				administrator account, so that you can access the admin panel.<br />
+				All of the fields below need to be filled.</p>
+				<form action="<?php echo basename($_SERVER['SCRIPT_FILENAME']); ?>" method="post">
+					<div id="bsleft">
+						<label for="bsusername">Username</label><br />
+						<input type="text" name="bsusername" id="bsusername" style="width:200px;" onkeyup="checkInputs();" /><br />
+						<label for="bspassword">Password</label><span id="bspassword_text" style="font-size:.75em;margin-left:10px;" onkeyup="checkInputs();"></span><br />
+						<input type="password" name="bspassword" id="bspassword" style="width:200px;" onkeyup="runPassword(this.value, 'bspassword');checkInputs();" />
+						<label for="bsvpassword">Confirm Password</label><span id="matchpasswords" style="font-size:.75em;margin-left:10px;" onkeyup="checkInputs();"></span><br />
+						<input type="password" name="bsvpassword" id="bsvpassword" style="width:200px;" onkeyup="checkInputs();" />
+						<label for="bsemail">Email</label><br />
+						<input type="text" name="bsemail" id="bsemail" style="width:200px;" onkeyup="checkInputs();" /><br />
+						<label for="bsdname" title="This name will be used to identify you in posts and in areas around LightBlog.">Display Name</label><br />
+						<input type="text" name="bsdname" id="bsdname" style="width:200px;" onkeyup="checkInputs();" /><br /><br />
+					</div>
+					<div id="bsright">
+						<label for="bstitle">Blog Title</label><br />
+						<input type="text" name="bstitle" id="bstitle" style="width:200px;" onkeyup="checkInputs();" /><br />
+						<label for="bsurl">Blog URL</label><br />
+						<input type="text" name="bsurl" id="bsurl" value="<?php echo baseurl(); ?>" style="width:200px;" onkeyup="checkInputs();" />
+					</div>
+					<div style="width:100%;clear:both;">
+						<input type="submit" name="bsetup" id="bscontinue" value="Continue" onclick="setTimeout('this.disabled=true', 250);" />
+						<span id="error"><?php if(!isset($error)){$error=null;}echo $error; ?></span>
+					</div>
+				</form>
 				<script type="text/javascript">
 					// Password strength meter v2.0
 					// Matthew R. Miller - 2007
@@ -472,6 +516,8 @@ if(isset($_POST['bsetup'])) {
 					var m_strLowerCase="abcdefghijklmnopqrstuvwxyz";
 					var m_strNumber="0123456789";
 					var m_strCharacters="!@#$%^&*?_~.,+=";
+					var submit=document.getElementById('bscontinue');
+					submit.disabled=true;
 					function checkPassword(strPassword){
 						var nScore=0;
 						if(strPassword.length<5){nScore+=5;}
@@ -509,43 +555,24 @@ if(isset($_POST['bsetup'])) {
 						for(i=0;i<strPassword.length;i++){
 							if(strCheck.indexOf(strPassword.charAt(i))>-1){nCount++;}}
 						return nCount;}
-					function matchPasswords(){
-						var field1=document.getElementById('bspassword');
-						var field2=document.getElementById('bsvpassword');
+					function checkInputs(){
+						var username=document.getElementById('bsusername');
+						var password=document.getElementById('bspassword');
+						var vpassword=document.getElementById('bsvpassword');
 						var mpspan=document.getElementById('matchpasswords');
-						if(field1.value==field2.value){
+						var email=document.getElementById('bsemail');
+						var dname=document.getElementById('bsdname');
+						var title=document.getElementById('bstitle');
+						var url=document.getElementById('bsurl');
+						if(username.value.length > 0 && password.value.length > 0 && vpassword.value.length > 0 && email.value.length > 0 && dname.value.length > 0 && title.value.length > 0 && url.value.length > 0 && password.value==vpassword.value) {
+							submit.disabled=false;}
+						else {
+							submit.disabled=true;}
+						if(password.value==vpassword.value){
 							mpspan.innerHTML='<span style="color:#0ca908;">OK</span>';}
 						else{
 							mpspan.innerHTML='<span style="color:#e71a1a;">Not a match</span>';}}
 				</script>
-				<h2>Blog setup</h2>
-				<p>Before we show you your new blog, we need to setup an<br />
-				administrator account, so that you can access the admin panel.<br />
-				All of the fields below need to be filled.</p>
-				<form action="<?php echo basename($_SERVER['SCRIPT_FILENAME']); ?>" method="post">
-					<div id="bsleft">
-						<label for="bsusername">Username</label><br />
-						<input type="text" name="bsusername" id="bsusername" style="width:200px;" /><br />
-						<label for="bspassword">Password</label><span id="bspassword_text" style="font-size:.75em;margin-left:10px;"></span><br />
-						<input type="password" name="bspassword" id="bspassword" style="width:200px;" onkeyup="runPassword(this.value, 'bspassword');matchPasswords();" />
-						<label for="bsvpassword">Confirm Password</label><span id="matchpasswords" style="font-size:.75em;margin-left:10px;"></span><br />
-						<input type="password" name="bsvpassword" id="bsvpassword" style="width:200px;" onkeyup="matchPasswords();" />
-						<label for="bsemail">Email</label><br />
-						<input type="text" name="bsemail" id="bsemail" style="width:200px;" /><br />
-						<label for="bsdname" title="This name will be used to identify you in posts and in areas around LightBlog.">Display Name</label><br />
-						<input type="text" name="bsdname" id="bsdname" style="width:200px;" /><br /><br />
-					</div>
-					<div id="bsright">
-						<label for="bstitle">Blog Title</label><br />
-						<input type="text" name="bstitle" id="bstitle" style="width:200px;" /><br />
-						<label for="bsurl">Blog URL</label><br />
-						<input type="text" name="bsurl" id="bsurl" value="<?php echo baseurl(); ?>" style="width:200px;" />
-					</div>
-					<div style="width:100%;clear:both;">
-						<input type="submit" name="bsetup" value="Continue" onclick="setTimeout('this.disabled=true', 250);" />
-					</div>
-				</form>
-				<span id="error"><?php if(!isset($error)){$error=null;}echo $error; ?></span>
 			<?php endif; if($page == 'finish'): ?>
 				<h2>You're done!</h2>
 				<p>Click the Finish button to see your new blog! :)</p>
