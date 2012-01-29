@@ -697,7 +697,7 @@ class CommentLoop {
 			// Get the end tag by removing attributes and adding a slash
 			$endtag = explode(' ', str_replace('<', '</', $tag));
 			// Put it all together
-			echo $tag.$_SESSION['cmessage'].$endtag[0];
+			echo $tag.$_SESSION['cmessage'].$endtag[0].'>';
 			// Destroy the message, we're done with it now
 			unset($_SESSION['cmessage']);
 		}

@@ -517,8 +517,8 @@ if(isset($_POST['bsetup'])) {
 					var m_strNumber="0123456789";
 					var m_strCharacters="!@#$%^&*?_~.,+=";
 					var submit=document.getElementById('bscontinue');
-					submit.disabled=true;
-					function checkPassword(strPassword){
+					submit.disabled = true;
+					function checkPassword(strPassword) {
 						var nScore=0;
 						if(strPassword.length<5){nScore+=5;}
 						else if(strPassword.length>4&&strPassword.length<8){nScore+=10;}
@@ -538,7 +538,7 @@ if(isset($_POST['bsetup'])) {
 						if(nNumberCount!=0&&nLowerUpperCount!=0&&nCharacterCount!=0){nScore+=3;}
 						if(nNumberCount!=0&&nUpperCount!=0&&nLowerCount!=0&&nCharacterCount!=0){nScore+=5;}
 						return nScore;}
-					function runPassword(strPassword,strFieldID){
+					function runPassword(strPassword,strFieldID) {
 						var nScore=checkPassword(strPassword);
 						var ctlText=document.getElementById(strFieldID+"_text");
 						if(!ctlText){return;}
@@ -550,28 +550,37 @@ if(isset($_POST['bsetup'])) {
 						else if(nScore>=25){var strText="Weak";var strColor="#e7d61a";}
 						else{var strText="Very Weak";var strColor="#e71a1a";}
 						ctlText.innerHTML="<span style='color: "+strColor+";'>"+strText+"</span>";}
-					function countContain(strPassword,strCheck){
+					function countContain(strPassword,strCheck) {
 						var nCount=0;
 						for(i=0;i<strPassword.length;i++){
 							if(strCheck.indexOf(strPassword.charAt(i))>-1){nCount++;}}
 						return nCount;}
-					function checkInputs(){
-						var username=document.getElementById('bsusername');
-						var password=document.getElementById('bspassword');
-						var vpassword=document.getElementById('bsvpassword');
-						var mpspan=document.getElementById('matchpasswords');
-						var email=document.getElementById('bsemail');
-						var dname=document.getElementById('bsdname');
-						var title=document.getElementById('bstitle');
-						var url=document.getElementById('bsurl');
+					function checkInputs() {
+						var username = document.getElementById('bsusername');
+						var password = document.getElementById('bspassword');
+						var vpassword = document.getElementById('bsvpassword');
+						var mpspan = document.getElementById('matchpasswords');
+						var email = document.getElementById('bsemail');
+						var dname = document.getElementById('bsdname');
+						var title = document.getElementById('bstitle');
+						var url = document.getElementById('bsurl');
 						if(username.value.length > 0 && password.value.length > 0 && vpassword.value.length > 0 && email.value.length > 0 && dname.value.length > 0 && title.value.length > 0 && url.value.length > 0 && password.value==vpassword.value) {
-							submit.disabled=false;}
+							submit.disabled = false;
+						}
 						else {
-							submit.disabled=true;}
-						if(password.value==vpassword.value){
-							mpspan.innerHTML='<span style="color:#0ca908;">OK</span>';}
-						else{
-							mpspan.innerHTML='<span style="color:#e71a1a;">Not a match</span>';}}
+							submit.disabled=true;
+						}
+						if(vpassword.value.length > 0) {
+							if(password.value==vpassword.value) {
+								mpspan.innerHTML='<span style="color:#0ca908;">OK</span>';}
+							else {
+								mpspan.innerHTML='<span style="color:#e71a1a;">Not a match</span>';
+							}
+						}
+						else {
+							mpspan.innerHTML='';
+						}
+					}
 				</script>
 			<?php endif; if($page == 'finish'): ?>
 				<h2>You're done!</h2>
