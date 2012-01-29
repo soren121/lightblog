@@ -1,4 +1,4 @@
-<!--**************************************
+<?php /***************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
@@ -12,7 +12,7 @@
 	see the LICENSE.txt document 
 	included in this distribution.
 
-***************************************-->
+******************************************/ ?>
 
 <?php include('head.php')?>
 <?php include('sidebar.php')?>

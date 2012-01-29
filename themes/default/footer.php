@@ -1,4 +1,4 @@
-<!--**************************************
+<?php /***************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
@@ -12,7 +12,7 @@
 	see the LICENSE.txt document 
 	included in this distribution.
 
-***************************************-->
+******************************************/ ?>
 
 		<div id="footer">
 			&copy; <?php echo date('Y') ?> <?php bloginfo('title') ?>. Powered by LightBlog.		
