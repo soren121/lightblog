@@ -42,7 +42,7 @@
 						</span>
 					</div>
 				</div>
-				<?php endwhile; unset($posts); else: ?>
+				<?php endwhile; $posts->pagination(); else: ?>
 				<p>Sorry, no posts matched your criteria.</p>
 				<?php endif; ?>
 		      

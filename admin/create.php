@@ -75,6 +75,7 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 								$('#notifybox').html('<?php echo ucwords($type) ?> created.').slideDown("normal");
 							}
 							nicEditors.findEditor('wysiwyg').setContent('');
+							$('#title').val('');
 						}
 						else {
 							$('#notifybox').text('Failed to submit <?php echo $type; ?>; ' + r.response).css("background","#E36868").css("border-color","#a40000").slideDown("normal");

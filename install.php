@@ -401,7 +401,7 @@ if(isset($_POST['bsetup'])) {
 					<tr>
 						<td>fsockopen</td>
 						<td>n/a</td>
-						<?php if(is_resource(@fsockopen("www.google.com"))): ?>
+						<?php if(is_resource(@fsockopen("127.0.0.1"))): ?>
 							<td>OK</td>
 						<?php else: ?>
 							<td>Disabled</td>

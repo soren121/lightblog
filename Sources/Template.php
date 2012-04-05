@@ -357,7 +357,7 @@ class PostLoop {
 		
 		Displays simple paginations link when the PostLoop class is destroyed with unset().
 	*/
-	public function __destruct() {
+	public function pagination() {
 		if($GLOBALS['postquery']['type'] != 'post' && $GLOBALS['postquery']['type'] != 'page') {
 			global $file, $page;
 			$dbh = $this->dbh;
@@ -379,8 +379,8 @@ class PostLoop {
 					$pagination .= "<a href=\"".$file."?p=".$prev."\" class=\"next\">Newer Posts &raquo;</a>";
 				}
 				# Add the previous link
-				if($page < $lastpage) {
-					$pagination .= "<a href=\"".$target."?p=".$next."\" class=\"prev\">&laquo; Older Posts</a>";
+				if(($page * $limit) < $totalitems) {
+					$pagination .= "<a href=\"".$file."?p=".$next."\" class=\"prev\">&laquo; Older Posts</a>";
 				}
 			}
 			# Return the links! Duh!
