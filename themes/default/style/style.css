@@ -16,6 +16,20 @@
 
 * { padding: 0; margin: 0; }
 
+.rounded {
+	border-radius: 5px;
+}
+
+.roundedt {
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.roundedb {
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
 html {
 	background: #eeeeee;
 }
@@ -113,6 +127,10 @@ body {
 #content div.post li {
 	padding-top: 2px;
 	padding-bottom: 2px;
+}
+
+#content div.post p {
+	margin-bottom: 15px;
 }
 
 #content div.postdata {

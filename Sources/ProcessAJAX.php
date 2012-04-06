@@ -38,7 +38,7 @@ if(isset($_POST['create'])) {
 			$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
 			# Grab the data from form and clean things up
 			$title = strip_tags($_POST['title']);
-			$text = $filter->process($_POST['text']);
+			$text = $_POST['text'];
 			# If you're not a category, you must be...
 			if($type !== 'category') {
 				$date = time();
@@ -100,7 +100,7 @@ if(isset($_POST['edit'])) {
 			$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
 			# Grab the data from form and escape the text
 			$title = strip_tags($_POST['title']);
-			$text = $filter->process($_POST['text']);
+			$text = $_POST['text'];
 			//die(json_encode(array("result" => "error", "response" => $_POST['text'].$text)));
 			# Check published checkbox
 			if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }

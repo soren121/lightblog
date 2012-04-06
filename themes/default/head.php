@@ -23,10 +23,8 @@
 	<link rel="alternate" type="application/rss+xml" href="<?php bloginfo('url') ?>feed.php"  title="RSS Feed" />
 	<link rel="alternate" type="application/atom+xml" href="<?php bloginfo('url') ?>feed.php?type=atom"  title="Atom Feed" />
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$('.rounded').corner('round 5px');
 			$('#notifybox').click(function() { $(this).slideUp('normal'); });
 		});
 	</script>
