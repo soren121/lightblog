@@ -32,23 +32,21 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<title>Create <?php echo ucwords($type) ?> - <?php bloginfo('title') ?></title>
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
+	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.css" />
 	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.js"></script> 
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.XHTML.js"></script> 
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.AdvancedTable.js"></script>
 	<script type="text/javascript">	
-		$(document).ready(function(){
-			$('.rounded').corner(); 
-			$('.roundedt').corner("round top 10px"); 
-			$('.roundedb').corner("round bottom 10px");
-			new nicEditor({iconsPath:'<?php bloginfo('url') ?>Sources/nicEditorIcons.gif',xhtml:true,buttonList:['bold','italic','underline','strikethrough','left','center','right','justify','ol','ul','subscript','superscript','hr','image','upload','forecolor','bgcolor','link','unlink','removeformat','fontFormat','fontFamily','fontSize']}).panelInstance('wysiwyg');
+		$(document).ready(function() {
+			$('#wysiwyg').cleditor({width: 465, height: 300});
 		});
 		$(function() {
 			$('#create').submit(function() {
 				$('#notifybox').slideUp('normal').empty();
 				var inputs = [];
-				nicEditors.findEditor('wysiwyg').saveContent();
 				$('.cf', this).each(function() {
 					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
 						void(0);
@@ -74,8 +72,8 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 							else {
 								$('#notifybox').html('<?php echo ucwords($type) ?> created.').slideDown("normal");
 							}
-							nicEditors.findEditor('wysiwyg').setContent('');
 							$('#title').val('');
+							$('#wysiwyg').cleditor()[0].clear();
 						}
 						else {
 							$('#notifybox').text('Failed to submit <?php echo $type; ?>; ' + r.response).css("background","#E36868").css("border-color","#a40000").slideDown("normal");

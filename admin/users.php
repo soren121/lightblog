@@ -40,14 +40,7 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Corners.js"></script>
-	<script type="text/javascript">			
-		$(document).ready(function(){ 
-			$('.rounded').corner(); 
-			$('.roundedt').corner("round top 10px"); 
-			$('.roundedb').corner("round bottom 10px");
-		});
-
+	<script type="text/javascript">
 		function deleteUser(id,user) {
 			var answer = confirm("Really delete user \"" + user + "\"?");
 			if(answer) {
