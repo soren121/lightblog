@@ -29,16 +29,15 @@ if(isset($_POST['create'])) {
 	else {
 		$type = $_POST['type'];
 		if(($type !== 'category' && permissions(1)) || ($type === 'category' && permissions(2))) {
+			# Has anything been submitted?
+			if(empty($_POST['title']) || empty($_POST['text'])) {
+				die(json_encode(array("result" => "error", "response" => "you must give your ".$type." a title and content.")));
+			}
 			# Require the HTML filter class
-			require('Class.InputFilter.php');
-			# Set allowed tags
-			$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br', 'div');
-			$allowed_attr = array('id', 'class', 'href', 'title', 'src', 'alt', 'style');
-			# Initialize class
-			$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
+			require('Class.htmLawed.php');
 			# Grab the data from form and clean things up
 			$title = strip_tags($_POST['title']);
-			$text = $_POST['text'];
+			$text = htmLawed::hl($_POST['text'], array('safe' => 1));
 			# If you're not a category, you must be...
 			if($type !== 'category') {
 				$date = time();
@@ -92,16 +91,10 @@ if(isset($_POST['edit'])) {
 		$query = @$dbh->query("SELECT author FROM posts WHERE id=".$id) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 		if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $query->fetchSingle() === userFetch('displayname','r') || $type === 'category' && permissions(2)) {
 			# Require the HTML filter class
-			require('Class.InputFilter.php');
-			# Set allowed tags
-			$allowed_tags = array('p', 'b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br', 'div');
-			$allowed_attr = array('id', 'class', 'href', 'title', 'alt', 'style', 'align', 'src');
-			# Initialize class
-			$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
+			require('Class.htmLawed.php');
 			# Grab the data from form and escape the text
 			$title = strip_tags($_POST['title']);
-			$text = $_POST['text'];
-			//die(json_encode(array("result" => "error", "response" => $_POST['text'].$text)));
+			$text = htmLawed::hl($_POST['text'], array('safe' => 1));
 			# Check published checkbox
 			if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
 			else { $published = 0; }

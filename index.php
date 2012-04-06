@@ -35,6 +35,9 @@ if(isset($_GET['install']) && $_GET['install'] === 'true' && file_exists('instal
 	if(file_exists('update.sql')) {
 		unlink('update.sql');
 	}
+	if(file_exists('config-example.php')) {
+		unlink('config-example.php');
+	}
 }
 
 // Require config file

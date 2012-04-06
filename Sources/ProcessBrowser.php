@@ -27,18 +27,13 @@ if(isset($_POST['comment_submit'])) {
 	if($query->fetchSingle() == '1') {
 		if(strlen($_POST['comment_name']) && strlen($_POST['comment_email']) > 0) {
 			// Require the HTML filter class
-			require('Class.InputFilter.php');
-			// Set allowed tags
-			$allowed_tags = array('b', 'i', 'u', 'em', 'strong', 'img', 'a', 'ul', 'ol', 'li', 'span', 'quote', 'br');
-			$allowed_attr = array('id', 'class', 'href', 'title', 'alt', 'style');
-			// Initialize class
-			$filter = new InputFilter($allowed_tags, $allowed_attr, 0, 0, 1);
+			require('Class.htmLawed.php');
 			// Escape values
 			$comment_name = sqlite_escape_string(strip_tags($_POST['comment_name']));
 			$comment_email = sqlite_escape_string(strip_tags($_POST['comment_email']));
 			$comment_website = sqlite_escape_string(strip_tags($_POST['comment_website']));
 			$comment_date = time();
-			$comment_text = sqlite_escape_string($filter->process($_POST['comment_text']));
+			$comment_text = sqlite_escape_string(htmLawed::hl($_POST['text'], array('safe' => 1, 'elements' => 'a, b, strong, i, em, li, ol, ul, br, span, u, s, img')));
 			if(bloginfo('comment_moderation','r') == 'approval') {
 				// Submit the comment
 				$dbh->query("INSERT INTO comments (published,pid,name,email,website,date,text) VALUES(0,$comment_pid,'$comment_name','$comment_email','$comment_website',$comment_date,'$comment_text')") or die(sqlite_error_string($dbh->lastError));

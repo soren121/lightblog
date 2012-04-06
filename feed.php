@@ -19,16 +19,18 @@
 // Include config and FeedWriter library
 require('config.php');
 require(ABSPATH .'/Sources/Core.php');
-require(ABSPATH .'/Sources/FeedWriter.php');
+require(ABSPATH .'/Sources/Class.FeedItem.php');
+require(ABSPATH .'/Sources/Class.FeedWriter.php');
 
 // Check requested feed type
-if(!isset($_GET['type']) or $_GET['type'] == 'rss'):
+if(!isset($_GET['type']) or $_GET['type'] == 'rss') {
 	$type = 'rss';
 	$TestFeed = new FeedWriter(RSS2);	
-elseif($_GET['type'] == 'atom'):
+}
+elseif($_GET['type'] == 'atom') {
 	$type = 'atom';
 	$TestFeed = new FeedWriter(ATOM);
-endif;
+}
 
 if(isset($_GET['category'])) {
 	$category = (int)$_GET['category'];
@@ -38,20 +40,22 @@ if(isset($_GET['category'])) {
 // Use wrapper functions for common elements
 $TestFeed->setTitle('Syndication feed for '.bloginfo('title', 'r'));
 
-if($type == 'rss'):
+if($type == 'rss') {
 	$TestFeed->setLink(bloginfo('url', 'r').'feed.php');
-else:
+}
+else {
 	$TestFeed->setLink(bloginfo('url', 'r').'feed.php?type=atom');
-endif;
+}
 	
 // For other channel elements, use setChannelElement() function
-if($type == 'atom'):
+if($type == 'atom') {
 	$TestFeed->setChannelElement('updated', date(DATE_ATOM, time()));
-	$TestFeed->setChannelElement('author', array('name'=>'LightBlog')); // temporary
-elseif($type == 'rss'):
+	$TestFeed->setChannelElement('author', 'LightBlog');
+}
+elseif($type == 'rss') {
 	$TestFeed->setChannelElement('pubDate', date("D, d M Y h:i:s O", time()));
 	$TestFeed->setChannelElement('description', 'RSS2 syndication feed for '.bloginfo('title', 'r'));
-endif;
+}
 
 // Adding items to feed. Generally this portion will be in a loop and add all feeds.
 $where = (isset($category)) ? "AND category=".$category." " : "";
@@ -67,14 +71,15 @@ while($row = $result->fetch(SQLITE_ASSOC)) {
 	$newItem->setDescription(stripslashes($row['post']));
 	$newItem->setDate(date("D, d M Y h:i:s O", $row['date']));
 	// Add RSS-unique elements
-	if($type == 'rss'):
+	if($type == 'rss') {
 		$newItem->addElement('guid', bloginfo('url', 'r').'?post='.$row['id'], array('isPermaLink'=>'true'));
 		header('Content-Type: application/rss+xml');
+	}
 	// Add Atom-unique elements
-	elseif($type == 'atom'):
+	elseif($type == 'atom') {
 		$newItem->addElement('id', bloginfo('url', 'r').'?post='.$row['id']);
 		header('Content-Type: application/atom+xml');
-	endif;
+	}
 	// Now add the feed item
 	$TestFeed->addItem($newItem);
 }
