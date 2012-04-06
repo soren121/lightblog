@@ -1,6 +1,6 @@
----------------------------------------------------
-LightBlog LICENSE.txt
----------------------------------------------------
+-----------------------------------------------------------------------
+LightBlog LICENSE
+-----------------------------------------------------------------------
 
 Some files included within LightBlog are licensed
 under different open-source licenses than our
@@ -12,18 +12,16 @@ LightBlog were made by Mark James of famfamfam.com.
 The icons are licensed under the Creative Commons
 Attribution 2.5 license.
 
-The NicEdit WYSIWYG editor, written by Brian Kirchoff,
-and ruzee.shadedborder.js, written by Steffen 
-Rusitschka, are licensed under the MIT License.
+jQuery.SlideMenu.js is licensed under a custom 
+Dynamic Drive license, which permits modification 
+and redistribution within the distribution of a 
+larger application, but their code must retain the 
+original license header.
 
-elite.slidemenu.js is based on a script by Michael
-Leigeber, and is licensed under the Creative Commons
-Attribution 3.0 license.
+What follows is the official GNU GPL version 3 
+license:
 
-What follows is the official GNU GPL version 3 license:
-
-----------------------------------------------------
-
+-----------------------------------------------------------------------
 
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007

@@ -37,7 +37,7 @@ if(isset($_POST['create'])) {
 			require('Class.htmLawed.php');
 			# Grab the data from form and clean things up
 			$title = strip_tags($_POST['title']);
-			$text = htmLawed::hl($_POST['text'], array('safe' => 1));
+			$text = htmLawed::hl($_POST['text'], array('safe' => 1, 'valid_xhtml' => 1));
 			# If you're not a category, you must be...
 			if($type !== 'category') {
 				$date = time();
@@ -94,7 +94,7 @@ if(isset($_POST['edit'])) {
 			require('Class.htmLawed.php');
 			# Grab the data from form and escape the text
 			$title = strip_tags($_POST['title']);
-			$text = htmLawed::hl($_POST['text'], array('safe' => 1));
+			$text = htmLawed::hl($_POST['text'], array('safe' => 1, 'valid_xhtml' => 1));
 			# Check published checkbox
 			if(isset($_POST['published']) && $_POST['published'] == 1) { $published = 1; }
 			else { $published = 0; }
