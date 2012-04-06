@@ -233,50 +233,95 @@ class PostLoop {
 		
 		Parameters:
 		
-			excerpt - The excerpt suffix. If set, this function will output an excerpt. (e.g. Read More...)
+			ending - The excerpt suffix. If set, this function will output an excerpt. (e.g. Read More...)
 	*/
-  	public function content($excerpt = '') {
+  	public function content($ending = false) {
 		# We didn't screw up and keep an empty query, did we?
-    	if(!empty($this->cur_result)) {
-  			$text = stripslashes($this->cur_result->post);
+		if(!empty($this->cur_result)) {
+			$text = stripslashes($this->cur_result->post);
 			$length = 360;
-			# Was an excerpt suffix specified?
-			if(!empty($excerpt) && strlen($text) > $length) {
-				$i = 0;
-				$tags = array();
-				preg_match_all('/<[^>]+>([^<]*)/', $text, $m, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
-				foreach($m as $o){
-					if($o[0][1] - $i >= $length)
+			// The following truncator code is from CakePHP
+			// http://www.cakephp.org/
+			// Licensed under the MIT license
+			
+			// if the plain text is shorter than the maximum length, return the whole text
+			if(strlen(preg_replace('/<.*?>/', '', $text)) <= $length || !$ending) {
+				echo $text;
+			}
+			else {
+				// splits all html-tags to scanable lines
+				preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
+				$total_length = strlen($ending);
+				$open_tags = array();
+				$truncate = '';
+				foreach ($lines as $line_matchings) {
+					// if there is any html-tag in this line, handle it and add it (uncounted) to the output
+					if (!empty($line_matchings[1])) {
+						// if it's an "empty element" with or without xhtml-conform closing slash
+						if (preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1])) {
+							// do nothing
+						// if tag is a closing tag
+						} else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
+							// delete tag from $open_tags list
+							$pos = array_search($tag_matchings[1], $open_tags);
+							if ($pos !== false) {
+							unset($open_tags[$pos]);
+							}
+						// if tag is an opening tag
+						} else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
+							// add tag to the beginning of $open_tags list
+							array_unshift($open_tags, strtolower($tag_matchings[1]));
+						}
+						// add html-tag to $truncate'd text
+						$truncate .= $line_matchings[1];
+					}
+					// calculate the length of the plain text part of the line; handle entities as one character
+					$content_length = strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', ' ', $line_matchings[2]));
+					if ($total_length + $content_length > $length) {
+						// the number of characters which are left
+						$left = $length - $total_length;
+						$entities_length = 0;
+						// search for html entities
+						if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', $line_matchings[2], $entities, PREG_OFFSET_CAPTURE)) {
+							// calculate the real length of all entities in the legal range
+							foreach ($entities[0] as $entity) {
+								if ($entity[1] + 1 - $entities_length <= $left) {
+									$left--;
+									$entities_length += strlen($entity[0]);
+								} else {
+									// no more characters left
+									break;
+								}
+							}
+						}
+						$truncate .= substr($line_matchings[2], 0, $left + $entities_length);
+						// maximum lenght is reached, so get off the loop
 						break;
-					$t = substr(strtok($o[0][0], " \t\n\r\0\x0B>"), 1);
-					if($t[0] != '/')
-						$tags[] = $t;
-					elseif(end($tags) == substr($t, 1))
-						array_pop($tags);
-					$i += $o[1][1] - $o[0][1];
-				}
-				$output = substr($text, 0, $length = min(strlen($text),  $length + $i)).(count($tags = array_reverse($tags)) ? '</' . implode('></', $tags) . '>' : '');		
-				// Get everything until last space
-				$one = substr($output, 0, strrpos($output, " "));
-				// Get the rest
-				$two = substr($output, strrpos($output, " "), (strlen($output) - strrpos($output, " ")));
-				// Extract all tags from the last bit
-				preg_match_all('/<(.*?)>/s', $two, $tags);
-				// Remove tags that don't need closing
-				foreach($tags[0] as $key => $val) {
-					if($tags[0][$key] == '</br>' || $tags[0][$key] == '</img>') {
-						unset($tags[0][$key]);
+					} else {
+						$truncate .= $line_matchings[2];
+						$total_length += $content_length;
+					}
+					// if the maximum length is reached, get off the loop
+					if($total_length >= $length) {
+						break;
 					}
 				}
-				// Re-attach tags
-				$output = $one.implode($tags[0]).'... <a href="?post='.$this->cur_result->id.'">'.$excerpt.'</a>';
-				// Return final string
-				echo $output;
-			}
-			# Looks like we're echoing the full post
-			else {
-				# Unsanitize it and echo it
-				echo stripslashes($this->cur_result->post);
+				// ...search the last occurance of a space...
+				$spacepos = strrpos($truncate, ' ');
+				if (isset($spacepos)) {
+					// ...and cut the text in this position
+					$truncate = substr($truncate, 0, $spacepos);
+				}
+				// close all unclosed html-tags
+				foreach ($open_tags as $tag) {
+					$truncate .= '</' . $tag . '>';
+				}
+				if($ending) {
+					// add the defined ending to the text
+					$truncate .= '... <a href="?post='.$this->cur_result->id.'">'.$ending.'</a>';
+				}
+				// and echo
+				echo $truncate;
 			}
 		}
 		# Oh no, we screwed up :(
