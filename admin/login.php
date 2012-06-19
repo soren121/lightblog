@@ -51,7 +51,7 @@ if(isset($_GET['logout'])) {
 
 <body>
 	<div id="registerbox">
-		<?php if(isset($_POST['proclogin'])): $c_username = $_POST['username']; ?>
+		<?php if(isset($_POST['proclogin'])): $c_username = htmlspecialchars($_POST['username']); ?>
 			<div style="font-weight:bold;color:#FF0000;font-size:1.2em;padding:-5px 0 5px 0;text-align:center;">
 				Incorrect Username or Password
 			</div>
