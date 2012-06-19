@@ -21,9 +21,13 @@ require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
+$_GET['page'] = !empty($_GET['page']) ? (int)$_GET['page'] : 1;
+
 if((int)$_GET['type'] == 1) { $type = 'posts'; }
 elseif((int)$_GET['type'] == 2) { $type = 'pages'; }
 elseif((int)$_GET['type'] == 3) { $type = 'categories'; }
+
+$pagination = advancedPagination($type, $_SERVER['PHP_SELF'].'?type='.(int)$_GET['type'], $_GET['page']);
 
 if(isset($_GET['page']) && $_GET['page'] > 1) {
 		$result = $dbh->query("SELECT * FROM ".$type." ORDER BY id desc LIMIT ".(($_GET['page'] - 1) * 8).",8") or die(sqlite_error_string($dbh->lastError));
@@ -55,8 +59,7 @@ else {
 					error: function() {
 						$('#notifybox').text('Failed to delete <?php echo ($type == 'categories' ? 'category' : substr($type, 0, -1)) ?>.').css("background","#E36868").css("border-color","#a40000").slideDown("normal");
 					},
-					success: function(json) {
-						var r = jQuery.parseJSON(json);
+					success: function(r) {
 						if(r.result == 'success') {
 							var tr = '#tr' + id;
 							$(tr).hide();
@@ -125,7 +128,7 @@ else {
 					<?php endif; ?>
 					<?php if(($type !== 'categories') && (permissions(1) && userFetch('displayname',1) == $row->author) || (permissions(2))): ?>
 						<td class="c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $row->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
-						<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $row->id.', \''.(($type == 'categories') ? $row->fullname : $row->title).'\'' ?>);" style="cursor:pointer;" /></td>
+						<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $row->id.', \''.addcslashes(($type == 'categories') ? $row->fullname : $row->title, '\'').'\'' ?>);" style="cursor:pointer;" /></td>
 					<?php else: ?>
 						<td class="c"><img src="style/edit-d.png" alt="" title="You aren't allowed to edit this <?php echo substr($type, 0, -1); ?>." /></td>
 						<td class="c"><img src="style/delete-d.png" alt="" title="You aren't allowed to delete this <?php echo substr($type, 0, -1); ?>." /></td>
@@ -134,7 +137,7 @@ else {
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
-			<?php echo advancedPagination($type, $_SERVER['PHP_SELF'].'?type='.(int)$_GET['type'], @(int)$_GET['page']); ?>
+			<?php echo $pagination; ?>
 			<!-- None exist error message -->
 			<?php else: ?>
 			<p>Sorry, no <?php echo $type ?> exist to manage.</p>

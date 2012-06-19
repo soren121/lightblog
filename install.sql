@@ -73,3 +73,17 @@ CREATE TABLE 'users' (
 );
 
 CREATE UNIQUE INDEX 'users_username_index' ON 'users' ('username');
+
+CREATE TABLE 'error_log'
+(
+  'error_id' INTEGER PRIMARY KEY NOT NULL DEFAULT '0',
+  'error_time' INT(10) NOT NULL,
+  'error_type' INT NOT NULL DEFAULT '0',
+  'error_message' TEXT NOT NULL,
+  'error_file' VARCHAR(255) NOT NULL,
+  'error_line' INT NOT NULL DEFAULT '0',
+  'error_url' VARCHAR(255) NOT NULL
+);
+
+CREATE INDEX 'error_log_time_index' ON 'error_log' ('error_time');
+CREATE INDEX 'error_log_type_index' ON 'error_log' ('error_type');
