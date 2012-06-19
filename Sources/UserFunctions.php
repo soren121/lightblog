@@ -17,34 +17,31 @@
 ***********************************************/
 
 /*
-	Function: userFetch
+	Function: get_userinfo
 	
 	Safely obtains a piece of information about the user currently logged in.
 	
 	Parameters:
 	
 		var - The name of the info we are getting.
-		output - Specifies whether the version will be echoed or returned.
 		
 	Returns:
 	
 		The requested information about the user (e.g. their email address.)
 */
-function userFetch($var, $output = 'e') {
+function get_userinfo($var) {
 	# Does that value exist?
 	if(!isset($_SESSION[$var])) { 
 		# Nope, so return nothing
 		return null;
 	}
 	else {
-		# It exists, so echo/return it
-		if($output == 'e') {
-			echo $_SESSION[$var];
-		}
-		else {
-			return $_SESSION[$var];
-		}
+		return $_SESSION[$var];
 	}
+}
+
+function userinfo($var) {
+	echo get_userinfo($var);
 }
 
 /*
@@ -62,7 +59,7 @@ function userFetch($var, $output = 'e') {
 */
 function permissions($group) {
 	# Fetch the session info
-	if(userFetch('role', 1) >= $group) {
+	if(get_userinfo('role') >= $group) {
 		# Return true if they're allowed
 		return true;
 	}

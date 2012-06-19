@@ -126,7 +126,7 @@ else {
 							<?php endif; ?>
 						</td>
 					<?php endif; ?>
-					<?php if(($type !== 'categories') && (permissions(1) && userFetch('displayname',1) == $row->author) || (permissions(2))): ?>
+					<?php if(($type !== 'categories') && (permissions(1) && get_userinfo('displayname') == $row->author) || (permissions(2))): ?>
 						<td class="c"><a href="edit.php?type=<?php echo (int)$_GET['type'] ?>&amp;id=<?php echo $row->id ?>"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
 						<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem(<?php echo $row->id.', \''.addcslashes(($type == 'categories') ? $row->fullname : $row->title, '\'').'\'' ?>);" style="cursor:pointer;" /></td>
 					<?php else: ?>

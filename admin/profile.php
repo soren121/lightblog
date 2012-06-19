@@ -102,13 +102,13 @@ require(ABSPATH .'/Sources/Admin.php');
 					<p class="label"><label for="email">Email</label></p>
 					<p style="margin-top:-5px;">
 						<input type="checkbox" name="em-ck" value="1" />
-						<input type="text" name="email" id="email" value="<?php userFetch('email') ?>" disabled="disabled" />
+						<input type="text" name="email" id="email" value="<?php userinfo('email') ?>" disabled="disabled" />
 					</p>
 
 					<p class="label"><label for="displayname">Display Name</label></p>
 					<p style="margin-top:-5px;">
 						<input type="checkbox" name="dn-ck" value="1" />
-						<input type="text" name="displayname" id="displayname" value="<?php userFetch('displayname') ?>" disabled="disabled" />
+						<input type="text" name="displayname" id="displayname" value="<?php userinfo('displayname') ?>" disabled="disabled" />
 					</p>
 
 					<p class="label" style="margin-top:20px;">For security reasons, please type your current password in here.</p>

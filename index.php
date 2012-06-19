@@ -45,7 +45,7 @@ require('config.php');
 require(ABSPATH .'/Sources/Core.php');
 
 // Include theme files
-$themeName = bloginfo('theme', 'r');
+$themeName = get_bloginfo('theme');
 
 // If it isn't a post or page we're showing...
 if(!isset($_GET['post']) && !isset($_GET['page'])) {

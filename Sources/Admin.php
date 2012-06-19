@@ -17,8 +17,8 @@
 ***********************************************/
 
 // Check for session status
-if(userFetch('username', 'r') == false && permissions(1) == false) {
-	header('Location: login.php');
+if(get_userinfo('username') == false && permissions(1) == false) {
+	header('Location: login.php?return_to='.urlencode(currentURL()));
 }
 
 ?>

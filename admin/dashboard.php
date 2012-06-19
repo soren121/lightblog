@@ -44,7 +44,7 @@ require(ABSPATH .'/Sources/Admin.php');
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
-			<h2 class="title">Welcome <?php userFetch('displayname') ?>!</h2>
+			<h2 class="title">Welcome <?php userinfo('displayname') ?>!</h2>
 			<div>
 				<div style="float:left;width:50%;">
 					<div class="db_box rounded">

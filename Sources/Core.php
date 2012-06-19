@@ -104,6 +104,21 @@ function dirlist($input) {
 	return $array;
 }
 
+function currentURL() {
+	$pageURL = 'http';
+	if($_SERVER["HTTPS"] == "on") {
+		$pageURL .= "s";
+	}
+	$pageURL .= "://";
+	if($_SERVER["SERVER_PORT"] != "80") {
+		$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+	} 
+	else {
+		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+	}
+	return $pageURL;
+}
+
 /*
 	Function: advancedPagination
 	
@@ -262,7 +277,7 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 	
 		An error message if something failed. If it worked, it will send the user to the admin dashboard.
 */
-function login($method) {
+function login($method, $return = null) {
 	// Global the database handle so we can use it
 	global $dbh;
 	// Are we logging the user in via username/password?
@@ -302,8 +317,13 @@ function login($method) {
 						setcookie('username', $user->username, time()+60*60*24*30, "/");
 						setcookie('password', $_POST['password'], time()+60*60*24*30, "/");
 					}
-					// Send the user to the dashboard
-					header('Location: '.get_bloginfo('url').'admin/dashboard.php');
+					if($return != null) {
+						header('Location: '.$return);
+					}
+					else {
+						// Send the user to the dashboard
+						header('Location: '.get_bloginfo('url').'admin/dashboard.php');
+					}
 				}
 			}
 		}
@@ -378,10 +398,10 @@ function list_categories($tag = 'li', $limit = 5, $selected = null) {
 	global $dbh;
 	// Is there a limit? If so, typecast it and add it to the query
 	if($limit != null) {
-		$limitv = " LIMIT 0, ".(int)$limit;
+		$limit = " LIMIT 0, ".(int)$limit;
 	}
 	// Get category data from database
-	$result = $dbh->query("SELECT * FROM categories ORDER BY id desc".$limitv) or die(sqlite_error_string($dbh->lastError));
+	$result = $dbh->query("SELECT * FROM categories ORDER BY id desc".$limit) or die(sqlite_error_string($dbh->lastError));
 	// What tag are we using?
 	if($tag == 'option') {
 		while($row = $result->fetchObject()) {

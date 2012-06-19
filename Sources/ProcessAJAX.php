@@ -43,7 +43,7 @@ if(isset($_POST['create'])) {
 			# If you're not a category, you must be...
 			if($type !== 'category') {
 				$date = time();
-				$author = userFetch('displayname', 'r');
+				$author = get_userinfo('displayname');
 				if($type == 'post') {
 					$category = (int)$_POST['category'];
 				}
@@ -91,7 +91,7 @@ if(isset($_POST['edit'])) {
 		$id = (int)$_POST['id'];
 		$type = sqlite_escape_string($_POST['type']);
 		$query = @$dbh->query("SELECT author FROM posts WHERE id=".$id) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
-		if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $query->fetchSingle() === userFetch('displayname','r') || $type === 'category' && permissions(2)) {
+		if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $query->fetchSingle() === get_userinfo('displayname') || $type === 'category' && permissions(2)) {
 			# Require the HTML filter class
 			require('Class.htmLawed.php');
 			# Grab the data from form and escape the text
@@ -293,7 +293,7 @@ if(isset($_POST['editprofilesubmit'])) {
 			$email = sqlite_escape_string($_POST['email']);
 			$displayname = sqlite_escape_string($_POST['displayname']);
 			$vpassword = sqlite_escape_string($_POST['vpassword']);
-			$c_user = sqlite_escape_string(userFetch('username', 1));
+			$c_user = sqlite_escape_string(get_userinfo('username'));
 			// Run database query to get current password hash
 			$dbpasshash = @$dbh->query("SELECT password FROM users WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "username query failed.")));
 			$dbsalt = @$dbh->query("SELECT salt FROM users WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "salt query failed.")));
@@ -337,7 +337,7 @@ if(isset($_POST['deleteusersubmit'])) {
 		if(permissions(2)) {
 			# Check the user level of the user being deleted
 			$query = @$dbh->query("SELECT role FROM users WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "could not get the role of the user being deleted.")));
-			if(userFetch('role', 2) >= $query->fetchSingle() ) {
+			if(get_userinfo('role') >= $query->fetchSingle() ) {
 				# Execute query to delete user
 				@$dbh->query("DELETE FROM users WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "user deletion command failed.")));
 				die(json_encode(array("result" => "success")));

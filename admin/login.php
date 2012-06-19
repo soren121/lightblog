@@ -29,7 +29,12 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])) {
 
 // Process normal login
 if(isset($_POST['proclogin'])) {
-	login('userpass');
+	if(isset($_GET['return_to'])) {
+		login('userpass', $_GET['return_to']);
+	}
+	else {
+		login('userpass');
+	}
 }
 
 // Logout the user

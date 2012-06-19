@@ -120,7 +120,7 @@ while($past = $result->fetchObject()) {
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
-			<?php if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $author === userFetch('displayname','r') || $type === 'category' && permissions(2)): if(!isset($type)): ?>
+			<?php if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $author === get_userinfo('displayname') || $type === 'category' && permissions(2)): if(!isset($type)): ?>
 			<p>The type of content to add was not specified. You must have taken a bad link. Please
 			use the navigation bar above to choose the correct type.</p>
 			<?php else: ?>

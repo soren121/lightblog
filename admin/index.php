@@ -16,16 +16,6 @@
 
 ***********************************************/
 
-// Require config file
-require('../config.php');
-require(ABSPATH .'/Sources/UserFunctions.php');
-
-# check user status
-if(userFetch('username', 'r') != false && permissions(1)) {
-	header('Location: dashboard.php');
-}
-else {
-	header('Location: login.php');
-}
+header('Location: dashboard.php');
 
 ?>
