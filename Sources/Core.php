@@ -300,28 +300,155 @@ function list_themes() {
 }
 
 /*
-	Function: list_categories
-	
-	Outputs a list of categories in HTML <option> tags.
-	
+	Function: list_pages
+
+	Lists pages as HTML list items.
+
 	Parameters:
-	
-		selected - The category ID that will be selected by default in the drop-down list. Not required.
+
+		tag - The HTML tag that will contain the link (e.g. li)
+		limit - The maximum number of pages to list.
+
+	Returns:
+
+		HTML list items for however many pages were requested.
 */
-function list_categories($selected = null) {
+function list_pages($tag = 'li', $limit = 5) {
+	global $dbh;
+	$limit = intval($limit);
+	$result = $dbh->query("SELECT * FROM pages ORDER BY id desc LIMIT 0, ".$limit);
+	if($result->numRows() > 0) {
+		while($pages = $result->fetchObject()) {
+			echo '<'.$tag.'><a href="'.bloginfo('url',2).'?page='.$pages->id.'">'.$pages->title.'</a>'.'</'.$tag.'>';
+		}
+	}
+	else {
+		echo 'No pages to list.';
+	}
+}
+
+/*
+	Function: list_categories
+
+	Lists categories as HTML list items.
+
+	Parameters:
+
+		tag - The HTML tag that will contain the link (e.g. li or option)
+		limit - The maximum number of pages to list.
+
+	Returns:
+
+		HTML list items for however many pages were requested.
+*/
+function list_categories($tag = 'li', $limit = 5, $selected = null) {
 	// Grab the database handle
 	global $dbh;
 	// Get category data from database
-	$result = $dbh->query("SELECT * FROM categories") or die(sqlite_error_string($dbh->lastError));
-	// Sort through and create list items
-	while($row = $result->fetchObject()) {
-		if($selected == $row->id) {
-			echo '<option value="'.$row->id.'" selected="selected">'.stripslashes($row->fullname).'</option>';
-		}
-		else {
-			echo '<option value="'.$row->id.'">'.stripslashes($row->fullname).'</option>';
+	$result = $dbh->query("SELECT * FROM categories ORDER BY id desc LIMIT 0, ".$limit) or die(sqlite_error_string($dbh->lastError));
+	// What tag are we using?
+	if($tag == 'option') {
+		while($row = $result->fetchObject()) {
+			if($selected == $row->id) {
+				echo '<option value="'.$row->id.'" selected="selected">'.stripslashes($row->fullname).'</option>';
+			}
+			else {
+				echo '<option value="'.$row->id.'">'.stripslashes($row->fullname).'</option>';
+			}
 		}
 	}
+	else {
+		// Sort through and create list items
+		while($row = $result->fetchObject()) {
+			echo '<li><a href="'.bloginfo('url','r').'?category='.(int)$row->id.'">'.stripslashes($row->fullname).'</a></li>';
+		}
+	}
+
+}
+
+/*
+	Function: list_archives
+
+	Outputs a multi-level HTML list containing links for monthly post archives.
+*/
+function list_archives($limit = 10) {
+	// Grab the database handle
+	global $dbh;
+	// Get archive data
+	$result = $dbh->query("SELECT date FROM posts WHERE published=1 ORDER BY id desc LIMIT 0, ".(int)$limit);
+	// Sort through and create list items
+	while($row = $result->fetchObject()) {
+		$month = date('m', $row->date);
+		$monthname = date('F', $row->date);
+		$year = date('Y', $row->date);
+		if(!isset($post[$year][$month])) {
+			echo "<li><a href=\"".bloginfo('url','r')."?archive=".$year.$month."\">".$monthname." ".$year."</a></li>";
+		}
+		$post[$year][$month] = true;
+	}
+}
+
+/*
+	Function: commentNum
+
+	Outputs the number of comments on a post.
+
+	Parameters:
+
+		output - Specifies whether to echo the number or return it. Default is to return it.
+
+	Returns:
+
+		The number of comments as an integer.
+*/
+function commentNum($id, $output = 'r') {
+	// Make the database handle available here
+	global $dbh;
+	// If it's null, use the global
+	if($id == null) $id = $GLOBALS['pid'];
+	// Set the query
+	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE published=1 AND pid=".(int)$id) or die(sqlite_error_string($dbh->lastError));
+	// Query the database
+	@list($commentnum) = $query->fetch(SQLITE_NUM);
+	// Return or echo data
+	if($output == 'e') {
+		echo $commentnum;
+	}
+	else {
+		return $commentnum;
+	}
+}
+
+/*
+	Function: alternateColor
+
+	Alternates colors using CSS classes. Technically, it could alternate anything.
+
+	Parameters:
+
+		class1 - Name of the first class.
+		class2 - Name of the second class.
+
+	Returns:
+
+		The appropriate class name.
+*/
+function alternateColor($class1, $class2) {
+	# If $count isn't set, set it as 1
+	if(!isset($count)) { $count = 1; }
+	# Make PHP remember $count
+	static $count;
+	# Is it odd or even?
+	if($count % 2 == 0) {
+		# It's even!
+		echo $class1;
+	}
+	else {
+		# It's odd...
+		echo $class2;
+	}
+	# Increase $count by 1 for next time
+	$count++;
 }
 
 ?>

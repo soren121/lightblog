@@ -42,13 +42,16 @@ if(isset($_GET['install']) && $_GET['install'] === 'true' && file_exists('instal
 
 // Require config file
 require('config.php');
-require(ABSPATH .'/Sources/Template.php');
+require(ABSPATH .'/Sources/Core.php');
 
 // Include theme files
 $themeName = bloginfo('theme', 'r');
 
 // If it isn't a post or page we're showing...
 if(!isset($_GET['post']) && !isset($_GET['page'])) {
+	// Require the proper loop class
+	require(ABSPATH .'/Sources/Class.PostLoop.php');
+
 	// Pagination variables
 	$file = basename($_SERVER['SCRIPT_FILENAME']);
 	if(isset($_GET['p'])) {
@@ -80,6 +83,9 @@ if(!isset($_GET['post']) && !isset($_GET['page'])) {
 // Looks like it is a post or page
 else {
 	if(isset($_GET['post'])) {
+		// Require the proper loop class
+		require(ABSPATH .'/Sources/Class.PostLoop.php');
+		require(ABSPATH .'/Sources/Class.CommentLoop.php');
 		// Get post ID
 		$GLOBALS['pid'] = (int)$_GET['post'];
 		$GLOBALS['postquery']['type'] = 'post';
@@ -88,6 +94,8 @@ else {
 	}
 
 	elseif(isset($_GET['page'])) {
+		// Require the proper loop class
+		require(ABSPATH .'/Sources/Class.PageLoop.php');
 		// Get page ID
 		$GLOBALS['pid'] = (int)$_GET['page'];
 		$GLOBALS['postquery']['type'] = 'page';
