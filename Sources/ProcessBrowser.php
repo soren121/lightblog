@@ -4,14 +4,14 @@
 
 	LightBlog 0.9
 	SQLite blogging platform
-	
+
 	Sources/ProcessBrowser.php
-	
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 *********************************************/
@@ -34,6 +34,7 @@ if(isset($_POST['comment_submit'])) {
 			$comment_website = sqlite_escape_string(strip_tags($_POST['comment_website']));
 			$comment_date = time();
 			$comment_text = sqlite_escape_string(htmLawed::hl($_POST['comment_text'], array('safe' => 1, 'elements' => 'a, b, strong, i, em, li, ol, ul, br, span, u, s, img, abbr, blockquote, strike, code')));
+
 			if(bloginfo('comment_moderation','r') == 'approval') {
 				// Submit the comment
 				$dbh->query("INSERT INTO comments (published,pid,name,email,website,date,text) VALUES(0,$comment_pid,'$comment_name','$comment_email','$comment_website',$comment_date,'$comment_text')") or die(sqlite_error_string($dbh->lastError));

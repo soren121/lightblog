@@ -4,14 +4,14 @@
 
 	LightBlog 0.9
 	SQLite blogging platform
-	
+
 	Sources/Template.php
-	
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 ***********************************************/
@@ -26,7 +26,7 @@ $dbh = new SQLiteDatabase( DBH );
 
 /*
 	Class: PostLoop
-	
+
 	Provides an easy method to display a list of posts, for example, on the front page.
 */
 class PostLoop {
@@ -34,10 +34,10 @@ class PostLoop {
 	private $dbh = null;
 	private $result = null;
 	private $cur_result = null;
-	
+
 	/*
 		Constructor: __construct
-		
+
 		Sets the database handle for all functions in our class.
 	*/
 	public function __construct() {
@@ -46,11 +46,11 @@ class PostLoop {
 
 	/*
 		Function: set_dbh
-		
+
 		Sets the database handle.
-		
+
 		Parameters:
-		
+
 			dbh - Database handle object.
 	*/
   	public function set_dbh($dbh) {
@@ -63,18 +63,18 @@ class PostLoop {
       		trigger_error('Invalid object supplied.');
       	}
   	}
-	
+
 	/*
 		Function: parseQuery
-		
+
 		Parses the very basic query given and turns it in to a full-blown SQL query!
-		
+
 		Parameters:
-		
+
 			single - Optional parameter. Used to specify whether to obtain a single post or not.
 
 		Returns:
-		
+
 			A complete SQL query.
 	*/
 	private function parseQuery($single = false) {
@@ -87,7 +87,7 @@ class PostLoop {
 			$where = "id=$pid";
 			// If the user is logged in...
 			if(!userFetch('username', 'r') && !permissions(1)) {
-				$where .= " AND published=1";		
+				$where .= " AND published=1";
 			}
 		}
 		else {
@@ -108,29 +108,29 @@ class PostLoop {
 			return "SELECT * FROM posts WHERE $where ORDER BY id desc";
 		}
 	}
-	
+
 	/*
 		Function: obtain_post
-		
+
 		Obtains the data for a single post from the database.
 	*/
 	public function obtain_post() {
 		# Sanitize and set variables
 		$dbh = $this->dbh;
-			
+
 		# Query the database for the post data
 		$this->result = $dbh->query($this->parseQuery(true));
 	}
-	
+
 	/*
 		Function: obtain_posts
-		
+
 		Obtains the data for multiple posts from the database.
-		
+
 		Parameters:
-		
+
 			start - The ID of the first row to retrieve data from.
-			limit - The number of rows to retrieve data from, starting from the ID specified in start. 
+			limit - The number of rows to retrieve data from, starting from the ID specified in start.
 	*/
   	public function obtain_posts($start = 1, $limit = 8) {
 		# Sanitize and set variables
@@ -143,14 +143,14 @@ class PostLoop {
 		# Query the database for post data
     	$this->result = $dbh->query($this->parseQuery()." LIMIT ".$start.", ".$limit);
   	}
-  	
+
 	/*
 		Function: has_posts
-		
+
 		Checks if there are any posts available for us to show.
-		
+
 		Returns:
-		
+
 			Boolean value (true/false).
 	*/
   	public function has_posts() {
@@ -167,11 +167,11 @@ class PostLoop {
 
 	/*
 		Function: loop
-		
+
 		Loops through our post query until we have no more posts.
-		
+
 		Returns:
-		
+
 			Boolean value (e.g. true/false.)
 	*/
   	public function loop() {
@@ -194,7 +194,7 @@ class PostLoop {
 
 	/*
 		Function: permalink
-		
+
 		Outputs the permanent URL (or permalink) to the current post.
 	*/
   	public function permalink() {
@@ -211,7 +211,7 @@ class PostLoop {
 
 	/*
 		Function: title
-		
+
 		Outputs the title of the current post.
 	*/
   	public function title() {
@@ -225,14 +225,14 @@ class PostLoop {
       		return false;
       	}
   	}
-	
+
 	/*
 		Function: content
-		
+
 		Outputs the content, in full form or as an excerpt.
-		
+
 		Parameters:
-		
+
 			ending - The excerpt suffix. If set, this function will output an excerpt. (e.g. Read More...)
 	*/
   	public function content($ending = false) {
@@ -243,7 +243,7 @@ class PostLoop {
 			// The following truncator code is from CakePHP
 			// http://www.cakephp.org/
 			// Licensed under the MIT license
-			
+
 			// if the plain text is shorter than the maximum length, return the whole text
 			if(strlen(preg_replace('/<.*?>/', '', $text)) <= $length || !$ending) {
 				echo $text;
@@ -333,11 +333,11 @@ class PostLoop {
 
 	/*
 		Function: date
-		
+
 		Outputs the published date of the post.
-		
+
 		Parameters:
-		
+
 			format - The format, in PHP's date() format, in which to display the date. (e.g. F js, Y)
 	*/
   	public function date($format = null) {
@@ -380,10 +380,10 @@ class PostLoop {
 			return false;
 		}
 	}
-	
+
 	/*
 		Function: category
-		
+
 		Outputs the category the post was filed under.
 	*/
 	public function category() {
@@ -396,10 +396,10 @@ class PostLoop {
 			return false;
 		}
 	}
-	
+
 	/*
 		Destructor: __destruct
-		
+
 		Displays simple paginations link when the PostLoop class is destroyed with unset().
 	*/
 	public function pagination() {
@@ -411,7 +411,7 @@ class PostLoop {
 			# Set the query to retrieve the number of rows
 			$query = $dbh->query(str_replace(" * ", " COUNT(*) ", $this->parseQuery())) or die(sqlite_error_string($dbh->lastError));
 			# Query the database
-			@list($totalitems) = $query->fetch(SQLITE_NUM);	
+			@list($totalitems) = $query->fetch(SQLITE_NUM);
 			# Set various required variables
 			$prev = $page - 1;						# Previous page is page - 1
 			$next = $page + 1;						# Next page is page + 1
@@ -436,7 +436,7 @@ class PostLoop {
 
 /*
 	Class: PageLoop
-	
+
 	Provides an easy way for theme developers to display pages.
 */
 class PageLoop {
@@ -444,7 +444,7 @@ class PageLoop {
 	private $dbh = null;
 	private $result = null;
 	private $cur_result = null;
-	
+
 	/*
 		Constructor: __construct
 
@@ -483,14 +483,14 @@ class PageLoop {
 		# Sanitize and set variables
 		$pid = (int)$GLOBALS['pid'];
 		$dbh = $this->dbh;
-		
+
 		# Query the database for the page data
 		$this->result = $dbh->query("SELECT * FROM 'pages' WHERE id=".$pid);
 	}
 
 	/*
 		Function: has_pages
-		
+
 		Checks if the query result we got contained any pages.
 
 		Returns:
@@ -518,10 +518,10 @@ class PageLoop {
 			return false;
 		}
 	}
-	
+
 	/*
 		Function: permalink
-		
+
 		Outputs a permanent link to the page.
 	*/
   	public function permalink() {
@@ -538,7 +538,7 @@ class PageLoop {
 
 	/*
 		Function: title
-		
+
 		Outputs the title of the page.
 	*/
   	public function title() {
@@ -555,7 +555,7 @@ class PageLoop {
 
 	/*
 		Function: content
-		
+
 		Outputs the content of the page.
 	*/
   	public function content() {
@@ -573,7 +573,7 @@ class PageLoop {
 
 /*
 	Class: CommentLoop
-	
+
 	Provides an easy method to display a list of comments associated with a post.
 */
 class CommentLoop {
@@ -613,7 +613,7 @@ class CommentLoop {
 
 	/*
 		Function: comments_open
-		
+
 		Checks if comments are enabled.
 
 		Returns:
@@ -631,7 +631,7 @@ class CommentLoop {
 			return false;
 		}
 	}
-	
+
 	/*
 		Function: obtain_comments
 
@@ -657,6 +657,7 @@ class CommentLoop {
 		if(!empty($this->result)) {
 			# Convert query results into something usable
 			$this->cur_result = $this->result->fetchObject();
+
 			# This while loop will remain true until we run out of comments
 			while($post = $this->cur_result) {
 				return true;
@@ -673,16 +674,16 @@ class CommentLoop {
 			return false;
 		}
   	}
-	
+
 	/*
 		Function: list_comments
-		
+
 		Outputs a list of comments.
-		
+
 		Parameters:
-		
+
 			tag - The HTML tag to wrap the comment in.
-	*/	
+	*/
 	public function list_comments($tag = 'div') {
 		if(!empty($this->cur_result)) {
 			echo '<'.$tag.' class="comment '; alternateColor('c1', 'c2'); echo '" id="comment-'.(int)$this->cur_result->id.'">
@@ -692,7 +693,7 @@ class CommentLoop {
 					}
 					else {
 						echo '<a class="comment_name" href="'.stripslashes($this->cur_result->website).'">'.stripslashes($this->cur_result->name).'</a>';
-					}					
+					}
 					echo '<span class="comment_says"> says:</span><br />
 					<a href="'.bloginfo('url','r').'?post='.(int)$this->cur_result->pid.'#comment-'.(int)$this->cur_result->id.'" class="comment_date">'.date('F j, Y \a\t g:i A', (int)$this->cur_result->date).'</a><br />
 					<p class="comment_text">'.stripslashes($this->cur_result->text).'</p>
@@ -702,16 +703,16 @@ class CommentLoop {
 		else {
 			# Send nothing back
 			return false;
-		}	
+		}
 	}
-	
+
 	/*
 		Function: gravatar
-		
+
 		Outputs the user's Gravatar, derived from their email address.
-		
+
 		Parameters:
-		
+
 			size - The square pixel size to display the Gravatar (e.g. 32 == 32x32.) Defaults to 32.
 	*/
 	private function gravatar($size = 32) {
@@ -725,16 +726,16 @@ class CommentLoop {
 		else {
 			# Send nothing back
 			return false;
-		}	
+		}
 	}
-	
+
 	/*
 		Function: messageHook
-	
+
 		Outputs a response, if any, from the comment processor.
-		
+
 		Parameters:
-		
+
 			tag - The HTML tag to wrap the message in.
 	*/
 	public function messageHook($tag = '') {
@@ -750,12 +751,12 @@ class CommentLoop {
 			return false;
 		}
 	}
-	
+
 	/*
 		Function: formHook
-	
+
 		Injects form inputs required by LightBlog into the comment form.
-	*/	
+	*/
 	public function formHook() {
 		// Output the post ID as a hidden form input
 		echo '<p style="display:none;"><input name="comment_pid" type="hidden" value="'.$GLOBALS['pid'].'" /></p>';
@@ -764,16 +765,16 @@ class CommentLoop {
 
 /*
 	Function: list_pages
-	
+
 	Lists pages as HTML list items.
-	
+
 	Parameters:
-	
+
 		tag - The HTML tag that will contain the link (e.g. li)
 		limit - The maximum number of pages to list.
-	
+
 	Returns:
-	
+
 		HTML list items for however many pages were requested.
 */
 function list_pages($tag = 'li', $limit = 5) {
@@ -827,7 +828,7 @@ function list_categories($tag = 'li', $limit = 5) {
 
 /*
 	Function: list_archives
-	
+
 	Outputs a multi-level HTML list containing links for monthly post archives.
 */
 function list_archives($limit = 10) {
@@ -849,15 +850,15 @@ function list_archives($limit = 10) {
 
 /*
 	Function: commentNum
-	
+
 	Outputs the number of comments on a post.
-	
+
 	Parameters:
 
 		output - Specifies whether to echo the number or return it. Default is to return it.
-		
+
 	Returns:
-	
+
 		The number of comments as an integer.
 */
 function commentNum($id, $output = 'r') {
@@ -880,16 +881,16 @@ function commentNum($id, $output = 'r') {
 
 /*
 	Function: alternateColor
-	
+
 	Alternates colors using CSS classes. Technically, it could alternate anything.
-	
+
 	Parameters:
-	
+
 		class1 - Name of the first class.
 		class2 - Name of the second class.
-		
+
 	Returns:
-	
+
 		The appropriate class name.
 */
 function alternateColor($class1, $class2) {

@@ -7,11 +7,11 @@
 
 	admin/comments.php
 
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 *********************************************/
@@ -33,7 +33,7 @@ else {
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>Manage Comments - <?php bloginfo('title') ?></title>
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
 	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style></script><![endif]-->
@@ -47,15 +47,15 @@ else {
 						void(0);
 					}
 					else {
-						$(this).css('cursor', 'pointer').empty().html('<span style="color:green;">Approve?</span>');	
-					}	
+						$(this).css('cursor', 'pointer').empty().html('<span style="color:green;">Approve?</span>');
+					}
 				},
 				function() {
 					if(typeof(window.ajaxr) == 'undefined') {
 						$(this).empty().html('<img src="style/cross.png" alt="Not approved" />');
 					}
 				}
-			);	
+			);
 			$('.nApproved').click(function() {
 				$(this).empty().html('<img src="style/loading.gif" alt="" class="loader" />');
 				var id = $(this).parent().attr('id').substr(2);
@@ -77,7 +77,7 @@ else {
 						}
 						else {
 							$('#notifybox').text('Failed to approve comment; ' + r.response).css("background","#E36868").css("border-color","#a40000").slideDown("normal");
-							$(thisa).empty().html('<img src="style/cross.png" alt="Not approved" />');							
+							$(thisa).empty().html('<img src="style/cross.png" alt="Not approved" />');
 						}
 					}
 				});
@@ -114,7 +114,7 @@ else {
 <body>
 	<div id="wrapper">
 		<div id="header" class="roundedt">
-			<a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>	 
+			<a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
@@ -132,9 +132,9 @@ else {
 					<th class="managelist">Excerpt</th>
 					<th class="managelist">Approved</th>
 					<th class="managelist">Delete</th>
-				</tr>		
+				</tr>
 				<!-- Start row loop -->
-				<?php while($row = $result->fetchObject()): ?>	
+				<?php while($row = $result->fetchObject()): ?>
 				<tr id="tr<?php echo $row->id ?>">
 					<td style="white-space:nowrap;">
 						<img src="http://www.gravatar.com/avatar.php?gravatar_id=<?php echo md5($row->email) ?>&amp;size=24" style="vertical-align:middle;margin-right:5px;" />
@@ -160,8 +160,8 @@ else {
 			<!-- End all ifs -->
 			<?php endif; endif; ?>
 		</div>
-		<div id="footer" class="roundedb">		
-			Powered by LightBlog <?php LightyVersion() ?>    
+		<div id="footer" class="roundedb">
+			Powered by LightBlog <?php LightyVersion() ?>
 		</div>
 	</div>
 </body>

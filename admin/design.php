@@ -4,14 +4,14 @@
 
 	LightBlog 0.9
 	SQLite blogging platform
-	
+
 	admin/design.php
-	
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 *********************************************/
@@ -25,14 +25,14 @@ require(ABSPATH .'/Sources/Admin.php');
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>Design - <?php bloginfo('title') ?></title>
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
 	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.InputHint.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script> 
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			$('#themeform').submit(function() {
@@ -71,7 +71,7 @@ require(ABSPATH .'/Sources/Admin.php');
 <body>
 	<div id="wrapper">
 		<div id="header" class="roundedt">
-			<a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>	 
+			<a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
@@ -91,8 +91,8 @@ require(ABSPATH .'/Sources/Admin.php');
 			</div>
 			<?php endif; ?>
 		</div>
-		<div id="footer" class="roundedb">		
-			Powered by LightBlog <?php LightyVersion() ?>    
+		<div id="footer" class="roundedb">
+			Powered by LightBlog <?php LightyVersion() ?>
 	    </div>
 	</div>
 </body>

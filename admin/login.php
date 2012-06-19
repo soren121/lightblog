@@ -4,14 +4,14 @@
 
 	LightBlog 0.9
 	SQLite blogging platform
-	
+
 	admin/login.php
-	
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 *********************************************/
@@ -31,7 +31,7 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])) {
 if(isset($_POST['proclogin'])) {
 	login('userpass');
 }
-	
+
 // Logout the user
 if(isset($_GET['logout'])) {
 	// Destroy the session
@@ -44,7 +44,7 @@ if(isset($_GET['logout'])) {
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php bloginfo('title') ?> - Login</title>
 	<link rel="stylesheet" type="text/css" href="style/loginstyle.css" />
 </head>
@@ -66,7 +66,7 @@ if(isset($_GET['logout'])) {
 				<label for="rememberme">Remember Me</label></p>
 				<p><input name="proclogin" type="submit" value="Login" id="submit" /></p>
 			</div>
-		</form>	
+		</form>
 	</div>
 </body>
 </html>

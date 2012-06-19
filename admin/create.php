@@ -4,16 +4,16 @@
 
 	LightBlog 0.9
 	SQLite blogging platform
-	
+
 	admin/create.php
-	
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
-	
+
 *********************************************/
 
 // Require config file
@@ -29,42 +29,43 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>Create <?php echo ucwords($type) ?> - <?php bloginfo('title') ?></title>
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.css" />
 	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.js"></script> 
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.XHTML.js"></script> 
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.js"></script>
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.XHTML.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.AdvancedTable.js"></script>
-	<script type="text/javascript">	
+	<script type="text/javascript">
 		$(document).ready(function() {
 			$('#wysiwyg').cleditor({width: 465, height: 300});
 		});
 		$(function() {
 			$('#create').submit(function() {
 				$('#notifybox').slideUp('normal').empty();
-				var inputs = [];
-				$('.cf', this).each(function() {
+	var inputs = [];
+	$('.cf', this).each(function() {
 					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
-						void(0);
+									void(0);
 					}
 					else {
-						inputs.push(this.name + '=' + escape(this.value));
+									inputs.push(this.name + '=' + this.value);
 					}
-				})
-				jQuery.ajax({
+	});
+
+	jQuery.ajax({
 					data: inputs.join('&'),
 					type: "POST",
-					url: this.getAttribute('action'),
+					url: $(this).attr('action'),
 					timeout: 2000,
 					error: function() {
 						$('#notifybox').text('Failed to submit <?php echo $type; ?>.').css("background","#E36868").css("border-color","#a40000").slideDown("normal");
 					},
-					success: function(json) {
-						var r = jQuery.parseJSON(json);
+					dataType: 'json',
+					success: function(r) {
 						if(r.result == 'success') {
 							if(r.showlink == true) {
 								$('#notifybox').html('<?php echo ucwords($type) ?> created. | <' + 'a href="' + r.response + '">View <?php echo $type ?></' + 'a>').slideDown("normal");
@@ -89,7 +90,7 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 <body>
 	<div id="wrapper">
 		<div id="header" class="roundedt">
-			<a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>	 
+			<a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
@@ -126,8 +127,8 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 			</form>
 			<?php endif; endif; ?>
 		</div>
-		<div id="footer" class="roundedb">		
-			Powered by LightBlog <?php LightyVersion() ?>    
+		<div id="footer" class="roundedb">
+			Powered by LightBlog <?php LightyVersion() ?>
 		</div>
 	</div>
 </body>

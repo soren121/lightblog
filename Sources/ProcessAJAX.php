@@ -7,11 +7,11 @@
 
 	Sources/ProcessAJAX.php
 
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 *********************************************/
@@ -20,6 +20,8 @@
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 require(ABSPATH .'/Sources/FunctionReplacements.php');
+
+header('Content-Type: text/json; charset=utf-8');
 
 # Process post/page/category creation
 if(isset($_POST['create'])) {
@@ -246,10 +248,10 @@ if(isset($_POST['addusersubmit'])) {
 			if(isset($fielderror) && $fielderror == true) {
 				die(json_encode(array("result" => "error", "response" => "All fields must be filled. Try again.")));
 			}
-			// Does that username exist already?		
+			// Does that username exist already?
 			$result = @$dbh->query("SELECT * FROM users WHERE username='$username'") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
-			if($result->numRows() < 0) { 
-				die(json_encode(array("result" => "error", "response" => "Username is already taken. Try again."))); 
+			if($result->numRows() < 0) {
+				die(json_encode(array("result" => "error", "response" => "Username is already taken. Try again.")));
 			}
 			unset($result);
 			// I guess not, let's verify the password
@@ -257,7 +259,7 @@ if(isset($_POST['addusersubmit'])) {
 				die(json_encode(array("result" => "error", "response" => "Passwords don't match. Try again.")));
 			}
 			// Let's verify the email
-			if(!preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/',$email)) { 
+			if(!preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/',$email)) {
 				die(json_encode(array("result" => "error", "response" => "Email address not valid. Try again.")));
 			}
 			// Well, everything looks good, let's go
@@ -313,7 +315,7 @@ if(isset($_POST['editprofilesubmit'])) {
 				if(isset($_POST['dn-ck']) && $_POST['dn-ck'] == 1) {
 					// Send it to the database
 					@$dbh->query("UPDATE users SET displayname='$displayname' WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "display name update failed.")));
-				}	
+				}
 			}
 			else {
 				die(json_encode(array("result" => "error", "response" => "security password incorrect.")));
@@ -335,7 +337,7 @@ if(isset($_POST['deleteusersubmit'])) {
 		if(permissions(2)) {
 			# Check the user level of the user being deleted
 			$query = @$dbh->query("SELECT role FROM users WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "could not get the role of the user being deleted.")));
-			if(userFetch('role', 2) >= $query->fetchSingle() ) {		
+			if(userFetch('role', 2) >= $query->fetchSingle() ) {
 				# Execute query to delete user
 				@$dbh->query("DELETE FROM users WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "user deletion command failed.")));
 				die(json_encode(array("result" => "success")));
