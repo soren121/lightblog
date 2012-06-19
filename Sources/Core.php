@@ -22,8 +22,20 @@ require(ABSPATH .'/Sources/DatabaseFunctions.php');
 require(ABSPATH .'/Sources/UserFunctions.php');
 require(ABSPATH .'/Sources/StringFunctions.php');
 
-// Open database if not open
-$dbh = new SQLiteDatabase( DBH );
+// Check to make sure that the database exists.
+if(file_exists(DBH))
+{
+	$dbh = new SQLiteDatabase(DBH, 0666, $error_message);
+}
+else
+{
+	$error_message = 'The database file does not exist';
+}
+
+if(!empty($error_message))
+{
+	trigger_error($error_message, E_USER_ERROR);
+}
 
 // Shutdown Magic Quotes automatically
 // Highly inefficient, but there isn't much we can do about it

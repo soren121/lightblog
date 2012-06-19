@@ -21,6 +21,8 @@ require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
+$_GET['page'] = !empty($_GET['page']) && (int)$_GET['page'] > 1 ? (int)$_GET['page'] : 1;
+
 if(isset($_GET['page']) && $_GET['page'] > 1) {
 		$result = $dbh->query("SELECT * FROM users ORDER BY username asc LIMIT ".(($_GET['page'] - 1) * 8).",8") or die(sqlite_error_string($dbh->lastError));
 }
@@ -29,7 +31,7 @@ else {
 }
 
 $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
-
+$pagination = advancedPagination('users', $_SERVER['PHP_SELF'], $_GET['page']);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -107,7 +109,7 @@ $role_array = array(1 => 'Standard', 2 => 'Moderator', 3 => 'Administrator');
 				<?php endwhile; ?>
 				<!-- End row loop -->
 			</table>
-			<?php echo advancedPagination('users', $_SERVER['PHP_SELF'], @(int)$_GET['page']); ?>
+			<?php echo $pagination; ?>
 			<?php endif; endif; ?>
 		</div>
 		<div id="footer" class="roundedb">

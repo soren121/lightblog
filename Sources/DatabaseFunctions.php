@@ -4,29 +4,29 @@
 
 	LightBlog 0.9
 	SQLite blogging platform
-	
+
 	Sources/DatabaseFunctions.php
-	
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 ***********************************************/
 
 /*
 	Function: get_bloginfo
-	
+
 	Returns the value of a given row.
-	
+
 	Parameters:
-	
+
 		var - Row to obtain value from.
-		
+
 	Returns:
-	
+
 		The value of the given row.
 */
 function get_bloginfo($var) {
