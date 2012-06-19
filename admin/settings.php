@@ -21,10 +21,10 @@ require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
-if(bloginfo('comment_moderation','r') == 'none') {
+if(get_bloginfo('comment_moderation') == 'none') {
 	$cmno = 'checked="checked"';
 }
-elseif(bloginfo('comment_moderation','r') == 'approval') {
+elseif(get_bloginfo('comment_moderation') == 'approval') {
 	$cmapvl = 'checked="checked"';
 }
 

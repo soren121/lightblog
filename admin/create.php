@@ -46,17 +46,17 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 		$(function() {
 			$('#create').submit(function() {
 				$('#notifybox').slideUp('normal').empty();
-	var inputs = [];
-	$('.cf', this).each(function() {
+				var inputs = [];
+				$('.cf', this).each(function() {
 					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
-									void(0);
+						void(0);
 					}
 					else {
-									inputs.push(this.name + '=' + this.value);
+						inputs.push(this.name + '=' + this.value);
 					}
-	});
+				});
 
-	jQuery.ajax({
+				jQuery.ajax({
 					data: inputs.join('&'),
 					type: "POST",
 					url: $(this).attr('action'),

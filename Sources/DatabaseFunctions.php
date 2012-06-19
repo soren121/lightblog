@@ -17,20 +17,19 @@
 ***********************************************/
 
 /*
-	Function: bloginfo
+	Function: get_bloginfo
 	
 	Returns the value of a given row.
 	
 	Parameters:
 	
 		var - Row to obtain value from.
-		output - Specifies whether the version will be echoed or returned.
 		
 	Returns:
 	
 		The value of the given row.
 */
-function bloginfo($var, $output = 'e') {
+function get_bloginfo($var) {
 	# Global the database handle
 	global $dbh;
 	# Make PHP remember $bloginfo next time
@@ -50,8 +49,11 @@ function bloginfo($var, $output = 'e') {
 		}
 	}
 	# Are we echoing or returning?
-	if($output == 'e') { echo !empty($bloginfo[$var]) ? $bloginfo[$var] : false; }
-	else { return !empty($bloginfo[$var]) ? $bloginfo[$var] : false; }	
+	return !empty($bloginfo[$var]) ? $bloginfo[$var] : false;
+}
+
+function bloginfo($var) {
+	echo get_bloginfo($var);
 }
 
 ?>

@@ -193,7 +193,7 @@ class PostLoop {
 		# We didn't screw up and keep an empty query, did we?
 		if(!empty($this->cur_result)) {
 			# Nope, so return the post's permalink
-			echo bloginfo('url', 'return'). '?post='. $this->cur_result->id;
+			echo get_bloginfo('url'). '?post='. $this->cur_result->id;
 		}
 		else {
 			# Looks like we messed up, send nothing

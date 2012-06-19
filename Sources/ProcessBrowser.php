@@ -35,19 +35,19 @@ if(isset($_POST['comment_submit'])) {
 			$comment_date = time();
 			$comment_text = sqlite_escape_string(htmLawed::hl($_POST['comment_text'], array('safe' => 1, 'elements' => 'a, b, strong, i, em, li, ol, ul, br, span, u, s, img, abbr, blockquote, strike, code')));
 
-			if(bloginfo('comment_moderation','r') == 'approval') {
+			if(get_bloginfo('comment_moderation') == 'approval') {
 				// Submit the comment
 				$dbh->query("INSERT INTO comments (published,pid,name,email,website,date,text) VALUES(0,$comment_pid,'$comment_name','$comment_email','$comment_website',$comment_date,'$comment_text')") or die(sqlite_error_string($dbh->lastError));
 				// Set message
 				$_SESSION['cmessage'] = 'Your comment will appear as soon as it is approved by a moderator.';
 			}
-			if(bloginfo('comment_moderation','r') == 'none') {
+			elseif(get_bloginfo('comment_moderation') == 'none') {
 				// Submit the comment
 				$dbh->query("INSERT INTO comments (pid,name,email,website,date,text) VALUES($comment_pid,'$comment_name','$comment_email','$comment_website',$comment_date,'$comment_text')") or die(sqlite_error_string($dbh->lastError));
 			}
 		}
 		// Send the user back to the page they came from
-		header('Location: '.bloginfo('url',2).'?post='.$comment_pid.'#commentform');
+		header('Location: '.get_bloginfo('url').'?post='.$comment_pid.'#commentform');
 	}
 }
 

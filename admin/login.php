@@ -37,7 +37,7 @@ if(isset($_GET['logout'])) {
 	// Destroy the session
 	session_destroy();
 	// Send them to the homepage
-	header('Location: '.bloginfo('url', 'r'));
+	header('Location: '.get_bloginfo('url'));
 }
 
 ?>

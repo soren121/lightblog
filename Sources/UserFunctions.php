@@ -73,4 +73,11 @@ function permissions($group) {
 	}
 }
 
+function gravatar($email = null, $size = 80, $default = 'mm', $rating = 'pg') {
+	if($email == null) {
+		$email = $_SESSION['email'];
+	}
+	return "http://www.gravatar.com/avatar/".md5(strtolower(trim($email)))."?s=".$size."&d=".$default."&rating=".$rating;
+}
+
 ?>

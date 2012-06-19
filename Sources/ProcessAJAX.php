@@ -73,7 +73,7 @@ if(isset($_POST['create'])) {
 			# Fetch post ID from database
 			$id = $dbh->lastInsertRowid();
 			# Create URL to return to jQuery
-			$url = bloginfo('url', 'r')."?".$type."=".$id;
+			$url = get_bloginfo('url')."?".$type."=".$id;
 			# Return JSON-encoded response
 			echo json_encode(array("result" => "success", "response" => "$url", "showlink" => "$showlink"));
 			# Prevent the rest of the page from loading
@@ -136,7 +136,7 @@ if(isset($_POST['edit'])) {
 			# Set a base query to modify
 			$base = "UPDATE ".($type == 'category' ? 'categorie' : $type)."s SET ";
 			# Create URL to return to jQuery
-			$url = bloginfo('url', 'r')."?".$type."=".$id;
+			$url = get_bloginfo('url')."?".$type."=".$id;
 			# Run through scenarios
 			if($type != 'category') {
 				if(stripslashes($ptitle) !== $title) { $base .= "title='".sqlite_escape_string($title)."', "; }
@@ -210,10 +210,10 @@ if(isset($_POST['changesettings'])) {
 		json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing."));
 	}
 	else {
-		if($_POST['changetitle'] != bloginfo('title', 'r')) {
+		if($_POST['changetitle'] != get_bloginfo('title')) {
 			@$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changetitle']))."' WHERE variable='title'") or die(json_encode(array("result" => "error", "response" => "Failed to change blog title.")));
 		}
-		if($_POST['changeurl'] != bloginfo('url', 'r')) {
+		if($_POST['changeurl'] != get_bloginfo('url')) {
 			@$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changeurl']))."' WHERE variable='url'") or die(json_encode(array("result" => "error", "response" => "Failed to change blog URL.")));
 		}
 		if($_POST['commentmoderation'] != bloginfo('comment_moderation', 'r')) {

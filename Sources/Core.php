@@ -4,14 +4,14 @@
 
 	LightBlog 0.9
 	SQLite blogging platform
-
+	
 	Sources/Core.php
-
-	©2008-2012 The LightBlog Team. All
-	rights reserved. Released under the
-	GNU General Public License 3. For
-	all licensing information, please
-	see the LICENSE.txt document
+	
+	©2008-2012 The LightBlog Team. All 
+	rights reserved. Released under the 
+	GNU General Public License 3. For 
+	all licensing information, please 
+	see the LICENSE.txt document 
 	included in this distribution.
 
 ***********************************************/
@@ -45,15 +45,15 @@ if(function_exists('get_magic_quotes_runtime') && @get_magic_quotes_runtime())
 
 /*
 	Function: LightyVersion
-
+	
 	Returns the installed version number of LightBlog.
-
+	
 	Parameters:
-
+	
 		output - Specifies whether the version will be echoed or returned.
-
+		
 	Returns:
-
+	
 		The installed version number.
 */
 function LightyVersion($output = 'e') {
@@ -67,15 +67,15 @@ function LightyVersion($output = 'e') {
 
 /*
 	Function: dirlist
-
+	
 	Reads a directory and outputs its directories into a sorted array.
-
+	
 	Parameters:
-
+		
 		input - The path of the directory to inspect.
-
+	
 	Returns:
-
+	
 		An array sorted in ascending order by values containing the directories in the given path.
 */
 function dirlist($input) {
@@ -94,23 +94,23 @@ function dirlist($input) {
 
 /*
 	Function: advancedPagination
-
+	
 	Creates a more advanced pagination that is more efficient for handling large amounts of data than <simplePagination>.
-
+	
 	Parameters:
-
+	
 		type - Type of content being processed.
 		target - URL of the page that the pagination will be displayed on.
 		page - The page the user is currently on.
 		limit - Defines how many items are in a page.
 		adjacents - Number of items in the pagination on either side of the current page? (not entirely sure)
 		pagestring - GET argument to be used for the current page.
-
+		
 	Returns:
-
+	
 		HTML code for a full pagination menu.
 */
-function advancedPagination($type, $target, &$page = 1, $limit = 8, $adjacents = 1, $pagestring = "&page=") {
+function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 1, $pagestring = "&page=") {
 	# Global the database handle so we can use it in this function
 	global $dbh;
 
@@ -127,7 +127,7 @@ function advancedPagination($type, $target, &$page = 1, $limit = 8, $adjacents =
 	# Set teh query to retrieve the number of rows
 	$query = $dbh->query("SELECT COUNT(*) FROM '".sqlite_escape_string($type)."'") or die(sqlite_error_string($dbh->lastError));
 	# Query the database
-	@list($totalitems) = $query->fetch(SQLITE_NUM);
+	@list($totalitems) = $query->fetch(SQLITE_NUM);	
 	# Set various required variables
 	$prev = $page - 1;						# Previous page is page - 1
 	$next = $page + 1;						# Next page is page + 1
@@ -143,10 +143,10 @@ function advancedPagination($type, $target, &$page = 1, $limit = 8, $adjacents =
 	# Clear $pagination
 	$pagination = "";
 	# Do we have more than one page?
-	if($totalitems > $limit) {
+	if($totalitems > $limit) {	
 		# Start the pagination div
 		$pagination .= "<div class=\"pagination\">";
-
+		
 		# Add the previous button
 		if($page > 1) {
 			$pagination .= "<a href=\"" . $target . $pagestring . $prev . "\">&laquo; prev</a>";
@@ -155,8 +155,8 @@ function advancedPagination($type, $target, &$page = 1, $limit = 8, $adjacents =
 			# Disable the previous button, since we're on the first page
 			$pagination .= "<span class=\"disabled\">&laquo; prev</span>";
 		}
-		# Add the page buttons
-		if ($lastpage < 7 + ($adjacents * 2)) {
+		# Add the page buttons	
+		if ($lastpage < 7 + ($adjacents * 2)) {	
 			# There aren't enough pages to bother breaking it up
 			# Loop through the pages and create links for all
 			for($counter = 1; $counter <= $lastpage; $counter++) {
@@ -164,7 +164,7 @@ function advancedPagination($type, $target, &$page = 1, $limit = 8, $adjacents =
 					$pagination .= "<span class=\"current\">$counter</span>";
 				}
 				else {
-					$pagination .= "<a href=\"" . $target . $pagestring . $counter . "\">$counter</a>";
+					$pagination .= "<a href=\"" . $target . $pagestring . $counter . "\">$counter</a>";		
 				}
 			}
 		}
@@ -177,13 +177,13 @@ function advancedPagination($type, $target, &$page = 1, $limit = 8, $adjacents =
 						$pagination .= "<span class=\"current\">$counter</span>";
 					}
 					else {
-						$pagination .= "<a href=\"" . $target . $pagestring. $counter . "\">$counter</a>";
+						$pagination .= "<a href=\"" . $target . $pagestring. $counter . "\">$counter</a>";					
 					}
 				}
 				# Add the ellipses
 				$pagination .= "<span class=\"elipses\">...</span>";
 				$pagination .= "<a href=\"" . $target . $pagestring . $lpm1 . "\">$lpm1</a>";
-				$pagination .= "<a href=\"" . $target . $pagestring . $lastpage . "\">$lastpage</a>";
+				$pagination .= "<a href=\"" . $target . $pagestring . $lastpage . "\">$lastpage</a>";		
 			}
 			# We're in the middle; hide some in the front and back
 			elseif($lastpage - ($adjacents * 2) > $page && $page > ($adjacents * 2)) {
@@ -198,13 +198,13 @@ function advancedPagination($type, $target, &$page = 1, $limit = 8, $adjacents =
 						$pagination .= "<span class=\"current\">$counter</span>";
 					}
 					else {
-						$pagination .= "<a href=\"" . $target . $target . $pagestring . $counter . "\">$counter</a>";
+						$pagination .= "<a href=\"" . $target . $target . $pagestring . $counter . "\">$counter</a>";	
 					}
 				}
 				# Add the ellipses and the last few pages
 				$pagination .= "...";
 				$pagination .= "<a href=\"" . $target . $pagestring . $lpm1 . "\">$lpm1</a>";
-				$pagination .= "<a href=\"" . $target . $pagestring . $lastpage . "\">$lastpage</a>";
+				$pagination .= "<a href=\"" . $target . $pagestring . $lastpage . "\">$lastpage</a>";		
 			}
 			# We're close to the end, so only hide the early pages
 			else {
@@ -218,17 +218,17 @@ function advancedPagination($type, $target, &$page = 1, $limit = 8, $adjacents =
 						$pagination .= "<span class=\"current\">$counter</span>";
 					}
 					else {
-						$pagination .= "<a href=\"".$target.$pagestring.$counter."\">$counter</a>";
+						$pagination .= "<a href=\"".$target.$pagestring.$counter."\">$counter</a>";	
 					}
-				}
+				}				
 			}
-		}
+		}		
 		# Add the next button
 		if ($page < $counter - 1) {
-			$pagination .= "<a href=\"".$target.$pagestring.$next."\">next &raquo;</a>";
+			$pagination .= "<a href=\"".$target.$pagestring.$next."\">next »</a>";
 		}
 		else {
-			$pagination .= "<span class=\"disabled\">next &raquo;</span>";
+			$pagination .= "<span class=\"disabled\">next »</span>";
 		}
 		# End the pagination div
 		$pagination .= "</div>\n";
@@ -239,15 +239,15 @@ function advancedPagination($type, $target, &$page = 1, $limit = 8, $adjacents =
 
 /*
 	Function: login
-
+	
 	Logs in a user.
-
+	
 	Parameters:
-
+	
 		method - Method used to login the user. Will be used more when 0.9.4 rolls around.
-
+		
 	Returns:
-
+	
 		An error message if something failed. If it worked, it will send the user to the admin dashboard.
 */
 function login($method) {
@@ -291,7 +291,7 @@ function login($method) {
 						setcookie('password', $_POST['password'], time()+60*60*24*30, "/");
 					}
 					// Send the user to the dashboard
-					header('Location: '.bloginfo('url','r').'admin/dashboard.php');
+					header('Location: '.get_bloginfo('url').'admin/dashboard.php');
 				}
 			}
 		}
@@ -303,19 +303,19 @@ function login($method) {
 
 /*
 	Function: list_themes
-
+	
 	Outputs a list of themes in HTML <option> tags.
 */
 function list_themes() {
 	// List directories
-	$dir = dirlist(ABSPATH .'/themes');
+	$dir = dirlist(ABSPATH .'/themes'); 
 	foreach($dir as $k => $v) {
 		if(bloginfo('theme','r') == $k) {
 			echo '<option selected="selected" value="'.$k.'">'.$v.'</option>';
 		}
 		else {
 			echo '<option value="'.$k.'">'.$v.'</option>';
-		}
+		}		
 	}
 }
 
@@ -339,7 +339,7 @@ function list_pages($tag = 'li', $limit = 5) {
 	$result = $dbh->query("SELECT * FROM pages ORDER BY id desc LIMIT 0, ".$limit);
 	if($result->numRows() > 0) {
 		while($pages = $result->fetchObject()) {
-			echo '<'.$tag.'><a href="'.bloginfo('url',2).'?page='.$pages->id.'">'.$pages->title.'</a>'.'</'.$tag.'>';
+			echo '<'.$tag.'><a href="'.get_bloginfo('url').'?page='.$pages->id.'">'.$pages->title.'</a>'.'</'.$tag.'>';
 		}
 	}
 	else {
@@ -364,14 +364,16 @@ function list_pages($tag = 'li', $limit = 5) {
 function list_categories($tag = 'li', $limit = 5, $selected = null) {
 	// Grab the database handle
 	global $dbh;
+	// Is there a limit? If so, typecast it and add it to the query
 	if($limit != null) {
-		$limitv = " LIMIT 0, ".$limit;
+		$limitv = " LIMIT 0, ".(int)$limit;
 	}
 	// Get category data from database
 	$result = $dbh->query("SELECT * FROM categories ORDER BY id desc".$limitv) or die(sqlite_error_string($dbh->lastError));
 	// What tag are we using?
 	if($tag == 'option') {
 		while($row = $result->fetchObject()) {
+			// If there's a category that needs selecting, we can do it!
 			if($selected == $row->id) {
 				echo '<option value="'.$row->id.'" selected="selected">'.stripslashes($row->fullname).'</option>';
 			}
@@ -383,7 +385,7 @@ function list_categories($tag = 'li', $limit = 5, $selected = null) {
 	else {
 		// Sort through and create list items
 		while($row = $result->fetchObject()) {
-			echo '<li><a href="'.bloginfo('url','r').'?category='.(int)$row->id.'">'.stripslashes($row->fullname).'</a></li>';
+			echo '<li><a href="'.get_bloginfo('url').'?category='.(int)$row->id.'">'.stripslashes($row->fullname).'</a></li>';
 		}
 	}
 
@@ -405,26 +407,22 @@ function list_archives($limit = 10) {
 		$monthname = date('F', $row->date);
 		$year = date('Y', $row->date);
 		if(!isset($post[$year][$month])) {
-			echo "<li><a href=\"".bloginfo('url','r')."?archive=".$year.$month."\">".$monthname." ".$year."</a></li>";
+			echo '<li><a href="'.get_bloginfo('url').'?archive='.$year.$month.'">'.$monthname.' '.$year.'</a></li>';
 		}
 		$post[$year][$month] = true;
 	}
 }
 
 /*
-	Function: commentNum
+	Function: get_commentnum
 
 	Outputs the number of comments on a post.
-
-	Parameters:
-
-		output - Specifies whether to echo the number or return it. Default is to return it.
 
 	Returns:
 
 		The number of comments as an integer.
 */
-function commentNum($id, $output = 'r') {
+function get_commentnum($id) {
 	// Make the database handle available here
 	global $dbh;
 	// If it's null, use the global
@@ -433,13 +431,12 @@ function commentNum($id, $output = 'r') {
 	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE published=1 AND pid=".(int)$id) or die(sqlite_error_string($dbh->lastError));
 	// Query the database
 	@list($commentnum) = $query->fetch(SQLITE_NUM);
-	// Return or echo data
-	if($output == 'e') {
-		echo $commentnum;
-	}
-	else {
-		return $commentnum;
-	}
+	// Return data
+	return $commentnum;
+}
+
+function commentnum($id) {
+	echo get_commentnum($id);
 }
 
 /*

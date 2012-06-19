@@ -109,7 +109,7 @@ class PageLoop {
 	public function permalink() {
 		# We didn't screw up and keep an empty query, did we?
 		if(!empty($this->cur_result)) {
-			echo bloginfo('url', 'return').'?page='.(int)$this->cur_result->id;
+			echo get_bloginfo('url').'?page='.(int)$this->cur_result->id;
 		}
 		# Oh no, we screwed up :(
 		else {

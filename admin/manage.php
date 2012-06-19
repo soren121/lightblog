@@ -113,7 +113,7 @@ else {
 					<?php else: ?>
 						<td style="width:160px;">
 						<?php if($type != 'categories'): ?>
-							<a href="<?php echo bloginfo('url','r').'?'.substr($type, 0, -1).'='.$row->id.'">'.$row->title; ?></a>
+							<a href="<?php echo get_bloginfo('url').'?'.substr($type, 0, -1).'='.$row->id.'">'.$row->title; ?></a>
 						<?php else: echo $row->title; endif; ?>
 						</td>
 						<td><?php echo $row->author ?></td>
