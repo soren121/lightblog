@@ -140,7 +140,7 @@ while($past = $result->fetchObject()) {
 					<?php if($type == 'post'): ?>
 						<label for="category">Category:</label><br />
 						<select class="ef" id="category" name="category">
-							<?php list_categories($s_category) ?>
+							<?php list_categories('option', null, $s_category) ?>
 						</select><br /><br />
 						<label for="comments">Comments on?</label>
 						<input class="ef" type="checkbox" name="comments" id="comments" <?php echo @$cs_checked; ?> value="1" /><br />

@@ -344,8 +344,11 @@ function list_pages($tag = 'li', $limit = 5) {
 function list_categories($tag = 'li', $limit = 5, $selected = null) {
 	// Grab the database handle
 	global $dbh;
+	if($limit != null) {
+		$limitv = " LIMIT 0, ".$limit;
+	}
 	// Get category data from database
-	$result = $dbh->query("SELECT * FROM categories ORDER BY id desc LIMIT 0, ".$limit) or die(sqlite_error_string($dbh->lastError));
+	$result = $dbh->query("SELECT * FROM categories ORDER BY id desc".$limitv) or die(sqlite_error_string($dbh->lastError));
 	// What tag are we using?
 	if($tag == 'option') {
 		while($row = $result->fetchObject()) {
