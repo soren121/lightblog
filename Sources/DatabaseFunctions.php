@@ -29,31 +29,41 @@
 
 		The value of the given row.
 */
-function get_bloginfo($var) {
-	# Global the database handle
+function get_bloginfo($var)
+{
+	// Global the database handle
 	global $dbh;
-	# Make PHP remember $bloginfo next time
+
+	// Make PHP remember $bloginfo next time
 	static $bloginfo = null;
-	# If this is the first time bloginfo's been called...
-	if($bloginfo == null) {
+
+	// If this is the first time bloginfo's been called...
+	if($bloginfo === null)
+	{
 		$result = $dbh->query('SELECT * FROM core') or die(sqlite_error_string($dbh->lastError));
-		# Let's make an array!
+
+		// Let's make an array!
 		$bloginfo = array();
-		# For each row, set a key with the value
-		while($row = $result->fetchObject()) {
+
+		// For each row, set a key with the value
+		while($row = $result->fetchObject())
+		{
 			$bloginfo[$row->variable] = $row->value;
 		}
-		if(!isset($bloginfo['themeurl'])) {
+
+		if(!isset($bloginfo['themeurl']))
+		{
 			// Set the theme URL
 			$bloginfo['themeurl'] = $bloginfo['url'].'themes/'.$bloginfo['theme'];
 		}
 	}
-	# Are we echoing or returning?
+
+	// Are we echoing or returning?
 	return !empty($bloginfo[$var]) ? $bloginfo[$var] : false;
 }
 
-function bloginfo($var) {
+function bloginfo($var)
+{
 	echo get_bloginfo($var);
 }
-
 ?>
