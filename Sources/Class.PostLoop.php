@@ -78,7 +78,7 @@ class PostLoop {
 			$pid = (int)$GLOBALS['pid'];
 			$where = "id=$pid";
 			// If the user is logged in...
-			if(!userFetch('username', 'r') && !permissions(1)) {
+			if(!get_userinfo('username') && !permissions(1)) {
 				$where .= " AND published=1";
 			}
 		}

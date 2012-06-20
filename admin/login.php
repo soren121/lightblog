@@ -51,7 +51,13 @@ if(isset($_GET['logout'])) {
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php bloginfo('title') ?> - Login</title>
-	<link rel="stylesheet" type="text/css" href="style/loginstyle.css" />
+	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/loginstyle.css" />
+	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+		  $("#username").focus();
+		});
+	</script>
 </head>
 
 <body>

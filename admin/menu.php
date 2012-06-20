@@ -43,7 +43,7 @@
 				<?php endif; if(permissions(1) && !permissions(2)): ?>
 					<li><a href="manage.php?type=1">Manage Post</a></li>
 				<?php endif; if(permissions(3)): ?>
-					<li><a href="design.php">Design</a></li>
+					<li><a href="appearance.php">Design</a></li>
 				<?php endif; if(permissions(1) && !permissions(2)): ?>
 					<li><a href="profile.php">Your Profile</a></li>
 				<?php endif; if(permissions(2)): ?>
