@@ -24,7 +24,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Create Post // Test &mdash; LightBlog</title>
+	<title><?php echo $title ?> // <?php bloginfo('title') ?> &mdash; LightBlog</title>
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/new/main.css" />
 	<!--[if lte IE 7]>
 		<link rel="stylesheet" type="text/css" href="style/ie-fixes.css" />
