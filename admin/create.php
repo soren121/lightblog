@@ -38,7 +38,6 @@ include('head.php');
 					<p>The type of content to add was not specified. You must have taken a bad link. Please
 					use the navigation bar above to choose the correct type.</p>
 				<?php else: ?>
-					<div id="notifybox"></div>
 					<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="create">
 						<div>
 							<label class="tfl" for="title">Title</label><br />
@@ -113,16 +112,16 @@ include('head.php');
 						success: function(r) {
 							if(r.result == 'success') {
 								if(r.showlink == true) {
-									$('#ajaxresponse').html('<?php echo ucwords($type) ?> created.<br /><' + 'a href="' + r.response + '">View <?php echo $type ?></' + 'a>');
+									$('#ajaxresponse').html('<' + 'a class="view" href="' + r.response + '">View <?php echo $type ?> &raquo;</' + 'a>');
 								}
 								else {
-									$('#ajaxresponse').html('<?php echo ucwords($type) ?> created.').css("color","#E36868");
+									$('#ajaxresponse').html('<span class="result"><?php echo ucwords($type) ?> created.</span>');
 								}
 								$('#title').val('');
 								$('#wysiwyg').cleditor()[0].clear();
 							}
 							else {
-								$('#notifybox').text('Failed to submit <?php echo $type; ?>;<br />' + r.response).css("color","#E36868");
+								$('#ajaxresponse').text('<span class="result">Failed to submit <?php echo $type; ?>;<br />' + r.response + '</span>').css("color","#E36868");
 							}
 						}
 					})

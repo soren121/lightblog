@@ -19,7 +19,6 @@
 // Require config file
 require('../config.php');
 require(ABSPATH .'/Sources/Core.php');
-require(ABSPATH .'/Sources/FunctionReplacements.php');
 
 header('Content-Type: text/json; charset=utf-8');
 
@@ -298,6 +297,30 @@ if(isset($_POST['delete']) && $_POST['delete'] == 'true')
 			@$dbh->query("DELETE FROM comments WHERE pid=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 		}
 
+		die(json_encode(array("result" => "success")));
+	}
+}
+
+if(isset($_POST['bulk']))
+{
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	{
+		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
+	}
+	elseif($_POST['checked'] != '' && permissions(2))
+	{
+		if($_POST['action'] == 'delete')
+		{
+			@$dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags($_POST['type']))." WHERE id IN (".sqlite_escape_string(implode(',', $_POST['checked'])).")") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+		}
+		elseif($_POST['action'] == 'publish')
+		{
+			@$dbh->query("UPDATE ".sqlite_escape_string(strip_tags($_POST['type']))." SET published=1 WHERE id IN (".sqlite_escape_string(implode(',', $_POST['checked'])).")") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+		}
+		elseif($_POST['action'] == 'unpublish')
+		{
+			@$dbh->query("UPDATE ".sqlite_escape_string(strip_tags($_POST['type']))." SET published=0 WHERE id IN (".sqlite_escape_string(implode(',', $_POST['checked'])).")") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+		}
 		die(json_encode(array("result" => "success")));
 	}
 }

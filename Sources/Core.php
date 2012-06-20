@@ -18,6 +18,7 @@
 
 // Include the extra user, database, and string functions
 require(ABSPATH. '/Sources/Errors.php');
+require(ABSPATH. '/Sources/FunctionReplacements.php');
 require(ABSPATH .'/Sources/DatabaseFunctions.php');
 require(ABSPATH .'/Sources/UserFunctions.php');
 require(ABSPATH .'/Sources/StringFunctions.php');

@@ -54,12 +54,25 @@ a:hover {
 #header #ajaxresponse img {
 	width: 31px;
 	height: 31px;
-	padding: 26px 29px 29px 29px;
+	padding: 26px 0 29px 29px;
 }
 
 #header #ajaxresponse p {
 	text-align: right;
-	margin-top: 22px;
+	margin-top: 28px;
+}
+
+#header #ajaxresponse a.view, #header #ajaxresponse span.result {
+	padding: 5px 20px;
+	margin: 25px 0;
+	display: block;
+	text-align: center;
+	border: 1px solid #85c44e;
+	color: #85c44e;
+}
+
+#header #ajaxresponse a.view {
+	border-radius: 4px;
 }
 
 #contentwrapper {
@@ -83,7 +96,8 @@ a:hover {
 #contentcolumn select {
 	height: 25px;
 	vertical-align: middle;
-	font-size: 1.2em;
+	font-size: 1.0em;
+	padding: 3px;
 }
 
 #contentcolumn div.settings p {
@@ -92,8 +106,7 @@ a:hover {
 
 #contentcolumn input.submit {
 	float: right;
-	width: 140px;
-	height: 35px;
+	padding: 9px 36px;
 	background: #a9db80; /* Old browsers */
 	background: -moz-linear-gradient(top, #a9db80 0%, #85c44e 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#a9db80), color-stop(100%,#85c44e)); /* Chrome,Safari4+ */
@@ -107,6 +120,75 @@ a:hover {
 	font-weight: 600;
 	color: #275707;
 	cursor: pointer;
+}
+
+#contentcolumn table {
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	width: 100%;
+}
+
+#contentcolumn table th {
+	background: #ebebeb;
+	text-align: left;
+	border-left: 1px solid #ccc;
+}
+
+#contentcolumn table th:first-child {
+	border-left: none;
+}
+
+#contentcolumn table td, th {
+	border-bottom: 1px solid #ccc;
+	padding: 3px 5px;
+}
+
+#contentcolumn table tbody tr.even {
+	background-color: #f7f7f7;
+}
+
+#contentcolumn table thead tr .tablesorter-header {
+	background-image: url(sort-default.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+}
+
+#contentcolumn table thead tr .tablesorter-header:hover {
+	background-color: #ddd;
+}
+
+#contentcolumn table thead tr .tablesorter-headerSortUp {
+	background-image: url(sort-asc.gif);
+}
+
+#contentcolumn table thead tr .tablesorter-headerSortDown {
+	background-image: url(sort-desc.gif);
+}
+
+#contentcolumn .table-options {
+	margin: 10px 0;
+}
+
+#contentcolumn .table-options input[type=submit] {
+	vertical-align: middle;
+	padding: 3px 12px;
+	border: 1px solid #ccc;
+	background: #fff;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+#contentcolumn .table-options input[type=submit]:hover {
+	background: #ffffff; /* Old browsers */
+	background: -moz-linear-gradient(top, #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* IE10+ */
+	background: linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
 }
 
 #navigation {
@@ -155,7 +237,7 @@ a:hover {
 	background: #989898;
 }
 
-#navigation ul#menu li a.nav-link {
+#navigation ul#menu li .nav-link {
 	letter-spacing: 1px;
 	text-transform: uppercase;
 	font-size: .95em;
@@ -165,7 +247,7 @@ a:hover {
 	display: inline-block;
 }
 
-#navigation ul#menu li a.nav-link.single {
+#navigation ul#menu li .nav-link.single {
 	width: 198px;
 	margin-right: 0;
 }
@@ -193,13 +275,13 @@ a:hover {
 	border-top: none;
 }
 
-#navigation ul#menu li ul li a.nav-link {
+#navigation ul#menu li ul li .nav-link {
 	width: 197px;
 	margin: 0;
 	text-transform: none;
 }
 
-#navigation ul#menu li ul li a.nav-link.selected {
+#navigation ul#menu li ul li .nav-link.selected {
 	background: #ccc;
 }
 

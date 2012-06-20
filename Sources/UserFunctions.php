@@ -81,7 +81,6 @@ function gravatar($email = null, $size = 80, $default = 'mm', $rating = 'pg')
 	{
 		$email = $_SESSION['email'];
 	}
-
-	return "http://www.gravatar.com/avatar/".md5(utf_strtolower(trim($email)))."?s=".$size."&d=".$default."&rating=".$rating;
+	return "http://www.gravatar.com/avatar/".md5(strtolower(trim($email)))."?s=".$size."&amp;d=".$default."&amp;rating=".$rating;
 }
 ?>

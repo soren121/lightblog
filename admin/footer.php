@@ -18,7 +18,8 @@
 
 $rolequery = $dbh->query("SELECT role FROM roles WHERE id=".get_userinfo('role')) or die(sqlite_error_string($dbh->lastError));
 			
-function buildMenu($selected) {
+function buildMenu($selected)
+{
 	$menu = array(
 		"Dashboard" => array(
 			"link" => "dashboard.php",
@@ -63,36 +64,51 @@ function buildMenu($selected) {
 		)
 	);
 	
-	foreach($menu as $topname => $attr) {
-		if(is_array($attr['children']) && in_array($selected, $attr['children'])) {
+	foreach($menu as $topname => $attr)
+	{
+		if(is_array($attr['children']) && in_array($selected, $attr['children']))
+		{
 			$select = true;
 		}
-		if($select == true || $selected == $attr['link']) {
+		else
+		{
+			$select = false;
+		}
+		if($select == true || $selected == $attr['link'])
+		{
 			echo '<li class="selected">';
 		}
-		else {
+		else
+		{
 			echo '<li>';
 		}
-		echo '<img src="style/new/'.strtolower($topname).'.png" class="nav-icon" />';
-		if($attr['children'] === false) {
+		echo '<img src="style/new/'.strtolower($topname).'.png" class="nav-icon" alt="" />';
+		if($attr['children'] === false)
+		{
 			echo '<a href="'.$attr['link'].'" class="nav-link single">'.$topname.'</a>';
 			echo '</li>';
 		}
-		else {
+		else
+		{
 			echo '<a href="'.$attr['link'].'" class="nav-link">'.$topname.'</a>';
-			if($select == true) {
-				echo '<a href="#" class="nav-toggle"><img src="style/new/minus.png" /></a>';
+			if($select == true)
+			{
+				echo '<a href="#" class="nav-toggle"><img src="style/new/minus.png" alt="-" /></a>';
 				echo '<ul class="submenu selected">';
 			}
-			else {
-				echo '<a href="#" class="nav-toggle"><img src="style/new/plus.png" /></a>';
+			else
+			{
+				echo '<a href="#" class="nav-toggle"><img src="style/new/plus.png" alt="+" /></a>';
 				echo '<ul class="submenu">';
 			}
-			foreach($attr['children'] as $name => $link) {
-				if($link == $selected) {
+			foreach($attr['children'] as $name => $link)
+			{
+				if($link == $selected)
+				{
 					echo '<li><a href="'.$link.'" class="nav-link selected">'.$name.'</a></li>';
 				}
-				else {
+				else
+				{
 					echo '<li><a href="'.$link.'" class="nav-link">'.$name.'</a></li>';
 				}
 			}
@@ -107,7 +123,7 @@ function buildMenu($selected) {
 
 		<div id="navigation">
 			<div id="user">
-				<img id="gravatar" src="<?php echo gravatar() ?>" title="Your Gravatar, from gravatar.com" />
+				<img id="gravatar" src="<?php echo gravatar() ?>" title="Your Gravatar, from gravatar.com" alt="Gravatar" />
 				<div>
 					<strong><?php userinfo('displayname') ?></strong><br />
 					<span><?php echo $rolequery->fetchSingle() ?></span><br />
