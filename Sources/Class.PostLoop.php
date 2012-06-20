@@ -354,7 +354,7 @@ class PostLoop
 						$total_length += $content_length;
 					}
 					// if the maximum length is reached, get off the loop
-					if($total_length >= $length_
+					if($total_length >= $length)
 					{
 						break;
 					}
