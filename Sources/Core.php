@@ -252,10 +252,10 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 		}		
 		# Add the next button
 		if ($page < $counter - 1) {
-			$pagination .= "<a href=\"".$target.$pagestring.$next."\">next »</a>";
+			$pagination .= "<a href=\"".$target.$pagestring.$next."\">next &raquo;</a>";
 		}
 		else {
-			$pagination .= "<span class=\"disabled\">next »</span>";
+			$pagination .= "<span class=\"disabled\">next &raquo;</span>";
 		}
 		# End the pagination div
 		$pagination .= "</div>\n";
@@ -317,7 +317,7 @@ function login($method, $return = null) {
 						setcookie('username', $user->username, time()+60*60*24*30, "/");
 						setcookie('password', $_POST['password'], time()+60*60*24*30, "/");
 					}
-					if($return != null) {
+					if($return != null && !strpos($return, '://')) {
 						header('Location: '.$return);
 					}
 					else {

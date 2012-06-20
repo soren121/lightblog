@@ -67,7 +67,7 @@ elseif($area == 'errors' && !empty($_GET['delete']))
 	{
 		$dbh->query('
 			DELETE FROM error_log'. ($_GET['delete'] != 'all' ? '
-			WHERE error_id = '. ((int)$_GET['delete']) : 'WHERE 1'));
+			WHERE error_id = '. ((int)$_GET['delete']) : ' WHERE 1'));
 
 		if($dbh->changes() > 0)
 		{

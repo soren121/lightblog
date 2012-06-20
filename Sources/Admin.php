@@ -18,7 +18,7 @@
 
 // Check for session status
 if(get_userinfo('username') == false && permissions(1) == false) {
-	header('Location: login.php?return_to='.urlencode(currentURL()));
+	header('Location: login.php?return_to='.urlencode($_SERVER['REQUEST_URI']));
 }
 
 ?>
