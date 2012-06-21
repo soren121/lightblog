@@ -75,9 +75,9 @@ include('head.php');
 			</div>
 		</div>
 
-		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.js"></script>
-		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.XHTML.js"></script>
-		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.AdvancedTable.js"></script>
+		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.CLEditor.js"></script>
+		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.CLEditor.XHTML.js"></script>
+		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.CLEditor.AdvancedTable.js"></script>
 		<script type="text/javascript">
 		//<![CDATA[
 			$('#wysiwyg').cleditor({
@@ -88,7 +88,7 @@ include('head.php');
 
 			$(function() {
 				$('#create').submit(function() {
-					$('#ajaxresponse').html('<img src="<?php bloginfo('url') ?>admin/style/new/loading.gif" alt="Saving" />');
+					$('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Saving" />');
 					var inputs = [];
 					$('.cf', this).each(function() {
 						if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
@@ -104,10 +104,10 @@ include('head.php');
 						type: "POST",
 						url: $(this).attr('action'),
 						timeout: 2000,
+						dataType: 'json',
 						error: function() {
 							$('#ajaxresponse').html('<span class="result">Failed to submit <?php echo $type; ?>;<br />(jQuery failure).</span>').css("color","#E36868");
 						},
-						dataType: 'json',
 						success: function(r) {
 							if(r.result == 'success') {
 								if(r.showlink == true) {

@@ -1,5 +1,4 @@
-<?php session_start();
-
+<?php
 /*********************************************
 
 	LightBlog 0.9
@@ -17,8 +16,7 @@
 *********************************************/
 
 // Require config file
-require('../config.php');
-require(ABSPATH .'/Sources/Core.php');
+require('Core.php');
 
 header('Content-Type: text/json; charset=utf-8');
 
@@ -32,7 +30,8 @@ if(isset($_POST['create']))
 	else
 	{
 		$type = $_POST['type'];
-		if(($type !== 'category' && permissions(1)) || ($type === 'category' && permissions(2)))
+		die(user()->name());
+		if($type != 'category' && permissions(1) || $type == 'category' && permissions(2))
 		{
 			// Has anything been submitted?
 			if(empty($_POST['title']) || empty($_POST['text']))
@@ -51,7 +50,7 @@ if(isset($_POST['create']))
 			if($type !== 'category')
 			{
 				$date = time();
-				$author = get_userinfo('displayname');
+				$author = user()->displayName();
 				if($type == 'post')
 				{
 					$category = (int)$_POST['category'];
@@ -107,10 +106,7 @@ if(isset($_POST['create']))
 			$url = get_bloginfo('url')."?".$type."=".$id;
 
 			// Return JSON-encoded response
-			echo json_encode(array("result" => "success", "response" => "$url", "showlink" => "$showlink"));
-
-			// Prevent the rest of the page from loading
-			exit;
+			die(json_encode(array("result" => "success", "response" => "$url", "showlink" => "$showlink")));
 		}
 	}
 }
@@ -128,7 +124,7 @@ if(isset($_POST['edit']))
 		$type = sqlite_escape_string($_POST['type']);
 		$query = @$dbh->query("SELECT author FROM posts WHERE id=".$id) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 
-		if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $query->fetchSingle() === get_userinfo('displayname') || $type === 'category' && permissions(2))
+		if($type !== 'category' &&  permissions(2) || $type !== 'category' &&  permissions(1) && $query->fetchSingle() === user()->displayName() || $type === 'category' && permissions(2))
 		{
 			// Require the HTML filter class
 			require('Class.htmLawed.php');
@@ -528,7 +524,7 @@ if(isset($_POST['editprofilesubmit']))
 			$email = sqlite_escape_string($_POST['email']);
 			$displayname = sqlite_escape_string(utf_htmlspecialchars($_POST['displayname']));
 			$vpassword = sqlite_escape_string($_POST['vpassword']);
-			$c_user = sqlite_escape_string(get_userinfo('username'));
+			$c_user = sqlite_escape_string(user()->name());
 
 			// Run database query to get current password hash
 			$dbpasshash = @$dbh->query("SELECT password FROM users WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "username query failed.")));
@@ -589,7 +585,7 @@ if(isset($_POST['deleteusersubmit']))
 			// Check the user level of the user being deleted
 			$query = @$dbh->query("SELECT role FROM users WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "could not get the role of the user being deleted.")));
 
-			if(get_userinfo('role') >= $query->fetchSingle())
+			if(user()->role() >= $query->fetchSingle())
 			{
 				// Execute query to delete user
 				@$dbh->query("DELETE FROM users WHERE id=".(int)$_POST['id']) or die(json_encode(array("result" => "error", "response" => "user deletion command failed.")));
