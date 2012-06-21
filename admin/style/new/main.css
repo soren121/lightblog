@@ -179,6 +179,10 @@ a:hover {
 	color: #999;
 }
 
+#contentcolumn table td.c {
+	width: 45px;
+}
+
 #contentcolumn .table-options input[type=submit] {
 	vertical-align: middle;
 	padding: 3px 12px;
