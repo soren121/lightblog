@@ -109,7 +109,7 @@ function user_login($options)
 				WHERE id = $user_id");
 
 			// Now, set that cookie!
-			setcookie(LBCOOKIE, implode('|', array($user_id, $new_password)), (!empty($options['remember_me']) ? time() + 2592000 : 0));
+			setcookie(LBCOOKIE, implode('|', array($user_id, $new_password)), (!empty($options['remember_me']) ? time() + 2592000 : 0), '/');
 
 			// Along with some basic session information.
 			$_SESSION['user_id'] = $user_id;

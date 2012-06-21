@@ -30,7 +30,6 @@ if(isset($_POST['create']))
 	else
 	{
 		$type = $_POST['type'];
-		die(user()->name());
 		if($type != 'category' && permissions(1) || $type == 'category' && permissions(2))
 		{
 			// Has anything been submitted?
@@ -267,10 +266,7 @@ if(isset($_POST['edit']))
 			@$dbh->query($base) or die(json_encode(array("result" => "error", "response" => $type.sqlite_error_string($dbh->lastError()))));
 
 			// Return JSON-encoded response
-			echo json_encode(array("result" => "success", "response" => "$url", "showlink" => "$showlink"));
-
-			// Prevent the rest of the page from loading
-			die();
+			die(json_encode(array("result" => "success", "response" => "$url", "showlink" => "$showlink")));
 		}
 	}
 }
