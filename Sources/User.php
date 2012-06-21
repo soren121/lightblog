@@ -228,6 +228,9 @@ class User
 				}
 			}
 		}
+
+		// They showed signs of activity just now, they're not dead!
+		$_SESSION['last_activity'] = time();
 	}
 
 	/*
@@ -375,6 +378,29 @@ class User
 	public function ip()
 	{
 		return isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
+	}
+
+	/*
+		Function: csrf_token
+
+		Returns the user's current CSRF (Cross-Site Request Forgery) token.
+
+		Parameters:
+			bool $urlencode - Whether to URL encode the CSRF token. Defaults to
+												false.
+
+		Returns:
+			string
+	*/
+	public function csrf_token($urlencode = false)
+	{
+		// Do they not have a token yet? Do we need to regenerate it?
+		if(empty($_SESSION['csrf_token']) || empty($_SESSION['last_activity']) || ($_SESSION['last_activity'] + 86400) < time())
+		{
+			$_SESSION['csrf_token'] = randomString(mt_rand(40, 60));
+		}
+
+		return !empty($urlencode) ? urlencode($_SESSION['csrf_token']) : $_SESSION['csrf_token'];
 	}
 }
 
