@@ -63,7 +63,7 @@ function loadrow($type, $count = 10, $after = null)
 			<td>'.date('n/j/Y', $row->date).'</td>';
 			if($type == 'posts')
 			{
-				echo '<td>'.$row->category.'</td>';
+				$return .= '<td>'.$row->category.'</td>';
 			}
 		}
 		if(($type !== 'categories') && (permissions(1) && get_userinfo('displayname') == $row->author) || (permissions(2)))
@@ -163,7 +163,7 @@ $total = $total->numRows();
 		//<![CDATA[
 			$('#manage').tablesorter(
 			{
-				widgets:['zebra', 'resizable', 'stickyHeaders'],
+				widgets:['zebra', 'resizable'],
 				widgetOptions:
 				{ 
 	  				zebra: ["normal-row", "alt-row"] 
@@ -228,7 +228,7 @@ $total = $total->numRows();
 									if(action == 'delete')
 									{
 										$('#ajaxresponse').html('<p><?php echo ucwords($type) ?> deleted.</p>');
-										var last = $('tbody tr:last').attr('id');
+										var last = $('tbody tr.last').attr('id');
 										var count = $('.table:checked').size();
 										$('.table:checked').parent('td').parent('tr').remove();
 										jQuery.ajax(
@@ -246,7 +246,8 @@ $total = $total->numRows();
 												}
 												if(r.result == 'success')
 												{
-													$('#manage tbody').append(r.response).trigger('addRows', [r.response, true]);
+													$('#manage tbody').append(r.response);
+													$('#manage').trigger('update', [true]);
 													var rowtotal = $('span#row-total').text();
 													var rowlimit = $('span#row-limit').text();
 													$('span#row-total').text(rowtotal - 1);
