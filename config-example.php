@@ -4,14 +4,14 @@
 
 	LightBlog 0.9
 	SQLite blogging platform
-	
+
 	config.php
-	
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 *********************************************/
@@ -19,6 +19,8 @@
 // Constant: DBH
 // Defines the path to the SQLite database
 define('DBH', 'absolute path to database here');
+
+define('LBCOOKIE', 'name of login cookie');
 
 /*-------DO NOT EDIT BELOW THIS LINE!---------*/
 

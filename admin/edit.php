@@ -1,6 +1,5 @@
-<?php session_start();
-
-/*********************************************
+<?php
+/***********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
@@ -14,11 +13,10 @@
 	see the LICENSE.txt document
 	included in this distribution.
 
-*********************************************/
+***********************************************/
 
 // Require config file
-require('../config.php');
-require(ABSPATH .'/Sources/Core.php');
+require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
 if((int)$_GET['type'] == 1) { $type = 'post'; }
@@ -108,8 +106,8 @@ while($past = $result->fetchObject()) {
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.XHTML.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.AdvancedTable.js"></script>
-		<script type="text/javascript">	
-		//<![CDATA[			
+		<script type="text/javascript">
+		//<![CDATA[
 			$('#wysiwyg').cleditor({
 				width: '100%',
 				height: '320px',

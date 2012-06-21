@@ -1,5 +1,4 @@
-<?php session_start();
-
+<?php
 /***********************************************
 
 	LightBlog 0.9
@@ -17,8 +16,7 @@
 ***********************************************/
 
 // Require config file
-require('../config.php');
-require(ABSPATH .'/Sources/Core.php');
+require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
 ?>

@@ -17,8 +17,8 @@
 ***********************************************/
 
 // Check for session status
-if(get_userinfo('username') == false && permissions(1) == false)
+if(user()->is_guest() || permissions(1) == false)
 {
-	header('Location: login.php?return_to='.urlencode($_SERVER['REQUEST_URI']));
+	redirect('login.php?return_to='. urlencode($_SERVER['REQUEST_URI']));
 }
 ?>

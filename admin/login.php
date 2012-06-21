@@ -1,6 +1,5 @@
-<?php session_start();
-
-/*********************************************
+<?php
+/***********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
@@ -14,39 +13,35 @@
 	see the LICENSE.txt document
 	included in this distribution.
 
-*********************************************/
+***********************************************/
 
-// Open config if not open
-require('../config.php');
-require(ABSPATH .'/Sources/Core.php');
+// Require config file
+require('../Sources/Core.php');
 
-// Check for cookies
-if(isset($_COOKIE['username']) && isset($_COOKIE['password'])) {
-	// set cookie info
-	$c_username = $_COOKIE['username'];
-	$c_password = $_COOKIE['password'];
-}
-
-// Process normal login
-if(isset($_POST['proclogin'])) {
-	if(isset($_GET['return_to'])) {
-		login('userpass', $_GET['return_to']);
-	}
-	else {
-		login('userpass');
-	}
+// Do we need to process their log in request?
+if(!empty($_POST['proclogin']))
+{
+	$messages = user_login(array(
+													 'username' => isset($_POST['username']) ? $_POST['username'] : '',
+													 'password' => isset($_POST['password']) ? $_POST['password'] : '',
+													 'remember_me' => !empty($_POST['rememberme']),
+													 'redir_to' => !empty($_REQUEST['return_to']) ? $_REQUEST['return_to'] : '',
+												));
 }
 
 // Logout the user
-if(isset($_GET['logout'])) {
+if(isset($_GET['logout']))
+{
 	// Destroy the session
 	session_destroy();
-	// Send them to the homepage
-	header('Location: '.get_bloginfo('url'));
-}
 
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+	// Unset their cookie, too.
+	setcookie(LBCOOKIE, '', time() - 86400);
+
+	// Send them to the homepage
+	redirect(get_bloginfo('url'));
+}
+?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -62,18 +57,29 @@ if(isset($_GET['logout'])) {
 
 <body>
 	<div id="registerbox">
-		<?php if(isset($_POST['proclogin'])): $c_username = htmlspecialchars($_POST['username']); ?>
-			<div style="font-weight:bold;color:#FF0000;font-size:1.2em;padding:-5px 0 5px 0;text-align:center;">
-				Incorrect Username or Password
-			</div>
-		<?php endif; ?>
+<?php
+if(isset($messages) && count($messages) > 0)
+{
+	echo '
+			<div style="font-weight:bold;color:#FF0000;font-size:1.2em;padding: 5px 0 5px 0;text-align:center;">';
+
+	foreach($messages as $message)
+	{
+		echo '
+				<p>', $message, '</p>';
+	}
+
+	echo '
+			</div>';
+}
+?>
     	<form action="" method="post">
 			<div>
 				<label for="username">Username</label>
-				<p><input name="username" type="text" size="16" id="username" value="<?php if(isset($c_username)){echo $c_username;} ?>" /></p>
+				<p><input name="username" type="text" size="16" id="username" value="<?php echo !empty($_POST['username']) ? utf_htmlspecialchars($_POST['username']) : ''; ?>" /></p>
 				<label for="password">Password</label>
-				<p><input name="password" type="password" size="16" id="password" value="<?php if(isset($c_password)){echo $c_password;} ?>" /></p>
-				<p class="remember"><input name="remember" type="checkbox" id="rememberme" />
+				<p><input name="password" type="password" size="16" id="password" value="" /></p>
+				<p class="remember"><input name="remember" type="checkbox" id="rememberme" <?php echo !empty($_POST['rememberme']) ? 'checked="checked"' : ''; ?> value="1" />
 				<label for="rememberme">Remember Me</label></p>
 				<p><input name="proclogin" type="submit" value="Login" id="submit" /></p>
 			</div>

@@ -16,12 +16,28 @@
 
 ***********************************************/
 
-// Include the extra user, database, and string functions
-require(ABSPATH. '/Sources/Errors.php');
-require(ABSPATH. '/Sources/FunctionReplacements.php');
-require(ABSPATH .'/Sources/DatabaseFunctions.php');
-require(ABSPATH .'/Sources/UserFunctions.php');
-require(ABSPATH .'/Sources/StringFunctions.php');
+// Let's make sure that LightBlog has been installed.
+if(!file_exists(dirname(__FILE__). '/../config.php'))
+{
+	// Is there an install.php file?
+	if(file_exists(dirname(__FILE__). '/../install.php'))
+	{
+		// Redirect to the installer, then.
+		header('HTTP/1.1 307 Temporary Redirect');
+		header('Location: install.php');
+
+		exit;
+	}
+	else
+	{
+		die('LightBlog Error: config.php file missing (no install.php).');
+	}
+}
+else
+{
+	// Include the config.php file, we need it!
+	require(dirname(__FILE__). '/../config.php');
+}
 
 // Check to make sure that the database exists.
 if(file_exists(DBH))
@@ -38,22 +54,27 @@ if(!empty($error_message))
 	trigger_error($error_message, E_USER_ERROR);
 }
 
-// Shutdown Magic Quotes automatically
-// Highly inefficient, but there isn't much we can do about it
-if(get_magic_quotes_gpc()) {
-	function stripslashes_gpc(&$value) {
-		$value = stripslashes($value);
-	}
-	array_walk_recursive($_GET, 'stripslashes_gpc');
-    array_walk_recursive($_POST, 'stripslashes_gpc');
-    array_walk_recursive($_COOKIE, 'stripslashes_gpc');
-    array_walk_recursive($_REQUEST, 'stripslashes_gpc');
-}
+// Include the extra user, database, and string functions
+require(ABSPATH. '/Sources/Errors.php');
+require(ABSPATH. '/Sources/CleanRequest.php');
+require(ABSPATH. '/Sources/FunctionReplacements.php');
+require(ABSPATH .'/Sources/DatabaseFunctions.php');
+require(ABSPATH. '/Sources/User.php');
+require(ABSPATH .'/Sources/UserFunctions.php');
+require(ABSPATH .'/Sources/StringFunctions.php');
+require(ABSPATH. '/Sources/Language.php');
 
-// Just in case magic quotes runtime is enabled.
-if(function_exists('get_magic_quotes_runtime') && @get_magic_quotes_runtime())
+// Start up our session.
+session_start();
+
+// Now output buffering, too. With compression, if supported.
+if(function_exists('ob_gzhandler') && get_bloginfo('disable_compression') === false)
 {
-	@set_magic_quotes_runtime(false);
+	ob_start();
+}
+else
+{
+	ob_start();
 }
 
 /*
@@ -113,7 +134,7 @@ function currentURL() {
 	$pageURL .= "://";
 	if($_SERVER["SERVER_PORT"] != "80") {
 		$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-	} 
+	}
 	else {
 		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
 	}
@@ -263,75 +284,6 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 	}
 	# Return the final pagination div
 	return $pagination;
-}
-
-/*
-	Function: login
-
-	Logs in a user.
-
-	Parameters:
-
-		method - Method used to login the user. Will be used more when 0.9.4 rolls around.
-
-	Returns:
-
-		An error message if something failed. If it worked, it will send the user to the admin dashboard.
-*/
-function login($method, $return = null) {
-	// Global the database handle so we can use it
-	global $dbh;
-	// Are we logging the user in via username/password?
-	if($method == 'userpass') {
-		// Set easy variables and escape username
-		$username = sqlite_escape_string($_POST['username']);
-		$password = $_POST['password'];
-		// Does that user exist?
-		$saltquery = $dbh->query("SELECT salt FROM users WHERE username='$username'") or null;
-		// Well?
-		if($saltquery !== null) {
-			// It exists, so recreate the password hash so we can match it
-			$passhash = sha1($saltquery->fetchSingle().$password);
-			// Retrieve all user data
-			$userquery = $dbh->query("SELECT * FROM users WHERE username='$username'") or die(sqlite_error_string($dbh->lastError));
-			// Start the while loop
-			while($user = $userquery->fetchObject()) {
-				// Does the provided password match the database hash?
-				if($passhash == $user->password) {
-					// Set the session timeout to 20 minutes
-					$_SESSION['expires_by'] = time() + 60*20;
-					// Send the user data to the session
-					$_SESSION['username'] = $user->username;
-					$_SESSION['email'] = $user->email;
-					$_SESSION['displayname'] = $user->displayname;
-					$_SESSION['role'] = $user->role;
-					$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
-					// Set CSRF token
-					$_SESSION['csrf_token'] = sha1('csrf'.session_id().randomString(9));
-					// Resalt password
-					$salt = substr(md5(uniqid(rand(), true)), 0, 9);
-					$passhash = sha1($salt.$password);
-					// Send new hash and salt to database
-					$dbh->query("UPDATE users SET password='$passhash', salt='$salt' WHERE username='$username'");
-					// Does the user want to remember their data?
-					if(isset($_POST['remember']) && !isset($_COOKIE[bloginfo('title','r').'user'])) {
-						setcookie('username', $user->username, time()+60*60*24*30, "/");
-						setcookie('password', $_POST['password'], time()+60*60*24*30, "/");
-					}
-					if($return != null && !strpos($return, '://')) {
-						header('Location: '.$return);
-					}
-					else {
-						// Send the user to the dashboard
-						header('Location: '.get_bloginfo('url').'admin/dashboard.php');
-					}
-				}
-			}
-		}
-		else {
-			echo 'Incorrect username or password.';
-		}
-	}
 }
 
 /*

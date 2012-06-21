@@ -1,6 +1,5 @@
-<?php session_start();
-
-/*********************************************
+<?php
+/***********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
@@ -14,11 +13,10 @@
 	see the LICENSE.txt document
 	included in this distribution.
 
-*********************************************/
+***********************************************/
 
 // Require config file
-require('../config.php');
-require(ABSPATH .'/Sources/Core.php');
+require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
 if((int)$_GET['type'] == 1) { $type = 'post'; }
@@ -31,7 +29,7 @@ $selected = basename($_SERVER['REQUEST_URI']);
 include('head.php');
 
 ?>
-		
+
 		<div id="contentwrapper">
 			<div id="contentcolumn">
 				<?php if($type !== 'category' && permissions(1) || $type === 'category' && permissions(2)): if(!isset($type)): ?>
@@ -75,18 +73,18 @@ include('head.php');
 				<?php endif; endif; ?>
 			</div>
 		</div>
-		
+
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.XHTML.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.AdvancedTable.js"></script>
 		<script type="text/javascript">
-		//<![CDATA[			
+		//<![CDATA[
 			$('#wysiwyg').cleditor({
 				width: '100%',
 				height: '320px',
 				bodyStyle: 'margin:10px; font:11pt Georgia,Times,serif; cursor:text'
 			});
-			
+
 			$(function() {
 				$('#create').submit(function() {
 					$('#ajaxresponse').html('<img src="<?php bloginfo('url') ?>admin/style/new/loading.gif" alt="Saving" />');
@@ -99,7 +97,7 @@ include('head.php');
 							inputs.push(this.name + '=' + this.value);
 						}
 					});
-	
+
 					jQuery.ajax({
 						data: inputs.join('&'),
 						type: "POST",
@@ -130,5 +128,5 @@ include('head.php');
 			});
 		//]]>
 		</script>
-		
+
 <?php include('footer.php') ?>

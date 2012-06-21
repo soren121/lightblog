@@ -1,31 +1,29 @@
-<?php session_start();
-
+<?php
 /*********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
-	
+
 	feed.php
-	
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 *********************************************/
 
 // Include config and FeedWriter library
-require('config.php');
-require(ABSPATH .'/Sources/Core.php');
+require('Sources/Core.php');
 require(ABSPATH .'/Sources/Class.FeedItem.php');
 require(ABSPATH .'/Sources/Class.FeedWriter.php');
 
 // Check requested feed type
 if(!isset($_GET['type']) or $_GET['type'] == 'rss') {
 	$type = 'rss';
-	$TestFeed = new FeedWriter(RSS2);	
+	$TestFeed = new FeedWriter(RSS2);
 }
 elseif($_GET['type'] == 'atom') {
 	$type = 'atom';
@@ -46,7 +44,7 @@ if($type == 'rss') {
 else {
 	$TestFeed->setLink(get_bloginfo('url').'feed.php?type=atom');
 }
-	
+
 // For other channel elements, use setChannelElement() function
 if($type == 'atom') {
 	$TestFeed->setChannelElement('updated', date(DATE_ATOM, time()));
@@ -64,8 +62,8 @@ $result = $dbh->query("SELECT * FROM posts WHERE published=1 $where ORDER BY id 
 while($row = $result->fetch(SQLITE_ASSOC)) {
 	// Create a FeedItem
 	$newItem = $TestFeed->createNewItem();
-		
-	// Add elements to the feed item    
+
+	// Add elements to the feed item
 	$newItem->setTitle(stripslashes($row['title']));
 	$newItem->setLink(bloginfo('url', 'r').'?post='.$row['id']);
 	$newItem->setDescription(stripslashes($row['post']));

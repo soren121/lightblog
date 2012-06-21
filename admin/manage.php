@@ -1,6 +1,5 @@
-<?php session_start();
-
-/*********************************************
+<?php
+/***********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
@@ -14,11 +13,10 @@
 	see the LICENSE.txt document
 	included in this distribution.
 
-*********************************************/
+***********************************************/
 
 // Require config file
-require('../config.php');
-require(ABSPATH .'/Sources/Core.php');
+require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
 if((int)$_GET['type'] == 1) { $type = 'posts'; }
@@ -52,11 +50,11 @@ function loadrow($type, $count = 10, $before = 0, $start = 0)
 		$i++;
 		if($i == $result->numRows())
 		{
-			$return .= '<tr id="'.$row->id.'" class="last">';	
+			$return .= '<tr id="'.$row->id.'" class="last">';
 		}
 		elseif($i == 1)
 		{
-			$return .= '<tr id="'.$row->id.'" class="first">';	
+			$return .= '<tr id="'.$row->id.'" class="first">';
 		}
 		else
 		{
@@ -196,16 +194,16 @@ $total = $total->numRows();
 			{
 				window.location.hash = '#page=1';
 			}
-			
+
 			$('table').tablesorter(
 			{
 				widgets:['zebra', 'resizable'],
 				widgetOptions:
-				{ 
-	  				zebra: ["normal-row", "alt-row"] 
-				} 
+				{
+	  				zebra: ["normal-row", "alt-row"]
+				}
 			});
-			
+
 			$('input#select-all').click(function()
 			{
 				var checked = this.checked;
@@ -214,13 +212,13 @@ $total = $total->numRows();
 					this.checked = checked;
 				})
 			});
-			
+
 			$('#itemnum').change(function()
 			{
 				count = $('#itemnum > option:selected').val();
 				loadpage('reset');
 			});
-			
+
 			function pagination_callback()
 			{
 				var hash = window.location.hash;
@@ -248,7 +246,7 @@ $total = $total->numRows();
 					$('span#row-limit').text(count * page);
 				}
 			}
-			
+
 			function loadrow_js(count, clear, start)
 			{
 				function callback(r, clear)
@@ -286,18 +284,18 @@ $total = $total->numRows();
 					}
 				});
 			}
-			
+
 			function loadpage(type)
 			{
-				$('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Loading" />');		
-				
+				$('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Loading" />');
+
 				var hash = window.location.hash;
 				var page = Number(hash.substr(6, 1));
 				var count = $('#itemnum > option:selected').val();
 				var rowstart = Number($('span#row-start').text());
 				var rowlimit = Number($('span#row-limit').text());
 				var rowtotal = Number($('span#row-total').text());
-				
+
 				if(type == 'prev')
 				{
 					if(page == 1)
@@ -333,13 +331,13 @@ $total = $total->numRows();
 					page = 1;
 					loadrow_js(count, true, page);
 				}
-				
+
 				pagination_callback();
 				$('#ajaxresponse').empty();
 			}
-			
+
 			loadpage('initial');
-			
+
 			function deleterow_callback(r, single)
 			{
 				if(r == null)
@@ -434,7 +432,7 @@ $total = $total->numRows();
 				})
 				return false;
 			});
-			
+
 			function deleteItem(id, title)
 			{
 				var type = 'category';
@@ -447,7 +445,7 @@ $total = $total->numRows();
 				if(answer)
 				{
 					$('#ajaxresponse').html('<img src="<?php bloginfo('url') ?>admin/style/new/loading.gif" alt="Saving" />');
-					
+
 					$('tr#' + id + ' > td:first').children(':checkbox').attr('checked', true);
 					jQuery.ajax(
 					{

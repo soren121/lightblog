@@ -1,6 +1,5 @@
-<?php session_start();
-
-/*********************************************
+<?php
+/***********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
@@ -14,11 +13,10 @@
 	see the LICENSE.txt document
 	included in this distribution.
 
-*********************************************/
+***********************************************/
 
 // Require config file
-require('../config.php');
-require(ABSPATH .'/Sources/Core.php');
+require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
 ?>
@@ -44,7 +42,7 @@ require(ABSPATH .'/Sources/Admin.php');
 		</div>
 		<?php include('menu.php'); ?>
 		<div id="content">
-			<h2 class="title">Welcome <?php userinfo('displayname') ?>!</h2>
+			<h2 class="title">Welcome <?php echo user()->displayName(); ?>!</h2>
 			<div>
 				<div style="float:left;width:50%;">
 					<div class="db_box rounded">

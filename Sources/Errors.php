@@ -21,8 +21,6 @@ if(!defined('E_USER_DEPRECATED'))
 	define('E_USER_DEPRECATED', 16384);
 }
 
-ob_start();
-
 // We will go ahead and have PHP report all errors.
 error_reporting(E_ALL | E_STRICT | E_NOTICE);
 

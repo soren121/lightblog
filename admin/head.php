@@ -17,9 +17,7 @@
 *********************************************/
 
 
-?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
@@ -33,7 +31,7 @@
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 </head>
 <body>
-	<div id="maincontainer">	
+	<div id="maincontainer">
 		<div id="header">
 			<h1><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a><span> // <?php echo $title ?></span></h1>
 			<div id="ajaxresponse"></div>

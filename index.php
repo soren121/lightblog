@@ -1,5 +1,4 @@
-<?php session_start();
-
+<?php
 /*********************************************
 
 	LightBlog 0.9
@@ -7,42 +6,17 @@
 
 	index.php
 
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 *********************************************/
 
-// Check if LightBlog is installed
-if(!file_exists('config.php')) {
-	// It isn't, so head to the installer
-	header('Location: install.php');
-
-	exit;
-}
-
-if(isset($_GET['install']) && $_GET['install'] === 'true' && file_exists('install.php')) {
-	unlink('install.php');
-	if(file_exists('install.sql')) {
-		unlink('install.sql');
-	}
-	if(file_exists('update.php')) {
-		unlink('update.php');
-	}
-	if(file_exists('update.sql')) {
-		unlink('update.sql');
-	}
-	if(file_exists('config-example.php')) {
-		unlink('config-example.php');
-	}
-}
-
 // Require config file
-require('config.php');
-require(ABSPATH .'/Sources/Core.php');
+require('Sources/Core.php');
 
 // Include theme files
 $themeName = get_bloginfo('theme');

@@ -84,3 +84,13 @@ CREATE TABLE 'error_log'
 
 CREATE INDEX 'error_log_time_index' ON 'error_log' ('error_time');
 CREATE INDEX 'error_log_type_index' ON 'error_log' ('error_type');
+
+CREATE TABLE 'roles' (
+	'id' INTEGER PRIMARY KEY NOT NULL,
+	'role' VARCHAR(255) NOT NULL,
+	'permissions' TEXT
+);
+
+INSERT INTO roles (id, role, permissions) VALUES ('1', 'Standard User', '');
+INSERT INTO roles (id, role, permissions) VALUES ('2', 'Editor', '');
+INSERT INTO roles (id, role, permissions) VALUES ('3', 'Administrator', '');

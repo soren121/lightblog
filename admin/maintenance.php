@@ -1,11 +1,10 @@
-<?php session_start();
-
+<?php
 /***********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
 
-	admin/settings.php
+	admin/maintenance.php
 
 	©2008-2012 The LightBlog Team. All
 	rights reserved. Released under the
@@ -17,8 +16,7 @@
 ***********************************************/
 
 // Require config file
-require('../config.php');
-require(ABSPATH .'/Sources/Core.php');
+require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
 $area = !empty($_GET['area']) && $_GET['area'] == 'errors' ? 'errors' : 'system';

@@ -62,10 +62,10 @@ function userinfo($var)
 */
 function permissions($group)
 {
-	# Fetch the session info
-	if(get_userinfo('role') >= $group)
+	// Fetch the session info
+	if(user()->id() >= $group)
 	{
-		# Return true if they're allowed
+		// Return true if they're allowed
 		return true;
 	}
 	else
@@ -79,8 +79,9 @@ function gravatar($email = null, $size = 80, $default = 'mm', $rating = 'pg')
 {
 	if($email == null)
 	{
-		$email = $_SESSION['email'];
+		$email = user()->email();
 	}
-	return "http://www.gravatar.com/avatar/".md5(strtolower(trim($email)))."?s=".$size."&amp;d=".$default."&amp;rating=".$rating;
+
+	return 'http://www.gravatar.com/avatar/'. md5(strtolower(trim($email))). '?s='. $size. '&amp;d='. $default. '&amp;rating='. $rating;
 }
 ?>
