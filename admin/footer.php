@@ -16,7 +16,7 @@
 
 *********************************************/
 
-$rolequery = $dbh->query("SELECT role FROM roles WHERE id=".get_userinfo('role')) or die(sqlite_error_string($dbh->lastError));
+$rolequery = $dbh->query("SELECT role FROM roles WHERE id=".user()->role()) or die(sqlite_error_string($dbh->lastError));
 			
 function buildMenu($selected)
 {
@@ -125,7 +125,7 @@ function buildMenu($selected)
 			<div id="user">
 				<img id="gravatar" src="<?php echo gravatar() ?>" title="Your Gravatar, from gravatar.com" alt="Gravatar" />
 				<div>
-					<strong><?php userinfo('displayname') ?></strong><br />
+					<strong><?php echo user()->displayName() ?></strong><br />
 					<span><?php echo $rolequery->fetchSingle() ?></span><br />
 					<a href="profile.php">Your Profile</a> | <a href="login.php?logout">Logout</a>
 				</div>
@@ -141,6 +141,7 @@ function buildMenu($selected)
 	</div>
 
 	<script type="text/javascript">
+	//<![CDATA[
 		$('.submenu:not(".selected")').hide();
 		$('.nav-toggle').click(function()
 		{
@@ -155,6 +156,7 @@ function buildMenu($selected)
 				$(this).children('img').attr('src', 'style/new/plus.png').parent().next('ul').slideUp('fast').parent().removeClass('selected');
 			}
 		});
+	//]]>
 	</script>
 </body>
 </html>

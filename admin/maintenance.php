@@ -25,7 +25,7 @@ if($area == 'errors' && !empty($_POST['ajax']))
 {
 	header('Content-Type: text/json; charset=utf-8');
 
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token()) {
 		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
 	}
 
@@ -102,7 +102,7 @@ elseif($area == 'errors' && !empty($_GET['delete']))
 		{
 			if(confirm('Do you really want to remove this error message?')) {
 				jQuery.ajax({
-					data: "ajax=true&csrf_token=<?php echo $_SESSION['csrf_token']; ?>&id=" + id,
+					data: "ajax=true&csrf_token=<?php echo user()->csrf_token() ?>&id=" + id,
 					type: "POST",
 					url: "<?php echo $_SERVER['PHP_SELF']. '?area=errors' ?>",
 					timeout: 3000,
@@ -199,7 +199,7 @@ while($row = $request->fetch(SQLITE_ASSOC))
 			</table>
 <?php
 			echo '<div style="float: left;">'. $pagination. '</div>
-			<div style="float: right;"><p style="margin-top: 5px; margin-right: 5px;"><a href="'. $_SERVER['PHP_SELF']. '?area=errors&amp;delete=all&amp;sid='. $_SESSION['csrf_token']. '" onclick="return confirm(\'Are you sure you want to remove all error messages?\');">Delete All</a></p></div><div style="clear: both;"></div>';
+			<div style="float: right;"><p style="margin-top: 5px; margin-right: 5px;"><a href="'. $_SERVER['PHP_SELF']. '?area=errors&amp;delete=all&amp;sid='.user()->csrf_token(). '" onclick="return confirm(\'Are you sure you want to remove all error messages?\');">Delete All</a></p></div><div style="clear: both;"></div>';
 	}
 	// ... or maybe they want some more information about an error.
 	elseif($area == 'errors' && !empty($_GET['id']))
@@ -254,7 +254,7 @@ while($row = $request->fetch(SQLITE_ASSOC))
 					<td colspan="4"><?php echo $error['url'] ?></td>
 				</tr>
 			</table>
-			<p style="text-align: right;"><a href="<?php echo $_SERVER['PHP_SELF']. '?area=errors&amp;delete='. $error['id']. '&amp;sid='. $_SESSION['csrf_token']; ?>" onclick="return confirm('Are you sure?');">Delete</a> | <a href="<?php echo $_SERVER['PHP_SELF']. '?area=errors'; ?>">Back to Error Log &raquo;</a></p>
+			<p style="text-align: right;"><a href="<?php echo $_SERVER['PHP_SELF']. '?area=errors&amp;delete='. $error['id']. '&amp;sid='.user()->csrf_token(); ?>" onclick="return confirm('Are you sure?');">Delete</a> | <a href="<?php echo $_SERVER['PHP_SELF']. '?area=errors'; ?>">Back to Error Log &raquo;</a></p>
 <?php
 		}
 	}

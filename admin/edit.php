@@ -25,7 +25,8 @@ elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 if(isset($_GET['id'])): $id = (int)$_GET['id']; endif;
 
 $title = "Edit ".ucwords($type);
-$selected = basename($_SERVER['REQUEST_URI']);
+$css = "create.css";
+$selected = "manage.php?type=".(int)$_GET['type'];
 
 include('head.php');
 
@@ -71,7 +72,7 @@ while($past = $result->fetchObject()) {
 							<textarea class="ef" rows="12" cols="36" name="text" id="wysiwyg"><?php echo $text ?></textarea><br />
 							<input class="ef" type="hidden" name="type" value="<?php echo $type ?>" />
 							<input class="ef" type="hidden" name="id" value="<?php echo $id ?>" />
-							<input class="ef" type="hidden" name="csrf_token" value="<?php userinfo('csrf_token') ?>" />
+							<input class="ef" type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
 						</div>
 						<div class="settings">
 							<?php if($type == 'post'): ?>
@@ -133,7 +134,7 @@ while($past = $result->fetchObject()) {
 						url: $(this).attr('action'),
 						timeout: 2000,
 						error: function() {
-							$('#ajaxresponse').html('Failed to submit <?php echo $type; ?>.');
+							$('#ajaxresponse').html('<span class="result">Failed to submit <?php echo $type; ?>;<br />(jQuery failure).</span>').css("color","#E36868");
 						},
 						dataType: 'json',
 						success: function(r) {
@@ -144,11 +145,9 @@ while($past = $result->fetchObject()) {
 								else {
 									$('#ajaxresponse').html('<span class="result"><?php echo ucwords($type) ?> saved.</span>');
 								}
-								$('#title').val('');
-								$('#wysiwyg').cleditor()[0].clear();
 							}
 							else {
-								$('#ajaxresponse').text('<span class="result">Failed to submit <?php echo $type; ?>;<br />' + r.response + '</span>').css("color","#E36868");
+								$('#ajaxresponse').html('<span class="result">Failed to submit <?php echo $type; ?>;<br />' + r.response + '</span>').css("color","#E36868");
 							}
 						}
 					})

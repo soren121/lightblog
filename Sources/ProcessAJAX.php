@@ -25,7 +25,7 @@ header('Content-Type: text/json; charset=utf-8');
 // Process post/page/category creation
 if(isset($_POST['create']))
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
 	{
 		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
 	}
@@ -118,7 +118,7 @@ if(isset($_POST['create']))
 # Process post/page editing
 if(isset($_POST['edit']))
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
 	{
 		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
 	}
@@ -282,7 +282,7 @@ if(isset($_POST['edit']))
 // Process post/page/category deletion
 if(isset($_POST['delete']) && $_POST['delete'] == 'true')
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
 	{
 		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
 	}
@@ -303,7 +303,7 @@ if(isset($_POST['delete']) && $_POST['delete'] == 'true')
 
 if(isset($_POST['bulk']))
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
 	{
 		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
 	}
@@ -328,7 +328,7 @@ if(isset($_POST['bulk']))
 // Process theme change
 if(isset($_POST['themesubmit']))
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
 	{
 		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
 	}
@@ -347,27 +347,52 @@ if(isset($_POST['themesubmit']))
 
 if(isset($_POST['changesettings']))
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
 	{
 		json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing."));
 	}
 	else
 	{
-		if($_POST['changetitle'] != get_bloginfo('title'))
+		$query = '';
+		if($_POST['title'] != get_bloginfo('title'))
 		{
-			@$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changetitle']))."' WHERE variable='title'") or die(json_encode(array("result" => "error", "response" => "Failed to change blog title.")));
+			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['title'])."' WHERE variable='title';";
 		}
 
-		if($_POST['changeurl'] != get_bloginfo('url'))
+		if($_POST['url'] != get_bloginfo('url'))
 		{
-			@$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['changeurl']))."' WHERE variable='url'") or die(json_encode(array("result" => "error", "response" => "Failed to change blog URL.")));
+			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['url'])."' WHERE variable='url';";
+		}
+		
+		if($_POST['timezone'] != get_bloginfo('timezone'))
+		{
+			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['timezone'])."' WHERE variable='timezone';";
+		}
+		
+		if($_POST['date'] != get_bloginfo('date_format'))
+		{
+			if($_POST['date'] == 'custom')
+			{
+				$_POST['date'] = $_POST['custom_date'];
+			}
+			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['date'])."' WHERE variable='date_format';";
+		}
+		
+		if($_POST['time'] != get_bloginfo('time_format'))
+		{
+			if($_POST['time'] == 'custom')
+			{
+				$_POST['time'] = $_POST['custom_time'];
+			}
+			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['time'])."' WHERE variable='time_format';";
 		}
 
-		if($_POST['commentmoderation'] != bloginfo('comment_moderation', 'r'))
+		if($_POST['commentmoderation'] != get_bloginfo('comment_moderation'))
 		{
-			@$dbh->query("UPDATE core SET value='".sqlite_escape_string(strip_tags($_POST['commentmoderation']))."' WHERE variable='comment_moderation'") or die(json_encode(array("result" => "error", "response" => "Failed to change blog URL.")));
+			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['commentmoderation'])."' WHERE variable='comment_moderation';";
 		}
 
+		@$dbh->query($query) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 		die(json_encode(array("result" => "success")));
 	}
 }
@@ -375,7 +400,7 @@ if(isset($_POST['changesettings']))
 // User creation
 if(isset($_POST['addusersubmit']))
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
 	{
 		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
 	}
@@ -489,7 +514,7 @@ if(isset($_POST['addusersubmit']))
 
 if(isset($_POST['editprofilesubmit']))
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
 	{
 		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
 	}
@@ -552,7 +577,7 @@ if(isset($_POST['editprofilesubmit']))
 
 if(isset($_POST['deleteusersubmit']))
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
 	{
 		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
 	}
@@ -578,7 +603,7 @@ if(isset($_POST['deleteusersubmit']))
 // Process comment approval
 if(isset($_POST['approvecomment']))
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
 	{
 		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
 	}

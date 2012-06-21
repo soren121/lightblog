@@ -24,6 +24,7 @@ elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 
 $title = "Create ".ucwords($type);
+$css = "create.css";
 $selected = basename($_SERVER['REQUEST_URI']);
 
 include('head.php');
@@ -42,7 +43,7 @@ include('head.php');
 							<input id="title" class="textfield cf" name="title" type="text" title="Title" /><br />
 							<textarea class="cf" rows="12" cols="36" name="text" id="wysiwyg"></textarea><br />
 							<input class="cf" type="hidden" name="type" value="<?php echo $type ?>" />
-							<input class="cf" type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
+							<input class="cf" type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
 						</div>
 						<div class="settings">
 							<?php if($type == 'post'): ?>
@@ -104,7 +105,7 @@ include('head.php');
 						url: $(this).attr('action'),
 						timeout: 2000,
 						error: function() {
-							$('#ajaxresponse').html('Failed to submit <?php echo $type; ?>.');
+							$('#ajaxresponse').html('<span class="result">Failed to submit <?php echo $type; ?>;<br />(jQuery failure).</span>').css("color","#E36868");
 						},
 						dataType: 'json',
 						success: function(r) {
@@ -119,7 +120,7 @@ include('head.php');
 								$('#wysiwyg').cleditor()[0].clear();
 							}
 							else {
-								$('#ajaxresponse').text('<span class="result">Failed to submit <?php echo $type; ?>;<br />' + r.response + '</span>').css("color","#E36868");
+								$('#ajaxresponse').html('<span class="result">Failed to submit <?php echo $type; ?>;<br />' + r.response + '</span>').css("color","#E36868");
 							}
 						}
 					})

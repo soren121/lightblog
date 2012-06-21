@@ -86,22 +86,11 @@ a:hover {
 	padding: 0 2px 20px 20px;
 }
 
-#contentcolumn input#title {
-	width: 100%;
-	height: 35px;
-	margin-bottom: 11px;
-	font-size: 1.4em;
-}
-
 #contentcolumn select {
 	height: 25px;
 	vertical-align: middle;
 	font-size: 1.0em;
 	padding: 3px;
-}
-
-#contentcolumn div.settings p {
-	margin-bottom: 6px;
 }
 
 #contentcolumn input.submit {
@@ -120,87 +109,6 @@ a:hover {
 	font-weight: 600;
 	color: #275707;
 	cursor: pointer;
-}
-
-#contentcolumn table {
-	border-top: 1px solid #ccc;
-	border-left: 1px solid #ccc;
-	border-right: 1px solid #ccc;
-	width: 100%;
-	font-size: 0.9em;
-}
-
-#contentcolumn table th {
-	background: #ebebeb;
-	text-align: left;
-	border-left: 1px solid #ccc;
-}
-
-#contentcolumn table th:first-child {
-	border-left: none;
-}
-
-#contentcolumn table td, th {
-	border-bottom: 1px solid #ccc;
-	padding: 3px 5px;
-}
-
-#contentcolumn table tbody tr.normal-row {
-	background-color: #f7f7f7;
-}
-
-#contentcolumn table thead tr .tablesorter-header {
-	background-image: url(sort-default.gif);
-	background-repeat: no-repeat;
-	background-position: center right;
-	cursor: pointer;
-}
-
-#contentcolumn table thead tr .tablesorter-header:hover {
-	background-color: #ddd;
-}
-
-#contentcolumn table thead tr .tablesorter-headerSortUp {
-	background-image: url(sort-asc.gif);
-}
-
-#contentcolumn table thead tr .tablesorter-headerSortDown {
-	background-image: url(sort-desc.gif);
-}
-
-#contentcolumn .table-options, #contentcolumn .table-info {
-	margin: 10px 0;
-	clear: none;
-	font-size: 0.9em;
-}
-
-#contentcolumn table td.c, #contentcolumn .table-info {
-	text-align: center;
-	color: #999;
-}
-
-#contentcolumn table td.c {
-	width: 45px;
-}
-
-#contentcolumn .table-options input[type=submit] {
-	vertical-align: middle;
-	padding: 3px 12px;
-	border: 1px solid #ccc;
-	background: #fff;
-	border-radius: 3px;
-	cursor: pointer;
-}
-
-#contentcolumn .table-options input[type=submit]:hover {
-	background: #ffffff; /* Old browsers */
-	background: -moz-linear-gradient(top, #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* IE10+ */
-	background: linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
 }
 
 #navigation {

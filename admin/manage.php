@@ -107,6 +107,7 @@ if(isset($_POST['loadrow']))
 }
 
 $title = "Manage ".ucwords($type);
+$css = "table.css";
 $selected = basename($_SERVER['REQUEST_URI']);
 
 include('head.php');
@@ -134,7 +135,7 @@ $total = $total->numRows();
 									<?php endif; ?>
 								</select>
 								<input class="bf" type="hidden" name="type" value="<?php echo $type ?>" />
-								<input class="bf" type="hidden" name="csrf_token" value="<?php userinfo('csrf_token') ?>" />
+								<input class="bf" type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
 								<input type="submit" class="bf" value="Apply" name="bulk" />
 							</p>
 							<p style="float:right">
