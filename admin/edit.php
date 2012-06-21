@@ -117,7 +117,7 @@ while($past = $result->fetchObject()) {
 			});
 
 			$(function() {
-				$('#create').submit(function() {
+				$('#edit').submit(function() {
 					$('#ajaxresponse').html('<img src="<?php bloginfo('url') ?>admin/style/new/loading.gif" alt="Saving" />');
 					var inputs = [];
 					$('.ef', this).each(function() {
