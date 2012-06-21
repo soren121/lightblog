@@ -122,7 +122,7 @@ function user_login($options)
 			}
 			else
 			{
-				redirect(get_bloginfo('url'). '/admin/dashboard.php');
+				redirect(get_bloginfo('url'). 'admin/dashboard.php');
 			}
 
 			$messages[] = l('An unknown error occurred.');

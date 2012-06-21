@@ -63,7 +63,7 @@ function userinfo($var)
 function permissions($group)
 {
 	// Fetch the session info
-	if(user()->id() >= $group)
+	if(user()->role() >= $group)
 	{
 		// Return true if they're allowed
 		return true;
