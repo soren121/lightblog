@@ -25,22 +25,38 @@ if((int)$_GET['type'] == 1) { $type = 'posts'; }
 elseif((int)$_GET['type'] == 2) { $type = 'pages'; }
 elseif((int)$_GET['type'] == 3) { $type = 'categories'; }
 
-function loadrow($type, $count = 10, $after = null)
+function loadrow($type, $count = 10, $before = null, $start = null)
 {
 	global $dbh;
-	if($after != null)
+	if(!is_null($start))
 	{
-		$after = " WHERE id < ".(int)$after;
+		$where = '';
+		$start = (int)(($start - 1) * $count);
 	}
-	$result = @$dbh->query("SELECT * FROM ".sqlite_escape_string(strip_tags($type)).$after." ORDER BY id desc LIMIT 0, ".(int)$count) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+	elseif(!is_null($before))
+	{
+		$where = " WHERE id < ".(int)$before;
+		$start = 0;
+	}
+	$result = @$dbh->query("SELECT * FROM ".sqlite_escape_string(strip_tags($type)).$where." ORDER BY id desc LIMIT ".(int)$start.", ".(int)$count) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
+	$category = @$dbh->query("SELECT id,fullname FROM categories ORDER BY id asc");
+	$categories = array();
+	while($cat = $category->fetchObject())
+	{
+		$categories[$cat->id] = $cat->fullname;
+	}
 	$return = '';
 	$i = 0;
 	while($row = $result->fetchObject())
 	{
 		$i++;
-		if($i == $count)
+		if($i == $result->numRows())
 		{
 			$return .= '<tr id="'.$row->id.'" class="last">';	
+		}
+		elseif($i == 1)
+		{
+			$return .= '<tr id="'.$row->id.'" class="first">';	
 		}
 		else
 		{
@@ -63,7 +79,7 @@ function loadrow($type, $count = 10, $after = null)
 			<td>'.date('n/j/Y', $row->date).'</td>';
 			if($type == 'posts')
 			{
-				$return .= '<td>'.$row->category.'</td>';
+				$return .= '<td><a href="'.$row->category.'">'.$categories[$row->category].'</a></td>';
 			}
 		}
 		if(($type !== 'categories') && (permissions(1) && get_userinfo('displayname') == $row->author) || (permissions(2)))
@@ -88,7 +104,7 @@ if(isset($_POST['loadrow']))
 	}
 	else
 	{
-		die(json_encode(array("result" => "success", "response" => loadrow($_POST['type'], $_POST['count'], $_POST['after']))));
+		die(json_encode(array("result" => "success", "response" => loadrow($_POST['type'], $_POST['count'], $_POST['before'], $_POST['start']))));
 	}
 }
 
@@ -109,19 +125,30 @@ $total = $total->numRows();
 					use the navigation bar above to choose the correct type.</p>
 				<?php else: ?>
 					<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="bulk">
-						<p class="table-options">
-							<select name="action" class="bf" style="width: 140px;">
-								<option selected="selected" value="default">Bulk Actions:</option>
-								<option value="delete">Delete</option>
-								<?php if($type != 'categories'): ?>
-									<option value="publish">Publish</option>
-									<option value="unpublish">Un-publish</option>
-								<?php endif; ?>
-							</select>
-							<input class="bf" type="hidden" name="type" value="<?php echo $type ?>" />
-							<input class="bf" type="hidden" name="csrf_token" value="<?php userinfo('csrf_token') ?>" />
-							<input type="submit" class="bf" value="Apply" name="bulk" />
-						</p>
+						<div class="table-options">
+							<p style="float:left">
+								<select name="action" class="bf" style="width: 140px;">
+									<option selected="selected" value="default">Bulk Actions:</option>
+									<option value="delete">Delete</option>
+									<?php if($type != 'categories'): ?>
+										<option value="publish">Publish</option>
+										<option value="unpublish">Un-publish</option>
+									<?php endif; ?>
+								</select>
+								<input class="bf" type="hidden" name="type" value="<?php echo $type ?>" />
+								<input class="bf" type="hidden" name="csrf_token" value="<?php userinfo('csrf_token') ?>" />
+								<input type="submit" class="bf" value="Apply" name="bulk" />
+							</p>
+							<p style="float:right">
+								<label for="itemnum"><?php echo ucwords($type) ?> per page</label>
+								<select id="itemnum" name="items" style="width: 60px;">
+									<option value="10" selected="selected">10</option>
+									<option value="20">20</option>
+									<option value="50">50</option>
+								</select>
+							</p>
+							<div class="clear"></div>
+						</div>
 						<table id="manage" cellspacing="0">
 							<thead>
 								<tr>
@@ -144,18 +171,22 @@ $total = $total->numRows();
 								</tr>
 							</thead>
 							<tbody>
-								<?php echo loadrow($type) ?>
+								<tr id="1" class="last">
+									<td colspan="7">&nbsp;</td>
+								</tr>
 							</tbody>
 						</table>
 					</form>
-					<p class="table-options">
-						Showing <span id="row-start">1<span>-<span id="row-limit"><?php echo $total < 10 ? $total : 10 ?></span> out of <span id="row-total"><?php echo $total ?></span> <?php echo $type ?>.
-					</p>
+					<div class="table-options">
+						<a href="javascript:loadpage('prev');" style="float:left;">&laquo; Prev Page</a>
+						<a href="javascript:loadpage('next');" style="float:right;">Next Page &raquo;</a>
+						<div class="clear"></div>
+					</div>
+					<p class="table-info">Showing <span id="row-start">1</span> - <span id="row-limit"></span> out of <span id="row-total"><?php echo $total ?></span> <?php echo $type ?>.</p>
 				<?php endif; endif; ?>
 			</div>
 		</div>
 
-		<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.css" />
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.Widgets.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Metadata.js"></script>
@@ -178,6 +209,98 @@ $total = $total->numRows();
 					this.checked = checked;
 				})
 			});
+			
+			$('#itemnum').change(function()
+			{
+				loadpage('initial');
+			});
+			
+			function loadrow_js(count, clear, start)
+			{
+				function callback(r, clear)
+				{
+					if(r == null || r.result == 'error')
+					{
+						$('#ajaxresponse').html('<p>AJAX request failed;<br />failed to fetch new row(s).</p>').css("color","#E36868");
+						return false;
+					}
+					if(r.result == 'success')
+					{
+						if(clear == true)
+						{
+							$('#manage tbody').html(r.response);
+						}
+						else
+						{
+							$('#manage tbody').append(r.response);
+						}
+						$('#manage').trigger('update', [true]);
+					}
+				}
+				var last = $('tbody tr.last').attr('id');
+				jQuery.ajax(
+				{
+					data: "loadrow=true&type=<?php echo $type ?>&count=" + count + "&before=" + last + "&start=" + start + "&csrf_token=<?php userinfo('csrf_token') ?>",
+					type: "POST",
+					cache: false,
+					url: window.location,
+					timeout: 2000,
+					dataType: 'json',
+					success: function(data)
+					{
+						callback(data, clear);
+					}
+				});
+			}
+			
+			function loadpage(type)
+			{
+				if(window.location.hash == '')
+				{
+					window.location.hash = '#page-1';
+				}
+				var hash = window.location.hash;
+				var page = Number(hash.substr(6, 1));
+				var count = $('#itemnum > option:selected').val();
+				var rowstart = Number($('span#row-start').text());
+				var rowlimit = Number($('span#row-limit').text());
+				var rowtotal = <?php echo $total ?>;
+				if(type == 'prev')
+				{
+					if(page == 1)
+					{
+						return;
+					}
+					page -= 1;
+					loadrow_js(count, true, page);
+					window.location.hash = '#page-' + String(page);
+				}
+				if(type == 'next')
+				{
+					if(page >= Math.round(rowtotal / count))
+					{
+						return;
+					}
+					page += 1;
+					loadrow_js(count, true, page);
+					window.location.hash = '#page-' + String(page);
+				}
+				if(type == 'initial')
+				{
+					loadrow_js(count, true, page);
+				}
+				$('span#row-start').text((count * page) - count + 1);
+				if((count * page) > rowtotal)
+				{
+					$('span#row-limit').text(rowtotal);
+				}
+				else
+				{
+					$('span#row-limit').text(count * page);
+				}
+			}
+			
+			loadpage('initial');
 
 			$(function()
 			{
@@ -228,36 +351,17 @@ $total = $total->numRows();
 									if(action == 'delete')
 									{
 										$('#ajaxresponse').html('<p><?php echo ucwords($type) ?> deleted.</p>');
-										var last = $('tbody tr.last').attr('id');
 										var count = $('.table:checked').size();
 										$('.table:checked').parent('td').parent('tr').remove();
-										jQuery.ajax(
+										loadrow_js(count, false, 0);
+										$('#manage').trigger('update', [true]);
+										var rowtotal = Number($('span#row-total').text());
+										var rowlimit = Number($('span#row-limit').text());
+										$('span#row-total').text(rowtotal - 1);
+										if(rowlimit > rowtotal)
 										{
-											data: "loadrow=true&type=<?php echo $type ?>&count=" + count + "&after=" + last + "&csrf_token=<?php userinfo('csrf_token') ?>",
-											type: "POST",
-											url: window.location,
-											timeout: 2000,
-											dataType: 'json',
-											success: function(r)
-											{
-												if(r == null || r.result == 'error')
-												{
-													$('#ajaxresponse').html('<p>AJAX request failed;<br />failed to fetch new row.</p>').css("color","#E36868");
-												}
-												if(r.result == 'success')
-												{
-													$('#manage tbody').append(r.response);
-													$('#manage').trigger('update', [true]);
-													var rowtotal = $('span#row-total').text();
-													var rowlimit = $('span#row-limit').text();
-													$('span#row-total').text(rowtotal - 1);
-													if(rowlimit > rowtotal)
-													{
-														$('span#row-limit').text(rowlimit - 1);
-													}
-												}
-											}
-										});
+											$('span#row-limit').text(rowlimit - 1);
+										}
 									}
 									else
 									{

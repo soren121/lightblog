@@ -127,6 +127,7 @@ a:hover {
 	border-left: 1px solid #ccc;
 	border-right: 1px solid #ccc;
 	width: 100%;
+	font-size: 0.9em;
 }
 
 #contentcolumn table th {
@@ -144,7 +145,7 @@ a:hover {
 	padding: 3px 5px;
 }
 
-#contentcolumn table tbody tr.even {
+#contentcolumn table tbody tr.normal-row {
 	background-color: #f7f7f7;
 }
 
@@ -167,8 +168,15 @@ a:hover {
 	background-image: url(sort-desc.gif);
 }
 
-#contentcolumn .table-options {
+#contentcolumn .table-options, #contentcolumn .table-info {
 	margin: 10px 0;
+	clear: none;
+	font-size: 0.9em;
+}
+
+#contentcolumn table td.c, #contentcolumn .table-info {
+	text-align: center;
+	color: #999;
 }
 
 #contentcolumn .table-options input[type=submit] {

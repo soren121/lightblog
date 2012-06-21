@@ -76,11 +76,11 @@ include('head.php');
 			</div>
 		</div>
 		
-		<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.css" />
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.XHTML.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/CLEditor/jQuery.CLEditor.AdvancedTable.js"></script>
-		<script type="text/javascript">	
+		<script type="text/javascript">
+		//<![CDATA[			
 			$('#wysiwyg').cleditor({
 				width: '100%',
 				height: '320px',
@@ -128,6 +128,7 @@ include('head.php');
 					return false;
 				})
 			});
+		//]]>
 		</script>
 		
 <?php include('footer.php') ?>
