@@ -1,129 +1,178 @@
 <?php
-/***********************************************
+/*********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
 
 	admin/profile.php
 
-	©2008-2012 The LightBlog Team. All
+	Â©2008-2012 The LightBlog Team. All
 	rights reserved. Released under the
 	GNU General Public License 3. For
 	all licensing information, please
 	see the LICENSE.txt document
 	included in this distribution.
 
-***********************************************/
+*********************************************/
 
 // Require config file
 require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
+if(permissions(3))
+{
+	$userquery = $dbh->query("SELECT role FROM users WHERE id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
+	$role_options = '';
+	foreach(get_roles() as $role_id => $role)
+	{
+		$select = '';
+		if((int)$_GET['id'] == user()->id() && $role_id == user()->role())
+		{
+			$select = 'selected="selected"';
+		}
+		elseif($userquery->fetchSingle() == $role_id)
+		{
+			$select = 'selected="selected"';
+		}
+		$role_options .= '<option name="'.$role_id.'" '.$select.'>'.$role.'</option>';
+	}
+}
+
+$title = "Edit Profile";
+$css = "settings.css";
+if((int)$_GET['id'] != user()->id())
+{
+	$selected = explode('?', basename($_SERVER['REQUEST_URI']));
+	$selected = $selected[0];
+}
+else
+{
+	$selected = basename($_SERVER['REQUEST_URI']);
+}
+
+include('head.php');
+
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>User Profile - <?php bloginfo('title') ?></title>
-	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
-	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			$('input:checkbox').click(function() {
-	 			if($(this).is(':checked')) {
-	   				$(this).next().removeAttr('disabled');
-	 			} else {
-			   		$(this).next().attr('disabled', 'disabled');
-	 			}
-   			});
-		});
-		$(function() {
-			$('form').submit(function() {
-				var inputs = [];
-				$(':input', this).each(function() {
-					if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
-						void(0);
-					}
-					else {
-						inputs.push(this.name + '=' + escape(this.value));
-					}
-				})
-				$('.inform').remove();
-				$('input[type=submit]').attr('disabled','disabled').after('<' + 'img src="style/loading.gif" alt="" class="loader" style="margin-left:5px;" />');
-				jQuery.ajax({
-					data: inputs.join('&'),
-					type: "POST",
-					url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
-					timeout: 2000,
-					error: function() {
-						$('.loader').remove();
-						$('#editprofilesubmit').removeAttr('disabled').after('<' + 'span style="color:red;margin-left:5px;" class="inform">Failed to submit.</' + 'span>');
-					},
-					success: function(json) {
-						$('.loader').remove();
-						var r = jQuery.parseJSON(json);
-						if(r.result == 'success') {
-							$('#editprofilesubmit').removeAttr('disabled').after('<' + 'span style="color:green;margin-left:5px;" class="inform">Success! Changes will appear on next login.</' + 'span>');
+
+		<div id="contentwrapper">
+			<div id="contentcolumn">
+				<?php if((permissions(3) || (int)$_GET['id'] == user()->id()) && isset($_GET['id'])): ?>
+					<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="settings">
+						<div class="setting">
+							<div class="label">
+								<label for="password">New Password</label>
+							</div>
+							<div class="input">
+								<input type="password" name="password" id="password" />
+							</div>
+							<div class="clear"></div>
+						</div>
+
+						<div class="setting">
+							<div class="label">
+								<label for="vpassword">Password (again)</label>
+							</div>
+							<div class="input">
+								<input type="password" name="vpassword" id="vpassword" />
+							</div>
+							<div class="clear"></div>
+						</div>
+
+						<div class="setting">
+							<div class="label">
+								<label for="email">Email Address</label>
+							</div>
+							<div class="input">
+								<input type="text" name="email" id="email" value="<?php echo user()->email() ?>" />
+							</div>
+							<div class="clear"></div>
+						</div>
+						
+						<div class="setting">
+							<div class="label">
+								<label for="displayname">Display Name</label>
+							</div>
+							<div class="input">
+								<input type="text" name="displayname" id="displayname" value="<?php echo user()->displayName() ?>" />
+							</div>
+							<div class="clear"></div>
+						</div>
+
+						<?php if(permissions(3)): ?>
+							<div class="setting">
+								<div class="label">
+									<label for="role">Role</label>
+								</div>
+								<div class="input">
+									<select name="role" id="role">
+										<?php echo $role_options ?>
+									</select>
+								</div>
+								<div class="clear"></div>
+							</div>
+						<?php endif; ?>
+						
+						<div class="setting">
+							<div class="label">
+								<label for="cpassword">Current Password</label>
+								<p>Required for security purposes.</p>
+							</div>
+							<div class="input">
+								<input type="password" name="cpassword" id="cpassword" />
+							</div>
+							<div class="clear"></div>
+						</div>			
+
+						<div class="setting">
+							<input type="hidden" name="uid" value="<?php echo (int)$_GET['id'] ?>" />
+							<input type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
+							<input type="submit" class="submit" name="editprofile" value="Save" />
+							<div class="clear"></div>
+						</div>
+					</form>
+				<?php endif; ?>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+		//<![CDATA[
+			$('div.setting:even').addClass('even');
+		
+			$(function() {
+				$('form').submit(function() {
+					$('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Saving" />');
+					var inputs = [];
+					$(':input', this).each(function() {
+						if($(this).is(':checkbox, :radio') && $(this).is(':not(:checked)')) {
+							void(0);
 						}
 						else {
-							$('#editprofilesubmit').removeAttr('disabled').after('<' + 'span style="color:red;margin-left:5px;" class="inform">Fatal error; ' + r.response + '</' + 'span>');
+							inputs.push(this.name + '=' + this.value);
 						}
-					}
+					});
+
+					jQuery.ajax({
+						data: inputs.join('&'),
+						type: "POST",
+						url: $(this).attr('action'),
+						timeout: 2000,
+						error: function() {
+							$('#ajaxresponse').html('<span class="result">Failed to save settings;<br />(jQuery failure).</span>');
+						},
+						dataType: 'json',
+						success: function(r) {
+							if(r.result == 'success') {
+								$('#ajaxresponse').html('<span class="result">Settings saved.</span>');
+							}
+							else {
+								$('#ajaxresponse').html('<span class="result">Failed to save settings;<br />' + r.response + '</span>').css("color","#E36868");
+							}
+						}
+					})
+					return false;
 				})
-				return false;
-			})
-		});
-	</script>
-</head>
+			});
+		//]]>
+		</script>
 
-<body>
-	<div id="wrapper">
-		<div id="header" class="roundedt">
-			<a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>
-		</div>
-		<?php include('menu.php'); ?>
-		<div id="content">
-			<?php if(permissions(1)): ?>
-			<h2 class="title"><img class="textmid" src="style/users.png" alt="" />User Profile</h2>
-			<div class="settings">
-				<p style="margin-bottom:10px;">You can edit your profile here. For each item you want to edit, you need to check the checkbox.</p>
-
-				<form action="" method="post" style="margin-bottom:5px;margin-left:25px;">
-					<p class="label"><label for="password">Password</label></p>
-					<p style="margin-top:-5px;">
-						<input type="checkbox" name="pw-ck" value="1" />
-						<input type="password" name="password" id="password" value="" disabled="disabled" />
-					</p>
-
-					<p class="label"><label for="email">Email</label></p>
-					<p style="margin-top:-5px;">
-						<input type="checkbox" name="em-ck" value="1" />
-						<input type="text" name="email" id="email" value="<?php userinfo('email') ?>" disabled="disabled" />
-					</p>
-
-					<p class="label"><label for="displayname">Display Name</label></p>
-					<p style="margin-top:-5px;">
-						<input type="checkbox" name="dn-ck" value="1" />
-						<input type="text" name="displayname" id="displayname" value="<?php userinfo('displayname') ?>" disabled="disabled" />
-					</p>
-
-					<p class="label" style="margin-top:20px;">For security reasons, please type your current password in here.</p>
-					<p style="margin-top:0px;">
-						<input type="password" name="vpassword" id="vpassword" value="" />
-					</p>
-
-					<p><input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" /></p>
-
-					<p><input type="submit" value="Save Changes" name="editprofilesubmit" id="editprofilesubmit" /></p>
-				</form>
-			</div>
-			<?php endif; ?>
-		</div>
-		<div id="footer" class="roundedb">
-			Powered by LightBlog <?php LightyVersion() ?>
-	    </div>
-	</div>
-</body>
-</html>
+<?php include('footer.php') ?>

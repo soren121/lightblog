@@ -98,7 +98,7 @@ $pagination = advancedPagination('users', $_SERVER['PHP_SELF'], $_GET['page']);
 					<td><?php echo $user->email ?></td>
 					<td><?php echo $user->displayname ?></td>
 					<td><?php echo $user->ip ?></td>
-					<?php if(get_userinfo('username') !== $user->username && get_userinfo('role') >= $user->role): ?>
+					<?php if(user()->name() !== $user->username && user()->role() >= $user->role): ?>
 						<td class="c"><img src="style/delete-user.png" onclick="deleteUser('<?php echo $user->id ?>', '<?php echo $user->username ?>');" alt="Delete User" style="cursor:pointer;" /></td>
 					<?php else: ?>
 						<td class="c"><img src="style/delete-user-d.png" alt="" title="You're not allowed to delete this person." /></td>

@@ -4,7 +4,7 @@
 	LightBlog 0.9
 	SQLite blogging platform
 
-	admin/settings.php
+	admin/adduser.php
 
 	©2008-2012 The LightBlog Team. All
 	rights reserved. Released under the
@@ -18,6 +18,25 @@
 // Require config file
 require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
+
+if(permissions(3))
+{
+	$userquery = $dbh->query("SELECT role FROM users WHERE id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
+	$role_options = '';
+	foreach(get_roles() as $role_id => $role)
+	{
+		$select = '';
+		if((int)$_GET['id'] == user()->id() && $role_id == user()->role())
+		{
+			$select = 'selected="selected"';
+		}
+		elseif($userquery->fetchSingle() == $role_id)
+		{
+			$select = 'selected="selected"';
+		}
+		$role_options .= '<option name="'.$role_id.'" '.$select.'>'.$role.'</option>';
+	}
+}
 
 $title = "Add User";
 $css = "settings.css";
@@ -74,6 +93,7 @@ include('head.php');
 						<div class="setting">
 							<div class="label">
 								<label for="displayname">Display Name</label>
+								<p>This will be used to identify the user around the site.</p>
 							</div>
 							<div class="input">
 								<input type="text" name="displayname" id="displayname" value="" />
@@ -87,9 +107,7 @@ include('head.php');
 							</div>
 							<div class="input">
 								<select name="role" id="role">
-									<option value="1">Standard User</option>
-									<option value="2">Moderator</option>
-									<option value="3">Administrator</option>
+									<?php echo $role_options ?>
 								</select>
 							</div>
 							<div class="clear"></div>

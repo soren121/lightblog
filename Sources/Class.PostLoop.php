@@ -87,7 +87,7 @@ class PostLoop
 			$where = "id=$pid";
 
 			// If the user is logged in...
-			if(!get_userinfo('username') && !permissions(1))
+			if(!user()->name() && !permissions(1))
 			{
 				$where .= " AND published=1";
 			}

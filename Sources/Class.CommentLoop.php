@@ -162,7 +162,7 @@ class CommentLoop
 					}
 
 					echo '<span class="comment_says"> says:</span><br />
-					<a href="'.bloginfo('url','r').'?post='.(int)$this->cur_result->pid.'#comment-'.(int)$this->cur_result->id.'" class="comment_date">'.date('F j, Y \a\t g:i A', (int)$this->cur_result->date).'</a><br />
+					<a href="'.get_bloginfo('url').'?post='.(int)$this->cur_result->pid.'#comment-'.(int)$this->cur_result->id.'" class="comment_date">'.date('F j, Y \a\t g:i A', (int)$this->cur_result->date).'</a><br />
 					<p class="comment_text">'.$this->cur_result->text.'</p>
 			</'.$tag.'>';
 		}

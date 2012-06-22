@@ -20,37 +20,37 @@ require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
 $timezones = array(
-	-12.0 => '(GMT -12:00) Eniwetok, Kwajalein',
-	-11.0 => '(GMT -11:00) Midway Island, Samoa',
-	-10.0 => '(GMT -10:00) Hawaii',
-	-9.0 => '(GMT -9:00) Alaska',
-	-8.0 => '(GMT -8:00) Pacific Time (US & Canada)',
-	-7.0 => '(GMT -7:00) Mountain Time (US & Canada)',
-	-6.0 => '(GMT -6:00) Central Time (US & Canada), Mexico City',
-	-5.0 => '(GMT -5:00) Eastern Time (US & Canada), Bogota, Lima',
-	-4.0 => '(GMT -4:00) Atlantic Time (Canada), Caracas, La Paz',
-	-3.5 => '(GMT -3:30) Newfoundland',
-	-3.0 => '(GMT -3:00) Brazil, Buenos Aires, Georgetown',
-	-2.0 => '(GMT -2:00) Mid-Atlantic',
-	-1.0 => '(GMT -1:00 hour) Azores, Cape Verde Islands',
-	0.0 => '(GMT) Western Europe Time, London, Lisbon, Casablanca',
-	1.0 => '(GMT +1:00 hour) Brussels, Copenhagen, Madrid, Paris',
-	2.0 => '(GMT +2:00) Kaliningrad, South Africa',
-	3.0 => '(GMT +3:00) Baghdad, Riyadh, Moscow, St. Petersburg',
-	3.5 => '(GMT +3:30) Tehran',
-	4.0 => '(GMT +4:00) Abu Dhabi, Muscat, Baku, Tbilisi',
-	4.5 => '(GMT +4:30) Kabul',
-	5.0 => '(GMT +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent',
-	5.5 => '(GMT +5:30) Bombay, Calcutta, Madras, New Delhi',
-	5.75 => '(GMT +5:45) Kathmandu',
-	6.0 => '(GMT +6:00) Almaty, Dhaka, Colombo',
-	7.0 => '(GMT +7:00) Bangkok, Hanoi, Jakarta',
-	8.0 => '(GMT +8:00) Beijing, Perth, Singapore, Hong Kong',
-	9.0 => '(GMT +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk',
-	9.5 => '(GMT +9:30) Adelaide, Darwin',
-	10.0 => '(GMT +10:00) Eastern Australia, Guam, Vladivostok',
-	11.0 => '(GMT +11:00) Magadan, Solomon Islands, New Caledonia',
-	12.0 => '(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka'
+	-12.0 => '(UTC -12:00) Eniwetok, Kwajalein',
+	-11.0 => '(UTC -11:00) Midway Island, Samoa',
+	-10.0 => '(UTC -10:00) Hawaii',
+	-9.0 => '(UTC -9:00) Alaska',
+	-8.0 => '(UTC -8:00) Pacific Time (US & Canada)',
+	-7.0 => '(UTC -7:00) Mountain Time (US & Canada)',
+	-6.0 => '(UTC -6:00) Central Time (US & Canada), Mexico City',
+	-5.0 => '(UTC -5:00) Eastern Time (US & Canada), Bogota, Lima',
+	-4.0 => '(UTC -4:00) Atlantic Time (Canada), Caracas, La Paz',
+	-3.5 => '(UTC -3:30) Newfoundland',
+	-3.0 => '(UTC -3:00) Brazil, Buenos Aires, Georgetown',
+	-2.0 => '(UTC -2:00) Mid-Atlantic',
+	-1.0 => '(UTC -1:00 hour) Azores, Cape Verde Islands',
+	0.0 => '(UTC) Western Europe Time, London, Lisbon, Casablanca',
+	1.0 => '(UTC +1:00 hour) Brussels, Copenhagen, Madrid, Paris',
+	2.0 => '(UTC +2:00) Kaliningrad, South Africa',
+	3.0 => '(UTC +3:00) Baghdad, Riyadh, Moscow, St. Petersburg',
+	3.5 => '(UTC +3:30) Tehran',
+	4.0 => '(UTC +4:00) Abu Dhabi, Muscat, Baku, Tbilisi',
+	4.5 => '(UTC +4:30) Kabul',
+	5.0 => '(UTC +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent',
+	5.5 => '(UTC +5:30) Bombay, Calcutta, Madras, New Delhi',
+	5.75 => '(UTC +5:45) Kathmandu',
+	6.0 => '(UTC +6:00) Almaty, Dhaka, Colombo',
+	7.0 => '(UTC +7:00) Bangkok, Hanoi, Jakarta',
+	8.0 => '(UTC +8:00) Beijing, Perth, Singapore, Hong Kong',
+	9.0 => '(UTC +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk',
+	9.5 => '(UTC +9:30) Adelaide, Darwin',
+	10.0 => '(UTC +10:00) Eastern Australia, Guam, Vladivostok',
+	11.0 => '(UTC +11:00) Magadan, Solomon Islands, New Caledonia',
+	12.0 => '(UTC +12:00) Auckland, Wellington, Fiji, Kamchatka'
 );
 
 $timezone_options = '';
@@ -141,25 +141,25 @@ include('head.php');
 							<div class="label">
 								<label>Date Format</label>
 								<p>
-									For information on how to format a custom date or time, refer to <a href="http://php.net/manual/en/function.date.php">the PHP date() documentation</a>.
+									For information on how to format a custom date or time, refer to <a href="http://php.net/manual/en/function.date.php" target="_blank">the PHP date() documentation</a>.
 								</p>
 							</div>
 							<div class="input">
 								<p>
 									<input type="radio" name="date" id="M-D-Y" value="F j, Y" <?php echo $date['F j, Y'] ?> />
-									<label for="M-D-Y"><?php echo date('F j, Y') ?></label>
+									<label for="M-D-Y" title="Format: F j, Y"><?php echo date('F j, Y') ?></label>
 								</p>
 								<p>
 									<input type="radio" name="date" id="m-D-Y" value="m/j/Y" <?php echo $date['m/j/Y'] ?> />
-									<label for="m-D-Y"><?php echo date('m/j/Y') ?></label>
+									<label for="m-D-Y" title="Format: m/j/Y"><?php echo date('m/j/Y') ?></label>
 								</p>
 								<p>
 									<input type="radio" name="date" id="Y-M-D" value="Y/m/j" <?php echo $date['Y/m/j'] ?> />
-									<label for="Y-M-D"><?php echo date('Y/m/j') ?></label>
+									<label for="Y-M-D" title="Format: Y/m/j"><?php echo date('Y/m/j') ?></label>
 								</p>
 								<p>
 									<input type="radio" name="date" id="D-M-Y" value="j/m/Y" <?php echo $date['j/m/Y'] ?> />
-									<label for="D-M-Y"><?php echo date('j/m/Y') ?></label>
+									<label for="D-M-Y" title="Format: j/m/Y"><?php echo date('j/m/Y') ?></label>
 								</p>
 								<p>
 									<input type="radio" name="date" id="custom-date" value="custom" <?php echo $date['custom'] ?> />
@@ -177,15 +177,15 @@ include('head.php');
 							<div class="input">
 								<p>
 									<input type="radio" name="time" id="g:i-a" value="g:i a" <?php echo $time['g:i a'] ?> />
-									<label for="g:i-a"><?php echo date('g:i a') ?></label>
+									<label for="g:i-a" title="Format: g:i a"><?php echo date('g:i a') ?></label>
 								</p>
 								<p>
 									<input type="radio" name="time" id="g:i-A" value="g:i A" <?php echo $time['g:i A'] ?> />
-									<label for="g:i-A"><?php echo date('g:i A') ?></label>
+									<label for="g:i-A" title="Format: g:i A"><?php echo date('g:i A') ?></label>
 								</p>
 								<p>
 									<input type="radio" name="time" id="H:i" value="H:i" <?php echo $time['H:i'] ?> />
-									<label for="H:i"><?php echo date('H:i') ?></label>
+									<label for="H:i" title="Format: H:i"><?php echo date('H:i') ?></label>
 								</p>
 								<p>
 									<input type="radio" name="time" id="custom-time" value="custom" <?php echo $time['custom'] ?> />

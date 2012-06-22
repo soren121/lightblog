@@ -59,11 +59,35 @@ function get_bloginfo($var)
 	}
 
 	// Are we echoing or returning?
-	return !empty($bloginfo[$var]) ? $bloginfo[$var] : false;
+	return $bloginfo[$var];
 }
 
 function bloginfo($var)
 {
 	echo get_bloginfo($var);
 }
+
+function get_roles($role = null)
+{
+	global $dbh;
+	static $rolequery = null;
+	if($rolequery === null)
+	{
+		$result = $dbh->query("SELECT id,role FROM roles") or die(sqlite_error_string($dbh->lastError));
+		$roles = array();
+		while($row = $result->fetchObject())
+		{
+			$roles[$row->id] = $row->role;
+		}
+	}
+	if(!is_null($role))
+	{
+		return $roles[$role];
+	}
+	else
+	{
+		return $roles;
+	}
+}
+
 ?>

@@ -378,12 +378,7 @@ if(isset($_POST['changesettings']))
 			}
 			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['time'])."' WHERE variable='time_format';";
 		}
-
-		if($_POST['commentmoderation'] != get_bloginfo('comment_moderation'))
-		{
-			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['commentmoderation'])."' WHERE variable='comment_moderation';";
-		}
-
+		
 		@$dbh->query($query) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
 		die(json_encode(array("result" => "success")));
 	}
@@ -394,9 +389,9 @@ if(isset($_POST['addusersubmit']))
 {
 	// Later on, we will send this as JSON to the browser.
 	$response = array(
-								'result' => 'error',
-								'response' => null,
-							);
+		'result' => 'error',
+		'response' => null
+	);
 
 	// We should verify that the user is actually submitting the request
 	// themselves, or at least to our best abilities.
@@ -527,67 +522,101 @@ if(isset($_POST['addusersubmit']))
 	exit;
 }
 
-if(isset($_POST['editprofilesubmit']))
+if(isset($_POST['editprofile']))
 {
+	// Later on, we will send this as JSON to the browser
+	$response = array(
+		'result' => 'error',
+		'response' => null
+	);
+
 	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
 	{
-		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
+		$response['response'] = "CSRF token incorrect or missing.";
 	}
 	else
 	{
 		// Can the user do this?
-		if(permissions(1))
+		if(permissions(3) || (int)$_POST['uid'] == user()->id())
 		{
-			// Sanitize input fields
-			$password = sqlite_escape_string($_POST['password']);
-			$email = sqlite_escape_string($_POST['email']);
-			$displayname = sqlite_escape_string(utf_htmlspecialchars($_POST['displayname']));
-			$vpassword = sqlite_escape_string($_POST['vpassword']);
-			$c_user = sqlite_escape_string(user()->name());
-
-			// Run database query to get current password hash
-			$dbpasshash = @$dbh->query("SELECT password FROM users WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "username query failed.")));
-			$dbsalt = @$dbh->query("SELECT salt FROM users WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "salt query failed.")));
-
-			// Recreate hash
-			$passhash = sha1($dbsalt->fetchSingle().$vpassword);
-
-			// Do they match?
-			if($passhash === $dbpasshash->fetchSingle())
+			// Get current user data from the database
+			$user_query = @$dbh->query("SELECT password,email,displayname,role,salt FROM users WHERE id=".(int)$_POST['uid']) or die(json_encode(array("result" => "error", "response" => "couldn't read from the database.")));
+			while($row = $user_query->fetchObject())
 			{
-				if(isset($_POST['pw-ck']) && $_POST['pw-ck'] == 1)
+				// Make variables from the database query
+				$cpassword_db = $row->password;
+				$email = $row->email;
+				$displayname = $row->displayname;
+				$role = $row->role;
+				$csalt = $row->salt;
+			}
+			// Check if the current password given in the form matches the actual current password
+			if(sha1($csalt . $_POST['cpassword']) == $cpassword_db)
+			{
+				// Make an array for the queries
+				$query = array();
+				// Are we changing a password? Make sure both fields are filled so we don't accidentally change it!
+				if($_POST['password'] != '' && $_POST['vpassword'] != '')
 				{
-					// Let's make a new salt!
-					$salt = utf_substr(md5(uniqid(rand(), true)), 0, 9);
-					$passhash = sha1($salt.$password);
-					// Send it up to the mothership...I mean the database!
-					@$dbh->query("UPDATE users SET password='$passhash', salt='$salt' WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "password update failed.")));
+					// Do both password fields match?
+					if($_POST['password'] === $_POST['vpassword'])
+					{
+						// Make a new salt
+						$salt = randomString(9);
+						// Make a new password hash
+						$password = sha1($salt . $_POST['password']);
+						// Add it to the query
+						array_push($query, "SET password='".sqlite_escape_string($password)."'", "SET salt='".sqlite_escape_string($salt)."'");
+					}
+					else
+					{
+						$response['response'] = "new passwords don't match.";
+					}
 				}
-
-				if(isset($_POST['em-ck']) && $_POST['em-ck'] == 1)
+				// Are we changing an email address?
+				if($_POST['email'] != $email)
 				{
-					// Send it to the database
-					@$dbh->query("UPDATE users SET email='$email' WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "email update failed.")));
+					// Yup. Add it to the query
+					array_push($query, "SET email='".sqlite_escape_string($_POST['email'])."'");
 				}
-
-				if(isset($_POST['dn-ck']) && $_POST['dn-ck'] == 1)
+				// Are we changing a display name?
+				if($_POST['displayname'] != $displayname)
 				{
-					// Send it to the database
-					@$dbh->query("UPDATE users SET displayname='$displayname' WHERE username='$c_user'") or die(json_encode(array("result" => "error", "response" => "display name update failed.")));
+					// Yup. Add it to the query
+					array_push($query, "SET displayname='".sqlite_escape_string($_POST['displayname'])."'");
+				}
+				// Are we changing a role? And is the logged-in user an admin? Because you can't change roles otherwise.
+				if($_POST['role'] != $role && permissions(3))
+				{
+					// Yup. Add it to the query
+					array_push($query, "SET role='".sqlite_escape_string($_POST['role'])."'");
+				}
+				// Go, query, go!
+				@$dbh->query("UPDATE users ".implode(',', $query)." WHERE id=".(int)$_POST['uid']);
+				// Did it work?
+				if($dbh->changes() > 0)
+				{
+					// Yes!
+					$response['result'] = "success";
+					$response['response'] = "profile edited.";
+				}
+				else
+				{
+					$response['response'] = "couldn't save data to the database.";
 				}
 			}
 			else
 			{
-				die(json_encode(array("result" => "error", "response" => "security password incorrect.")));
+				$response['response'] = "current password incorrect.";
 			}
-
-			die(json_encode(array("result" => "success")));
 		}
 		else
 		{
-			die(json_encode(array("result" => "error", "response" => "user not allowed.")));
+			$response['response'] = "not allowed to edit this profile.";
 		}
 	}
+	// Return the news to jQuery, whether it's good or bad
+	die(json_encode($response));
 }
 
 if(isset($_POST['deleteusersubmit']))

@@ -50,7 +50,7 @@ function buildMenu($selected)
 			"link" => "users.php",
 			"children" => array(
 				"Manage Users" => "users.php",
-				"Your Profile" => "profile.php",
+				"Your Profile" => "profile.php?id=".user()->id(),
 				"Add User" => "adduser.php"
 			)
 		),
@@ -58,10 +58,16 @@ function buildMenu($selected)
 			"link" => "settings.php",
 			"children" => array(
 				"General" => "settings.php",
-				"Comments" => "settings-comments.php",
-				"Maintenance" => "maintenance.php"
+				"Comments" => "settings-comments.php"
 			)
-		)
+		),
+		"Maintenance" => array(
+			"link" => "maintenance.php",
+			"children" => array(
+				"Backup and Optimize" => "#",
+				"Error Log" => "maintenance.php?area=errors"
+			)
+		),
 	);
 	
 	foreach($menu as $topname => $attr)

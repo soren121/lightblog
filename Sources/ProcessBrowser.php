@@ -1,4 +1,4 @@
-<?php session_start();
+<?php
 
 /*********************************************
 
@@ -17,8 +17,7 @@
 *********************************************/
 
 // Require config file
-require('../config.php');
-require(ABSPATH .'/Sources/Core.php');
+require('Core.php');
 
 // Process comment submission
 if(isset($_POST['comment_submit']))

@@ -16,6 +16,9 @@ CREATE UNIQUE INDEX 'core_variable_index' ON 'core' ('variable');
 
 INSERT INTO core VALUES('theme','default');
 INSERT INTO core VALUES('comment_moderation', 'none');
+INSERT INTO core VALUES('timezone', '0.0');
+INSERT INTO core VALUES('date_format', 'm/j/Y');
+INSERT INTO core VALUES('time_format', 'g:i a');
 
 CREATE TABLE 'comments' (
 	'id' INTEGER PRIMARY KEY DEFAULT '0',
@@ -94,6 +97,6 @@ CREATE TABLE 'roles' (
 	'permissions' TEXT
 );
 
-INSERT INTO roles (id, role, permissions) VALUES ('1', 'Standard User', '');
-INSERT INTO roles (id, role, permissions) VALUES ('2', 'Editor', '');
-INSERT INTO roles (id, role, permissions) VALUES ('3', 'Administrator', '');
+INSERT INTO roles VALUES ('1', 'Standard User', '');
+INSERT INTO roles VALUES ('2', 'Editor', '');
+INSERT INTO roles VALUES ('3', 'Administrator', '');

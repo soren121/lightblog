@@ -42,8 +42,7 @@ if($area == 'errors' && !empty($_POST['ajax']))
 		// Delete the error message, or attempt to do so anyways.
 		$dbh->query('
 			DELETE FROM error_log
-			WHERE error_id = '. ((int)$_POST['id']). '
-			LIMIT 1');
+			WHERE error_id = '. (int)$_POST['id']);
 
 		if($dbh->changes() > 0)
 		{

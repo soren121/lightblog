@@ -33,6 +33,8 @@
 <body>
 	<div id="maincontainer">
 		<div id="header">
-			<h1><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a><span> // <?php echo $title ?></span></h1>
+			<h2 id="blogtitle"><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a></h2>
+			<!-- the double slashes are not a bug -->
+			<h2 id="section">// <?php echo $title ?></h2>
 			<div id="ajaxresponse"></div>
 		</div>
