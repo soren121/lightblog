@@ -14,6 +14,13 @@ div.setting div.label {
 	padding-top: 3px;
 }
 
+div.setting div.label > p {
+	margin-top: 5px;
+	font-size: 0.8em;
+	color: #999;
+	font-style: italic;
+}
+
 div.setting div.input {
 	float: left;
 	margin-left: 10%;

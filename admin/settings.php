@@ -67,7 +67,7 @@ foreach($timezones as $offset => $name)
 	}
 }
 
-$date = array('F j, Y' => '', 'm/j/Y' => '', 'Y/m/j' => '', 'j/m/Y' => '');
+$date = array('F j, Y' => '', 'm/j/Y' => '', 'Y/m/j' => '', 'j/m/Y' => '', 'custom' => '');
 $db_date = get_bloginfo('date_format');
 if(array_key_exists($db_date, $date))
 {
@@ -80,7 +80,7 @@ else
 	$date['custom_field'] = $db_date;
 }
 
-$time = array('g:i a' => '', 'g:i A' => '', 'H:i' => '');
+$time = array('g:i a' => '', 'g:i A' => '', 'H:i' => '', 'custom' => '');
 $db_time = get_bloginfo('time_format');
 if(array_key_exists($db_time, $time))
 {
@@ -127,7 +127,7 @@ include('head.php');
 						
 						<div class="setting">
 							<div class="label">
-								<label for="timezone">Timezone</label>
+								<label for="timezone">Time Zone</label>
 							</div>
 							<div class="input">
 								<select name="timezone" id="timezone">
@@ -140,6 +140,9 @@ include('head.php');
 						<div class="setting even">
 							<div class="label">
 								<label>Date Format</label>
+								<p>
+									For information on how to format a custom date or time, refer to <a href="http://php.net/manual/en/function.date.php">the PHP date() documentation</a>.
+								</p>
 							</div>
 							<div class="input">
 								<p>

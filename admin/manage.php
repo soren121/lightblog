@@ -80,7 +80,7 @@ function loadrow($type, $count = 10, $before = 0, $start = 0)
 				$return .= '<td><a href="'.$row->category.'">'.$categories[$row->category].'</a></td>';
 			}
 		}
-		if(($type !== 'categories') && (permissions(1) && get_userinfo('displayname') == $row->author) || (permissions(2)))
+		if(($type !== 'categories') && (permissions(1) && user()->displayName() == $row->author) || (permissions(2)))
 		{
 			$return .= '<td class="c"><a href="edit.php?type='.(int)$_GET['type'].'&amp;id='.$row->id.'"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
 			<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem('.$row->id.', \''.addcslashes(($type == 'categories') ? $row->fullname : $row->title, '\'').'\');" style="cursor:pointer;" /></td>';
@@ -273,7 +273,7 @@ $total = $total->numRows();
 				var last = $('tbody tr.last').attr('id');
 				jQuery.ajax(
 				{
-					data: "loadrow=true&type=<?php echo $type ?>&count=" + count + "&before=" + last + "&start=" + start + "&csrf_token=<?php userinfo('csrf_token') ?>",
+					data: "loadrow=true&type=<?php echo $type ?>&count=" + count + "&before=" + last + "&start=" + start + "&csrf_token=<?php echo user()->csrf_token() ?>",
 					type: "POST",
 					cache: false,
 					url: window.location,
@@ -450,7 +450,7 @@ $total = $total->numRows();
 					$('tr#' + id + ' > td:first').children(':checkbox').attr('checked', true);
 					jQuery.ajax(
 					{
-						data: "delete=true&csrf_token=<?php userinfo('csrf_token') ?>&type=<?php echo $type ?>&id=" + id,
+						data: "delete=true&csrf_token=<?php echo user()->csrf_token() ?>&type=<?php echo $type ?>&id=" + id,
 						type: "POST",
 						url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
 						timeout: 2000,

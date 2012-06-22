@@ -92,12 +92,6 @@ elseif($area == 'errors' && !empty($_GET['delete']))
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript">
-		$(document).ready(function(){
-			$('.rounded').corner();
-			$('.roundedt').corner("round top 10px");
-			$('.roundedb').corner("round bottom 10px");
-		});
-
 		function deleteItem(id)
 		{
 			if(confirm('Do you really want to remove this error message?')) {

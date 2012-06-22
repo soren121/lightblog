@@ -29,8 +29,6 @@ require(ABSPATH .'/Sources/Admin.php');
 	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.InputHint.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/nicEdit.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			$('#themeform').submit(function() {
