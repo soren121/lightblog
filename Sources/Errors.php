@@ -76,7 +76,7 @@ function errorsHandle($errno, $message, $filename, $line, $errcontext)
 		$line = (int)$line;
 		$error_url = sqlite_escape_string('http://'. $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI']);
 
-		$GLOBALS['dbh']->query("
+		@$GLOBALS['dbh']->query("
 			INSERT INTO 'error_log'
 			('error_time', 'error_type', 'error_message', 'error_file', 'error_line', 'error_url')
 			VALUES('$timestamp', '$error_type', '$message', '$filename', '$line', '$error_url')");

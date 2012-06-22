@@ -337,53 +337,6 @@ if(isset($_POST['themesubmit']))
 	}
 }
 
-if(isset($_POST['changesettings']))
-{
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
-	{
-		json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing."));
-	}
-	else
-	{
-		$query = '';
-		if($_POST['title'] != get_bloginfo('title'))
-		{
-			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['title'])."' WHERE variable='title';";
-		}
-
-		if($_POST['url'] != get_bloginfo('url'))
-		{
-			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['url'])."' WHERE variable='url';";
-		}
-
-		if($_POST['timezone'] != get_bloginfo('timezone'))
-		{
-			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['timezone'])."' WHERE variable='timezone';";
-		}
-
-		if($_POST['date'] != get_bloginfo('date_format'))
-		{
-			if($_POST['date'] == 'custom')
-			{
-				$_POST['date'] = $_POST['custom_date'];
-			}
-			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['date'])."' WHERE variable='date_format';";
-		}
-
-		if($_POST['time'] != get_bloginfo('time_format'))
-		{
-			if($_POST['time'] == 'custom')
-			{
-				$_POST['time'] = $_POST['custom_time'];
-			}
-			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['time'])."' WHERE variable='time_format';";
-		}
-		
-		@$dbh->query($query) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
-		die(json_encode(array("result" => "success")));
-	}
-}
-
 // User creation
 if(isset($_POST['addusersubmit']))
 {

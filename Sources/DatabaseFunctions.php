@@ -24,42 +24,44 @@
 	Parameters:
 
 		var - Row to obtain value from.
+		reload - Reload the settings again, forcibly.
 
 	Returns:
 
 		The value of the given row.
 */
-function get_bloginfo($var)
+function get_bloginfo($var, $reload = false)
 {
 	// Global the database handle
 	global $dbh;
 
-	// Make PHP remember $bloginfo next time
-	static $bloginfo = null;
+	if(!isset($GLOBALS['bloginfo_data']))
+	{
+		$GLOBALS['bloginfo_data'] = null;
+	}
 
 	// If this is the first time bloginfo's been called...
-	if($bloginfo === null)
+	if($GLOBALS['bloginfo_data'] === null || !empty($reload))
 	{
 		$result = $dbh->query('SELECT * FROM core') or die(sqlite_error_string($dbh->lastError));
 
 		// Let's make an array!
-		$bloginfo = array();
+		$GLOBALS['bloginfo_data'] = array();
 
 		// For each row, set a key with the value
 		while($row = $result->fetchObject())
 		{
-			$bloginfo[$row->variable] = $row->value;
+			$GLOBALS['bloginfo_data'][$row->variable] = $row->value;
 		}
 
-		if(!isset($bloginfo['themeurl']))
+		if(!isset($GLOBALS['bloginfo_data']['themeurl']))
 		{
 			// Set the theme URL
-			$bloginfo['themeurl'] = $bloginfo['url'].'themes/'.$bloginfo['theme'];
+			$GLOBALS['bloginfo_data']['themeurl'] = $GLOBALS['bloginfo_data']['url'].'themes/'.$GLOBALS['bloginfo_data']['theme'];
 		}
 	}
 
-	// Are we echoing or returning?
-	return $bloginfo[$var];
+	return array_key_exists($var, $GLOBALS['bloginfo_data']) ? $GLOBALS['bloginfo_data'][$var] : false;
 }
 
 function bloginfo($var)

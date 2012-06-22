@@ -19,6 +19,120 @@
 require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
+// Time to process any incoming requests to save the settings.
+if(!empty($_POST['changesettings']))
+{
+	// We will collect the response here.
+	$response = array(
+								'result' => 'error',
+								'response' => array(),
+							);
+
+	// Make sure they are the one submitting the request.
+	if(empty($_POST['csrf_token']) || $_POST['csrf_token'] != user()->csrf_token())
+	{
+		$response['response'][] = 'CSRF token incorrect or missing.';
+	}
+	else
+	{
+		$options = array();
+
+		// A title is required.
+		if(empty($_POST['title']) || utf_strlen($_POST['title']) == 0)
+		{
+			$response['response'][] = 'A blog title is required.';
+		}
+		else
+		{
+			$options['title'] = utf_htmlspecialchars($_POST['title']);
+		}
+
+		// Same goes for the URL. It also needs to be valid.
+		if(empty($_POST['url']) || !is_url($_POST['url']))
+		{
+			$response['response'][] = 'A valid URL is required.';
+		}
+		else
+		{
+			// We also want it to have a trailing slash.
+			$options['url'] = utf_substr($_POST['url'], -1, 1) == '/' ? $_POST['url'] : $_POST['url']. '/';
+		}
+
+		// Make sure the time zone is valid.
+		if(!array_key_exists('timezone', $_POST) || (float)$_POST['timezone'] < -12 || (float)$_POST['timezone'] > 12)
+		{
+			$response['response'][] = 'Invalid time zone selected.';
+		}
+		else
+		{
+			$options['timezone'] = (float)$_POST['timezone'];
+		}
+
+		// Now for the date...
+		if(empty($_POST['date']) || ($_POST['date'] == 'custom' && empty($_POST['custom_date'])))
+		{
+			$response['response'][] = 'Invalid date format.';
+		}
+		else
+		{
+			$options['date_format'] = utf_htmlspecialchars($_POST['date'] == 'custom' ? $_POST['custom_date'] : $_POST['date']);
+		}
+
+		// Then time formatting.
+		if(empty($_POST['time']) || ($_POST['time'] == 'custom' && empty($_POST['custom_time'])))
+		{
+			$response['response'][] = 'Invalid time format.';
+		}
+		else
+		{
+			$options['time_format'] = utf_htmlspecialchars($_POST['time'] == 'custom' ? $_POST['custom_time'] : $_POST['time']);
+		}
+
+		// Were there any issues?
+		if(count($response['response']) == 0)
+		{
+			// Nope, so we can save the settings.
+			$save_query = array();
+			foreach($options as $option => $value)
+			{
+				$GLOBALS['bloginfo_data'][$option] = $value;
+
+				if(is_string($value))
+				{
+					$value = sqlite_escape_string($value);
+				}
+
+				$save_query[] = 'INSERT OR REPLACE INTO core (variable, value) VALUES(\''. sqlite_escape_string($option). '\', '. (is_string($value) ? '\''. $value. '\'' : $value). ');';
+			}
+
+			if($dbh->queryExec(implode("\r\n", $save_query)))
+			{
+				$response['result'] = 'success';
+				$response['response'] = 'Settings saved.';
+			}
+			else
+			{
+				$response['response'][] = $error_message;
+			}
+		}
+	}
+
+	// Perhaps they made the request via AJAX?
+	if(!empty($_POST['response_type']) && $_POST['response_type'] == 'json')
+	{
+		// Combine all the messages into one.
+		$response['response'] = implode("\r\n", $response['response']);
+
+		echo json_encode($response);
+		exit;
+	}
+	else
+	{
+		$ajaxresponse_message = $response['response'];
+	}
+}
+
+// Now prepare what we're going to display.
 $timezones = array(
 	-12.0 => '(UTC -12:00) Eniwetok, Kwajalein',
 	-11.0 => '(UTC -11:00) Midway Island, Samoa',
@@ -100,11 +214,10 @@ $selected = basename($_SERVER['REQUEST_URI']);
 include('head.php');
 
 ?>
-
 		<div id="contentwrapper">
 			<div id="contentcolumn">
 				<?php if(permissions(3)): ?>
-					<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="settings">
+					<form action="<?php bloginfo('url') ?>admin/settings.php" method="post" id="settings">
 						<div class="setting">
 							<div class="label">
 								<label for="title">Blog Title</label>
@@ -120,7 +233,7 @@ include('head.php');
 								<label for="url">LightBlog Address (URL)</label>
 							</div>
 							<div class="input">
-								<input type="text" name="url" id="url" value="<?php bloginfo('url') ?>" />
+								<input type="text" name="url" id="url" value="<?php echo utf_htmlspecialchars(get_bloginfo('url')); ?>" />
 							</div>
 							<div class="clear"></div>
 						</div>
@@ -222,7 +335,7 @@ include('head.php');
 					});
 
 					jQuery.ajax({
-						data: inputs.join('&'),
+						data: inputs.join('&') + '&response_type=json',
 						type: "POST",
 						url: $(this).attr('action'),
 						timeout: 2000,

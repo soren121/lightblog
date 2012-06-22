@@ -36,5 +36,5 @@
 			<h2 id="blogtitle"><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a></h2>
 			<!-- the double slashes are not a bug -->
 			<h2 id="section">// <?php echo $title ?></h2>
-			<div id="ajaxresponse"></div>
+			<div id="ajaxresponse"><?php echo isset($ajaxresponse_message) ? '<span class="result">'. $ajaxresponse_message. '</span>' : ''; ?></div>
 		</div>
