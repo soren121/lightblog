@@ -355,12 +355,12 @@ if(isset($_POST['changesettings']))
 		{
 			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['url'])."' WHERE variable='url';";
 		}
-		
+
 		if($_POST['timezone'] != get_bloginfo('timezone'))
 		{
 			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['timezone'])."' WHERE variable='timezone';";
 		}
-		
+
 		if($_POST['date'] != get_bloginfo('date_format'))
 		{
 			if($_POST['date'] == 'custom')
@@ -369,7 +369,7 @@ if(isset($_POST['changesettings']))
 			}
 			$query .= "UPDATE core SET value='".sqlite_escape_string($_POST['date'])."' WHERE variable='date_format';";
 		}
-		
+
 		if($_POST['time'] != get_bloginfo('time_format'))
 		{
 			if($_POST['time'] == 'custom')
@@ -392,116 +392,139 @@ if(isset($_POST['changesettings']))
 // User creation
 if(isset($_POST['addusersubmit']))
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== user()->csrf_token())
+	// Later on, we will send this as JSON to the browser.
+	$response = array(
+								'result' => 'error',
+								'response' => null,
+							);
+
+	// We should verify that the user is actually submitting the request
+	// themselves, or at least to our best abilities.
+	if(empty($_POST['csrf_token']) || $_POST['csrf_token'] != user()->csrf_token())
 	{
-		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
+		$response['response'] = 'CSRF token incorrect or missing';
 	}
-	else
+	// They need to have permission too.
+	elseif(permissions(3))
 	{
-		// Can the user do this?
-		if(permissions(3))
+		$options = array();
+
+		// Make sure they gave us a user name.
+		if(empty($_POST['username']) || utf_strlen(trim($_POST['username'])) == 0)
 		{
-			// Set
-			if(!isset($_POST['username']))
-			{
-				$fielderror = true;
-			}
-			else
-			{
-				$username = sqlite_escape_string(utf_htmlspecialchars($_POST['username']));
-			}
-
-			if(!isset($_POST['password']))
-			{
-				$fielderror = true;
-			}
-			else
-			{
-				$password = $_POST['password'];
-			}
-
-			if(!isset($_POST['vpassword']))
-			{
-				$fielderror = true;
-			}
-			else
-			{
-				$vpassword = $_POST['vpassword'];
-			}
-
-			if(!isset($_POST['email']))
-			{
-				$fielderror = true;
-			}
-			else
-			{
-				$email = $_POST['email'];
-			}
-
-			if(!isset($_POST['displayname']))
-			{
-				$fielderror = true;
-			}
-			else
-			{
-				$displayname = $_POST['displayname'];
-			}
-
-			if(!isset($_POST['role']))
-			{
-				$fielderror = true;
-			}
-			else
-			{
-				$role = $_POST['role'];
-			}
-
-			// Output error if required
-			if(isset($fielderror) && $fielderror == true)
-			{
-				die(json_encode(array("result" => "error", "response" => "All fields must be filled. Try again.")));
-			}
-
-			// Does that username exist already?
-			$result = @$dbh->query("SELECT * FROM users WHERE username='$username'") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
-			if($result->numRows() < 0)
-			{
-				die(json_encode(array("result" => "error", "response" => "Username is already taken. Try again.")));
-			}
-
-			unset($result);
-
-			// I guess not, let's verify the password
-			if($password !== $vpassword)
-			{
-				die(json_encode(array("result" => "error", "response" => "Passwords don't match. Try again.")));
-			}
-			// Let's verify the email
-			if(!preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/',$email))
-			{
-				die(json_encode(array("result" => "error", "response" => "Email address not valid. Try again.")));
-			}
-
-			// Well, everything looks good, let's go
-			// Create a password hash
-			$salt = utf_substr(md5(uniqid(mt_rand(), true)), 0, 9);
-			$passhash = sha1($salt.$password);
-
-			// Clean!
-			$email = sqlite_escape_string($email);
-			$displayname = sqlite_escape_string(utf_htmlspecialchars($displayname));
-			$role = sqlite_escape_string($role);
-			$ip = sqlite_escape_string($_SERVER['REMOTE_ADDR']);
-
-			// Create the user!
-			@$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username','$passhash','$email','$displayname','$role', '$ip', '$salt');") or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
-			die(json_encode(array("result" => "success", "response" => "User $username created.")));
+			$response['response'] = 'Please enter a user name.';
+		}
+		// Make sure that the user name isn't in use.
+		elseif(!user_name_allowed($_POST['username']))
+		{
+			// Uh oh! That's no good.
+			$response['response'] = 'That user name is already in use.';
 		}
 		else
 		{
-			die(json_encode(array("result" => "error", "response" => "You're not allowed to add users.")));
+			$options['username'] = utf_htmlspecialchars(trim($_POST['username']));
+		}
+
+		// How about their password?
+		if($response['response'] === null && (empty($_POST['password']) || utf_strlen($_POST['password']) < 6))
+		{
+			$response['response'] = 'The password must be at least 6 characters.';
+		}
+		elseif($response['response'] === null)
+		{
+			$options['password'] = $_POST['password'];
+		}
+
+		// Make sure they verified the password (no typo!).
+		if($response['response'] === null && isset($options['password']) && (empty($_POST['vpassword']) || $_POST['vpassword'] != $options['password']))
+		{
+			$response['response'] = 'The passwords do not match.';
+		}
+
+		// Now, the email address!
+		if($response['response'] === null && empty($_POST['email']))
+		{
+			$response['response'] = 'Please enter an email address.';
+		}
+		elseif($response['response'] === null && !user_email_allowed($_POST['email']))
+		{
+			$response['response'] = 'That email address is already in use.';
+		}
+		elseif($response['response'] === null)
+		{
+			$options['email'] = utf_htmlspecialchars($_POST['email']);
+		}
+
+		// Now for their display name... That is, if it's set (if it's not, we
+		// will use their username.
+		$_POST['displayname'] = !empty($_POST['displayname']) && utf_strlen(trim($_POST['displayname'])) > 0 ? trim($_POST['displayname']) : (isset($_POST['username']) ? trim($_POST['username']) : '');
+		if($response['response'] === null && utf_strlen($_POST['displayname']) == 0)
+		{
+			$response['response'] = 'Please enter a display name.';
+		}
+		elseif($response['response'] === null && !user_name_allowed($_POST['displayname']))
+		{
+			$response['response'] = 'That display name is already in use.';
+		}
+		elseif($response['response'] === null)
+		{
+			$options['displayname'] = utf_htmlspecialchars($_POST['displayname']);
+		}
+
+		// Then their role.
+		if($response['response'] === null && (empty($_POST['role']) || !in_array((int)$_POST['role'], array(1, 2, 3), true)))
+		{
+			$response['response'] = 'Please select a valid role.';
+		}
+		elseif($response['response'] === null)
+		{
+			$options['role'] = (int)$_POST['role'];
+		}
+
+		// Is everything okay? May we create the user now?
+		if($response['response'] === null)
+		{
+			// We need to create a salt.
+			$options['salt'] = randomString(9);
+
+			// Now hash their password with the salt.
+			$options['password'] = sha1($options['salt']. $options['password']);
+
+			// Then their IP address.
+			$options['ip'] = user()->ip();
+
+			// Then sanitize everything.
+			foreach($options as $key => $value)
+			{
+				$options[$key] = sqlite_escape_string($value);
+			}
+
+			// Now insert the user.
+			$dbh->query("
+				INSERT INTO users
+				(username, password, email, displayname, role, ip, salt)
+				VALUES('{$options['username']}', '{$options['password']}', '{$options['email']}', '{$options['displayname']}', '{$options['role']}', '{$options['ip']}', '{$options['salt']}')");
+
+			// Did we create it?
+			if($dbh->changes() > 0)
+			{
+				// Yes!
+				$response['result'] = 'success';
+				$response['response'] = 'User '. utf_htmlspecialchars(trim($_POST['username'])). ' created.';
+			}
+			else
+			{
+				$response['response'] = sqlite_error_string($dbh->lastError());
+			}
 		}
 	}
+	else
+	{
+		$response['response'] = 'You&#039;re not allowed to add users.';
+	}
+
+	echo json_encode($response);
+	exit;
 }
 
 if(isset($_POST['editprofilesubmit']))

@@ -133,6 +133,70 @@ function user_login($options)
 }
 
 /*
+	Function: user_name_allowed
+
+	Determines whether the user name is allowed (as in, it isn't in use by
+	another user [checking both log in and display names]).
+
+	Parameters:
+		string $name
+		int $id - The user's ID (to exclude them from the check).
+
+	Returns:
+		bool - Returns true if the name is allowed, false if not.
+*/
+function user_name_allowed($name, $id = 0)
+{
+	global $dbh;
+
+	// Alright, let's check!
+	$request = $dbh->query("
+		SELECT
+			id
+		FROM users
+		WHERE (LOWER(username) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "') OR LOWER(displayname) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "')) AND id != ". ((int)$id). "
+		LIMIT 1");
+
+	// If there are no rows, they're free to have at it!
+	return $request->numRows() == 0;
+}
+
+/*
+	Function: user_email_allowed
+
+	Determines whether the email address is allowed (as in, it isn't in use by
+	another user and appears to be a valid email address).
+
+	Parameters:
+		string $email
+		int $id - The user's ID (to exclude them from the check).
+
+	Returns:
+		bool - Returns true if the email address is allowed, false if not.
+*/
+function user_email_allowed($email, $id = 0)
+{
+	global $dbh;
+
+	// First, check the email address with a regular expression.
+	if(!preg_match('~^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$~i', $email))
+	{
+		return false;
+	}
+
+	// Now to check the database.
+	$request = $dbh->query("
+		SELECT
+			id
+		FROM users
+		WHERE LOWER(email) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($email)). "') AND id != ". ((int)$id). "
+		LIMIT 1");
+
+	// Any rows? If none, it's okay for them to use it.
+	return $request->numRows() == 0;
+}
+
+/*
 	Class: User
 
 	Contains all the information about the currently logged in user (or guest).
@@ -417,11 +481,11 @@ class User
 */
 function user()
 {
-	if(!isset($GLOBALS['user']) || !is_object($GLOBALS['user']))
+	if(!isset($GLOBALS['user_obj']) || !is_a($GLOBALS['user_obj'], 'User'))
 	{
-		$GLOBALS['user'] = new User();
+		$GLOBALS['user_obj'] = new User();
 	}
 
-	return $GLOBALS['user'];
+	return $GLOBALS['user_obj'];
 }
 ?>

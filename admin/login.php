@@ -36,7 +36,7 @@ if(isset($_GET['logout']))
 	session_destroy();
 
 	// Unset their cookie, too.
-	setcookie(LBCOOKIE, '', time() - 86400);
+	setcookie(LBCOOKIE, '', time() - 2592000, '/');
 
 	// Send them to the homepage
 	redirect(get_bloginfo('url'));

@@ -69,7 +69,7 @@ foreach($timezones as $offset => $name)
 
 $date = array('F j, Y' => '', 'm/j/Y' => '', 'Y/m/j' => '', 'j/m/Y' => '', 'custom' => '');
 $db_date = get_bloginfo('date_format');
-if(array_key_exists($db_date, $date))
+if(!empty($db_date) && array_key_exists($db_date, $date))
 {
 	$date[$db_date] = 'checked="checked"';
 	$date['custom_field'] = key($date);
@@ -82,7 +82,7 @@ else
 
 $time = array('g:i a' => '', 'g:i A' => '', 'H:i' => '', 'custom' => '');
 $db_time = get_bloginfo('time_format');
-if(array_key_exists($db_time, $time))
+if(!empty($db_time) && array_key_exists($db_time, $time))
 {
 	$time[$db_time] = 'checked="checked"';
 	$time['custom_field'] = key($time);
@@ -114,7 +114,7 @@ include('head.php');
 							</div>
 							<div class="clear"></div>
 						</div>
-						
+
 						<div class="setting even">
 							<div class="label">
 								<label for="url">LightBlog Address (URL)</label>
@@ -124,7 +124,7 @@ include('head.php');
 							</div>
 							<div class="clear"></div>
 						</div>
-						
+
 						<div class="setting">
 							<div class="label">
 								<label for="timezone">Time Zone</label>
@@ -136,7 +136,7 @@ include('head.php');
 							</div>
 							<div class="clear"></div>
 						</div>
-						
+
 						<div class="setting even">
 							<div class="label">
 								<label>Date Format</label>
@@ -164,12 +164,12 @@ include('head.php');
 								<p>
 									<input type="radio" name="date" id="custom-date" value="custom" <?php echo $date['custom'] ?> />
 									<label for="custom-date">Custom: </label>
-									<input type="text" name="custom_date" id="custom-date-field" value="<?php echo $date['custom_field'] ?>" />					
+									<input type="text" name="custom_date" id="custom-date-field" value="<?php echo $date['custom_field'] ?>" />
 								</p>
 							</div>
 							<div class="clear"></div>
 						</div>
-						
+
 						<div class="setting">
 							<div class="label">
 								<label>Time Format</label>
@@ -190,12 +190,12 @@ include('head.php');
 								<p>
 									<input type="radio" name="time" id="custom-time" value="custom" <?php echo $time['custom'] ?> />
 									<label for="custom-time">Custom: </label>
-									<input type="text" name="custom_time" id="custom-time-field" value="<?php echo $time['custom_field'] ?>" />					
+									<input type="text" name="custom_time" id="custom-time-field" value="<?php echo $time['custom_field'] ?>" />
 								</p>
 							</div>
 							<div class="clear"></div>
 						</div>
-						
+
 						<div class="setting even">
 							<input type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
 							<input type="submit" class="submit" name="changesettings" value="Save" />
