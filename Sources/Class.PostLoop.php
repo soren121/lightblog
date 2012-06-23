@@ -21,6 +21,8 @@ if(!defined('INLB'))
 	die('Nice try...');
 }
 
+require(ABSPATH. '/Sources/PostFunctions.php');
+
 /*
 	Class: PostLoop
 
@@ -117,19 +119,19 @@ class PostLoop
 			$pid = (int)$GLOBALS['pid'];
 
 			// We know the specific ID, so add it to our WHERE clause.
-			$where = 'id= '. $pid;
+			$where = 'post_id= '. $pid;
 
 			// If the user isn't an administrator then they can view unpublished
 			// posts. However, they can also view unpublished posts if they made
 			// them, but LightBlog doesn't support this yet.
 			if(!permissions(1))
 			{
-				$where .= ' AND published = 1';
+				$where .= ' AND published <= '. time();
 			}
 		}
 		else
 		{
-			$where = !permissions(1) ? 'published = 1' : '1';
+			$where = !permissions(1) ? 'published <= '. time() : '1';
 		}
 
 		// Viewing the archive list?
@@ -141,17 +143,33 @@ class PostLoop
 			$firstday = mktime(0, 0, 0, $queryextra[1], 1, $queryextra[0]);
 			$lastday = mktime(0, 0, 0, ($queryextra[1] + 1), 0, $queryextra[0]);
 
-			return "SELECT * FROM posts WHERE $where AND date BETWEEN $firstday AND $lastday ORDER BY id desc";
+			return "
+				SELECT
+					*
+				FROM posts
+				WHERE $where AND post_date BETWEEN $firstday AND $lastday
+				ORDER BY post_date DESC";
 		}
 		elseif($querytype == 'category')
 		{
-			$queryextra = (int)$GLOBALS['postquery']['catid'];
+			$category_id = (int)$GLOBALS['postquery']['catid'];
 
-			return "SELECT * FROM posts WHERE $where AND category=$queryextra ORDER BY id desc";
+			return "
+				SELECT
+					p.*
+				FROM posts AS p
+					INNER JOIN post_categories AS pc ON pc.post_id = p.post_id AND pc.category_id = $category_id
+				WHERE $where
+				ORDER BY p.post_date DESC";
 		}
 		else
 		{
-			return "SELECT * FROM posts WHERE $where ORDER BY id desc";
+			return "
+				SELECT
+					*
+				FROM posts
+				WHERE $where
+				ORDER BY post_id DESC";
 		}
 	}
 
@@ -261,7 +279,7 @@ class PostLoop
 		if(!empty($this->cur_result))
 		{
 			// Nope, so return the post's permalink
-			echo get_bloginfo('url'). '?post='. $this->cur_result->id;
+			echo get_bloginfo('url'). '?post='. $this->cur_result->post_id;
 		}
 		else
 		{
@@ -281,7 +299,7 @@ class PostLoop
 		if(!empty($this->cur_result))
 		{
 			// Nope, so remove all sanitation and echo it out
-			echo $this->cur_result->title;
+			echo $this->cur_result->post_title;
 		}
 		else
 		{
@@ -304,7 +322,7 @@ class PostLoop
 		// We didn't screw up and keep an empty query, did we?
 		if(!empty($this->cur_result))
 		{
-			$text = $this->cur_result->post;
+			$text = $this->cur_result->post_text;
 			$length = 360;
 
 			// The following truncator code is from CakePHP
@@ -415,7 +433,7 @@ class PostLoop
 				if($ending)
 				{
 					// add the defined ending to the text
-					$truncate .= '... <a href="?post='.$this->cur_result->id.'">'.$ending.'</a>';
+					$truncate .= '... <a href="?post='.$this->cur_result->post_id.'">'.$ending.'</a>';
 				}
 
 				// and echo
@@ -445,7 +463,7 @@ class PostLoop
 		if(!empty($this->cur_result))
 		{
 			// Nope, so output the date in the right format
-			echo date(!empty($format) ? $format : 'F jS, Y', $this->cur_result->date);
+			echo date(!empty($format) ? $format : 'F jS, Y', $this->cur_result->post_date);
 		}
 		// Oh no, we screwed up :(
 		else
@@ -464,7 +482,7 @@ class PostLoop
 	{
 		if(!empty($this->cur_result))
 		{
-			echo $this->cur_result->author;
+			echo $this->cur_result->author_name;
 		}
 		else
 		{
@@ -481,7 +499,7 @@ class PostLoop
 	{
 		if(!empty($this->cur_result))
 		{
-			return commentNum($this->cur_result->id);
+			return $this->cur_result->comments;
 		}
 		else {
 			return false;
@@ -498,7 +516,12 @@ class PostLoop
 		if(!empty($this->cur_result))
 		{
 			$dbh = $this->dbh;
-			$result = $dbh->query("SELECT fullname FROM categories WHERE id=".(int)$this->cur_result->category);
+			$result = $dbh->query("
+				SELECT
+					full_name
+				FROM categories
+				WHERE category_id = ". ((int)$this->cur_result->categories). "
+				LIMIT 1");
 
 			echo $result->fetchSingle();
 		}

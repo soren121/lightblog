@@ -74,9 +74,14 @@ class CommentLoop
 	{
 		$dbh = $this->dbh;
 		$pid = (int)$GLOBALS['pid'];
-		$query = $dbh->query("SELECT comments FROM 'posts' WHERE id='$pid'");
 
-		if($query->fetchSingle() == 1)
+		$request = $dbh->query("
+			SELECT
+				allow_comments
+			FROM 'posts'
+			WHERE post_id = '$pid'");
+
+		if($request->fetchSingle() == 1)
 		{
 			return true;
 		}
@@ -95,7 +100,13 @@ class CommentLoop
 	{
 		$dbh = $this->dbh;
 		$pid = (int)$GLOBALS['pid'];
-		$this->result = $dbh->query("SELECT * FROM 'comments' WHERE published=1 AND pid='$pid'");
+
+		$this->result = $dbh->query("
+			SELECT
+				*
+			FROM 'comments'
+			WHERE published = 1 AND post_id = '$pid'
+			ORDER BY comment_date ASC");
 	}
 
 	/*
@@ -149,21 +160,21 @@ class CommentLoop
 	{
 		if(!empty($this->cur_result))
 		{
-			echo '<'.$tag.' class="comment '; alternateColor('c1', 'c2'); echo '" id="comment-'.(int)$this->cur_result->id.'">
+			echo '<'.$tag.' class="comment '; alternateColor('c1', 'c2'); echo '" id="comment-'.(int)$this->cur_result->comment_id.'">
 					<img class="comment_gravatar" src="'.$this->gravatar().'" alt="" />';
 
-					if($this->cur_result->website == '')
+					if(utf_strlen($this->cur_result->commenter_website) == 0 || !is_url($this->cur_result->commenter_website))
 					{
-						echo '<span class="comment_name">'.$this->cur_result->name.'</span>';
+						echo '<span class="comment_name">'.$this->cur_result->commenter_name.'</span>';
 					}
 					else
 					{
-						echo '<a class="comment_name" href="'.$this->cur_result->website.'">'.stripslashes($this->cur_result->name).'</a>';
+						echo '<a class="comment_name" href="'.$this->cur_result->commenter_website.'">'.stripslashes($this->cur_result->commenter_name).'</a>';
 					}
 
 					echo '<span class="comment_says"> says:</span><br />
-					<a href="'.get_bloginfo('url').'?post='.(int)$this->cur_result->pid.'#comment-'.(int)$this->cur_result->id.'" class="comment_date">'.date('F j, Y \a\t g:i A', (int)$this->cur_result->date).'</a><br />
-					<p class="comment_text">'.$this->cur_result->text.'</p>
+					<a href="'.get_bloginfo('url').'?post='.(int)$this->cur_result->post_id.'#comment-'.(int)$this->cur_result->comment_id.'" class="comment_date">'.date('F j, Y \a\t g:i A', (int)$this->cur_result->comment_date).'</a><br />
+					<p class="comment_text">'.$this->cur_result->comment_text.'</p>
 			</'.$tag.'>';
 		}
 		// Oh no, we screwed up :(
@@ -188,7 +199,7 @@ class CommentLoop
 		// We didn't screw up and keep an empty query, did we?
 		if(!empty($this->cur_result))
 		{
-			$email = md5($this->cur_result->email);
+			$email = md5($this->cur_result->commenter_email);
 			$size = (int)$size;
 			return "http://www.gravatar.com/avatar.php?gravatar_id=".$email."&amp;size=".$size;
 		}

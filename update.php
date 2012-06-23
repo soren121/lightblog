@@ -196,7 +196,7 @@ function copy_data($db, $ndb)
 	{
 		$id_map[strtolower($row['username'])] = (int)$row['id'];
 
-		$ndb->query(generate_query('users', array($row['id'], $row['username'], $row['password'], $row['email'], $row['displayname'], $row['role'], '', $row['salt'], 1, time())));
+		$ndb->query(generate_query('users', array($row['id'], $row['username'], $row['password'], $row['email'], $row['displayname'], $row['role'], $row['ip'], $row['salt'], 1, time())));
 	}
 
 	// Then their pages...

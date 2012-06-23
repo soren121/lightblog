@@ -43,6 +43,7 @@ else
 if(file_exists(DBH))
 {
 	$dbh = new SQLiteDatabase(DBH, 0666, $error_message);
+	$dbh->query('PRAGMA short_column_names = 1');
 }
 else
 {
@@ -160,7 +161,7 @@ function currentURL() {
 		HTML code for a full pagination menu.
 */
 function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 1, $pagestring = "&page=") {
-	# Global the database handle so we can use it in this function
+	// Global the database handle so we can use it in this function
 	global $dbh;
 
 	// The page cannot be less than 1.
@@ -169,19 +170,25 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 		$page = 1;
 	}
 
-	# Set defaults
+	// Set defaults
 	if(!$adjacents) $adjacents = 1;
 	if(!$limit) $limit = 8;
 	if(!$page) $page = 1;
-	# Set teh query to retrieve the number of rows
-	$query = $dbh->query("SELECT COUNT(*) FROM '".sqlite_escape_string($type)."'") or die(sqlite_error_string($dbh->lastError));
-	# Query the database
+
+	// Set teh query to retrieve the number of rows
+	$query = $dbh->query("
+		SELECT
+			COUNT(*)
+		FROM '".sqlite_escape_string($type)."'") or die(sqlite_error_string($dbh->lastError));
+
+	// Query the database
 	@list($totalitems) = $query->fetch(SQLITE_NUM);
-	# Set various required variables
-	$prev = $page - 1;						# Previous page is page - 1
-	$next = $page + 1;						# Next page is page + 1
-	$lastpage = ceil($totalitems/$limit);	# Last page is = total items / items per page, rounded up.
-	$lpm1 = $lastpage - 1;					# Last page minus 1
+
+	// Set various required variables
+	$prev = $page - 1;						// Previous page is page - 1
+	$next = $page + 1;						// Next page is page + 1
+	$lastpage = ceil($totalitems/$limit);	// Last page is = total items / items per page, rounded up.
+	$lpm1 = $lastpage - 1;					// Last page minus 1
 
 	// The page also cannot exceed the last page.
 	if($page > $lastpage)
@@ -189,100 +196,130 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 		$page = $lastpage;
 	}
 
-	# Clear $pagination
+	// Clear $pagination
 	$pagination = "";
-	# Do we have more than one page?
-	if($totalitems > $limit) {
-		# Start the pagination div
+	// Do we have more than one page?
+	if($totalitems > $limit)
+	{
+		// Start the pagination div
 		$pagination .= "<div class=\"pagination\">";
 
-		# Add the previous button
-		if($page > 1) {
+		// Add the previous button
+		if($page > 1)
+		{
 			$pagination .= "<a href=\"" . $target . $pagestring . $prev . "\">&laquo; prev</a>";
 		}
-		else {
-			# Disable the previous button, since we're on the first page
+		else
+		{
+			// Disable the previous button, since we're on the first page
 			$pagination .= "<span class=\"disabled\">&laquo; prev</span>";
 		}
-		# Add the page buttons
-		if ($lastpage < 7 + ($adjacents * 2)) {
-			# There aren't enough pages to bother breaking it up
-			# Loop through the pages and create links for all
-			for($counter = 1; $counter <= $lastpage; $counter++) {
-				if($counter == $page) {
+
+		// Add the page buttons
+		if ($lastpage < 7 + ($adjacents * 2))
+		{
+			// There aren't enough pages to bother breaking it up
+			// Loop through the pages and create links for all
+			for($counter = 1; $counter <= $lastpage; $counter++)
+			{
+				if($counter == $page)
+				{
 					$pagination .= "<span class=\"current\">$counter</span>";
 				}
-				else {
+				else
+				{
 					$pagination .= "<a href=\"" . $target . $pagestring . $counter . "\">$counter</a>";
 				}
 			}
 		}
-		elseif($lastpage >= 7 + ($adjacents * 2)) {
-			# We have enough pages to hide some of them now
-			if($page < 1 + ($adjacents * 3)) {
-				# Start a loop and create the first few pages
-				for($counter = 1; $counter < 4 + ($adjacents * 2); $counter++) {
-					if($counter == $page) {
+		elseif($lastpage >= 7 + ($adjacents * 2))
+		{
+			// We have enough pages to hide some of them now
+			if($page < 1 + ($adjacents * 3))
+			{
+				// Start a loop and create the first few pages
+				for($counter = 1; $counter < 4 + ($adjacents * 2); $counter++)
+				{
+					if($counter == $page)
+					{
 						$pagination .= "<span class=\"current\">$counter</span>";
 					}
-					else {
+					else
+					{
 						$pagination .= "<a href=\"" . $target . $pagestring. $counter . "\">$counter</a>";
 					}
 				}
-				# Add the ellipses
+
+				// Add the ellipses
 				$pagination .= "<span class=\"elipses\">...</span>";
 				$pagination .= "<a href=\"" . $target . $pagestring . $lpm1 . "\">$lpm1</a>";
 				$pagination .= "<a href=\"" . $target . $pagestring . $lastpage . "\">$lastpage</a>";
 			}
-			# We're in the middle; hide some in the front and back
-			elseif($lastpage - ($adjacents * 2) > $page && $page > ($adjacents * 2)) {
-				# Add the first two links
+			// We're in the middle; hide some in the front and back
+			elseif($lastpage - ($adjacents * 2) > $page && $page > ($adjacents * 2))
+			{
+				// Add the first two links
 				$pagination .= "<a href=\"" . $target . $pagestring . "1\">1</a>";
 				$pagination .= "<a href=\"" . $target . $pagestring . "2\">2</a>";
-				# Add the ellipses
+
+				// Add the ellipses
 				$pagination .= "<span class=\"elipses\">...</span>";
-				# Start the for loop to make the page links
-				for($counter = $page - $adjacents; $counter <= $page + $adjacents; $counter++) {
-					if($counter == $page) {
+
+				// Start the for loop to make the page links
+				for($counter = $page - $adjacents; $counter <= $page + $adjacents; $counter++)
+				{
+					if($counter == $page)
+					{
 						$pagination .= "<span class=\"current\">$counter</span>";
 					}
-					else {
+					else
+					{
 						$pagination .= "<a href=\"" . $target . $target . $pagestring . $counter . "\">$counter</a>";
 					}
 				}
-				# Add the ellipses and the last few pages
+
+				// Add the ellipses and the last few pages
 				$pagination .= "...";
 				$pagination .= "<a href=\"" . $target . $pagestring . $lpm1 . "\">$lpm1</a>";
 				$pagination .= "<a href=\"" . $target . $pagestring . $lastpage . "\">$lastpage</a>";
 			}
-			# We're close to the end, so only hide the early pages
-			else {
-				# Add the first few pages
+			// We're close to the end, so only hide the early pages
+			else
+			{
+				// Add the first few pages
 				$pagination .= "<a href=\"".$target.$pagestring."1\">1</a>";
 				$pagination .= "<a href=\"".$target.$pagestring."2\">2</a>";
-				# Add the ellipses
+
+				// Add the ellipses
 				$pagination .= "<span class=\"elipses\">...</span>";
-				for ($counter = $lastpage - (1 + ($adjacents * 3)); $counter <= $lastpage; $counter++) {
-					if ($counter == $page) {
+				for ($counter = $lastpage - (1 + ($adjacents * 3)); $counter <= $lastpage; $counter++)
+				{
+					if ($counter == $page)
+					{
 						$pagination .= "<span class=\"current\">$counter</span>";
 					}
-					else {
+					else
+					{
 						$pagination .= "<a href=\"".$target.$pagestring.$counter."\">$counter</a>";
 					}
 				}
 			}
 		}
-		# Add the next button
-		if ($page < $counter - 1) {
+		// Add the next button
+		if ($page < $counter - 1)
+		{
 			$pagination .= "<a href=\"".$target.$pagestring.$next."\">next &raquo;</a>";
 		}
-		else {
+		else
+		{
 			$pagination .= "<span class=\"disabled\">next &raquo;</span>";
 		}
-		# End the pagination div
+
+		// End the pagination div
 		$pagination .= "</div>\n";
 	}
-	# Return the final pagination div
+
+	// Return the final pagination div
 	return $pagination;
 }
 
@@ -291,16 +328,14 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 
 	Outputs a list of themes in HTML <option> tags.
 */
-function list_themes() {
+function list_themes()
+{
 	// List directories
 	$dir = dirlist(ABSPATH .'/themes');
-	foreach($dir as $k => $v) {
-		if(bloginfo('theme','r') == $k) {
-			echo '<option selected="selected" value="'.$k.'">'.$v.'</option>';
-		}
-		else {
-			echo '<option value="'.$k.'">'.$v.'</option>';
-		}
+
+	foreach($dir as $k => $v)
+	{
+		echo '<option value="'. utf_htmlspecialchars($k). '"'. (get_bloginfo('theme') == $k ? ' selected="selected"' : ''). '>'. utf_htmlspecialchars($v). '</option>';
 	}
 }
 
@@ -318,17 +353,27 @@ function list_themes() {
 
 		HTML list items for however many pages were requested.
 */
-function list_pages($tag = 'li', $limit = 5) {
+function list_pages($tag = 'li', $limit = 5)
+{
 	global $dbh;
-	$limit = intval($limit);
-	$result = $dbh->query("SELECT * FROM pages ORDER BY id desc LIMIT 0, ".$limit);
-	if($result->numRows() > 0) {
-		while($pages = $result->fetchObject()) {
-			echo '<'.$tag.'><a href="'.get_bloginfo('url').'?page='.$pages->id.'">'.$pages->title.'</a>'.'</'.$tag.'>';
+
+	$result = $dbh->query("
+		SELECT
+			*
+		FROM pages
+		ORDER BY page_id DESC
+		LIMIT 0, ". ((int)$limit));
+
+	if($result->numRows() > 0)
+	{
+		while($page = $result->fetchObject())
+		{
+			echo '<'. $tag. '><a href="'. get_bloginfo('url'). '?page='. $page->page_id. '">'. $page->page_title. '</a></'. $tag. '>';
 		}
 	}
-	else {
-		echo 'No pages to list.';
+	else
+	{
+		echo '<'. $tag. '>No pages.</'. $tag. '>';
 	}
 }
 
@@ -346,31 +391,39 @@ function list_pages($tag = 'li', $limit = 5) {
 
 		HTML list items for however many pages were requested.
 */
-function list_categories($tag = 'li', $limit = 5, $selected = null) {
+function list_categories($tag = 'li', $limit = 5, $selected = null)
+{
 	// Grab the database handle
 	global $dbh;
+
 	// Is there a limit? If so, typecast it and add it to the query
-	if($limit != null) {
-		$limit = " LIMIT 0, ".(int)$limit;
+	if($limit != null)
+	{
+		$limit = "LIMIT 0, ".(int)$limit;
 	}
+
 	// Get category data from database
-	$result = $dbh->query("SELECT * FROM categories ORDER BY id desc".$limit) or die(sqlite_error_string($dbh->lastError));
+	$result = $dbh->query("
+		SELECT
+			*
+		FROM categories
+		ORDER BY category_id DESC
+		".$limit) or die(sqlite_error_string($dbh->lastError));
+
 	// What tag are we using?
-	if($tag == 'option') {
-		while($row = $result->fetchObject()) {
-			// If there's a category that needs selecting, we can do it!
-			if($selected == $row->id) {
-				echo '<option value="'.$row->id.'" selected="selected">'.stripslashes($row->fullname).'</option>';
-			}
-			else {
-				echo '<option value="'.$row->id.'">'.stripslashes($row->fullname).'</option>';
-			}
+	if($tag == 'option')
+	{
+		while($row = $result->fetchObject())
+		{
+			echo '<option value="'. $row->category_id. '"'. ($this->category_id == $selected ? ' selected="selected"' : ''). '>'. $row->full_name. '</option>';
 		}
 	}
-	else {
+	else
+	{
 		// Sort through and create list items
-		while($row = $result->fetchObject()) {
-			echo '<li><a href="'.get_bloginfo('url').'?category='.(int)$row->id.'">'.stripslashes($row->fullname).'</a></li>';
+		while($row = $result->fetchObject())
+		{
+			echo '<'. $tag. '><a href="'. get_bloginfo('url'). '?category='. $row->category_id. '">'. $row->full_name .'</a></'. $tag. '>';
 		}
 	}
 
@@ -381,19 +434,31 @@ function list_categories($tag = 'li', $limit = 5, $selected = null) {
 
 	Outputs a multi-level HTML list containing links for monthly post archives.
 */
-function list_archives($limit = 10) {
+function list_archives($limit = 10)
+{
 	// Grab the database handle
 	global $dbh;
+
 	// Get archive data
-	$result = $dbh->query("SELECT date FROM posts WHERE published=1 ORDER BY id desc LIMIT 0, ".(int)$limit);
+	$result = $dbh->query("
+		SELECT
+			post_date
+		FROM posts WHERE published >= ". time(). "
+		ORDER BY post_date DESC
+		LIMIT 0, ".(int)$limit);
+
 	// Sort through and create list items
-	while($row = $result->fetchObject()) {
-		$month = date('m', $row->date);
-		$monthname = date('F', $row->date);
-		$year = date('Y', $row->date);
-		if(!isset($post[$year][$month])) {
-			echo '<li><a href="'.get_bloginfo('url').'?archive='.$year.$month.'">'.$monthname.' '.$year.'</a></li>';
+	while($row = $result->fetchObject())
+	{
+		$month = date('m', $row->post_date);
+		$monthname = date('F', $row->post_date);
+		$year = date('Y', $row->post_date);
+
+		if(!isset($post[$year][$month]))
+		{
+			echo '<li><a href="'. get_bloginfo('url'). '?archive='. $year. $month.'">'. $monthname. ' '. $year. '</a></li>';
 		}
+
 		$post[$year][$month] = true;
 	}
 }
@@ -407,20 +472,33 @@ function list_archives($limit = 10) {
 
 		The number of comments as an integer.
 */
-function get_commentnum($id) {
+function get_commentnum($id)
+{
 	// Make the database handle available here
 	global $dbh;
+
 	// If it's null, use the global
-	if($id == null) $id = $GLOBALS['pid'];
+	if($id == null)
+	{
+		$id = $GLOBALS['pid'];
+	}
+
 	// Set the query
-	$query = $dbh->query("SELECT COUNT(*) FROM comments WHERE published=1 AND pid=".(int)$id) or die(sqlite_error_string($dbh->lastError));
+	$query = $dbh->query("
+		SELECT
+			COUNT(*)
+		FROM comments
+		WHERE published = 1 AND post_id= ". ((int)$id)) or die(sqlite_error_string($dbh->lastError));
+
 	// Query the database
 	@list($commentnum) = $query->fetch(SQLITE_NUM);
+
 	// Return data
 	return $commentnum;
 }
 
-function commentnum($id) {
+function commentnum($id)
+{
 	echo get_commentnum($id);
 }
 
@@ -438,22 +516,10 @@ function commentnum($id) {
 
 		The appropriate class name.
 */
-function alternateColor($class1, $class2) {
-	# If $count isn't set, set it as 1
-	if(!isset($count)) { $count = 1; }
-	# Make PHP remember $count
-	static $count;
-	# Is it odd or even?
-	if($count % 2 == 0) {
-		# It's even!
-		echo $class1;
-	}
-	else {
-		# It's odd...
-		echo $class2;
-	}
-	# Increase $count by 1 for next time
-	$count++;
-}
+function alternateColor($class1, $class2)
+{
+	static $count = 1;
 
+	return (($count++) % 2) == 0 ? $class1 : $class2;
+}
 ?>

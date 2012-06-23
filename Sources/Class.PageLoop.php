@@ -73,7 +73,11 @@ class PageLoop
 		$dbh = $this->dbh;
 
 		// Query the database for the page data
-		$this->result = $dbh->query("SELECT * FROM 'pages' WHERE id=".$pid);
+		$this->result = $dbh->query("
+			SELECT
+				*
+			FROM 'pages'
+			WHERE page_id = ".$pid);
 	}
 
 	/*
@@ -124,7 +128,7 @@ class PageLoop
 		// We didn't screw up and keep an empty query, did we?
 		if(!empty($this->cur_result))
 		{
-			echo get_bloginfo('url').'?page='.(int)$this->cur_result->id;
+			echo get_bloginfo('url'). '?page='. (int)$this->cur_result->page_id;
 		}
 		// Oh no, we screwed up :(
 		else
@@ -144,7 +148,7 @@ class PageLoop
 		// We didn't screw up and keep an empty query, did we?
 		if(!empty($this->cur_result))
 		{
-			echo $this->cur_result->title;
+			echo $this->cur_result->page_title;
 		}
 		// Oh no, we screwed up :(
 		else
@@ -164,7 +168,7 @@ class PageLoop
 		// We didn't screw up and keep an empty query, did we?
 		if(!empty($this->cur_result))
 		{
-			echo $this->cur_result->page;
+			echo $this->cur_result->page_text;
 		}
 		// Oh no, we screwed up :(
 		else

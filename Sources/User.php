@@ -64,9 +64,9 @@ function user_login($options)
 	{
 		$request = $dbh->query("
 			SELECT
-				id, password, ip, salt
+				user_id, user_pass, user_ip, user_salt
 			FROM users
-			WHERE LOWER(username) = '". sqlite_escape_string(utf_strtolower(utf_htmlspecialchars($options['username']))). "'
+			WHERE LOWER(user_name) = '". sqlite_escape_string(utf_strtolower(utf_htmlspecialchars($options['username']))). "'
 			LIMIT 1");
 
 		if($request->numRows() == 0)
@@ -105,8 +105,8 @@ function user_login($options)
 
 			$dbh->query("
 				UPDATE users
-				SET salt = '$new_salt', password = '$new_password'". (user()->ip() != $user_ip ? ', ip = \''. $new_ip. '\'' : ''). "
-				WHERE id = $user_id");
+				SET user_salt = '$new_salt', user_pass = '$new_password'". (user()->ip() != $user_ip ? ', user_ip = \''. $new_ip. '\'' : ''). "
+				WHERE user_id = $user_id");
 
 			// Now, set that cookie!
 			setcookie(LBCOOKIE, implode('|', array($user_id, $new_password)), (!empty($options['remember_me']) ? time() + 2592000 : 0), '/');
@@ -152,9 +152,9 @@ function user_name_allowed($name, $id = 0)
 	// Alright, let's check!
 	$request = $dbh->query("
 		SELECT
-			id
+			user_id
 		FROM users
-		WHERE (LOWER(username) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "') OR LOWER(displayname) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "')) AND id != ". ((int)$id). "
+		WHERE (LOWER(user_name) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "') OR LOWER(display_name) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "')) AND user_id != ". ((int)$id). "
 		LIMIT 1");
 
 	// If there are no rows, they're free to have at it!
@@ -189,7 +189,7 @@ function user_email_allowed($email, $id = 0)
 		SELECT
 			id
 		FROM users
-		WHERE LOWER(email) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($email)). "') AND id != ". ((int)$id). "
+		WHERE LOWER(user_email) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($email)). "') AND user_id != ". ((int)$id). "
 		LIMIT 1");
 
 	// Any rows? If none, it's okay for them to use it.
@@ -268,9 +268,9 @@ class User
 				// Now we need to see if they can log in.
 				$request = $dbh->query("
 					SELECT
-						id, username, password, email, displayname, role
+						user_id, user_name, user_pass, user_email, display_name, user_role
 					FROM users
-					WHERE id = ". ((int)$user_id). " AND password = '". sqlite_escape_string($user_pass). "'
+					WHERE user_id = ". ((int)$user_id). " AND user_pass = '". sqlite_escape_string($user_pass). "'
 					LIMIT 1");
 
 				// Did we find anything?
@@ -280,12 +280,12 @@ class User
 					$row = $request->fetch(SQLITE_ASSOC);
 
 					// Now set their information.
-					$this->id = (int)$row['id'];
-					$this->name = $row['username'];
-					$this->password = $row['password'];
-					$this->email = $row['email'];
-					$this->displayName = $row['displayname'];
-					$this->role = (int)$row['role'];
+					$this->id = (int)$row['user_id'];
+					$this->name = $row['user_name'];
+					$this->password = $row['user_pass'];
+					$this->email = $row['user_email'];
+					$this->displayName = $row['display_name'];
+					$this->role = (int)$row['user_role'];
 
 					$_SESSION['user_id'] = $this->id();
 					$_SESSION['user_pass'] = $this->password();

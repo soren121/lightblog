@@ -43,7 +43,10 @@ function get_bloginfo($var, $reload = false)
 	// If this is the first time bloginfo's been called...
 	if($GLOBALS['bloginfo_data'] === null || !empty($reload))
 	{
-		$result = $dbh->query('SELECT * FROM core') or die(sqlite_error_string($dbh->lastError));
+		$result = $dbh->query('
+			SELECT
+				variable, value
+			FROM settings') or die(sqlite_error_string($dbh->lastError));
 
 		// Let's make an array!
 		$GLOBALS['bloginfo_data'] = array();
@@ -75,11 +78,15 @@ function get_roles($role = null)
 	static $rolequery = null;
 	if($rolequery === null)
 	{
-		$result = $dbh->query("SELECT id,role FROM roles") or die(sqlite_error_string($dbh->lastError));
+		$result = $dbh->query('
+			SELECT
+				role_id, role_name
+			FROM roles') or die(sqlite_error_string($dbh->lastError));
+
 		$roles = array();
 		while($row = $result->fetchObject())
 		{
-			$roles[$row->id] = $row->role;
+			$roles[$row->role_id] = $row->role_name;
 		}
 	}
 	if(!is_null($role))
