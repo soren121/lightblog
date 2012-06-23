@@ -16,17 +16,30 @@
 
 ***********************************************/
 
+if(!defined('INLB'))
+{
+	die('Nice try...');
+}
+
 /*
 	Class: PostLoop
 
-	Provides an easy method to display a list of posts, for example, on the front page.
+	Provides an easy method to display a list of posts, for example, on the
+	front page.
 */
 class PostLoop
 {
-	// Set private database variables
-	private $dbh = null;
-	private $result = null;
-	private $cur_result = null;
+	// Variable: dbh
+	// The database handle.
+	private $dbh;
+
+	// Variable: result
+	// The query result from fetching the posts to be displayed.
+	private $result;
+
+	// Variable: current
+	// The current row retrieved from the database.
+	private $current;
 
 	/*
 		Constructor: __construct
@@ -35,6 +48,10 @@ class PostLoop
 	*/
 	public function __construct()
 	{
+		$this->dbh = null;
+		$this->result = null;
+		$this->current = null;
+
 		$this->set_dbh($GLOBALS['dbh']);
 	}
 
@@ -44,8 +61,10 @@ class PostLoop
 		Sets the database handle.
 
 		Parameters:
+			resource $dbh - Database handle object.
 
-			dbh - Database handle object.
+		Returns:
+			void - Nothing is returned by this method.
 	*/
 	public function set_dbh($dbh)
 	{
@@ -64,41 +83,60 @@ class PostLoop
 	/*
 		Function: parseQuery
 
-		Parses the very basic query given and turns it in to a full-blown SQL query!
+		Parses the very basic query given and turns it in to a full-blown SQL
+		query!
 
 		Parameters:
-
-			single - Optional parameter. Used to specify whether to obtain a single post or not.
+			bool $single - Specifies whether to obtain a single post (defaults to
+										 false).
 
 		Returns:
-
-			A complete SQL query.
+			string - A complete SQL query.
 	*/
 	private function parseQuery($single = false)
 	{
-		// Get the view type
+		// What kind of query are we generating?
+		if(!isset($GLOBALS['postquery']['type']))
+		{
+			// I guess we don't know... You have to tell us!
+			trigger_error('Unknown post query type', E_USER_ERROR);
+		}
+
 		$querytype = $GLOBALS['postquery']['type'];
 
-		// If we're only showing one post, then we might be able to show it even if it's unpublished...
+		// If we're only showing one post, then we might be able to show it even
+		// if it's unpublished...
 		if($single == true)
 		{
-			// Specify post ID
-			$pid = (int)$GLOBALS['pid'];
-			$where = "id=$pid";
-
-			// If the user is logged in...
-			if(!user()->name() && !permissions(1))
+			// Then get the specific post ID. If it is defined...
+			if(!isset($GLOBALS['pid']))
 			{
-				$where .= " AND published=1";
+				trigger_error('Unknown pid', E_USER_ERROR);
+			}
+
+			$pid = (int)$GLOBALS['pid'];
+
+			// We know the specific ID, so add it to our WHERE clause.
+			$where = 'id= '. $pid;
+
+			// If the user isn't an administrator then they can view unpublished
+			// posts. However, they can also view unpublished posts if they made
+			// them, but LightBlog doesn't support this yet.
+			if(!permissions(1))
+			{
+				$where .= ' AND published = 1';
 			}
 		}
 		else
 		{
-			$where = "published=1";
+			$where = !permissions(1) ? 'published = 1' : '1';
 		}
+
+		// Viewing the archive list?
 		if($querytype == 'archive')
 		{
 			$queryextra = substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0);
+			var_dump($queryextra);
 			$queryextra = explode('-', $queryextra);
 			$firstday = mktime(0, 0, 0, $queryextra[1], 1, $queryextra[0]);
 			$lastday = mktime(0, 0, 0, ($queryextra[1] + 1), 0, $queryextra[0]);

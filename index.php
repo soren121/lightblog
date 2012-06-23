@@ -15,14 +15,25 @@
 
 *********************************************/
 
-// Require config file
+// This constant will allows us to include files that can't be viewed
+// directly.
+define('INLB', true);
+
+// We definitely need this, it will setup everything we need.
 require('Sources/Core.php');
 
-// Include theme files
+// Which theme are you using?
 $themeName = get_bloginfo('theme');
 
-// If it isn't a post or page we're showing...
-if(!isset($_GET['post']) && !isset($_GET['page'])) {
+// This could be fatal!
+if(!file_exists('themes/'. basename($themeName). '/main.php'))
+{
+	trigger_error('The theme "'. utf_htmlspecialchars($themeName). '" does not exist', E_USER_ERROR);
+}
+
+// If it isn't a post or page we're showing, then make a list of posts.
+if(!isset($_GET['post']) && !isset($_GET['page']))
+{
 	// Require the proper loop class
 	require(ABSPATH .'/Sources/Class.PostLoop.php');
 
