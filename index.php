@@ -39,10 +39,12 @@ if(!isset($_GET['post']) && !isset($_GET['page']))
 
 	// Pagination variables
 	$file = basename($_SERVER['SCRIPT_FILENAME']);
-	if(isset($_GET['p'])) {
+	if(isset($_GET['p']))
+	{
 		$page = (int)$_GET['p'];
 	}
-	else {
+	else
+	{
 		$page = 1;
 	}
 
@@ -66,24 +68,31 @@ if(!isset($_GET['post']) && !isset($_GET['page']))
 }
 
 // Looks like it is a post or page
-else {
-	if(isset($_GET['post'])) {
+else
+{
+	if(isset($_GET['post']))
+	{
 		// Require the proper loop class
 		require(ABSPATH .'/Sources/Class.PostLoop.php');
 		require(ABSPATH .'/Sources/Class.CommentLoop.php');
+
 		// Get post ID
 		$GLOBALS['pid'] = (int)$_GET['post'];
 		$GLOBALS['postquery']['type'] = 'post';
+
 		// Display appropriate theme file
 		include('themes/'.$themeName.'/post.php');
 	}
 
-	elseif(isset($_GET['page'])) {
+	elseif(isset($_GET['page']))
+	{
 		// Require the proper loop class
 		require(ABSPATH .'/Sources/Class.PageLoop.php');
+
 		// Get page ID
 		$GLOBALS['pid'] = (int)$_GET['page'];
 		$GLOBALS['postquery']['type'] = 'page';
+
 		// Display appropriate theme file
 		include('themes/'.$themeName.'/page.php');
 	}

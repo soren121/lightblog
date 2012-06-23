@@ -23,10 +23,16 @@
 */
 class CommentLoop
 {
-	// Set private database variables
-	private $dbh = null;
-	private $result = null;
-	private $cur_result = null;
+	// Variable: dbh
+	private $dbh;
+
+	// Variable: data
+	// An array containing the currently loaded data.
+	private $data;
+
+	// Variable: current
+	// An integer containing the current location within the loaded comments.
+	private $current;
 
 	/*
 		Constructor: __construct
@@ -35,7 +41,17 @@ class CommentLoop
 	*/
 	public function __construct()
 	{
+		$this->dbh = null;
+		$this->data = array(
+										'post' => array(
+																'id' => -1,
+															),
+										'comments' => array(),
+									);
+		$this->current = null;
+
 		$this->set_dbh($GLOBALS['dbh']);
+		$this->load();
 	}
 
 	/*
@@ -62,87 +78,176 @@ class CommentLoop
 	}
 
 	/*
-		Function: comments_open
+		Function: load
 
-		Checks if comments are enabled.
+		Loads the necessary information to display the list of comments.
+
+		Parameters:
+			none
 
 		Returns:
-
-			Boolean value (e.g. true/false.)
+			void - Nothing is returned by this method.
 	*/
-	public function comments_open()
+	private function load()
 	{
-		$dbh = $this->dbh;
-		$pid = (int)$GLOBALS['pid'];
-
-		$request = $dbh->query("
-			SELECT
-				allow_comments
-			FROM 'posts'
-			WHERE post_id = '$pid'");
-
-		if($request->fetchSingle() == 1)
+		// Do we have a post ID? We need that!
+		if(!isset($GLOBALS['pid']))
 		{
-			return true;
+			trigger_error('No post ID specified', E_USER_NOTICE);
+
+			return;
 		}
-		else
+
+		$this->data['post']['id'] = (int)$GLOBALS['pid'];
+
+		// There are a few things from the posts table we need to fetch.
+		$request = $this->dbh->query("
+			SELECT
+				allow_comments, allow_pingbacks, comments
+			FROM posts
+			WHERE post_id = {$this->data['post']['id']}
+			LIMIT 1");
+
+		// Does the post exist?
+		if($request->numRows() > 0)
 		{
-			return false;
+			list($allow_comments, $allow_pingbacks, $comments) = $request->fetch(SQLITE_NUM);
+
+			$this->data['post']['comments'] = !empty($allow_comments);
+			$this->data['post']['pingbacks'] = !empty($allow_pingbacks);
+			$this->data['post']['comments'] = $comments;
+
+			// Now load up all the comments.
+			$request = $this->dbh->query("
+				SELECT
+					comment_id, comment_type, published, commenter_id, commenter_name,
+					commenter_email, commenter_website, commenter_ip, comment_date,
+					comment_text
+				FROM comments
+				WHERE post_id = {$this->data['post']['id']}". (permissions(3) ? '' : ' AND published = 1'). "
+				ORDER BY comment_date ASC");
+
+			$users = array();
+			while($row = $request->fetch(SQLITE_ASSOC))
+			{
+				$this->data['comments'][] = array(
+																			'id' => $row['comment_id'],
+																			'type' => $row['comment_type'],
+																			'published' => !empty($row['published']),
+																			'commenter' => array(
+																											 'id' => $row['commenter_id'],
+																											 'name' => $row['commenter_name'],
+																											 'email' => $row['commenter_email'],
+																											 'website' => is_url($row['commenter_website']) ? $row['commenter_website'] : null,
+																											 'ip' => $row['commenter_ip'],
+																										 ),
+																			'date' => date('F j, Y \a\t g:i A', $row['comment_date']),
+																			'timestamp' => $row['comment_date'],
+																			'text' => $row['comment_text'],
+																		);
+
+				// We will load all user information at once.
+				if($row['commenter_id'] > 0)
+				{
+					$users[] = $row['commenter_id'];
+				}
+			}
+
+			// Did we load anything?
+			if(count($this->data['comments']) == 0)
+			{
+				$this->data['comments'] = null;
+			}
+			else
+			{
+				// Just to be sure, reset the pointer of the array to the beginning.
+				reset($this->data['comments']);
+
+				// Now set the current location within the array.
+				$this->current = key($this->data['comments']);
+			}
 		}
 	}
 
 	/*
-		Function: obtain_comments
+		Function: allowed
 
-		Obtains the data for comments associated with a post.
+		Returns whether the current post allows comments.
+
+		Parameters:
+			none
+
+		Returns:
+			bool - Returns true if the post allows comments, false if not.
 	*/
-	public function obtain_comments()
+	public function allowed()
 	{
-		$dbh = $this->dbh;
-		$pid = (int)$GLOBALS['pid'];
+		return !empty($this->data['post']['comments']);
+	}
 
-		$this->result = $dbh->query("
-			SELECT
-				*
-			FROM 'comments'
-			WHERE published = 1 AND post_id = '$pid'
-			ORDER BY comment_date ASC");
+	/*
+		Function: pingbacks_allowed
+
+		Returns whether the current post allows pingbacks.
+
+		Parameters:
+			none
+
+		Returns:
+			bool - Returns true if the post allows pingbacks, false if not.
+	*/
+	public function pingbacks_allowed()
+	{
+		return !empty($this->data['post']['pingbacks']);
+	}
+
+	/*
+		Function: count
+
+		Returns the number of comments on the current post.
+
+		Parameters:
+			none
+
+		Returns:
+			int - Returns the number of comments on the current post.
+
+		Note:
+			This number only reflects the total number of approved comments, as
+			an administrator may see more comments than indicated by this method.
+	*/
+	public function count()
+	{
+		return $this->data['post']['id'] > -1 ? $this->data['post']['comments'] : -1;
 	}
 
 	/*
 		Function: has_comments
 
-		Checks if the query result we got contained any comments for that post.
+		Returns whether the post has comments to display.
+
+		Parameters:
+			none
 
 		Returns:
-
-			Boolean value (e.g. true/false.)
+			bool - Returns true if there are comments to display, false if not.
 	*/
 	public function has_comments()
 	{
 		// Do we have any comments?
-		if(!empty($this->result))
+		if($this->data['comments'] !== null && $this->current !== null)
 		{
-			// Convert query results into something usable
-			$this->cur_result = $this->result->fetchObject();
+			// Save the current location.
+			$this->current = key($this->data['comments']);
 
-			// This while loop will remain true until we run out of comments
-			while($post = $this->cur_result)
-			{
-				return true;
-			}
+			// Move us along.
+			next($this->data['comments']);
 
-			// At which point it turns false, ending the loop in the template file
-			return false;
+			return $this->current !== null;
 		}
-		// We don't have any comments :(
 		else
 		{
-			// Erase our useless query results
-			$this->result = null;
-			$this->cur_result = null;
-
-			// Send the bad news (aka end the while loop)
+			// Nope, we don't.
 			return false;
 		}
 	}
@@ -158,23 +263,24 @@ class CommentLoop
 	*/
 	public function list_comments($tag = 'div')
 	{
-		if(!empty($this->cur_result))
+		// Do we have a comment to display?
+		if($this->current !== null)
 		{
-			echo '<'.$tag.' class="comment '; alternateColor('c1', 'c2'); echo '" id="comment-'.(int)$this->cur_result->comment_id.'">
-					<img class="comment_gravatar" src="'.$this->gravatar().'" alt="" />';
+			echo '<'.$tag.' class="comment '; alternateColor('c1', 'c2'); echo '" id="comment-'. $this->id().'">
+					<img class="comment_gravatar" src="'. $this->gravatar(). '" alt="" />';
 
-					if(utf_strlen($this->cur_result->commenter_website) == 0 || !is_url($this->cur_result->commenter_website))
+					if(utf_strlen($this->commenter_website()) == 0)
 					{
-						echo '<span class="comment_name">'.$this->cur_result->commenter_name.'</span>';
+						echo '<span class="comment_name">'. $this->commenter_name(). '</span>';
 					}
 					else
 					{
-						echo '<a class="comment_name" href="'.$this->cur_result->commenter_website.'">'.stripslashes($this->cur_result->commenter_name).'</a>';
+						echo '<a class="comment_name" href="'. $this->commenter_website(). '" rel="nofollow">'. $this->commenter_name(). '</a>';
 					}
 
 					echo '<span class="comment_says"> says:</span><br />
-					<a href="'.get_bloginfo('url').'?post='.(int)$this->cur_result->post_id.'#comment-'.(int)$this->cur_result->comment_id.'" class="comment_date">'.date('F j, Y \a\t g:i A', (int)$this->cur_result->comment_date).'</a><br />
-					<p class="comment_text">'.$this->cur_result->comment_text.'</p>
+					<a href="'. get_bloginfo('url'). '?post='. $this->data['post']['id']. '#comment-'. $this->id(). '" class="comment_date">'. $this->date().'</a><br />
+					<p class="comment_text">'. $this->text(). '</p>
 			</'.$tag.'>';
 		}
 		// Oh no, we screwed up :(
@@ -197,11 +303,9 @@ class CommentLoop
 	private function gravatar($size = 32)
 	{
 		// We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result))
+		if($this->current !== null)
 		{
-			$email = md5($this->cur_result->commenter_email);
-			$size = (int)$size;
-			return "http://www.gravatar.com/avatar.php?gravatar_id=".$email."&amp;size=".$size;
+			return 'http://www.gravatar.com/avatar.php?gravatar_id='. md5($this->commenter_email()). '&amp;size='. ((int)$size);
 		}
 		// Oh no, we screwed up :(
 		else
@@ -209,6 +313,72 @@ class CommentLoop
 			// Send nothing back
 			return false;
 		}
+	}
+
+	/*
+		Function: id
+
+		Returns the ID of the current comment.
+
+		Parameters:
+			none
+
+		Returns:
+			int - Returns the comment ID, but null if there is no comment.
+	*/
+	public function id()
+	{
+		return $this->current !== null ? $this->data['comments'][$this->current]['id'] : -1;
+	}
+
+	public function type()
+	{
+		return $this->current !== null ? $this->data['comments'][$this->current]['type'] : null;
+	}
+
+	public function published()
+	{
+		return $this->current !== null ? $this->data['comments'][$this->current]['published'] : null;
+	}
+
+	public function commenter_id()
+	{
+		return $this->current !== null ? $this->data['comments'][$this->current]['commenter']['id'] : null;
+	}
+
+	public function commenter_name()
+	{
+		return $this->current !== null ? $this->data['comments'][$this->current]['commenter']['name'] : null;
+	}
+
+	public function commenter_email()
+	{
+		return $this->current !== null ? $this->data['comments'][$this->current]['commenter']['email'] : null;
+	}
+
+	public function commenter_website()
+	{
+		return $this->current !== null ? $this->data['comments'][$this->current]['commenter']['website'] : null;
+	}
+
+	public function commenter_ip()
+	{
+		return $this->current !== null ? $this->data['comments'][$this->current]['commenter']['ip'] : null;
+	}
+
+	public function date()
+	{
+		return $this->current !== null ? $this->data['comments'][$this->current]['date'] : null;
+	}
+
+	public function timestamp()
+	{
+		return $this->current !== null ? $this->data['comments'][$this->current]['timestamp'] : null;
+	}
+
+	public function text()
+	{
+		return $this->current !== null ? $this->data['comments'][$this->current]['text'] : null;
 	}
 
 	/*
@@ -250,5 +420,4 @@ class CommentLoop
 		echo '<p style="display:none;"><input name="comment_pid" type="hidden" value="'.$GLOBALS['pid'].'" /></p>';
 	}
 }
-
 ?>

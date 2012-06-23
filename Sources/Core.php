@@ -443,7 +443,7 @@ function list_archives($limit = 10)
 	$result = $dbh->query("
 		SELECT
 			post_date
-		FROM posts WHERE published >= ". time(). "
+		FROM posts WHERE published <= ". time(). "
 		ORDER BY post_date DESC
 		LIMIT 0, ".(int)$limit);
 
