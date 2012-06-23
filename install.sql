@@ -100,7 +100,7 @@ CREATE INDEX 'posts_date_index' ON 'posts' ('post_date');
 CREATE INDEX 'posts_published_index' ON 'posts' ('published');
 CREATE INDEX 'posts_author_index' ON 'posts' ('author_id');
 
-INSERT INTO 'posts' VALUES(1, 'Hello world!', 'hello-world', strftime('%s', 'now'), 'LightBlog Dev Team', 0, 'Thank you for choosing LightBlog to manage your website. We hope you like it! Feel free to delete this post after you''re all set up. :)<br /><br />-The LightBlog Team<br /><a href="http://lightblog.googlecode.com/">http://lightblog.googlecode.com/</a>', '1', 1, 0, 0);
+INSERT INTO 'posts' VALUES(1, 'Hello world!', 'hello-world', strftime('%s', 'now'), 1, 'LightBlog Dev Team', 0, 'Thank you for choosing LightBlog to manage your website. We hope you like it! Feel free to delete this post after you''re all set up. :)<br /><br />-The LightBlog Team<br /><a href="http://lightblog.googlecode.com/">http://lightblog.googlecode.com/</a>', '1', 1, 0, 0);
 
 CREATE TABLE 'post_categories'
 (

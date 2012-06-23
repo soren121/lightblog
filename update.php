@@ -16,6 +16,9 @@
 
 *********************************************/
 
+define('INLB', true);
+define('INDEVMODE', true);
+
 // Shutdown Magic Quotes automatically
 // Highly inefficient, but there isn't much we can do about it
 if((function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() == 1) || @ini_get('magic_quotes_sybase'))
@@ -76,29 +79,230 @@ function menuClass($item, $op = 0)
 	}
 }
 
+function remove_inserts($sql)
+{
+	// Since none of the text have semicolons we can do this safely.
+	$commands = array();
+	foreach(explode(';', $sql) as $command)
+	{
+		$command = trim($command);
+
+		// Like the function name implies, no INSERTs. Well, except for a couple
+		// tables.
+		if(strtoupper(substr($command, 0, 6)) == 'INSERT' && strpos($command, 'INSERT INTO \'roles\'') === false && strpos($command, 'INSERT INTO \'role_permissions\'') === false)
+		{
+			continue;
+		}
+
+		$commands[] = $command;
+	}
+
+	return implode(';'. "\r\n", $commands);
+}
+
+function create_temp_db($sql)
+{
+	require(dirname(__FILE__). '/Sources/StringFunctions.php');
+
+	// We need a random name for the database.
+	$filename = randomString(mt_rand(32, 64)). '.db';
+
+	$ndbh = new SQLiteDatabase($filename);
+
+	// Execute the queries.
+	$executed = $ndbh->queryExec($sql, $error_message);
+
+	return array($ndbh, $filename, ($executed ? null : $error_message));
+}
+
+function sanitize_row($row)
+{
+	foreach($row as $key => $value)
+	{
+		if((string)$value == (string)(int)$value)
+		{
+			$value = (int)$value;
+		}
+		elseif((string)$value == (string)(float)$value)
+		{
+			$value = (float)$value;
+		}
+		else
+		{
+			$value = sqlite_escape_string($value);
+		}
+
+		$row[$key] = $value;
+	}
+
+	return $row;
+}
+
+function generate_query($table_name, $data)
+{
+	return 'INSERT INTO \''. $table_name. '\' VALUES(\''. implode('\', \'', sanitize_row($data)). '\')';
+}
+
+function copy_data($db, $ndb)
+{
+	// First off, for the categories.
+	$request = $db->query('
+		SELECT
+			id, shortname, fullname, info
+		FROM categories');
+
+	while($row = $request->fetch(SQLITE_ASSOC))
+	{
+		$ndb->query(generate_query('categories', array($row['id'], $row['shortname'], $row['fullname'], $row['info'])));
+	}
+
+	// Then all the settings.
+	$request = $db->query('
+		SELECT
+			variable, value
+		FROM core');
+
+	while($row = $request->fetch(SQLITE_ASSOC))
+	{
+		$ndb->query(generate_query('settings', array($row['variable'], $row['value'])));
+	}
+
+	// Comments, we want those!
+	$request = $db->query('
+		SELECT
+			id, published, pid, name, email, website, date, text, spam
+		FROM comments');
+
+	$comment_count = array();
+	while($row = $request->fetch(SQLITE_ASSOC))
+	{
+		$ndb->query(generate_query('comments', array($row['id'], $row['pid'], 'comment', $row['published'], 0, $row['name'], $row['email'], $row['website'], '', $row['date'], $row['text'], $row['spam'])));
+
+		if($row['published'] == 1)
+		{
+			$comment_count[$row['pid']] = (isset($comment_count[$row['pid']]) ? $comment_count[$row['pid']] + 1 : 1);
+		}
+	}
+
+	// We will do users next, we need their names to do a couple things right
+	// in just a bit.
+	$request = $db->query('
+		SELECT
+			id, username, password, email, displayname, role, ip, salt
+		FROM users');
+
+	$id_map = array();
+	while($row = $request->fetch(SQLITE_ASSOC))
+	{
+		$id_map[strtolower($row['username'])] = (int)$row['id'];
+
+		$ndb->query(generate_query('users', array($row['id'], $row['username'], $row['password'], $row['email'], $row['displayname'], $row['role'], '', $row['salt'], 1, time())));
+	}
+
+	// Then their pages...
+	$request = $db->query('
+		SELECT
+			id, title, page, date, author, published
+		FROM pages');
+
+	while($row = $request->fetch(SQLITE_ASSOC))
+	{
+		$ndb->query(generate_query('pages', array($row['id'], $row['title'], generate_shortname($row['id'], $row['title']), $row['date'], $row['published'], $row['author'], isset($id_map[strtolower($row['author'])]) ? $id_map[strtolower($row['author'])] : 0, $row['page'])));
+	}
+
+	// Finally, their posts. The most important, if I do say so myself :P.
+	$request = $db->query('
+		SELECT
+			id, title, post, date, author, published, category, comments
+		FROM posts');
+
+	while($row = $request->fetch(SQLITE_ASSOC))
+	{
+		$ndb->query(generate_query('posts', array($row['id'], $row['title'], generate_shortname($row['id'], $row['title']), $row['date'], $row['published'], $row['author'], isset($id_map[strtolower($row['author'])]) ? $id_map[strtolower($row['author'])] : 0, $row['post'], $row['category'], $row['comments'], $row['comments'], isset($comment_count[$row['id']]) ? $comment_count[$row['id']] : 0)));
+		$ndb->query(generate_query('post_categories', array($row['id'], $row['category'])));
+	}
+}
+
+function generate_shortname($id, $name)
+{
+	$char_map = 'abcdefghijklmnopqrstuvwxyz0123456789';
+	$name_length = strlen($name);
+	$name = strtolower($name);
+	$shortname = '';
+	$prev_char = null;
+	for($index = 0; $index < $name_length; $index++)
+	{
+		$char = substr($name, $index, 1);
+
+		// Is this an allowed character?
+		if(strpos($char_map, $char) === false)
+		{
+			// No repeated -.
+			if($prev_char !== null && $prev_char != '-')
+			{
+				$prev_char = '-';
+				$shortname .= '-';
+			}
+		}
+		else
+		{
+			$prev_char = $char;
+			$shortname .= $char;
+		}
+	}
+
+	return ((int)$id). '-'. trim($shortname, '-');
+}
+
 function update()
 {
 	require('config.php');
 
+	@set_time_limit(3600);
+	@ini_set('memory_limit', '64M');
+
 	$dbh = new SQLiteDatabase( DBH );
 
-	if(!is_readable('update.sql') && !chmod('update.sql', 0644))
+	// We actually use the install.sql file this time...
+	if(!is_readable('install.sql') && !chmod('install.sql', 0644))
 	{
-		return 'Failed to open update.sql. Please chmod it to 644 and try again.';
+		return 'Failed to open install.sql. Please chmod it to 644 and try again.';
 	}
 
 	// Open, read, and close SQL file
-	if(is_readable('update.sql'))
+	if(is_readable('install.sql'))
 	{
-		$sqlh = fopen('update.sql', 'r');
-		$sql = fread($sqlh, filesize('update.sql'));
+		$sqlh = fopen('install.sql', 'r');
+		$sql = fread($sqlh, filesize('install.sql'));
 		fclose($sqlh);
+
+		// Now to do some work...
+		// Such as removing any INSERT's, as they aren't needed.
+		$sql = remove_inserts($sql);
+
+		// Now create a temporary database with the new SQL.
+		list($ndbh, $filename, $error_message) = create_temp_db($sql);
+
+		if($error_message !== null)
+		{
+			return 'Failed to write to the temporary database because: '.$error_message.'.';
+		}
+
+		// Alright, almost there. Now we need to copy the data over from the old
+		// database to the new one.
+		copy_data($dbh, $ndbh);
+
+		// Okay, close the two databases and then rename it all.
+		unset($dbh, $ndbh);
+
+		$backup_name = dirname(DBH). '/backup-'. basename(DBH);
+		rename(DBH, $backup_name);
+		rename($filename, DBH);
+
+		return null;
 	}
 
-	if(!$dbh->queryExec($sql, $errormsg))
-	{
-		return 'Failed to write to the database because: '.$errormsg.'.';
-	}
+	return 'An unknown error occurred.';
 }
 
 // Will process after Step 1
@@ -229,6 +433,7 @@ if(isset($_POST['update']))
 				   start the process. Please note that if you have a lot of content on your site<br />
 				   it will take more time, so please be patient. DO NOT click the back button<br />
 				   or close your browser before the update is complete.</p>
+				 <p><strong>Note:</strong> This process can take a few minutes.</p>
 				<form action="<?php echo basename($_SERVER['SCRIPT_FILENAME']); ?>" method="post">
 					<div>
 						<input type="submit" name="update" value="Update Database" onclick="setTimeout('this.disabled=true', 250);" />
@@ -238,6 +443,7 @@ if(isset($_POST['update']))
 			<?php endif; if($page == 'finish'): ?>
 				<h2>You're done!</h2>
 				<p>Click the Continue button to go on to your updated blog! :)</p>
+				<p>A backup copy of your previous database was kept and may be deleted (containing &quot;backup-&quot; in the name) if everything was properly copied.</p>
 				<button onclick="window.location='<?php echo baseurl(); ?>'">Continue</button>
 			<?php endif; ?>
 			<div class="clear"></div>
