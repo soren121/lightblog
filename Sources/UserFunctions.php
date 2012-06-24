@@ -166,4 +166,64 @@ function users_get($users)
 		return isset($GLOBALS['loaded_users'][(int)$users]) ? $GLOBALS['loaded_users'][(int)$users] : false;
 	}
 }
+
+/*
+	Function: commenter_name
+
+	Attempts to fetch, and then output, the commenter's user name saved when
+	they commented.
+
+	Parameters:
+		none
+
+	Returns:
+		void - Nothing is returned by this function.
+*/
+function commenter_name()
+{
+	if(isset($_COOKIE[LBCOOKIE. '_cname']))
+	{
+		echo utf_htmlspecialchars($_COOKIE[LBCOOKIE. '_cname']);
+	}
+}
+
+/*
+	Function: commenter_email
+
+	Attempts to fetch, and then output, the commenter's email that may have
+	been saved when they commented.
+
+	Parameters:
+		none
+
+	Returns:
+		void
+*/
+function commenter_email()
+{
+	if(isset($_COOKIE[LBCOOKIE. '_cemail']))
+	{
+		echo utf_htmlspecialchars($_COOKIE[LBCOOKIE. '_cemail']);
+	}
+}
+
+/*
+	Function: commenter_website
+
+	Attempts to fetch, and then output, the commenter's website that may have
+	been saved when they commented.
+
+	Parameters:
+		none
+
+	Returns:
+		void
+*/
+function commenter_website()
+{
+	if(isset($_COOKIE[LBCOOKIE. '_curl']) && is_url($_COOKIE[LBCOOKIE. '_curl']))
+	{
+		echo utf_htmlspecialchars($_COOKIE[LBCOOKIE. '_curl']);
+	}
+}
 ?>

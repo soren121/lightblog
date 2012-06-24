@@ -113,8 +113,8 @@ class CommentLoop
 		{
 			list($allow_comments, $allow_pingbacks, $comments) = $request->fetch(SQLITE_NUM);
 
-			$this->data['post']['comments'] = !empty($allow_comments);
-			$this->data['post']['pingbacks'] = !empty($allow_pingbacks);
+			$this->data['post']['allow_comments'] = !empty($allow_comments);
+			$this->data['post']['allow_pingbacks'] = !empty($allow_pingbacks);
 			$this->data['post']['comments'] = $comments;
 
 			// Now load up all the comments.
@@ -185,7 +185,7 @@ class CommentLoop
 	*/
 	public function allowed()
 	{
-		return !empty($this->data['post']['comments']);
+		return !empty($this->data['post']['allow_comments']);
 	}
 
 	/*
@@ -201,7 +201,7 @@ class CommentLoop
 	*/
 	public function pingbacks_allowed()
 	{
-		return !empty($this->data['post']['pingbacks']);
+		return !empty($this->data['post']['allow_pingbacks']);
 	}
 
 	/*
@@ -269,7 +269,7 @@ class CommentLoop
 		// Do we have a comment to display?
 		if($this->current !== null)
 		{
-			echo '<'.$tag.' class="comment '; alternateColor('c1', 'c2'); echo '" id="comment-'. $this->id().'">
+			echo '<a name="comment-', $this->id(), '"></a><'.$tag.' class="comment '; alternateColor('c1', 'c2'); echo '" id="comment-'. $this->id().'">
 					<img class="comment_gravatar" src="'. $this->gravatar(). '" alt="" />';
 
 					if(utf_strlen($this->commenter_website()) == 0)
@@ -279,6 +279,12 @@ class CommentLoop
 					else
 					{
 						echo '<a class="comment_name" href="'. $this->commenter_website(). '" rel="nofollow">'. $this->commenter_name(). '</a>';
+					}
+
+					// Are they the real deal?
+					if($this->commenter_registered())
+					{
+						echo ' <span class="commenter_registered">(registered)</span>';
 					}
 
 					echo '<span class="comment_says"> says:</span><br />
@@ -347,6 +353,11 @@ class CommentLoop
 	public function commenter_id()
 	{
 		return $this->current !== null ? $this->data['comments'][$this->current]['commenter']['id'] : null;
+	}
+
+	public function commenter_registered()
+	{
+		return $this->current !== null ? users_get($this->commenter_id()) !== false : null;
 	}
 
 	public function commenter_name()

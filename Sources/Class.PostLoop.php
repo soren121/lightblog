@@ -61,6 +61,7 @@ class PostLoop
 										 'max_page' => null,
 										 'page' => null,
 										 'categories' => array(),
+										 'query_string' => null,
 									 );
 		$this->current = null;
 		$this->post = null;
@@ -143,9 +144,12 @@ class PostLoop
 		{
 			list($year, $month) = explode('-', substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0));
 
+			// We want to save this for later.
+			$this->data['query_string'] = 'archive='. $year. (utf_strlen($month) == 1 ? '0' : ''). $month;
+
 			// Now we will get the range for the post dates to retrieve.
-			$firstday = mktime(0, 0, 0, $month, 1, $year);
-			$lastday = mktime(0, 0, 0, $month + 1, 0, $year);
+			$firstday = mktime(0, 0, 0, (int)$month, 1, (int)$year);
+			$lastday = mktime(0, 0, 0, ((int)$month) + 1, 0, (int)$year);
 
 			$options['where'][] = 'post_date BETWEEN '. $firstday. ' AND '. $lastday;
 		}
@@ -155,6 +159,9 @@ class PostLoop
 
 			// Just add a JOIN.
 			$options['join'][] = 'INNER JOIN post_categories AS pc ON pc.post_id = p.post_id AND pc.category_id = '. $category_id;
+
+			// Go ahead and preserve our query string.
+			$this->data['query_string'] = 'category='. $category_id;
 		}
 		elseif($querytype != 'latest')
 		{
@@ -639,33 +646,26 @@ class PostLoop
 	*/
 	public function pagination()
 	{
+		// We won't show pagination if we're displaying a single post or a page.
 		if($GLOBALS['postquery']['type'] != 'post' && $GLOBALS['postquery']['type'] != 'page')
 		{
-			global $file;
+			$pagination = array();
 
-			echo '<div class="pagination">';
-
-			// Set various required variables
-			$prev = $this->data['page'] - 1;						// Previous page is page - 1
-			$next = $this->data['page'] + 1;						// Next page is page + 1
-
-			// Set $pagination
-			$pagination = "";
-
-			// Add the 'Newer Posts' link if we're beyond the first page.
+			// Not very complicated pagination, but it does the job :-).
+			// We will show the 'Newer Posts' link if we're beyond the first page.
 			if($this->data['page'] > 1)
 			{
-				$pagination .= "<a href=\"".$file."?p=".$prev."\" class=\"next\">Newer Posts &raquo;</a>";
+				$pagination[] = '<a href="'. get_bloginfo('url'). '?'. ($this->data['query_string'] !== null ? $this->data['query_string']. '&amp;' : ''). 'p='. ($this->data['page'] - 1). '" class="next">'. l('Newer Posts'). ' &raquo;</a>';
 			}
 
-			// Add 'Older Posts' link if the next page exists.
-			if($next <= $this->data['max_page'])
+			// Now the 'Older Posts' link if the next page exists.
+			if(($this->data['page'] + 1) <= $this->data['max_page'])
 			{
-				$pagination .= "<a href=\"".$file."?p=".$next."\" class=\"prev\">&laquo; Older Posts</a>";
+				$pagination[] = '<a href="'. get_bloginfo('url'). '?'. ($this->data['query_string'] !== null ? $this->data['query_string']. '&amp;' : ''). 'p='. ($this->data['page'] + 1). '" class="prev">&laquo; '. l('Older Posts'). '</a>';
 			}
 
 			// Return the links! Duh!
-			echo $pagination.'</div>';
+			echo '<div class="pagination">'. implode(' ', $pagination).'</div>';
 		}
 	}
 }

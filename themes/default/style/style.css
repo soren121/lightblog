@@ -5,11 +5,11 @@
 
 	themes/default/style/style.css
 
-	©2008-2012 The LightBlog Team. All 
-	rights reserved. Released under the 
-	GNU General Public License 3. For 
-	all licensing information, please 
-	see the LICENSE.txt document 
+	©2008-2012 The LightBlog Team. All
+	rights reserved. Released under the
+	GNU General Public License 3. For
+	all licensing information, please
+	see the LICENSE.txt document
 	included in this distribution.
 
 *********************************************/
@@ -40,7 +40,7 @@ body {
 	background: #eeeeee;
 }
 
-#wrapper { 
+#wrapper {
 	background: #fff url('faux.png') repeat-y;
 	margin: 20px auto 10px auto;
 	width: 740px;
@@ -69,7 +69,7 @@ body {
 	text-decoration: underline;
 }
 
-#content { 
+#content {
 	float: left;
 	color: #333;
 	margin: 10px 10px 0 10px;
@@ -199,6 +199,11 @@ body {
 	text-decoration: underline;
 }
 
+#content .commenter_registered {
+	font-size: 80%;
+	font-style: italic;
+}
+
 #content span.comment_says {
 	color: #333;
 	font-size: 0.9em;
@@ -237,7 +242,7 @@ body {
 	margin-bottom: -10px;
 	margin-top: 30px;
 }
-	
+
 #content #commentform {
 	margin: 5px 10px 0 0;
 }
@@ -286,7 +291,7 @@ body {
 	float: right;
 }
 
-#sidebar { 
+#sidebar {
 	display: inline;
 	color: #333;
 	margin: 10px;
@@ -326,8 +331,8 @@ body {
 	vertical-align: middle;
 	margin-right: 3px;
 }
-	
-#footer { 
+
+#footer {
 	width: 753px;
 	clear: both;
 	color: #333;

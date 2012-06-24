@@ -314,9 +314,27 @@ class User
 	}
 
 	/*
+		Function: userName
+
+		Returns the user's name they use to log in.
+
+		Parameters:
+			none
+
+		Returns:
+			string - Returns the users name if they're logged in, otherwise
+							 'Guest.'
+	*/
+	public function userName()
+	{
+		return $this->is_logged() ? $this->name : l('Guest');
+	}
+
+	/*
 		Function: name
 
-		Returns the user's name (the one used to log into their account).
+		Returns the user's name (either their display name if set or log in name
+		if not.
 
 		Parameters:
 			none
@@ -327,7 +345,7 @@ class User
 	*/
 	public function name()
 	{
-		return $this->is_logged() ? $this->name : l('Guest');
+		return $this->is_logged() ? (utf_strlen($this->displayName()) > 0 ? $this->displayName() : $this->userName()) : l('Guest');
 	}
 
 	/*
