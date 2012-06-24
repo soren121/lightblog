@@ -49,22 +49,23 @@ if(!isset($_GET['post']) && !isset($_GET['page']))
 	}
 
 	// Display the right post view
-	if(isset($_GET['archive'])) {
+	if(isset($_GET['archive']))
+	{
 		$GLOBALS['postquery']['type'] = 'archive';
 		$GLOBALS['postquery']['date'] = (int)$_GET['archive'];
 	}
-
-	elseif(isset($_GET['category'])) {
+	elseif(isset($_GET['category']))
+	{
 		$GLOBALS['postquery']['type'] = 'category';
 		$GLOBALS['postquery']['catid'] = (int)$_GET['category'];
 	}
-
-	else {
+	else
+	{
 		$GLOBALS['postquery']['type'] = 'latest';
 	}
 
 	// Include main theme file
-	include('themes/'.$themeName.'/main.php');
+	include('themes/'. $themeName. '/main.php');
 }
 
 // Looks like it is a post or page

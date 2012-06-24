@@ -23,7 +23,8 @@
 */
 class PageLoop
 {
-	// Set private database variables
+	// Variable: dbh
+	// The database handle.
 	private $dbh = null;
 	private $result = null;
 	private $cur_result = null;
@@ -47,7 +48,7 @@ class PageLoop
 
 			dbh - Database handle object.
 	*/
-	public function set_dbh($dbh)
+	private function set_dbh($dbh)
 	{
 		// Is this a valid handle?
 		if(is_object($dbh) && $dbh instanceof SQLiteDatabase)
@@ -178,5 +179,4 @@ class PageLoop
 		}
 	}
 }
-
 ?>

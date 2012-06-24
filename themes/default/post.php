@@ -17,7 +17,7 @@
 <?php include('head.php')?>
 <?php include('sidebar.php')?>
 			<div id="content">
-				<?php $posts = new PostLoop(); $posts->obtain_post(); if($posts->has_posts()): while($posts->loop()): ?>
+				<?php $posts = new PostLoop(); $posts->obtain_post(); if($posts->has_posts(true) > 0): while($posts->has_posts()): ?>
 				<div class="postbox">
 					<h4 class="postnamealt">
 						<?php $posts->title() ?>

@@ -51,8 +51,15 @@ class PostLoop
 	public function __construct()
 	{
 		$this->dbh = null;
-		$this->result = null;
+		$this->data  = array(
+										 'posts' => array(),
+										 'count' => null,
+										 'max_page' => null,
+										 'page' => null,
+										 'categories' => array(),
+									 );
 		$this->current = null;
+		$this->post = null;
 
 		$this->set_dbh($GLOBALS['dbh']);
 	}
@@ -68,10 +75,10 @@ class PostLoop
 		Returns:
 			void - Nothing is returned by this method.
 	*/
-	public function set_dbh($dbh)
+	private function set_dbh($dbh)
 	{
 		// Is this a valid handle?
-		if(is_object($dbh) && $dbh instanceof SQLiteDatabase)
+		if(is_object($dbh) && is_a($dbh, 'SQLiteDatabase'))
 		{
 			$this->dbh = $dbh;
 		}
@@ -83,19 +90,18 @@ class PostLoop
 	}
 
 	/*
-		Function: parseQuery
+		Function: generateQuery
 
-		Parses the very basic query given and turns it in to a full-blown SQL
-		query!
+		Generates a query to use to fetch the currently desired posts.
 
 		Parameters:
-			bool $single - Specifies whether to obtain a single post (defaults to
-										 false).
+			bool $is_count - Whether to replace COUNT(*) with the column selectors
+											 in the generated query.
 
 		Returns:
 			string - A complete SQL query.
 	*/
-	private function parseQuery($single = false)
+	private function generateQuery($is_count = false)
 	{
 		// What kind of query are we generating?
 		if(!isset($GLOBALS['postquery']['type']))
@@ -105,10 +111,14 @@ class PostLoop
 		}
 
 		$querytype = $GLOBALS['postquery']['type'];
+		$options = array(
+								 'join' => array(),
+								 'where' => array(),
+								 'order_by' => array('post_date DESC'),
+							 );
 
-		// If we're only showing one post, then we might be able to show it even
-		// if it's unpublished...
-		if($single == true)
+		// Perhaps they're viewing a single post?
+		if($querytype == 'post')
 		{
 			// Then get the specific post ID. If it is defined...
 			if(!isset($GLOBALS['pid']))
@@ -119,72 +129,59 @@ class PostLoop
 			$pid = (int)$GLOBALS['pid'];
 
 			// We know the specific ID, so add it to our WHERE clause.
-			$where = 'post_id= '. $pid;
+			$options['where'][] = 'post_id= '. $pid;
 
-			// If the user isn't an administrator then they can view unpublished
-			// posts. However, they can also view unpublished posts if they made
-			// them, but LightBlog doesn't support this yet.
-			if(!permissions(1))
-			{
-				$where .= ' AND published <= '. time();
-			}
+			// We don't need to order by anything.
+			$options['order_by'] = array();
 		}
-		else
-		{
-			$where = !permissions(1) ? 'published <= '. time() : '1';
-		}
-
 		// Viewing the archive list?
-		if($querytype == 'archive')
+		elseif($querytype == 'archive')
 		{
-			$queryextra = substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0);
-			var_dump($queryextra);
-			$queryextra = explode('-', $queryextra);
-			$firstday = mktime(0, 0, 0, $queryextra[1], 1, $queryextra[0]);
-			$lastday = mktime(0, 0, 0, ($queryextra[1] + 1), 0, $queryextra[0]);
+			list($year, $month) = explode('-', substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0));
 
-			return "
-				SELECT
-					*
-				FROM posts
-				WHERE $where AND post_date BETWEEN $firstday AND $lastday
-				ORDER BY post_date DESC";
+			// Now we will get the range for the post dates to retrieve.
+			$firstday = mktime(0, 0, 0, $month, 1, $year);
+			$lastday = mktime(0, 0, 0, $month + 1, 0, $year);
+
+			$options['where'][] = 'post_date BETWEEN '. $firstday. ' AND '. $lastday;
 		}
 		elseif($querytype == 'category')
 		{
 			$category_id = (int)$GLOBALS['postquery']['catid'];
 
-			return "
-				SELECT
-					p.*
-				FROM posts AS p
-					INNER JOIN post_categories AS pc ON pc.post_id = p.post_id AND pc.category_id = $category_id
-				WHERE $where
-				ORDER BY p.post_date DESC";
+			// Just add a JOIN.
+			$options['join'][] = 'INNER JOIN post_categories AS pc ON pc.post_id = p.post_id AND pc.category_id = '. $category_id;
 		}
-		else
+		elseif($querytype != 'latest')
 		{
-			return "
-				SELECT
-					*
-				FROM posts
-				WHERE $where
-				ORDER BY post_id DESC";
+			trigger_error('Unknown post query type '. utf_htmlspecialchars($querytype), E_USER_ERROR);
 		}
+
+		return '
+			SELECT
+				'. (!empty($is_count) ? 'COUNT(*)' : 'p.*'). '
+			FROM posts AS p'. (count($options['join']) > 0 ? '
+			'. implode("\r\n", $options['join']). "\r\n" : ''). '
+			WHERE '. (count($options['where']) > 0 ? implode(' AND ', $options['where']) : '1'). (count($options['order_by']) > 0 ? '
+			ORDER BY '. implode(', ', $options['order_by']) : '');
 	}
 
 	/*
 		Function: obtain_post
 
 		Obtains the data for a single post from the database.
+
+		Parameters:
+			none
+
+		Returns:
+			void
 	*/
 	public function obtain_post()
 	{
-		// Sanitize and set variables
-		$dbh = $this->dbh;
-
-		// Query the database for the post data
-		$this->result = $dbh->query($this->parseQuery(true));
+		// Just load that single post, please!
+		$this->data['count'] = 1;
+		$this->load($this->dbh->query($this->generateQuery()));
 	}
 
 	/*
@@ -193,77 +190,158 @@ class PostLoop
 		Obtains the data for multiple posts from the database.
 
 		Parameters:
+			int $page - The current page being viewed.
+			int $limit - The maximum number of posts to load on the page.
 
-			start - The ID of the first row to retrieve data from.
-			limit - The number of rows to retrieve data from, starting from the ID specified in start.
+		Returns:
+			void
 	*/
-	public function obtain_posts($start = 1, $limit = 8)
+	public function obtain_posts($page = 1, $limit = 8)
 	{
-		// Sanitize and set variables
-		$start = (int)$start;
-		$limit = (int)$limit;
-		$start = (int)(($start - 1) * $limit);
-		$dbh = $this->dbh;
-		$this->limit = (int)$limit;
+		// We won't load less than 1 post :-P.
+		$limit = (int)$limit >= 1 ? (int)$limit : 1;
+
+		// Okay, first off, we need to see how many posts there are in total.
+		$request = $this->dbh->query($this->generateQuery(true));
+
+		list($this->data['count']) = $request->fetch(SQLITE_NUM);
+
+		// Let's see, how many pages can we have?
+		$this->data['max_page'] = ceil($this->data['count'] / (int)$limit);
+
+		// Now let's make sure the page is valid.
+		$this->data['page'] = (int)$page <= 1 ? 1 : ((int)$page > $this->data['max_page'] ? $this->data['max_page'] : (int)$page);
+		$start = ($this->data['page'] - 1) * $limit;
 
 		// Query the database for post data
-		$this->result = $dbh->query($this->parseQuery()." LIMIT ".$start.", ".$limit);
+		$this->load($this->dbh->query($this->generateQuery(). "\r\n". 'LIMIT '. $start. ', '. $limit));
+	}
+
+	/*
+		Function: load
+
+		Processes the posts from the specified query resource.
+
+		Parameters:
+			resource $request
+
+		Returns:
+			void
+	*/
+	private function load($request)
+	{
+		// No need to load the users data over and over again, so we'll do it
+		// once later. The same goes for categories.
+		$users = array();
+		$categories = array();
+		$this->data['posts'] = array();
+		while($row = $request->fetch(SQLITE_ASSOC))
+		{
+			$this->data['posts'][] = array(
+																 'id' => $row['post_id'],
+																 'title' => $row['post_title'],
+																 'short_name' => $row['short_name'],
+																 'date' => date('F j, Y', $row['post_date']),
+																 'timestamp' => $row['post_date'],
+																 'published' => $row['published'],
+																 'author' => array(
+																							 'id' => $row['author_id'],
+																							 'name' => $row['author_name'],
+																						 ),
+																 'text' => $row['post_text'],
+																 'categories' => explode(',', $row['categories']),
+																 'allow_comments' => !empty($row['allow_comments']),
+																 'allow_pingbacks' => !empty($row['allow_pingbacks']),
+																 'comments' => $row['comments'],
+															 );
+
+			// Add the author's ID to the list to load.
+			$users[] = $row['author_id'];
+
+			// Same goes for the categories.
+			$categories = array_merge($categories, explode(',', $row['categories']));
+		}
+
+		// Now load the user data.
+		users_load($users);
+
+		// Then all the category information. But first make sure the ID's are
+		// all safe.
+		$categories = array_unique($categories);
+		foreach($categories as $key => $category_id)
+		{
+			$categories[$key] = (int)$category_id;
+		}
+
+		$request = $this->dbh->query("
+			SELECT
+				category_id, short_name, full_name, category_text
+			FROM categories
+			WHERE category_id IN(". implode(', ', $categories). ")");
+
+		$this->data['categories'] = array();
+		while($row = $request->fetch(SQLITE_ASSOC))
+		{
+			$this->data['categories'][$row['category_id']] = array(
+																												 'id' => $row['category_id'],
+																												 'name' => $row['full_name'],
+																												 'short_name' => $row['short_name'],
+																												 'text' => $row['category_text'],
+																												 'href' => get_bloginfo('url'). 'index.php?category='. $row['category_id'],
+																												 'url' => '<a href="'. get_bloginfo('url'). 'index.php?category='. $row['category_id']. '" title="'. (utf_strlen($row['category_text']) > 255 ? utf_substr($row['category_text'], 0, 252). '...' : $row['category_text']). '">'. $row['full_name']. '</a>',
+																											 );
+		}
+
+		// Make sure our pointer in the posts array is at the beginning. That is
+		// unless we don't have any posts.
+		if(count($this->data['posts']) > 0)
+		{
+			reset($this->data['posts']);
+			$this->current = key($this->data['posts']);
+		}
+		else
+		{
+			$this->data['posts'] = null;
+			$this->data['count'] = 0;
+			$this->current = null;
+		}
 	}
 
 	/*
 		Function: has_posts
 
-		Checks if there are any posts available for us to show.
+		Determines whether there are more posts to iterate through if $count is
+		false, but otherwise returns the total number of posts currently loaded.
+
+		Parameters:
+			bool $count - Whether to return the number of posts loaded.
 
 		Returns:
 
 			Boolean value (true/false).
 	*/
-	public function has_posts()
+	public function has_posts($count = false)
 	{
-		if($this->result->numRows() > 0)
+		if(!empty($count))
 		{
-			return true;
+			return $this->data['posts'] !== null ? count($this->data['posts']) : 0;
 		}
-		else
-		{
-			// Erase our useless query results
-			$this->result = null;
-			$this->cur_result = null;
 
-			return false;
-		}
-	}
-
-	/*
-		Function: loop
-
-		Loops through our post query until we have no more posts.
-
-		Returns:
-
-			Boolean value (e.g. true/false.)
-	*/
-	public function loop()
-	{
 		// Do we have any posts?
-		if(!empty($this->result))
+		if($this->data['posts'] !== null && $this->current !== null)
 		{
-			// Convert query results into something usable
-			$this->cur_result = $this->result->fetchObject();
+			// Save the current location.
+			$this->current = key($this->data['posts']);
+			$this->post = $this->current !== null ? $this->data['posts'][$this->current] : null;
 
-			// This while loop will remain true until we run out of posts
-			while($post = $this->cur_result)
-			{
-				return true;
-			}
+			// Move us along, for the next time.
+			next($this->data['posts']);
 
-			// At which point it turns false, ending the loop in the template file
-			return false;
+			return $this->current !== null;
 		}
-		// We don't have any posts :(
 		else
 		{
+			// Nope, no posts.
 			return false;
 		}
 	}
@@ -276,10 +354,10 @@ class PostLoop
 	public function permalink()
 	{
 		// We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result))
+		if($this->post !== null)
 		{
 			// Nope, so return the post's permalink
-			echo get_bloginfo('url'). '?post='. $this->cur_result->post_id;
+			echo get_bloginfo('url'). '?post='. $this->post['id'];
 		}
 		else
 		{
@@ -296,10 +374,10 @@ class PostLoop
 	public function title()
 	{
 		// We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result))
+		if($this->post !== null)
 		{
 			// Nope, so remove all sanitation and echo it out
-			echo $this->cur_result->post_title;
+			echo $this->post['title'];
 		}
 		else
 		{
@@ -320,9 +398,9 @@ class PostLoop
 	public function content($ending = false)
 	{
 		// We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result))
+		if($this->post !== null)
 		{
-			$text = $this->cur_result->post_text;
+			$text = $this->post['text'];
 			$length = 360;
 
 			// The following truncator code is from CakePHP
@@ -433,7 +511,7 @@ class PostLoop
 				if($ending)
 				{
 					// add the defined ending to the text
-					$truncate .= '... <a href="?post='.$this->cur_result->post_id.'">'.$ending.'</a>';
+					$truncate .= '... <a href="?post='. $this->post['id']. '">'. $ending. '</a>';
 				}
 
 				// and echo
@@ -460,10 +538,10 @@ class PostLoop
 	public function date($format = null)
 	{
 		// We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result))
+		if($this->post !== null)
 		{
 			// Nope, so output the date in the right format
-			echo date(!empty($format) ? $format : 'F jS, Y', $this->cur_result->post_date);
+			echo !empty($format) ? date($format, $this->post['timestamp']) : $this->post['date'];
 		}
 		// Oh no, we screwed up :(
 		else
@@ -480,9 +558,18 @@ class PostLoop
 	*/
 	public function author()
 	{
-		if(!empty($this->cur_result))
+		if($this->post !== null)
 		{
-			echo $this->cur_result->author_name;
+			// Does the user currently exist?
+			if(($user = users_get($this->post['author']['id'])) !== false)
+			{
+				echo $user['name'];
+			}
+			else
+			{
+				// We will use the saved name, then.
+				echo $this->post['author']['name'];
+			}
 		}
 		else
 		{
@@ -497,9 +584,9 @@ class PostLoop
 	*/
 	public function commentNum()
 	{
-		if(!empty($this->cur_result))
+		if($this->post !== null)
 		{
-			return $this->cur_result->comments;
+			return $this->post['comments'];
 		}
 		else {
 			return false;
@@ -513,17 +600,20 @@ class PostLoop
 	*/
 	public function category()
 	{
-		if(!empty($this->cur_result))
+		if($this->post !== null)
 		{
-			$dbh = $this->dbh;
-			$result = $dbh->query("
-				SELECT
-					full_name
-				FROM categories
-				WHERE category_id = ". ((int)$this->cur_result->categories). "
-				LIMIT 1");
+			$categories = array();
+			foreach($this->post['categories'] as $category_id)
+			{
+				if(!isset($this->data['categories'][$category_id]))
+				{
+					continue;
+				}
 
-			echo $result->fetchSingle();
+				$categories[] = $this->data['categories'][$category_id]['url'];
+			}
+
+			echo count($categories) == 0 ? l('No categories') : implode(', ', $categories);
 		}
 		else
 		{
@@ -540,40 +630,27 @@ class PostLoop
 	{
 		if($GLOBALS['postquery']['type'] != 'post' && $GLOBALS['postquery']['type'] != 'page')
 		{
-			global $file, $page;
-
-			$dbh = $this->dbh;
-			$limit = $this->limit;
+			global $file;
 
 			echo '<div class="pagination">';
 
-			// Set the query to retrieve the number of rows
-			$query = $dbh->query(str_replace(" * ", " COUNT(*) ", $this->parseQuery())) or die(sqlite_error_string($dbh->lastError));
-
-			// Query the database
-			@list($totalitems) = $query->fetch(SQLITE_NUM);
-
 			// Set various required variables
-			$prev = $page - 1;						// Previous page is page - 1
-			$next = $page + 1;						// Next page is page + 1
+			$prev = $this->data['page'] - 1;						// Previous page is page - 1
+			$next = $this->data['page'] + 1;						// Next page is page + 1
 
 			// Set $pagination
 			$pagination = "";
 
-			// Do we have more than one page?
-			if($totalitems > $limit)
+			// Add the 'Newer Posts' link if we're beyond the first page.
+			if($this->data['page'] > 1)
 			{
-				// Add the next link
-				if($page > 1)
-				{
-					$pagination .= "<a href=\"".$file."?p=".$prev."\" class=\"next\">Newer Posts &raquo;</a>";
-				}
+				$pagination .= "<a href=\"".$file."?p=".$prev."\" class=\"next\">Newer Posts &raquo;</a>";
+			}
 
-				// Add the previous link
-				if(($page * $limit) < $totalitems)
-				{
-					$pagination .= "<a href=\"".$file."?p=".$next."\" class=\"prev\">&laquo; Older Posts</a>";
-				}
+			// Add 'Older Posts' link if the next page exists.
+			if($next <= $this->data['max_page'])
+			{
+				$pagination .= "<a href=\"".$file."?p=".$next."\" class=\"prev\">&laquo; Older Posts</a>";
 			}
 
 			// Return the links! Duh!

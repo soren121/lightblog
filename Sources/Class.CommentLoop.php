@@ -63,7 +63,7 @@ class CommentLoop
 
 			dbh - Database handle object.
 	*/
-	public function set_dbh($dbh)
+	private function set_dbh($dbh)
 	{
 		// Is this a valid handle?
 		if(is_object($dbh) && $dbh instanceof SQLiteDatabase)
@@ -160,6 +160,9 @@ class CommentLoop
 			}
 			else
 			{
+				// Load user data.
+				users_load($users);
+
 				// Just to be sure, reset the pointer of the array to the beginning.
 				reset($this->data['comments']);
 
@@ -348,6 +351,12 @@ class CommentLoop
 
 	public function commenter_name()
 	{
+		// Do we need to load the user's current name?
+		if(($user = users_get($this->commenter_id())) !== false)
+		{
+			return $user['name'];
+		}
+
 		return $this->current !== null ? $this->data['comments'][$this->current]['commenter']['name'] : null;
 	}
 
