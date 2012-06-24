@@ -25,9 +25,19 @@ class PageLoop
 {
 	// Variable: dbh
 	// The database handle.
-	private $dbh = null;
-	private $result = null;
-	private $cur_result = null;
+	private $dbh;
+
+	// Variable: data
+	// An array containing loaded data.
+	private $data;
+
+	// Variable: current
+	// An integer containing the location of the current page in the array.
+	private $current;
+
+	// Variable: page
+	// The current page.
+	private $page;
 
 	/*
 		Constructor: __construct
@@ -36,6 +46,14 @@ class PageLoop
 	*/
 	public function __construct()
 	{
+		$this->dbh = null;
+		$this->data = array(
+										'pages' => array(),
+										'count' => array(),
+									);
+		$this->current = null;
+		$this->page = null;
+
 		$this->set_dbh($GLOBALS['dbh']);
 	}
 
@@ -51,7 +69,7 @@ class PageLoop
 	private function set_dbh($dbh)
 	{
 		// Is this a valid handle?
-		if(is_object($dbh) && $dbh instanceof SQLiteDatabase)
+		if(is_object($dbh) && is_a($dbh, 'SQLiteDatabase'))
 		{
 			$this->dbh = $dbh;
 		}
@@ -69,22 +87,45 @@ class PageLoop
 	*/
 	public function obtain_page()
 	{
+		if(!isset($GLOBALS['pid']))
+		{
+			trigger_error('Unknown pid', E_USER_ERROR);
+		}
+
 		// Sanitize and set variables
 		$pid = (int)$GLOBALS['pid'];
-		$dbh = $this->dbh;
 
-		// Query the database for the page data
-		$this->result = $dbh->query("
+		$this->load($this->dbh->query("
 			SELECT
 				*
-			FROM 'pages'
-			WHERE page_id = ".$pid);
+			FROM pages
+			WHERE page_id = $pid". (!permissions(1) ? ' AND published = 1' : ''). "
+			LIMIT 1"));
+	}
+
+	/*
+		Function: obtain_pages
+
+		Obtains all the current pages.
+	*/
+	public function obtain_pages()
+	{
+		$this->load($this->dbh->query("
+			SELECT
+				*
+			FROM pages
+			WHERE ". (!permissions(1) ? 'published = 1' : '1'). "
+			ORDER BY post_title ASC"));
 	}
 
 	/*
 		Function: has_pages
 
-		Checks if the query result we got contained any pages.
+		Determines whether there are more pages to iterate through if $count is
+		false, but otherwise returns the total number of pages currently loaded.
+
+		Parameters:
+			bool $count - Whether to return the number of posts loaded.
 
 		Returns:
 
@@ -92,30 +133,89 @@ class PageLoop
 	*/
 	public function has_pages()
 	{
-		// Do we have any pages?
-		if(!empty($this->result))
+		if(!empty($count))
 		{
-			// Convert query results into something usable
-			$this->cur_result = $this->result->fetchObject();
-
-			// This while loop will remain true until we run out of pages
-			while($post = $this->cur_result)
-			{
-				return true;
-			}
-
-			// At which point it turns false, ending the loop in the template file
-			return false;
+			return $this->data['pages'] !== null ? $this->data['count'] : 0;
 		}
-		// We don't have any pages :(
+
+		// Do we have any pages?
+		if($this->data['pages'] !== null && $this->current !== null)
+		{
+			// Save the current location.
+			$this->current = key($this->data['pages']);
+			$this->page = $this->current !== null ? $this->data['pages'][$this->current] : null;
+
+			// Move us along, for the next time.
+			next($this->data['pages']);
+
+			return $this->current !== null;
+		}
 		else
 		{
-			// Erase our useless query results
-			$this->result = null;
-			$this->cur_result = null;
-
-			// Send the bad news (aka end the while loop)
+			// Nope, no posts.
 			return false;
+		}
+	}
+
+	/*
+		Function: load
+
+		Processes the results of a page load query.
+
+		Parameters:
+			resource $request
+
+		Returns:
+			void
+	*/
+	private function load($request)
+	{
+		if(empty($request))
+		{
+			trigger_error('An unknown error occurred while processing the pages', E_USER_ERROR);
+		}
+
+		// Alright, time to load them up!
+		$users = array();
+		$this->data['pages'] = array();
+		$this->data['count'] = 0;
+		while($row = $request->fetch(SQLITE_ASSOC))
+		{
+			$this->data['pages'][] = array(
+																 'id' => $row['page_id'],
+																 'title' => $row['page_title'],
+																 'short_name' => $row['short_name'],
+																 'date' => date('F j, Y', $row['page_date']),
+																 'timestamp' => $row['page_date'],
+																 'published' => $row['published'],
+																 'author' => array(
+																							 'id' => $row['author_id'],
+																							 'name' => $row['author_name'],
+																						 ),
+																 'text' => $row['page_text'],
+															 );
+
+			$users[] = $row['author_id'];
+			$this->data['count']++;
+		}
+
+		// Load the user data.
+		users_load($users);
+
+		// Make sure our pointer in the pages array is at the beginning. That is
+		// unless we don't have any pages.
+		if(count($this->data['pages']) > 0)
+		{
+			reset($this->data['pages']);
+			$this->current = key($this->data['pages']);
+			$this->page = null;
+		}
+		else
+		{
+			$this->data['pages'] = null;
+			$this->data['count'] = 0;
+			$this->current = null;
+			$this->page = null;
 		}
 	}
 
@@ -127,9 +227,9 @@ class PageLoop
 	public function permalink()
 	{
 		// We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result))
+		if($this->page !== null)
 		{
-			echo get_bloginfo('url'). '?page='. (int)$this->cur_result->page_id;
+			echo get_bloginfo('url'). '?page='. $this->page['id'];
 		}
 		// Oh no, we screwed up :(
 		else
@@ -147,9 +247,9 @@ class PageLoop
 	public function title()
 	{
 		// We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result))
+		if($this->page !== null)
 		{
-			echo $this->cur_result->page_title;
+			echo $this->page['title'];
 		}
 		// Oh no, we screwed up :(
 		else
@@ -167,9 +267,9 @@ class PageLoop
 	public function content()
 	{
 		// We didn't screw up and keep an empty query, did we?
-		if(!empty($this->cur_result))
+		if($this->page !== null)
 		{
-			echo $this->cur_result->page_text;
+			echo $this->page['text'];
 		}
 		// Oh no, we screwed up :(
 		else

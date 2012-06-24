@@ -43,6 +43,10 @@ class PostLoop
 	// The current row retrieved from the database.
 	private $current;
 
+	// Variable: post
+	// The current post.
+	private $post;
+
 	/*
 		Constructor: __construct
 
@@ -230,6 +234,11 @@ class PostLoop
 	*/
 	private function load($request)
 	{
+		if(empty($request))
+		{
+			trigger_error('An unknown error occurred while processing posts', E_USER_ERROR);
+		}
+
 		// No need to load the users data over and over again, so we'll do it
 		// once later. The same goes for categories.
 		$users = array();
@@ -298,12 +307,14 @@ class PostLoop
 		{
 			reset($this->data['posts']);
 			$this->current = key($this->data['posts']);
+			$this->post = null;
 		}
 		else
 		{
 			$this->data['posts'] = null;
 			$this->data['count'] = 0;
 			$this->current = null;
+			$this->post = null;
 		}
 	}
 
