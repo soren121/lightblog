@@ -5,6 +5,14 @@
 	font-size: 1.4em;
 }
 
+#contentcolumn textarea {
+	width: 97%;
+	height: 320px;
+	padding: 10px;
+	margin-bottom: 12px;
+	font: 12pt Georgia, Times, serif;
+}
+
 #contentcolumn div.settings p {
 	margin-bottom: 6px;
 }

@@ -18,14 +18,36 @@
 // Require config file
 require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
+require(ABSPATH .'/Sources/Process.php');
 
 if((int)$_GET['type'] == 1) { $type = 'post'; }
 elseif((int)$_GET['type'] == 2) { $type = 'page'; }
-elseif((int)$_GET['type'] == 3) { $type = 'category'; }
 
-$title = "Create ".ucwords($type);
-$css = "create.css";
-$selected = basename($_SERVER['REQUEST_URI']);
+function formCallback($response)
+{
+	if(!empty($response))
+	{
+		global $type;
+		if($response['result'] == 'error')
+		{
+			return '<span class="result error">Failed to submit '.$type.';<br />'.$response['response'].'</span>';
+		}
+		elseif($response['result'] == 'success')
+		{
+			return '<a class="view" href="'.$response['response'].'">View '.$type.' &raquo;</a>';
+		}
+		else
+		{
+			return '<span class="result error">Failed to submit '.$type.';<br />No response from form processor.</span>';
+		}
+	}
+}
+
+$head_response = formCallback(processForm($_POST));
+if(isset($_POST['ajax'])) { die(json_encode(array('response' => $head_response))); }
+
+$head_title = "Create ".ucwords($type);
+$head_css = "create.css";
 
 include('head.php');
 
@@ -33,16 +55,17 @@ include('head.php');
 
 		<div id="contentwrapper">
 			<div id="contentcolumn">
-				<?php if($type !== 'category' && permissions(1) || $type === 'category' && permissions(2)): if(!isset($type)): ?>
+				<?php if(!isset($type)): ?>
 					<p>The type of content to add was not specified. You must have taken a bad link. Please
-					use the navigation bar above to choose the correct type.</p>
-				<?php else: ?>
-					<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="create">
+					use the navigation to the left to choose the correct type.</p>
+				<?php else: if(permissions('Create'.ucwords($type).'s')): ?>
+					<form action="<?php bloginfo('url') ?>admin/create.php?type=<?php echo (int)$_GET['type'] ?>" method="post" id="create">
 						<div>
 							<label class="tfl" for="title">Title</label><br />
 							<input id="title" class="textfield cf" name="title" type="text" title="Title" /><br />
 							<textarea class="cf" rows="12" cols="36" name="text" id="wysiwyg"></textarea><br />
 							<input class="cf" type="hidden" name="type" value="<?php echo $type ?>" />
+							<input class="cf" type="hidden" name="form" value="Create" />
 							<input class="cf" type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
 						</div>
 						<div class="settings">
@@ -83,7 +106,7 @@ include('head.php');
 			$('#wysiwyg').cleditor({
 				width: '100%',
 				height: '320px',
-				bodyStyle: 'margin:10px; font:11pt Georgia,Times,serif; cursor:text'
+				bodyStyle: 'margin:10px; font:12pt Georgia,Times,serif; cursor:text'
 			});
 
 			$(function() {
@@ -100,28 +123,16 @@ include('head.php');
 					});
 
 					jQuery.ajax({
-						data: inputs.join('&'),
+						data: 'ajax=true&' + inputs.join('&'),
 						type: "POST",
 						url: $(this).attr('action'),
 						timeout: 2000,
 						dataType: 'json',
 						error: function() {
-							$('#ajaxresponse').html('<span class="result">Failed to submit <?php echo $type; ?>;<br />(jQuery failure).</span>').css("color","#E36868");
+							$('#ajaxresponse').html('<span class="result error">Failed to submit <?php echo $type ?>;<br />(jQuery failure).</span>');
 						},
 						success: function(r) {
-							if(r.result == 'success') {
-								if(r.showlink == true) {
-									$('#ajaxresponse').html('<' + 'a class="view" href="' + r.response + '">View <?php echo $type ?> &raquo;</' + 'a>');
-								}
-								else {
-									$('#ajaxresponse').html('<span class="result"><?php echo ucwords($type) ?> created.</span>');
-								}
-								$('#title').val('');
-								$('#wysiwyg').cleditor()[0].clear();
-							}
-							else {
-								$('#ajaxresponse').html('<span class="result">Failed to submit <?php echo $type; ?>;<br />' + r.response + '</span>').css("color","#E36868");
-							}
+							$('#ajaxresponse').html(r.response);
 						}
 					})
 					return false;

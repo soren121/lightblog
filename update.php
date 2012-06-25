@@ -388,15 +388,16 @@ if(isset($_POST['update']))
 			margin: 10px 0 5px 10px;
 		}
 		#content p {
-			margin: 10px 0 0 25px;
+			margin: 15px 0 0 25px;
 			font-size: .98em;
+			line-height: 1.5em;
 		}
 		#content span#error {
 			margin: 15px 0 0 25px;
 			color: #9C0606;
 			font-size: .9em;
 		}
-		form {
+		form, button {
 			margin: 20px 0 0 25px;
 		}
 		label {
@@ -444,7 +445,7 @@ if(isset($_POST['update']))
 				<h2>You're done!</h2>
 				<p>Click the Continue button to go on to your updated blog! :)</p>
 				<p>A backup copy of your previous database was kept and may be deleted (containing &quot;backup-&quot; in the name) if everything was properly copied.</p>
-				<button onclick="window.location='<?php echo baseurl(); ?>'">Continue</button>
+				<button onclick="window.location='<?php echo baseurl() ?>'">Continue</button>
 			<?php endif; ?>
 			<div class="clear"></div>
 		</div>

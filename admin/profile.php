@@ -18,10 +18,33 @@
 // Require config file
 require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
+require(ABSPATH .'/Sources/Process.php');
 
-if(permissions(3))
+function formCallback($response)
 {
-	$userquery = $dbh->query("SELECT role FROM users WHERE id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
+	if(!empty($response))
+	{
+		if($response['result'] == 'error')
+		{
+			return '<span class="result error">Failed to update profile;<br />'.$response['response'].'</span>';
+		}
+		elseif($response['result'] == 'success')
+		{
+			return '<span class="result">Profile updated.</span>';
+		}
+		else
+		{
+			return '<span class="result error">Failed to update profile;<br />No response from form processor.</span>';
+		}
+	}
+}
+
+$head_response = formCallback(processForm($_POST));
+if(isset($_POST['ajax'])) { die(json_encode(array('response' => $head_response))); }
+
+if(permissions('EditOtherUsers') || (int)$_GET['id'] == user()->id())
+{
+	$userquery = $dbh->query("SELECT user_role FROM users WHERE user_id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
 	$role_options = '';
 	foreach(get_roles() as $role_id => $role)
 	{
@@ -34,20 +57,15 @@ if(permissions(3))
 		{
 			$select = 'selected="selected"';
 		}
-		$role_options .= '<option name="'.$role_id.'" '.$select.'>'.$role.'</option>';
+		$role_options .= '<option value="'.$role_id.'" '.$select.'>'.$role.'</option>';
 	}
 }
 
-$title = "Edit Profile";
-$css = "settings.css";
+$head_title = "Edit Profile";
+$head_css = "settings.css";
 if((int)$_GET['id'] != user()->id())
 {
-	$selected = explode('?', basename($_SERVER['REQUEST_URI']));
-	$selected = $selected[0];
-}
-else
-{
-	$selected = basename($_SERVER['REQUEST_URI']);
+	$selected = "users.php";
 }
 
 include('head.php');
@@ -56,8 +74,8 @@ include('head.php');
 
 		<div id="contentwrapper">
 			<div id="contentcolumn">
-				<?php if((permissions(3) || (int)$_GET['id'] == user()->id()) && isset($_GET['id'])): ?>
-					<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="settings">
+				<?php if(isset($_GET['id'])): if(permissions('EditOtherUsers') || (int)$_GET['id'] == user()->id()): ?>
+					<form action="<?php bloginfo('url') ?>admin/profile.php" method="post" id="settings">
 						<div class="setting">
 							<div class="label">
 								<label for="password">New Password</label>
@@ -98,7 +116,7 @@ include('head.php');
 							<div class="clear"></div>
 						</div>
 
-						<?php if(permissions(3)): ?>
+						<?php if(permissions('EditRoles')): ?>
 							<div class="setting">
 								<div class="label">
 									<label for="role">Role</label>
@@ -126,17 +144,18 @@ include('head.php');
 						<div class="setting">
 							<input type="hidden" name="uid" value="<?php echo (int)$_GET['id'] ?>" />
 							<input type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
+							<input type="hidden" name="form" value="Profile" />
 							<input type="submit" class="submit" name="editprofile" value="Save" />
 							<div class="clear"></div>
 						</div>
 					</form>
-				<?php endif; ?>
+				<?php endif; endif; ?>
 			</div>
 		</div>
 
 		<script type="text/javascript">
 		//<![CDATA[
-			$('div.setting:even').addClass('even');
+			$('div.setting:odd').addClass('even');
 		
 			$(function() {
 				$('form').submit(function() {
@@ -152,7 +171,7 @@ include('head.php');
 					});
 
 					jQuery.ajax({
-						data: inputs.join('&'),
+						data: 'ajax=true&' + inputs.join('&'),
 						type: "POST",
 						url: $(this).attr('action'),
 						timeout: 2000,
@@ -161,12 +180,7 @@ include('head.php');
 						},
 						dataType: 'json',
 						success: function(r) {
-							if(r.result == 'success') {
-								$('#ajaxresponse').html('<span class="result">Settings saved.</span>');
-							}
-							else {
-								$('#ajaxresponse').html('<span class="result">Failed to save settings;<br />' + r.response + '</span>').css("color","#E36868");
-							}
+							$('#ajaxresponse').html(r.response);
 						}
 					})
 					return false;

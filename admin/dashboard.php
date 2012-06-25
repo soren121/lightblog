@@ -28,7 +28,6 @@ require(ABSPATH .'/Sources/Admin.php');
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
 	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 		});
@@ -49,24 +48,17 @@ require(ABSPATH .'/Sources/Admin.php');
 						<h4>Recent Posts</h4>
 						<ul>
 						<?php
-							$rpresult = $dbh->query("SELECT * FROM posts WHERE published=1 ORDER BY id desc LIMIT 5");
+							$rpresult = $dbh->query("SELECT * FROM posts WHERE published=1 ORDER BY post_id desc LIMIT 5");
 							if($rpresult->numRows() == 0): ?>
 								No posts to display.
-							<?php else: while($rp = $rpresult->fetch(SQLITE_ASSOC)): ?>
-								<li><a href="<?php bloginfo('url')?>?post=<?php echo $rp['id']; ?>"><?php echo $rp['title']?></a></li>
+							<?php else: while($rp = $rpresult->fetchObject()): ?>
+								<li><a href="<?php bloginfo('url')?>?post=<?php echo $rp->post_id; ?>"><?php echo $rp->post_title ?></a></li>
 							<?php endwhile; endif; ?>
 						</ul>
 					</div>
 					<div class="db_box rounded">
 						<h4>Recent Comments</h4>
 						<ul>
-						<?php
-							$rcresult = $dbh->query("SELECT * FROM comments ORDER BY id desc LIMIT 5");
-							if($rcresult->numRows() == 0): ?>
-								No comments to display.
-							<?php else: while($rp = $rcresult->fetch(SQLITE_ASSOC)): $rcpresult = $dbh->query("SELECT title FROM posts WHERE id=".(int)$rp['pid']) ?>
-								<li><a href="<?php bloginfo('url')?>?post=<?php echo $rp['pid']; ?>#comment-<?php echo $rp['id']; ?>"><?php echo $rp['name']?></a> on <a href="<?php bloginfo('url')?>?post=<?php echo $rp['pid']; ?>"><?php echo $rcpresult->fetchSingle(); ?></a></li>
-							<?php endwhile; endif; ?>
 						</ul>
 					</div>
 				</div>

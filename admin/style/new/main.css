@@ -42,7 +42,7 @@ a:hover {
 }
 
 #header h2#section {
-	color: #ccc;
+	color: #bbb;
 }
 
 #header #ajaxresponse {
@@ -58,22 +58,29 @@ a:hover {
 	padding: 26px 0 29px 29px;
 }
 
-#header #ajaxresponse p {
-	text-align: right;
-	margin-top: 28px;
-}
-
 #header #ajaxresponse a.view, #header #ajaxresponse span.result {
 	padding: 5px 20px;
-	margin: 25px 0;
 	display: block;
-	text-align: center;
 	border: 1px solid #85c44e;
 	color: #85c44e;
 }
 
+#header #ajaxresponse span.result {
+	text-align: right;
+	font-size: 0.9em;
+	line-height: 1em;
+	margin: 15px 0;
+}
+
+#header #ajaxresponse span.result.error {
+	color: #E36868 !important;
+	border: 1px solid #E36868;
+}
+
 #header #ajaxresponse a.view {
 	border-radius: 4px;
+	text-align: center;
+	margin: 25px 0;
 }
 
 #contentwrapper {
@@ -168,6 +175,10 @@ a:hover {
 	display: inline-block;
 }
 
+#navigation ul#menu li > a.nav-link {
+	width: 198px;
+}
+
 #navigation ul#menu li .nav-link.single {
 	width: 198px;
 	margin-right: 0;
@@ -178,6 +189,7 @@ a:hover {
 	width: 16px;
 	height: 16px;
 	padding: 9px 10px 7px 10px;
+	display: none;
 }
 
 #navigation ul#menu li a.nav-toggle img {

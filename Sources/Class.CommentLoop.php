@@ -131,20 +131,20 @@ class CommentLoop
 			while($row = $request->fetch(SQLITE_ASSOC))
 			{
 				$this->data['comments'][] = array(
-																			'id' => $row['comment_id'],
-																			'type' => $row['comment_type'],
-																			'published' => !empty($row['published']),
-																			'commenter' => array(
-																											 'id' => $row['commenter_id'],
-																											 'name' => $row['commenter_name'],
-																											 'email' => $row['commenter_email'],
-																											 'website' => is_url($row['commenter_website']) ? $row['commenter_website'] : null,
-																											 'ip' => $row['commenter_ip'],
-																										 ),
-																			'date' => date('F j, Y \a\t g:i A', $row['comment_date']),
-																			'timestamp' => $row['comment_date'],
-																			'text' => $row['comment_text'],
-																		);
+					'id' => $row['comment_id'],
+					'type' => $row['comment_type'],
+					'published' => !empty($row['published']),
+					'commenter' => array(
+						'id' => $row['commenter_id'],
+						'name' => $row['commenter_name'],
+						'email' => $row['commenter_email'],
+						'website' => is_url($row['commenter_website']) ? $row['commenter_website'] : null,
+						'ip' => $row['commenter_ip'],
+					),
+					'date' => date('F j, Y \a\t g:i A', $row['comment_date']),
+					'timestamp' => $row['comment_date'],
+					'text' => $row['comment_text'],
+				);
 
 				// We will load all user information at once.
 				if($row['commenter_id'] > 0)
@@ -437,7 +437,7 @@ class CommentLoop
 	public function formHook()
 	{
 		// Output the post ID as a hidden form input
-		echo '<p style="display:none;"><input name="comment_pid" type="hidden" value="'.$GLOBALS['pid'].'" /></p>';
+		echo '<p style="display:none;"><input name="comment_pid" type="hidden" value="'.$GLOBALS['pid'].'" /><input name="form" type="hidden" value="Comment" /></p>';
 	}
 }
 ?>

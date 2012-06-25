@@ -27,17 +27,38 @@
 	Returns:
 		bool - Boolean value based on the user's role level. (e.g. true/false)
 */
-function permissions($group)
+function permissions($permission)
 {
-	// Fetch the session info
-	if(user()->role() >= $group)
+	// Grab that database handle
+	global $dbh;
+	
+	// Check if we've already fetched the permissions from the DB
+	if(!isset($GLOBALS['permissions_data']))
 	{
-		// Return true if they're allowed
+		$result = $dbh->query('
+		SELECT *
+		FROM role_permissions') or die(sqlite_error_string($dbh->lastError));
+		
+		// Super fun array time!
+		$GLOBALS['permissions_data'] = array();
+		
+		// Toss those permissions into a multi-dimensional array
+		while($row = $result->fetchObject())
+		{
+			if(!isset($GLOBALS['permissions_data'][$row->permission]))
+			{
+				$GLOBALS['permissions_data'][$row->permission] = array();
+			}
+			$GLOBALS['permissions_data'][$row->permission][$row->role_id] = $row->status;
+		}
+	}
+	
+	if(isset($GLOBALS['permissions_data'][$permission][user()->role()]) && $GLOBALS['permissions_data'][$permission][user()->role()] == 1)
+	{
 		return true;
 	}
 	else
 	{
-		// Return false if they aren't
 		return false;
 	}
 }

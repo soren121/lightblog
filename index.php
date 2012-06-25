@@ -73,9 +73,30 @@ else
 {
 	if(isset($_GET['post']))
 	{
+		function formCallback($response)
+		{
+			if(!empty($response))
+			{
+				if($response['result'] == 'error' || $response['result'] == 'success')
+				{
+					if(isset($response['response']))
+					{
+						return $response['response'];
+					}
+				}
+				else
+				{
+					return 'No response from form processor.';
+				}
+			}
+			return;
+		}
+		
 		// Require the proper loop class
 		require(ABSPATH .'/Sources/Class.PostLoop.php');
 		require(ABSPATH .'/Sources/Class.CommentLoop.php');
+		require(ABSPATH .'/Sources/Process.php');
+		$_SESSION['cmessage'] = formCallback(processForm($_POST));
 
 		// Get post ID
 		$GLOBALS['pid'] = (int)$_GET['post'];

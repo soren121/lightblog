@@ -17,7 +17,7 @@
 ***********************************************/
 
 // Check for session status
-if(user()->is_guest() || permissions(1) == false)
+if(user()->is_guest() || !permissions('AccessACP'))
 {
 	redirect('login.php?return_to='. urlencode($_SERVER['REQUEST_URI']));
 }

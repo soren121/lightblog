@@ -89,7 +89,6 @@ elseif($area == 'errors' && !empty($_GET['delete']))
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
 	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.SlideMenu.js"></script>
 	<script type="text/javascript">
 		function deleteItem(id)
 		{
@@ -125,7 +124,7 @@ elseif($area == 'errors' && !empty($_GET['delete']))
 		<?php include('menu.php'); ?>
 		<div id="content">
 			<?php
-if(permissions(3))
+if(permissions('AccessMaintenance'))
 {
 	// Perhaps they are viewing the error log?
 	if($area == 'errors' && empty($_GET['id']))

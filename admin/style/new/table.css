@@ -45,7 +45,7 @@
 }
 
 #contentcolumn .table-options, #contentcolumn .table-info {
-	margin: 10px 0;
+	padding: 10px 0;
 	clear: none;
 	font-size: 0.9em;
 }
@@ -77,4 +77,8 @@
 	background: -ms-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* IE10+ */
 	background: linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+}
+
+p#itemnum-container, input#select-all {
+	display: none;
 }

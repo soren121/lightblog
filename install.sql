@@ -120,7 +120,8 @@ CREATE TABLE 'roles'
 
 INSERT INTO 'roles' ('role_id', 'role_name') VALUES(1, 'Administrator');
 INSERT INTO 'roles' ('role_id', 'role_name') VALUES(2, 'Editor');
-INSERT INTO 'roles' ('role_id', 'role_name') VALUES(3, 'Standard User');
+INSERT INTO 'roles' ('role_id', 'role_name') VALUES(3, 'Contributor');
+INSERT INTO 'roles' ('role_id', 'role_name') VALUES(4, 'Standard User');
 
 CREATE TABLE 'role_permissions'
 (
@@ -130,6 +131,71 @@ CREATE TABLE 'role_permissions'
 );
 
 CREATE UNIQUE INDEX 'role_permissions_index' ON 'role_permissions' ('role_id', 'permission');
+
+INSERT INTO role_permissions VALUES ('1','CreatePosts','1');
+INSERT INTO role_permissions VALUES ('1','CreatePages','1');
+INSERT INTO role_permissions VALUES ('1','CreateCategories','1');
+INSERT INTO role_permissions VALUES ('1','EditPosts','1');
+INSERT INTO role_permissions VALUES ('1','EditOthersPosts','1');
+INSERT INTO role_permissions VALUES ('1','EditPages','1');
+INSERT INTO role_permissions VALUES ('1','EditOthersPages','1');
+INSERT INTO role_permissions VALUES ('1','EditCategories','1');
+INSERT INTO role_permissions VALUES ('1','AddUsers','1');
+INSERT INTO role_permissions VALUES ('1','EditOtherUsers','1');
+INSERT INTO role_permissions VALUES ('1','EditSettings','1');
+INSERT INTO role_permissions VALUES ('1','EditComments','1');
+INSERT INTO role_permissions VALUES ('1','AccessMaintenance','1');
+INSERT INTO role_permissions VALUES ('1','AccessACP','1');
+INSERT INTO role_permissions VALUES ('1','CreateComments','1');
+INSERT INTO role_permissions VALUES ('1','EditRoles','1');
+INSERT INTO role_permissions VALUES ('2','CreatePosts','1');
+INSERT INTO role_permissions VALUES ('2','CreatePages','1');
+INSERT INTO role_permissions VALUES ('2','CreateCategories','1');
+INSERT INTO role_permissions VALUES ('2','EditPosts','1');
+INSERT INTO role_permissions VALUES ('2','EditOthersPosts','1');
+INSERT INTO role_permissions VALUES ('2','EditPages','1');
+INSERT INTO role_permissions VALUES ('2','EditOthersPages','1');
+INSERT INTO role_permissions VALUES ('2','EditCategories','1');
+INSERT INTO role_permissions VALUES ('2','AddUsers','0');
+INSERT INTO role_permissions VALUES ('2','EditOtherUsers','0');
+INSERT INTO role_permissions VALUES ('2','EditSettings','0');
+INSERT INTO role_permissions VALUES ('2','EditComments','1');
+INSERT INTO role_permissions VALUES ('2','AccessMaintenance','0');
+INSERT INTO role_permissions VALUES ('2','AccessACP','1');
+INSERT INTO role_permissions VALUES ('2','CreateComments','1');
+INSERT INTO role_permissions VALUES ('2','EditRoles','0');
+INSERT INTO role_permissions VALUES ('3','CreatePosts','1');
+INSERT INTO role_permissions VALUES ('3','CreatePages','1');
+INSERT INTO role_permissions VALUES ('3','CreateCategories','1');
+INSERT INTO role_permissions VALUES ('3','EditPosts','1');
+INSERT INTO role_permissions VALUES ('3','EditOthersPosts','0');
+INSERT INTO role_permissions VALUES ('3','EditPages','1');
+INSERT INTO role_permissions VALUES ('3','EditOthersPages','0');
+INSERT INTO role_permissions VALUES ('3','EditCategories','1');
+INSERT INTO role_permissions VALUES ('3','AddUsers','0');
+INSERT INTO role_permissions VALUES ('3','EditOtherUsers','0');
+INSERT INTO role_permissions VALUES ('3','EditSettings','0');
+INSERT INTO role_permissions VALUES ('3','EditComments','1');
+INSERT INTO role_permissions VALUES ('3','AccessMaintenance','0');
+INSERT INTO role_permissions VALUES ('3','AccessACP','1');
+INSERT INTO role_permissions VALUES ('3','CreateComments','1');
+INSERT INTO role_permissions VALUES ('3','EditRoles','0');
+INSERT INTO role_permissions VALUES ('4','CreatePosts','0');
+INSERT INTO role_permissions VALUES ('4','CreatePages','0');
+INSERT INTO role_permissions VALUES ('4','CreateCategories','0');
+INSERT INTO role_permissions VALUES ('4','EditPosts','0');
+INSERT INTO role_permissions VALUES ('4','EditOthersPosts','0');
+INSERT INTO role_permissions VALUES ('4','EditPages','0');
+INSERT INTO role_permissions VALUES ('4','EditOthersPages','0');
+INSERT INTO role_permissions VALUES ('4','EditCategories','0');
+INSERT INTO role_permissions VALUES ('4','AddUsers','0');
+INSERT INTO role_permissions VALUES ('4','EditOtherUsers','0');
+INSERT INTO role_permissions VALUES ('4','EditSettings','0');
+INSERT INTO role_permissions VALUES ('4','EditComments','0');
+INSERT INTO role_permissions VALUES ('4','AccessMaintenance','0');
+INSERT INTO role_permissions VALUES ('4','AccessACP','0');
+INSERT INTO role_permissions VALUES ('4','CreateComments','1');
+INSERT INTO role_permissions VALUES ('4','EditRoles','0');
 
 CREATE TABLE 'users'
 (

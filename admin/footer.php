@@ -16,7 +16,7 @@
 
 *********************************************/
 
-$rolequery = $dbh->query("SELECT role FROM roles WHERE id=".user()->role()) or die(sqlite_error_string($dbh->lastError));
+$rolequery = $dbh->query("SELECT role_name FROM roles WHERE role_id=".user()->role()) or die(sqlite_error_string($dbh->lastError));
 			
 function buildMenu($selected)
 {
@@ -30,7 +30,7 @@ function buildMenu($selected)
 			"children" => array(
 				"Post" => "create.php?type=1",
 				"Page" => "create.php?type=2",
-				"Category" => "create.php?type=3"
+				"Category" => "#"
 			)
 		),
 		"Manage" => array(
@@ -38,18 +38,18 @@ function buildMenu($selected)
 			"children" => array(
 				"Post" => "manage.php?type=1",
 				"Page" => "manage.php?type=2",
-				"Comments" => "comments.php",
-				"Categories" => "manage.php?type=3"
+				"Comments" => "#",
+				"Categories" => "#"
 			)
 		),
 		"Appearance" => array(
-			"link" => "appearance.php",
+			"link" => "#",
 			"children" => false
 		),
 		"Users" => array(
 			"link" => "users.php",
 			"children" => array(
-				"Manage Users" => "users.php",
+				"Manage Users" => "#",
 				"Your Profile" => "profile.php?id=".user()->id(),
 				"Add User" => "adduser.php"
 			)
@@ -58,7 +58,7 @@ function buildMenu($selected)
 			"link" => "settings.php",
 			"children" => array(
 				"General" => "settings.php",
-				"Comments" => "settings-comments.php"
+				"Comments" => "#"
 			)
 		),
 		"Maintenance" => array(
@@ -133,12 +133,12 @@ function buildMenu($selected)
 				<div>
 					<strong><?php echo user()->displayName() ?></strong><br />
 					<span><?php echo $rolequery->fetchSingle() ?></span><br />
-					<a href="profile.php">Your Profile</a> | <a href="login.php?logout">Logout</a>
+					<a href="profile.php?id=<?php echo user()->id() ?>">Your Profile</a> | <a href="login.php?logout">Logout</a>
 				</div>
 				<div class="clear"></div>
 			</div>
 			<ul id="menu">
-				<?php buildMenu($selected) ?>
+				<?php buildMenu((!isset($selected) ? $selected = basename($_SERVER['REQUEST_URI']) : $selected)) ?>
 			</ul>
 			<div id="footer">
 				<p>Powered by LightBlog <?php LightyVersion() ?></p>
@@ -149,7 +149,8 @@ function buildMenu($selected)
 	<script type="text/javascript">
 	//<![CDATA[
 		$('.submenu:not(".selected")').hide();
-		$('.nav-toggle').click(function()
+		$('ul#menu > li > a.nav-link:not(.single)').width(160);
+		$('.nav-toggle').show().click(function()
 		{
 			if(!$(this).closest('li').is('.selected'))
 			{

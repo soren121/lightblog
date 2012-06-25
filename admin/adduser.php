@@ -18,10 +18,33 @@
 // Require config file
 require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
-
-if(permissions(3))
+require(ABSPATH .'/Sources/Process.php');
+						
+function formCallback($response)
 {
-	$userquery = $dbh->query("SELECT role FROM users WHERE id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
+	if(!empty($response))
+	{
+		if($response['result'] == 'error')
+		{
+			return '<span class="result error">Failed to add user;<br />'.$response['response'].'</span>';
+		}
+		elseif($response['result'] == 'success')
+		{
+			return '<span class="result">'.$response['response'].'</span>';
+		}
+		else
+		{
+			return '<span class="result error">Failed to add user;<br />No response from form processor.</span>';
+		}
+	}
+}
+
+$head_response = formCallback(processForm($_POST));
+if(isset($_POST['ajax'])) { die(json_encode(array('response' => $head_response))); }
+
+if(permissions('AddUsers'))
+{
+	$userquery = $dbh->query("SELECT user_role FROM users WHERE user_id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
 	$role_options = '';
 	foreach(get_roles() as $role_id => $role)
 	{
@@ -34,13 +57,12 @@ if(permissions(3))
 		{
 			$select = 'selected="selected"';
 		}
-		$role_options .= '<option name="'.$role_id.'" '.$select.'>'.$role.'</option>';
+		$role_options .= '<option value="'.$role_id.'" '.$select.'>'.$role.'</option>';
 	}
 }
 
-$title = "Add User";
-$css = "settings.css";
-$selected = basename($_SERVER['REQUEST_URI']);
+$head_title = "Add User";
+$head_css = "settings.css";
 
 include('head.php');
 
@@ -48,8 +70,8 @@ include('head.php');
 
 		<div id="contentwrapper">
 			<div id="contentcolumn">
-				<?php if(permissions(3)): ?>
-					<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="adduser">
+				<?php if(permissions('AddUsers')): ?>
+					<form action="<?php bloginfo('url') ?>admin/adduser.php" method="post" id="adduser">
 						<div class="setting">
 							<div class="label">
 								<label for="username">Username</label>
@@ -115,6 +137,7 @@ include('head.php');
 
 						<div class="setting">
 							<input type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
+							<input type="hidden" name="form" value="AddUser" />
 							<input type="submit" class="submit" name="addusersubmit" value="Add User" />
 							<div class="clear"></div>
 						</div>
@@ -139,7 +162,7 @@ include('head.php');
 					});
 
 					jQuery.ajax({
-						data: inputs.join('&'),
+						data: 'ajax=true&' + inputs.join('&'),
 						type: "POST",
 						url: $(this).attr('action'),
 						timeout: 2000,
@@ -148,19 +171,13 @@ include('head.php');
 						},
 						dataType: 'json',
 						success: function(r) {
-							if(r.result == 'success') {
-								$('#ajaxresponse').html('<span class="result">' + r.response + '</span>');
-
-								$('#username').val('');
-								$('#password').val('');
-								$('#vpassword').val('');
-								$('#email').val('');
-								$('#displayname').val('');
-								$('#role').val(1);
-							}
-							else {
-								$('#ajaxresponse').html('<span class="result" style="color: red; border-color: red;">Failed to create user;<br />' + r.response + '</span>').css({color:"red"});
-							}
+							$('#ajaxresponse').html(r.response);
+							$('#username').val('');
+							$('#password').val('');
+							$('#vpassword').val('');
+							$('#email').val('');
+							$('#displayname').val('');
+							$('#role').val(1);
 						}
 					})
 					return false;

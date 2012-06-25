@@ -53,21 +53,20 @@
 
 				<h4 class="commentform-title">Post a comment</h4><br />
 				<?php $comment->messageHook('<div id="notifybox">') ?>
-				<form action="<?php bloginfo('url') ?>Sources/ProcessBrowser.php" method="post" id="commentform">
+				<form action="#commentform" method="post" id="commentform">
 					<?php if(user()->is_logged()): ?>
 					<p>You are commenting as <strong><?php echo user()->name(); ?></strong>.</p>
 					<?php else: ?>
-					<p><input name="commenter_name" type="text" id="cfname" maxlength="100" value="<?php commenter_name(); ?>" />
+					<p><input name="commenter_name" type="text" id="cfname" maxlength="100" value="<?php $comment->commenter_name(); ?>" />
 					<label for="cfname"><small>Name (required)</small></label></p>
-					<p><input name="commenter_email" type="text" id="cfemail" maxlength="255" value="<?php commenter_email(); ?>" />
+					<p><input name="commenter_email" type="text" id="cfemail" maxlength="255" value="<?php $comment->commenter_email(); ?>" />
 					<label for="cfemail"><small>Email (required)</small></label></p>
-					<p><input name="commenter_website" type="text" id="cfwebsite" maxlength="255" value="<?php commenter_website(); ?>" />
+					<p><input name="commenter_website" type="text" id="cfwebsite" maxlength="255" value="<?php $comment->commenter_website(); ?>" />
 					<label for="cfwebsite"><small>Website</small></label></p>
 					<?php endif; ?>
 					<p><textarea cols="41" rows="10" name="comment_text" id="wysiwyg"></textarea></p>
-					<?php $comment->formHook(); ?>
-					<?php if(user()->is_guest()): ?>
-					<p style="float: left;"><label title="Remember your name, email address and website"><input name="remember_me" value="1" type="checkbox" style="width: 15px !important;" checked="checked" /> Remember me.</label></p>
+					<?php $comment->formHook(); if(user()->is_guest()): ?>
+					<p style="float: left;"><label title="Remember your name, email address and website"><input name="remember_me" value="1" type="checkbox" style="width: 15px !important;" checked="checked" /> Remember me</label></p>
 					<?php endif; ?>
 					<p style="float: right;"><input name="comment_submit" type="submit" value="Submit" id="cfsubmit" /></p>
 					<div style="clear: both;">

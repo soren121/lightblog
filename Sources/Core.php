@@ -93,7 +93,7 @@ else
 */
 function LightyVersion($output = 'e') {
 	# DON'T TOUCH!
-	$version = '0.9.3.1';
+	$version = '0.9.4';
 	# Are we echoing or returning?
 	if($output == 'e') { echo $version; }
 	# Returning!
@@ -415,7 +415,7 @@ function list_categories($tag = 'li', $limit = 5, $selected = null)
 	{
 		while($row = $result->fetchObject())
 		{
-			echo '<option value="'. $row->category_id. '"'. ($this->category_id == $selected ? ' selected="selected"' : ''). '>'. $row->full_name. '</option>';
+			echo '<option value="'. $row->category_id. '"'. ($row->category_id == $selected ? ' selected="selected"' : ''). '>'. $row->full_name. '</option>';
 		}
 	}
 	else
@@ -440,27 +440,33 @@ function list_archives($limit = 10)
 	global $dbh;
 
 	// Get archive data
-	$result = $dbh->query("
-		SELECT
-			post_date
-		FROM posts WHERE published <= ". time(). "
-		ORDER BY post_date DESC
-		LIMIT 0, ".(int)$limit);
+	$result = $dbh->query(
+		"SELECT 
+			strftime('%m', post_date, 'unixepoch') AS 'month', 
+			strftime('%Y', post_date, 'unixepoch') AS 'year', 
+			post_date 
+		FROM posts 
+		WHERE published != 0  
+		GROUP BY month");
 
 	// Sort through and create list items
+	$i = 0;
+	$return = '';
 	while($row = $result->fetchObject())
 	{
-		$month = date('m', $row->post_date);
+		$month = $row->month;
 		$monthname = date('F', $row->post_date);
-		$year = date('Y', $row->post_date);
+		$year = $row->year;
 
-		if(!isset($post[$year][$month]))
+		$return .= '<li><a href="'. get_bloginfo('url'). '?archive='. $year. $month.'">'. $monthname. ' '. $year. '</a></li>';
+		
+		$i++;
+		if($i >= $limit)
 		{
-			echo '<li><a href="'. get_bloginfo('url'). '?archive='. $year. $month.'">'. $monthname. ' '. $year. '</a></li>';
+			break;
 		}
-
-		$post[$year][$month] = true;
 	}
+	echo $return;
 }
 
 /*

@@ -133,6 +133,12 @@ body {
 	margin-bottom: 15px;
 }
 
+#content div.post pre {
+	font-family: 'Consolas', 'DejaVu Sans Mono', 'Courier New', monospace;
+	background: #eee;
+	padding: 2px;
+}
+
 #content div.postdata {
 	padding: 4px 8px;
 	margin: 12px 0 8px 0;

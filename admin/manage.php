@@ -18,128 +18,79 @@
 // Require config file
 require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
+require(ABSPATH .'/Sources/Process.php');
 
-if((int)$_GET['type'] == 1) { $type = 'posts'; }
-elseif((int)$_GET['type'] == 2) { $type = 'pages'; }
-elseif((int)$_GET['type'] == 3) { $type = 'categories'; }
+if((int)$_GET['type'] == 1) { $type = 'post'; }
+elseif((int)$_GET['type'] == 2) { $type = 'page'; }
 
-function loadrow($type, $count = 10, $before = 0, $start = 0)
+$response = processForm($_POST);
+if(isset($_POST['ajax'])) { die(json_encode($response)); }
+
+if(!isset($_POST['page']))
 {
-	global $dbh;
-	if($start != 0)
-	{
-		$where = '';
-		$start = (int)(($start - 1) * $count);
-	}
-	else
-	{
-		$where = " WHERE id < ".(int)$before;
-		$start = 0;
-	}
-	$result = @$dbh->query("SELECT * FROM ".sqlite_escape_string(strip_tags($type)).$where." ORDER BY id desc LIMIT ".(int)$start.", ".(int)$count) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($dbh->lastError()))));
-	$category = @$dbh->query("SELECT id,fullname FROM categories ORDER BY id asc");
-	$categories = array();
-	while($cat = $category->fetchObject())
-	{
-		$categories[$cat->id] = $cat->fullname;
-	}
-	$return = '';
-	$i = 0;
-	while($row = $result->fetchObject())
-	{
-		$i++;
-		if($i == $result->numRows())
-		{
-			$return .= '<tr id="'.$row->id.'" class="last">';
-		}
-		elseif($i == 1)
-		{
-			$return .= '<tr id="'.$row->id.'" class="first">';
-		}
-		else
-		{
-			$return .= '<tr id="'.$row->id.'">';
-		}
-		$return .= '<td><input type="checkbox" name="checked[]" value="'.$row->id.'" class="bf table" /></td>';
-		if($type == 'categories')
-		{
-			$return .= '<td>'.$row->fullname.'</td>
-			<td>'.implode(' ', array_slice(explode(' ', $row->info), 0, 8)).'</td>';
-		}
-		else {
-			$return .= '<td>
-				<a href="'.get_bloginfo('url').'?'.substr($type, 0, -1).'='.$row->id.'">'.$row->title.'</a>';
-				if($row->published != 1) {
-					$return .= ' <span style="color:#E36868;">&mdash; Draft</span>';
-				}
-			$return .= '</td>
-			<td>'.$row->author.'</td>
-			<td>'.date('n/j/Y', $row->date).'</td>';
-			if($type == 'posts')
-			{
-				$return .= '<td><a href="'.$row->category.'">'.$categories[$row->category].'</a></td>';
-			}
-		}
-		if(($type !== 'categories') && (permissions(1) && user()->displayName() == $row->author) || (permissions(2)))
-		{
-			$return .= '<td class="c"><a href="edit.php?type='.(int)$_GET['type'].'&amp;id='.$row->id.'"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
-			<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem('.$row->id.', \''.addcslashes(($type == 'categories') ? $row->fullname : $row->title, '\'').'\');" style="cursor:pointer;" /></td>';
-		}
-		else {
-			$return .= '<td class="c"><img src="style/edit-d.png" alt="" title="You aren\'t allowed to edit this '.utf_substr($type, 0, -1).'." /></td>
-			<td class="c"><img src="style/delete-d.png" alt="" title="You aren\'t allowed to delete this '.utf_substr($type, 0, -1).'." /></td>';
-		}
-		$return .= '</tr>';
-	}
-	return $return;
+	$response = processForm(array('form' => 'Manage', 'csrf_token' => user()->csrf_token(), 'type' => $type, 'page' => 1));
+	$page = 1;
 }
-
-if(isset($_POST['loadrow']))
+else
 {
-	if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+	if(isset($_POST['prev']))
 	{
-		die(json_encode(array("result" => "error", "response" => "CSRF token incorrect or missing.")));
+		$page = $_POST['page'] -= 1;
 	}
-	else
+	if(isset($_POST['next']))
 	{
-		die(json_encode(array("result" => "success", "response" => loadrow($_POST['type'], $_POST['count'], $_POST['before'], $_POST['start']))));
+		$page = $_POST['page'] += 1;
 	}
 }
 
-$title = "Manage ".ucwords($type);
-$css = "table.css";
-$selected = basename($_SERVER['REQUEST_URI']);
+if(isset($response['response']))
+{
+	$response = $response['response'];
+}
+
+$head_title = "Manage ".ucwords($type)."s";
+$head_css = "table.css";
 
 include('head.php');
 
-$total = $dbh->query("SELECT id FROM $type") or die(sqlite_error_string($dbh->lastError));
-$total = $total->numRows();
+$rowtotal = $dbh->query("SELECT {$type}_id FROM {$type}s") or die(sqlite_error_string($dbh->lastError));
+$rowtotal = $rowtotal->numRows();
+
+$rowstart = (10 * $page) - 9;
+
+if((10 * $page) >= $rowtotal)
+{
+	$rowlimit = $rowtotal;
+}
+else
+{
+	$rowlimit = $page * 10;
+}
 
 ?>
 
 		<div id="contentwrapper">
 			<div id="contentcolumn">
-				<?php if($type !== 'categories' && permissions(1) || $type === 'categories' && permissions(2)): if(!isset($type)): ?>
+				<?php if(permissions('EditPosts')): if(!isset($type)): ?>
 					<p>The type of content to add was not specified. You must have taken a bad link. Please
 					use the navigation bar above to choose the correct type.</p>
 				<?php else: ?>
-					<form action="<?php bloginfo('url') ?>Sources/ProcessAJAX.php" method="post" id="bulk">
+					<form action="<?php bloginfo('url') ?>admin/manage.php?<?php echo http_build_query($_GET, '', '&amp;') ?>" method="post" id="bulk">
 						<div class="table-options">
 							<p style="float:left">
 								<select name="action" class="bf" style="width: 140px;">
 									<option selected="selected" value="default">Bulk Actions:</option>
 									<option value="delete">Delete</option>
-									<?php if($type != 'categories'): ?>
-										<option value="publish">Publish</option>
-										<option value="unpublish">Un-publish</option>
-									<?php endif; ?>
+									<option value="publish">Publish</option>
+									<option value="unpublish">Un-publish</option>
 								</select>
 								<input class="bf" type="hidden" name="type" value="<?php echo $type ?>" />
+								<input class="bf" type="hidden" name="form" value="BulkAction" />
 								<input class="bf" type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
 								<input type="submit" class="bf" value="Apply" name="bulk" />
 							</p>
-							<p style="float:right">
-								<label for="itemnum"><?php echo ucwords($type) ?> per page</label>
+							<p id="itemnum-container" style="float:right">
+								<label for="itemnum"><?php echo ucwords($type) ?>s per page</label>
 								<select id="itemnum" name="items" style="width: 60px;">
 									<option value="10" selected="selected">10</option>
 									<option value="20">20</option>
@@ -152,36 +103,33 @@ $total = $total->numRows();
 							<thead>
 								<tr>
 									<th class="{sorter: false}"><input type="checkbox" id="select-all" title="Select All/None" /></th>
-									<?php if($type != 'categories'): ?>
-										<th>Title</th>
-										<th>Author</th>
-										<th>Date</th>
-										<?php if($type == 'posts'): ?>
-											<th>Category</th>
-										<?php endif; ?>
-										<th class="{sorter: false}">Edit</th>
-										<th class="{sorter: false}">Delete</th>
-									<?php else: ?>
+									<th>Title</th>
+									<th>Author</th>
+									<th>Date</th>
+									<?php if($type == 'post'): ?>
 										<th>Category</th>
-										<th>Info</th>
-										<th class="{sorter: false}">Edit</th>
-										<th class="{sorter: false}">Delete</th>
 									<?php endif; ?>
+									<th class="{sorter: false}">Edit</th>
+									<th class="{sorter: false}">Delete</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr id="1" class="last">
-									<td colspan="7">&nbsp;</td>
-								</tr>
+								<?php echo $response ?>
 							</tbody>
 						</table>
 					</form>
-					<div class="table-options" style="height:20px;">
-						<a id="prev-link" href="javascript:loadpage('prev');" style="float:left;">&laquo; Prev Page</a>
-						<a id="next-link" href="javascript:loadpage('next');" style="float:right;">Next Page &raquo;</a>
-						<div class="clear"></div>
-					</div>
-					<p class="table-info">Showing <span id="row-start">1</span> - <span id="row-limit"></span> out of <span id="row-total"><?php echo $total ?></span> <?php echo $type ?>.</p>
+					<form action="<?php bloginfo('url') ?>admin/manage.php?<?php echo http_build_query($_GET, '', '&amp;') ?>" method="post">
+						<div class="table-options" style="height:20px;">
+							<input type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
+							<input type="hidden" name="type" value="<?php echo $type ?>" />
+							<input type="hidden" name="form" value="Manage" />
+							<input type="hidden" name="page" value="<?php echo $page ?>" />
+							<input type="submit" id="prev-link" name="prev" onclick="javascript:loadpage('prev');return false;" style="float:left;<?php echo ($page == 1) ? 'display:none;' : '' ?>" value="&laquo; Prev Page" />
+							<input type="submit" id="next-link" name="next" onclick="javascript:loadpage('next');return false;" style="float:right;<?php echo (($page * 10) >= $rowtotal) ? 'display:none;' : '' ?>" value="Next Page &raquo;" />
+							<div class="clear"></div>
+						</div>
+					</form>
+					<p class="table-info">Showing <span id="row-start"><?php echo $rowstart ?></span> - <span id="row-limit"><?php echo $rowlimit ?></span> out of <span id="row-total"><?php echo $rowtotal ?></span> <?php echo $type ?>s.</p>
 				<?php endif; endif; ?>
 			</div>
 		</div>
@@ -191,6 +139,8 @@ $total = $total->numRows();
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Metadata.js"></script>
 		<script type="text/javascript">
 		//<![CDATA[
+			$('#itemnum-container, #select-all').show();
+		
 			if(window.location.hash == '')
 			{
 				window.location.hash = '#page=1';
@@ -248,7 +198,7 @@ $total = $total->numRows();
 				}
 			}
 
-			function loadrow_js(count, clear, start)
+			function loadrow_js(count, clear, page)
 			{
 				function callback(r, clear)
 				{
@@ -273,9 +223,8 @@ $total = $total->numRows();
 				var last = $('tbody tr.last').attr('id');
 				jQuery.ajax(
 				{
-					data: "loadrow=true&type=<?php echo $type ?>&count=" + count + "&before=" + last + "&start=" + start + "&csrf_token=<?php echo user()->csrf_token() ?>",
+					data: "ajax=true&form=Manage&type=<?php echo $type ?>&count=" + count + "&before=" + last + "&page=" + page + "&csrf_token=<?php echo user()->csrf_token() ?>",
 					type: "POST",
-					cache: false,
 					url: window.location,
 					timeout: 2000,
 					dataType: 'json',
@@ -324,7 +273,10 @@ $total = $total->numRows();
 				}
 				if(type == 'initial')
 				{
-					loadrow_js(count, true, page);
+					if(page != 1)
+					{
+						loadrow_js(count, true, page);
+					}
 				}
 				if(type == 'reset')
 				{
@@ -417,7 +369,7 @@ $total = $total->numRows();
 
 				jQuery.ajax(
 				{
-					data: inputs.join('&'),
+					data: 'ajax=true&' + inputs.join('&'),
 					type: "POST",
 					url: $(this).attr('action'),
 					timeout: 2000,
@@ -436,12 +388,6 @@ $total = $total->numRows();
 
 			function deleteItem(id, title)
 			{
-				var type = 'category';
-				if('<?php echo $type ?>' != 'categories')
-				{
-					type = '<?php echo $type ?>';
-					type = type.substr(0, type.length - 1);
-				}
 				var answer = confirm('Do you really want to delete ' + type + ' "' + title + '"?');
 				if(answer)
 				{
@@ -450,7 +396,7 @@ $total = $total->numRows();
 					$('tr#' + id + ' > td:first').children(':checkbox').attr('checked', true);
 					jQuery.ajax(
 					{
-						data: "delete=true&csrf_token=<?php echo user()->csrf_token() ?>&type=<?php echo $type ?>&id=" + id,
+						data: "ajax=true&form=DeleteSingle&csrf_token=<?php echo user()->csrf_token() ?>&type=<?php echo $type ?>&id=" + id,
 						type: "POST",
 						url: "<?php bloginfo('url') ?>Sources/ProcessAJAX.php",
 						timeout: 2000,

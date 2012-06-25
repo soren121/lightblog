@@ -144,14 +144,10 @@ class PostLoop
 		{
 			list($year, $month) = explode('-', substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0));
 
+			$options['where'][] = "post_date BETWEEN strftime('%s', '{$year}-{$month}-01') AND strftime('%s', '{$year}-{$month}-01', '+1 month', '-1 day')";
+		
 			// We want to save this for later.
 			$this->data['query_string'] = 'archive='. $year. (utf_strlen($month) == 1 ? '0' : ''). $month;
-
-			// Now we will get the range for the post dates to retrieve.
-			$firstday = mktime(0, 0, 0, (int)$month, 1, (int)$year);
-			$lastday = mktime(0, 0, 0, ((int)$month) + 1, 0, (int)$year);
-
-			$options['where'][] = 'post_date BETWEEN '. $firstday. ' AND '. $lastday;
 		}
 		elseif($querytype == 'category')
 		{
