@@ -65,6 +65,7 @@ $head_title = "Edit Profile";
 $head_css = "settings.css";
 if((int)$_GET['id'] != user()->id())
 {
+	$head_title = "Edit User";
 	$selected = "users.php";
 }
 

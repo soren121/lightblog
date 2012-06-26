@@ -1,0 +1,70 @@
+html, body
+{
+	height: 100%;
+}
+
+div#login-response
+{
+	width: 550px;
+	position: absolute;
+	bottom: 50%;
+	left: 50%;
+	margin-bottom: 260px;
+	margin-left: -250px;
+	border: 1px solid #E36868;
+	color: #E36868;
+	text-align: center;
+	font-size: 0.9em;
+	line-height: 1em;
+	padding: 5px 0;
+}
+
+div#login-container
+{
+	width: 500px;
+	height: 350px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -210px; /* half height */
+	margin-left: -250px; /* half width */
+	background: transparent url('logo.png') left top no-repeat;
+}
+
+div#login-header
+{
+	padding-left: 270px;
+	padding-top: 5px;
+	height: 85px;
+	width: 300px;
+}
+
+div#login-header h2
+{
+	padding-top: 0;
+	font-size: 1.4em !important;
+	line-height: 1em;
+}
+
+form
+{
+	width: 370px;
+	padding: 10px 0;
+	margin: 0 auto;
+}
+
+form div > label, form span
+{
+	line-height: 32px;
+	float: left;
+}
+
+form input[type=text], form input[type=password]
+{
+	width: 255px;
+	height: 30px;
+	margin-bottom: 15px;
+	float: right;
+	font-size: 1.3em;
+	line-height: 30px;
+}

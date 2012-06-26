@@ -57,11 +57,11 @@
 					<?php if(user()->is_logged()): ?>
 					<p>You are commenting as <strong><?php echo user()->name(); ?></strong>.</p>
 					<?php else: ?>
-					<p><input name="commenter_name" type="text" id="cfname" maxlength="100" value="<?php $comment->commenter_name(); ?>" />
+					<p><input name="commenter_name" type="text" id="cfname" maxlength="100" value="<?php commenter_name(); ?>" />
 					<label for="cfname"><small>Name (required)</small></label></p>
-					<p><input name="commenter_email" type="text" id="cfemail" maxlength="255" value="<?php $comment->commenter_email(); ?>" />
+					<p><input name="commenter_email" type="text" id="cfemail" maxlength="255" value="<?php commenter_email(); ?>" />
 					<label for="cfemail"><small>Email (required)</small></label></p>
-					<p><input name="commenter_website" type="text" id="cfwebsite" maxlength="255" value="<?php $comment->commenter_website(); ?>" />
+					<p><input name="commenter_website" type="text" id="cfwebsite" maxlength="255" value="<?php commenter_website(); ?>" />
 					<label for="cfwebsite"><small>Website</small></label></p>
 					<?php endif; ?>
 					<p><textarea cols="41" rows="10" name="comment_text" id="wysiwyg"></textarea></p>

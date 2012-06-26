@@ -98,6 +98,7 @@ include('head.php');
 			</div>
 		</div>
 
+		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/Form.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.CLEditor.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.CLEditor.XHTML.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.CLEditor.AdvancedTable.js"></script>
@@ -107,36 +108,6 @@ include('head.php');
 				width: '100%',
 				height: '320px',
 				bodyStyle: 'margin:10px; font:12pt Georgia,Times,serif; cursor:text'
-			});
-
-			$(function() {
-				$('#create').submit(function() {
-					$('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Saving" />');
-					var inputs = [];
-					$('.cf', this).each(function() {
-						if($(this).is(':checkbox') && $(this).is(':not(:checked)')) {
-							void(0);
-						}
-						else {
-							inputs.push(this.name + '=' + this.value);
-						}
-					});
-
-					jQuery.ajax({
-						data: 'ajax=true&' + inputs.join('&'),
-						type: "POST",
-						url: $(this).attr('action'),
-						timeout: 2000,
-						dataType: 'json',
-						error: function() {
-							$('#ajaxresponse').html('<span class="result error">Failed to submit <?php echo $type ?>;<br />(jQuery failure).</span>');
-						},
-						success: function(r) {
-							$('#ajaxresponse').html(r.response);
-						}
-					})
-					return false;
-				})
 			});
 		//]]>
 		</script>

@@ -19,67 +19,17 @@
 require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Dashboard - <?php bloginfo('title') ?></title>
-	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/style.css" />
-	<!--[if lte IE 7]><style type="text/css">html.jqueryslidemenu { height: 1%; }</style><![endif]-->
-	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function() {
-		});
-	</script>
-</head>
+$head_title = "Dashboard";
+$head_css = "create.css";
 
-<body>
-	<div id="wrapper">
-		<div id="header" class="roundedt">
-			<a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>
-		</div>
-		<?php include('menu.php'); ?>
-		<div id="content">
-			<h2 class="title">Welcome <?php echo user()->displayName(); ?>!</h2>
-			<div>
-				<div style="float:left;width:50%;">
-					<div class="db_box rounded">
-						<h4>Recent Posts</h4>
-						<ul>
-						<?php
-							$rpresult = $dbh->query("SELECT * FROM posts WHERE published=1 ORDER BY post_id desc LIMIT 5");
-							if($rpresult->numRows() == 0): ?>
-								No posts to display.
-							<?php else: while($rp = $rpresult->fetchObject()): ?>
-								<li><a href="<?php bloginfo('url')?>?post=<?php echo $rp->post_id; ?>"><?php echo $rp->post_title ?></a></li>
-							<?php endwhile; endif; ?>
-						</ul>
-					</div>
-					<div class="db_box rounded">
-						<h4>Recent Comments</h4>
-						<ul>
-						</ul>
-					</div>
-				</div>
-				<div style="float:right;width:50%;">
-					<div class="db_box rounded">
-						<h4>Quick Links</h4>
-						<ul>
-							<li><a href="create.php?type=1">Create a post</a></li>
-							<?php if(permissions(2)):  ?>
-								<li><a href="create.php?type=2">Create a page</a></li>
-								<li><a href="manage.php?type=1">Manage posts</a></li>
-							<?php endif; ?>
-							<li><a href="profile.php">Edit your profile</a></li>
-						</ul>
-					</div>
-				</div>
+include('head.php');
+
+?>
+
+		<div id="contentwrapper">
+			<div id="contentcolumn">
+				TODO
 			</div>
 		</div>
-		<div id="footer" class="roundedb">
-			Powered by LightBlog <?php LightyVersion() ?>
-	    </div>
-	</div>
-</body>
-</html>
+
+<?php include('footer.php') ?>

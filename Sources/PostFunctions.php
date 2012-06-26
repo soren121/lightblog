@@ -5,7 +5,7 @@
 	LightBlog 0.9
 	SQLite blogging platform
 
-	Sources/Class.PostLoop.php
+	Sources/PostFunctions.php
 
 	©2008-2012 The LightBlog Team. All
 	rights reserved. Released under the

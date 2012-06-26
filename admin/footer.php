@@ -30,7 +30,7 @@ function buildMenu($selected)
 			"children" => array(
 				"Post" => "create.php?type=1",
 				"Page" => "create.php?type=2",
-				"Category" => "#"
+				"Category" => "create-category.php"
 			)
 		),
 		"Manage" => array(
@@ -38,31 +38,28 @@ function buildMenu($selected)
 			"children" => array(
 				"Post" => "manage.php?type=1",
 				"Page" => "manage.php?type=2",
-				"Comments" => "#",
-				"Categories" => "#"
+				"Comments" => "comments.php",
+				"Categories" => "manage.php?type=3"
 			)
 		),
 		"Appearance" => array(
-			"link" => "#",
+			"link" => "appearance.php",
 			"children" => false
 		),
 		"Users" => array(
 			"link" => "users.php",
 			"children" => array(
-				"Manage Users" => "#",
+				"Manage Users" => "users.php",
 				"Your Profile" => "profile.php?id=".user()->id(),
 				"Add User" => "adduser.php"
 			)
 		),
 		"Settings" => array(
 			"link" => "settings.php",
-			"children" => array(
-				"General" => "settings.php",
-				"Comments" => "#"
-			)
+			"children" => false
 		),
 		"Maintenance" => array(
-			"link" => "maintenance.php",
+			"link" => "maintenance.php?area=errors",
 			"children" => array(
 				"Backup and Optimize" => "#",
 				"Error Log" => "maintenance.php?area=errors"
@@ -72,51 +69,40 @@ function buildMenu($selected)
 	
 	foreach($menu as $topname => $attr)
 	{
-		if(is_array($attr['children']) && in_array($selected, $attr['children']))
+		if(is_array($attr['children']) && in_array($selected, $attr['children']) || !is_array($attr['children']) && $attr['link'] == $selected)
 		{
-			$select = true;
+			$select = 'selected';
 		}
 		else
 		{
-			$select = false;
+			$select = '';
 		}
-		if($select == true || $selected == $attr['link'])
-		{
-			echo '<li class="selected">';
-		}
-		else
-		{
-			echo '<li>';
-		}
+		echo '<li class="'.$select.'">';
 		echo '<img src="style/new/'.strtolower($topname).'.png" class="nav-icon" alt="" />';
 		if($attr['children'] === false)
 		{
-			echo '<a href="'.$attr['link'].'" class="nav-link single">'.$topname.'</a>';
+			echo '<a href="'.$attr['link'].'" class="nav-link single '.$select.'">'.$topname.'</a>';		
 			echo '</li>';
 		}
 		else
 		{
 			echo '<a href="'.$attr['link'].'" class="nav-link">'.$topname.'</a>';
-			if($select == true)
+			if($select != '')
 			{
 				echo '<a href="#" class="nav-toggle"><img src="style/new/minus.png" alt="-" /></a>';
-				echo '<ul class="submenu selected">';
 			}
 			else
 			{
 				echo '<a href="#" class="nav-toggle"><img src="style/new/plus.png" alt="+" /></a>';
-				echo '<ul class="submenu">';
 			}
+			echo '<ul class="submenu '.$select.'">';
 			foreach($attr['children'] as $name => $link)
 			{
-				if($link == $selected)
+				if($link != $selected)
 				{
-					echo '<li><a href="'.$link.'" class="nav-link selected">'.$name.'</a></li>';
+					$select = '';
 				}
-				else
-				{
-					echo '<li><a href="'.$link.'" class="nav-link">'.$name.'</a></li>';
-				}
+				echo '<li><a href="'.$link.'" class="nav-link '.$select.'">'.$name.'</a></li>';
 			}
 			echo '</ul></li>';
 		}

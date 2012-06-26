@@ -229,38 +229,6 @@ include('head.php');
 			</div>
 		</div>
 
-		<script type="text/javascript">
-		//<![CDATA[
-			$(function() {
-				$('form').submit(function() {
-					$('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Saving" />');
-					var inputs = [];
-					$(':input', this).each(function() {
-						if($(this).is(':checkbox, :radio') && $(this).is(':not(:checked)')) {
-							void(0);
-						}
-						else {
-							inputs.push(this.name + '=' + this.value);
-						}
-					});
-
-					jQuery.ajax({
-						data: 'ajax=true&' + inputs.join('&'),
-						type: "POST",
-						url: $(this).attr('action'),
-						timeout: 2000,
-						error: function() {
-							$('#ajaxresponse').html('<span class="result">Failed to save settings;<br />(jQuery failure).</span>');
-						},
-						dataType: 'json',
-						success: function(r) {
-							$('#ajaxresponse').html(r.response);
-						}
-					})
-					return false;
-				})
-			});
-		//]]>
-		</script>
+		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/Form.js"></script>
 
 <?php include('footer.php') ?>

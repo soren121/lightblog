@@ -1,11 +1,10 @@
 <?php
-
 /***********************************************
 
 	LightBlog 0.9
 	SQLite blogging platform
 
-	Sources/Admin.php
+	admin/create-category.php
 
 	©2008-2012 The LightBlog Team. All
 	rights reserved. Released under the
@@ -16,15 +15,21 @@
 
 ***********************************************/
 
-// Check for session status
-if(user()->is_guest())
-{
-	redirect('login.php?return_to='. urlencode($_SERVER['REQUEST_URI']));
-}
+// Require config file
+require('../Sources/Core.php');
+require(ABSPATH .'/Sources/Admin.php');
 
-if(!user()->is_guest() && !permissions('AccessACP'))
-{
-	redirect(get_bloginfo('url'));
-}
+$head_title = "Create Category";
+$head_css = "settings.css";
+
+include('head.php');
 
 ?>
+
+		<div id="contentwrapper">
+			<div id="contentcolumn">
+				TODO
+			</div>
+		</div>
+
+<?php include('footer.php') ?>

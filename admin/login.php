@@ -22,11 +22,11 @@ require('../Sources/Core.php');
 if(!empty($_POST['proclogin']))
 {
 	$messages = user_login(array(
-													 'username' => isset($_POST['username']) ? $_POST['username'] : '',
-													 'password' => isset($_POST['password']) ? $_POST['password'] : '',
-													 'remember_me' => !empty($_POST['rememberme']),
-													 'redir_to' => !empty($_REQUEST['return_to']) ? $_REQUEST['return_to'] : '',
-												));
+		'username' => isset($_POST['username']) ? $_POST['username'] : '',
+		'password' => isset($_POST['password']) ? $_POST['password'] : '',
+		'remember_me' => !empty($_POST['rememberme']),
+		'redir_to' => !empty($_REQUEST['return_to']) ? $_REQUEST['return_to'] : '',
+	));
 }
 
 // Logout the user
@@ -41,49 +41,72 @@ if(isset($_GET['logout']))
 	// Send them to the homepage
 	redirect(get_bloginfo('url'));
 }
-?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php bloginfo('title') ?> - Login</title>
-	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/loginstyle.css" />
+	<title>Log In // <?php bloginfo('title') ?> &mdash; LightBlog</title>
+	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/new/main.css" />
+	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/new/login.css" />
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function(){
-		  $("#username").focus();
-		});
-	</script>
 </head>
 
 <body>
-	<div id="registerbox">
-<?php
-if(isset($messages) && count($messages) > 0)
-{
-	echo '
-			<div style="font-weight:bold;color:#FF0000;font-size:1.2em;padding: 5px 0 5px 0;text-align:center;">';
-
-	foreach($messages as $message)
+	<?php
+	
+	if(isset($messages) && count($messages) > 0)
 	{
-		echo '
-				<p>', $message, '</p>';
+		echo '<div id="login-response">';
+	
+		foreach($messages as $message)
+		{
+			echo '<p>', $message, '</p>';
+		}
+	
+		echo '</div>';
 	}
-
-	echo '
-			</div>';
-}
-?>
-    	<form action="" method="post">
+	
+	?>
+	
+	<div id="login-container">
+		<div id="login-header">
+			<h2 id="blogtitle"><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a></h2>
+			<h2 id="section">// Log In</h2>
+		</div>
+		<form action="" method="post">
 			<div>
-				<label for="username">Username</label>
-				<p><input name="username" type="text" size="16" id="username" value="<?php echo !empty($_POST['username']) ? utf_htmlspecialchars($_POST['username']) : ''; ?>" /></p>
-				<label for="password">Password</label>
-				<p><input name="password" type="password" size="16" id="password" value="" /></p>
-				<p class="remember"><input name="remember" type="checkbox" id="rememberme" <?php echo !empty($_POST['rememberme']) ? 'checked="checked"' : ''; ?> value="1" />
-				<label for="rememberme">Remember Me</label></p>
-				<p><input name="proclogin" type="submit" value="Login" id="submit" /></p>
+				<div>
+					<label for="username">Username</label>
+					<input name="username" type="text" size="16" id="username" value="<?php echo !empty($_POST['username']) ? utf_htmlspecialchars($_POST['username']) : ''; ?>" />
+					<div class="clear"></div>
+				</div>
+				<div>
+					<label for="password">Password</label>
+					<input name="password" type="password" size="16" id="password" value="" />
+					<div class="clear"></div>
+				</div>
+				<span>
+					<input name="remember" type="checkbox" id="rememberme" <?php echo !empty($_POST['rememberme']) ? 'checked="checked"' : ''; ?> value="1" />
+					<label for="rememberme">Remember Me</label>
+				</span>
+				<input name="proclogin" type="submit" value="Log In" class="submit" />
+				<div class="clear" style="padding-top:15px;">
+					<a class="secondary-button" href="<?php bloginfo('url') ?>" style="float: left;">&laquo; Back</a>
+					<?php if(get_bloginfo('allow_registration')): ?>
+						<a class="secondary-button" href="#" style="float: right;padding:3px 34px;">Register</a>
+					<?php endif; ?>
+					<div class="clear"></div>
+				</div>
 			</div>
 		</form>
 	</div>
+	
+	<script type="text/javascript">
+		$('#username').focus();
+	</script>
 </body>
 </html>
