@@ -180,12 +180,11 @@ function bsetup() {
 	$salt = substr(md5(uniqid(mt_rand(), true)), 0, 9);
 	// Clean remaining variables
 	$password = sha1($salt.$password);
-	// Add user to database
-	$dbh->query("INSERT INTO users (username,password,email,displayname,role,ip,salt) VALUES('$username', '$password', '$email', '$dname', 3, '$ip', '$salt');");
-	// Add blog title to database
-	$dbh->query("INSERT INTO core VALUES('title', '$title');");
-	// Add blog URL to database
-	$dbh->query("INSERT INTO core VALUES('url', '$url');");
+	// Save the data!
+	$dbh->query("
+		INSERT INTO users (user_name,user_pass,user_email,display_name,user_role,user_ip,user_salt,user_activated,user_created) VALUES('$username', '$password', '$email', '$dname', 1, '$ip', '$salt', 1, ".time().");
+		INSERT INTO settings VALUES('title', '$title');
+		INSERT INTO settings VALUES('url', '$url');");
 	// Shut off database connection
 	unset($dbh);
 }
@@ -585,7 +584,7 @@ if(isset($_POST['bsetup'])) {
 			<?php endif; if($page == 'finish'): ?>
 				<h2>You're done!</h2>
 				<p>Click the Finish button to see your new blog! :)</p>
-				<button onclick="window.location='<?php echo baseurl(); ?>?install=true'">Finish</button>
+				<button onclick="window.location='<?php echo baseurl(); ?>'">Finish</button>
 			<?php endif; ?>
 			<div class="clear"></div>
 		</div>
