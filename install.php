@@ -16,140 +16,215 @@
 
 *********************************************/
 
-// Get some extra functions
-require(dirname(__FILE__).'/Sources/FunctionReplacements.php');
-require(dirname(__FILE__).'/Sources/StringFunctions.php');
+// This should be set to false when it is being distributed.
+define('INDEVMODE', true);
 
-// Shutdown Magic Quotes automatically
-// Highly inefficient, but there isn't much we can do about it
-if(get_magic_quotes_gpc()) {
-	function stripslashes_gpc(&$value) {
-		$value = stripslashes($value);
+// An array of files which the installer requires to operate.
+$required_files = array(
+	'Sources/FunctionReplacements.php', 'Sources/StringFunctions.php',
+	'config-example.php', 'Sources/CleanRequest.php', 'install.sql',
+);
+
+foreach($required_files as $filename)
+{
+	if(!file_exists($filename))
+	{
+		die('The file \''. $filename. '\' was not found and is required by the installer.');
 	}
-	array_walk_recursive($_GET, 'stripslashes_gpc');
-    array_walk_recursive($_POST, 'stripslashes_gpc');
-    array_walk_recursive($_COOKIE, 'stripslashes_gpc');
-    array_walk_recursive($_REQUEST, 'stripslashes_gpc');
 }
+
+// Delete the installer?
+if(!empty($_GET['delete']))
+{
+	// But make sure we're not in development mode.
+	if(!defined('INDEVMODE') || !INDEVMODE)
+	{
+		@unlink(__FILE__);
+	}
+
+	header('HTTP/1.1 307 Temporary Redirect');
+	header('Location: '. baseurl());
+
+	exit;
+}
+
+// Get some extra functions
+require(dirname(__FILE__). '/Sources/FunctionReplacements.php');
+require(dirname(__FILE__). '/Sources/StringFunctions.php');
+
+// Just including CleanRequest.php will disable magic quotes.
+require(dirname(__FILE__). '/Sources/CleanRequest.php');
 
 // Operates the side menu selectors
 // First parameter specifies page
 // Second parameter defines if we're changing the page or just reading it
-function menuClass($item, $op = 0) {
+function menuClass($item, $op = 0)
+{
 	static $cur_item = 1;
-	if($op == 1) {
+
+	// Setting the current item?
+	if($op == 1)
+	{
 		$cur_item = (int)$item;
 	}
-	else {
-		if($cur_item == $item) {
-			echo "selected";
-		}
-		if($cur_item > $item) {
-			echo "done";
-		}
-		if($cur_item < $item) {
-			echo "notdone";
-		}
+	// If they're equal then that means we are currently at that step.
+	elseif($cur_item == $item)
+	{
+		echo "selected";
+	}
+	// We've passed that step.
+	elseif($cur_item > $item)
+	{
+		echo "done";
+	}
+	// We haven't gotten to that step ($cur_item < $item).
+	else
+	{
+		echo "notdone";
 	}
 }
 
 // Adds trailing slash if needed
-function endslash($path) {
-	$last_char = substr($path, strlen($path) - 1, 1);
-	if($last_char != DIRECTORY_SEPARATOR) {
+function endslash($path)
+{
+	if(substr($path, -1, 1) != DIRECTORY_SEPARATOR)
+	{
 		$path .= DIRECTORY_SEPARATOR;
 	}
+
 	return $path;
 }
 
 // Gets directory URL
-function baseurl() {
-	$site_url = explode('/', $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
-	unset($site_url[count($site_url)-1]);
+function baseurl()
+{
+	$site_url = explode('/', $_SERVER['SERVER_NAME']. $_SERVER['REQUEST_URI']);
+	unset($site_url[count($site_url) - 1]);
+
 	$site_url = implode('/', $site_url);
-	$site_url = 'http://'.$site_url.'/';
+	$site_url = 'http://'. $site_url. '/';
+
 	return $site_url;
 }
 
 // Will process after Step 1
-if(isset($_POST['reqmet'])) {
+if(isset($_POST['reqmet']))
+{
 	// Set new installer page
 	$page = 'dbsetup';
 	menuClass(2, 1);
 }
 
 // Processing for step 2
-function dbsetup() {
-	if($_POST['dbpath'] == null || $_POST['dbpath'] == '') {
+function dbsetup()
+{
+	if($_POST['dbpath'] == null || $_POST['dbpath'] == '')
+	{
 		return 'No database path given.';
 	}
+
 	// Create database path
-	$dbpath = endslash($_POST['dbpath']).randomString(rand(9, 16)).'.db';
-	if(!is_dir($_POST['dbpath'])) {
-		if(!file_exists($_POST['dbpath'])) {
-			if(!@mkdir($_POST['dbpath'], 0760, true)) {
+	$dbpath = endslash($_POST['dbpath']). randomString(rand(32, 64)). '.db';
+	if(!is_dir($_POST['dbpath']))
+	{
+		if(!file_exists($_POST['dbpath']))
+		{
+			if(!@mkdir($_POST['dbpath'], 0760, true))
+			{
 				return 'Unable to create directory. Please create it manually, chmod it to 760, and try again.';
 			}
 		}
 	}
-	else {
-		if(!is_writable($_POST['dbpath'])) {
+	else
+	{
+		if(!is_writable($_POST['dbpath']))
+		{
 			return 'Database path is not writable. Please chmod it to 760 and try again.';
 		}
 	}
+
 	// Open, read, and close SQL file
-	if(is_readable('install.sql')) {
+	if(is_readable('install.sql'))
+	{
 		$sqlh = fopen('install.sql', 'r');
 		$sql = fread($sqlh, filesize('install.sql'));
 		fclose($sqlh);
 	}
-	else {
+	else
+	{
 		// Attempt to make it readable
-		if(!@chmod('install.sql', 0644)) {
+		if(!@chmod('install.sql', 0644))
+		{
 			return 'Failed to open \'install.sql\'. Please <abbr title="change permissions">chmod it</abbr> to 644 and try again.';
 		}
 	}
+
 	// Create, write to, and close database
-	if(!$dbh = new SQLiteDatabase($dbpath)) {
+	if(!$dbh = new SQLiteDatabase($dbpath))
+	{
 		return 'Failed to create the database. Please <abbr title="change permissions">chmod</abbr> its directory to 760 and try again.';
 	}
-	if(!$dbh->queryExec($sql, $errormsg)) {
+
+	if(!$dbh->queryExec($sql, $errormsg))
+	{
 		return 'Failed to write to the database because: '.$errormsg.'.';
 	}
+
 	unset($dbh);
+
 	// Open, read, and close example config file
-	if(is_readable('config-example.php')) {
+	if(is_readable('config-example.php'))
+	{
 		$excfgh = fopen('config-example.php', 'r');
 		$excfg = fread($excfgh, filesize('config-example.php'));
 		fclose($excfgh);
 	}
-	else {
-		if(!@chmod('config-example.php', 0644)) {
+	else
+	{
+		if(!@chmod('config-example.php', 0644))
+		{
 			return 'Failed to open \'config-example.php\'. Please <abbr title="change permissions">chmod it</abbr> to 644 and try again.';
 		}
-		else {
+		else
+		{
 			$excfgh = fopen('config-example.php', 'r');
 			$excfg = fread($excfgh, filesize('config-example.php'));
 			fclose($excfgh);
 		}
 	}
+
 	// Prepare config file data
 	$excfg = str_replace(array("absolute path to database here", 'name of login cookie'), array($dbpath, 'lb'. mt_rand(100, 9999)), $excfg);
+
+	// Now attempt to open config.php where we will store it.
 	$cfgh = fopen('config.php', 'w');
+
+	// But check to see if we couldn't open it by chance.
+	if(empty($cfgh))
+	{
+		return 'Failed to create \'config.php\'. Please <abbr title="Change permissions">chmod the directory</abbr> to 644 and try again.';
+	}
+
+	flock($cfgh, LOCK_EX);
 	fwrite($cfgh, $excfg);
+	flock($cfgh, LOCK_UN);
 	fclose($cfgh);
 }
 
 // Will process after Step 2
-if(isset($_POST['dbsetup'])) {
+if(isset($_POST['dbsetup']))
+{
 	$return = dbsetup();
+
 	// Check for errors
-	if(!$return == null) {
+	if(!$return == null)
+	{
 		$error = $return;
 		$page = "dbsetup";
 		menuClass(2, 1);
 	}
-	else {
+	else
+	{
 		// Set new installer page
 		$page = "bsetup";
 		menuClass(3, 1);
@@ -157,10 +232,12 @@ if(isset($_POST['dbsetup'])) {
 }
 
 // Processing for step 3
-function bsetup() {
+function bsetup()
+{
 	// Require config file
 	// We need it to open the database
 	require('config.php');
+
 	// Set (and for some, clean) variables
 	$username = sqlite_escape_string($_POST['bsusername']);
 	$password = $_POST['bspassword'];
@@ -170,46 +247,60 @@ function bsetup() {
 	$title = sqlite_escape_string($_POST['bstitle']);
 	$url = sqlite_escape_string($_POST['bsurl']);
 	$ip = $_SERVER['REMOTE_ADDR'];
+
 	// Match passwords
-	if($password !== $vpassword) {
+	if($password !== $vpassword)
+	{
 		return 'Passwords don\'t match. Please try again.';
 	}
+
 	// Open database
 	$dbh = new SQLiteDatabase( DBH );
+
 	// Generate password salt
 	$salt = substr(md5(uniqid(mt_rand(), true)), 0, 9);
+
 	// Clean remaining variables
-	$password = sha1($salt.$password);
+	$password = sha1($salt. $password);
+
 	// Save the data!
 	$dbh->query("
-		INSERT INTO users (user_name,user_pass,user_email,display_name,user_role,user_ip,user_salt,user_activated,user_created) VALUES('$username', '$password', '$email', '$dname', 1, '$ip', '$salt', 1, ".time().");
+		INSERT INTO users
+		(user_name, user_pass, user_email, display_name, user_role, user_ip, user_salt, user_activated, user_created)
+		VALUES('$username', '$password', '$email', '$dname', 1, '$ip', '$salt', 1, ". time(). ");
 		INSERT INTO settings VALUES('title', '$title');
 		INSERT INTO settings VALUES('url', '$url');");
+
 	// Shut off database connection
 	unset($dbh);
 }
 
 // Will process after Step 3
-if(isset($_POST['bsetup'])) {
+if(isset($_POST['bsetup']))
+{
 	$return = bsetup();
-	if(!$return == null) {
+	if(!$return == null)
+	{
 		$error = $return;
 		$page = "bsetup";
 		menuClass(3, 1);
 	}
-	else {
+	else
+	{
 		// Set new installer page
 		$page = "finish";
 		menuClass(4, 1);
 	}
 }
 
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<title>LightBlog Installer</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<script type="text/javascript">
+		var button = null;
+	</script>
 	<style type="text/css">
 		body {
 			background: #EDEDED;
@@ -333,7 +424,6 @@ if(isset($_POST['bsetup'])) {
 		}
 	</style>
 </head>
-
 <body>
 	<div id="wrapper">
 		<div id="header">
@@ -442,7 +532,7 @@ if(isset($_POST['bsetup'])) {
 				</table>
 				<form action="<?php echo basename($_SERVER['SCRIPT_FILENAME']); ?>" method="post">
 					<div>
-						<input type="submit" name="reqmet" value="Continue" onclick="setTimeout('this.disabled=true', 250);" <?php echo $disable; ?> />
+						<input type="submit" name="reqmet" value="Continue" onclick="(function(element) { button = element; setTimeout('button.disabled = true', 100); })(this); this.value = 'Please wait...';" <?php echo $disable; ?> />
 					</div>
 				</form>
 			<?php endif; if($page == 'dbsetup'): ?>
@@ -460,7 +550,7 @@ if(isset($_POST['bsetup'])) {
 					<label for="dbpath">Database Path</label><br />
 					<div>
 						<input type="text" name="dbpath" id="dbpath" value="<?php echo dirname(__FILE__); ?>" style="width:350px;" onkeyup="checkInput();" />
-						<input type="submit" name="dbsetup" id="dbcontinue" value="Continue" onclick="setTimeout('this.disabled=true', 250);" />
+						<input type="submit" name="dbsetup" id="dbcontinue" value="Continue" onclick="(function(element) { button = element; setTimeout('button.disabled = true', 100); })(this); this.value = 'Installing...';" />
 					</div>
 				</form>
 				<span id="error"><?php if(!isset($error)){$error=null;}echo $error; ?></span>
@@ -499,7 +589,7 @@ if(isset($_POST['bsetup'])) {
 						<input type="text" name="bsurl" id="bsurl" value="<?php echo baseurl(); ?>" style="width:200px;" onkeyup="checkInputs();" />
 					</div>
 					<div style="width:100%;clear:both;">
-						<input type="submit" name="bsetup" id="bscontinue" value="Continue" onclick="setTimeout('this.disabled=true', 250);" />
+						<input type="submit" name="bsetup" id="bscontinue" value="Continue" onclick="this.value = 'Please wait...';" />
 						<span id="error"><?php if(!isset($error)){$error=null;}echo $error; ?></span>
 					</div>
 				</form>
@@ -584,7 +674,7 @@ if(isset($_POST['bsetup'])) {
 			<?php endif; if($page == 'finish'): ?>
 				<h2>You're done!</h2>
 				<p>Click the Finish button to see your new blog! :)</p>
-				<button onclick="window.location='<?php echo baseurl(); ?>'">Finish</button>
+				<button onclick="this.value = 'Please wait...'; window.location='<?php echo baseurl(); ?>/install.php?delete=true';">Finish</button>
 			<?php endif; ?>
 			<div class="clear"></div>
 		</div>

@@ -22,9 +22,16 @@ if(!file_exists(dirname(__FILE__). '/../config.php'))
 	// Is there an install.php file?
 	if(file_exists(dirname(__FILE__). '/../install.php'))
 	{
+		// We will need to find the installer's relation to where we're
+		// currently at.
+		$filename = $_SERVER['SCRIPT_FILENAME'];
+
+		$try_count = 0;
+		while(strlen($filename) > 0 && !file_exists(($filename = dirname($filename)). '/install.php') && $try_count++ < 3);
+
 		// Redirect to the installer, then.
 		header('HTTP/1.1 307 Temporary Redirect');
-		header('Location: install.php');
+		header('Location: '. str_repeat('../', $try_count). 'install.php');
 
 		exit;
 	}
