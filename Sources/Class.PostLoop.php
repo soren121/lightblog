@@ -145,7 +145,7 @@ class PostLoop
 			list($year, $month) = explode('-', substr_replace((int)$GLOBALS['postquery']['date'], '-', 4, 0));
 
 			$options['where'][] = "post_date BETWEEN strftime('%s', '{$year}-{$month}-01') AND strftime('%s', '{$year}-{$month}-01', '+1 month', '-1 day')";
-		
+
 			// We want to save this for later.
 			$this->data['query_string'] = 'archive='. $year. (utf_strlen($month) == 1 ? '0' : ''). $month;
 		}
@@ -247,7 +247,7 @@ class PostLoop
 		$users = array();
 		$categories = array();
 		$this->data['posts'] = array();
-		while($row = $request->fetch(SQLITE_ASSOC))
+		while($row = $request->fetch(SQLITE_BOTH))
 		{
 			$this->data['posts'][] = array(
 																 'id' => $row['post_id'],

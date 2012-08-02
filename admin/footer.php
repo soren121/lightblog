@@ -17,7 +17,7 @@
 *********************************************/
 
 $rolequery = $dbh->query("SELECT role_name FROM roles WHERE role_id=".user()->role()) or die(sqlite_error_string($dbh->lastError));
-			
+
 function buildMenu($selected)
 {
 	$menu = array(
@@ -61,12 +61,12 @@ function buildMenu($selected)
 		"Maintenance" => array(
 			"link" => "maintenance.php?area=errors",
 			"children" => array(
-				"Backup and Optimize" => "#",
+				"Backup and Optimize" => "backup.php",
 				"Error Log" => "maintenance.php?area=errors"
 			)
 		),
 	);
-	
+
 	foreach($menu as $topname => $attr)
 	{
 		if(is_array($attr['children']) && in_array($selected, $attr['children']) || !is_array($attr['children']) && $attr['link'] == $selected)
@@ -108,8 +108,8 @@ function buildMenu($selected)
 		}
 		$select = null;
 	}
-}			
-				
+}
+
 
 ?>
 
@@ -128,7 +128,7 @@ function buildMenu($selected)
 			</ul>
 			<div id="footer">
 				<p>Powered by LightBlog <?php LightyVersion() ?></p>
-			</div>	
+			</div>
 		</div>
 	</div>
 

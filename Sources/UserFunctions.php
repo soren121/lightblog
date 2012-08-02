@@ -31,17 +31,17 @@ function permissions($permission)
 {
 	// Grab that database handle
 	global $dbh;
-	
+
 	// Check if we've already fetched the permissions from the DB
 	if(!isset($GLOBALS['permissions_data']))
 	{
 		$result = $dbh->query('
 		SELECT *
 		FROM role_permissions') or die(sqlite_error_string($dbh->lastError));
-		
+
 		// Super fun array time!
 		$GLOBALS['permissions_data'] = array();
-		
+
 		// Toss those permissions into a multi-dimensional array
 		while($row = $result->fetchObject())
 		{
@@ -52,7 +52,7 @@ function permissions($permission)
 			$GLOBALS['permissions_data'][$row->permission][$row->role_id] = $row->status;
 		}
 	}
-	
+
 	if(isset($GLOBALS['permissions_data'][$permission][user()->role()]) && $GLOBALS['permissions_data'][$permission][user()->role()] == 1)
 	{
 		return true;

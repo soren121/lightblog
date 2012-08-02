@@ -80,6 +80,15 @@ function redirect($location = null, $status = 307)
 	{
 		// Clear the output buffer, if anything has been written to it.
 		@ob_clean();
+
+		if(function_exists('ob_gzhandler') && (get_bloginfo('disable_compression') === false || get_bloginfo('disable_compression') == 0))
+		{
+			ob_start('ob_gzhandler');
+		}
+		else
+		{
+			ob_start();
+		}
 	}
 
 	if(empty($location))

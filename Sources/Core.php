@@ -69,9 +69,9 @@ require(ABSPATH. '/Sources/Language.php');
 session_start();
 
 // Now output buffering, too. With compression, if supported.
-if(function_exists('ob_gzhandler') && get_bloginfo('disable_compression') === false)
+if(function_exists('ob_gzhandler') && (get_bloginfo('disable_compression') === false || get_bloginfo('disable_compression') == 0))
 {
-	ob_start();
+	ob_start('ob_gzhandler');
 }
 else
 {
@@ -441,12 +441,12 @@ function list_archives($limit = 10)
 
 	// Get archive data
 	$result = $dbh->query(
-		"SELECT 
-			strftime('%m', post_date, 'unixepoch') AS 'month', 
-			strftime('%Y', post_date, 'unixepoch') AS 'year', 
-			post_date 
-		FROM posts 
-		WHERE published != 0  
+		"SELECT
+			strftime('%m', post_date, 'unixepoch') AS 'month',
+			strftime('%Y', post_date, 'unixepoch') AS 'year',
+			post_date
+		FROM posts
+		WHERE published != 0
 		GROUP BY month");
 
 	// Sort through and create list items
@@ -459,7 +459,7 @@ function list_archives($limit = 10)
 		$year = $row->year;
 
 		$return .= '<li><a href="'. get_bloginfo('url'). '?archive='. $year. $month.'">'. $monthname. ' '. $year. '</a></li>';
-		
+
 		$i++;
 		if($i >= $limit)
 		{
