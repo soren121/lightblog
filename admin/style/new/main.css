@@ -104,33 +104,33 @@ h2#section {
 input.submit {
 	float: right;
 	padding: 9px 36px;
-	background: #a9db80; /* Old browsers */
-	background: -moz-linear-gradient(top, #a9db80 0%, #85c44e 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#a9db80), color-stop(100%,#85c44e)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, #a9db80 0%,#85c44e 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, #a9db80 0%,#85c44e 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top, #a9db80 0%,#85c44e 100%); /* IE10+ */
-	background: linear-gradient(top, #a9db80 0%,#85c44e 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a9db80', endColorstr='#85c44e',GradientType=0 ); /* IE6-9 */
+	background: #499bea; /* Old browsers */
+	background: -moz-linear-gradient(top, #499bea 0%, #207ce5 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#499bea), color-stop(100%,#207ce5)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #499bea 0%,#207ce5 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #499bea 0%,#207ce5 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #499bea 0%,#207ce5 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #499bea 0%,#207ce5 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#499bea', endColorstr='#207ce5',GradientType=0 ); /* IE6-9 */
 	border-radius: 4px;
-	border: 1px solid #48B500;
+	border: 1px solid #1657A1;
 	font-weight: 600;
-	color: #275707;
+	color: #fff;
 	cursor: pointer;
 }
 
 input.submit:hover {
-	background: #85c44e; /* Old browsers */
-	background: -moz-linear-gradient(top, #85c44e 0%, #a9db80 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#85c44e), color-stop(100%,#a9db80)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, #85c44e 0%,#a9db80 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, #85c44e 0%,#a9db80 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top, #85c44e 0%,#a9db80 100%); /* IE10+ */
-	background: linear-gradient(top, #85c44e 0%,#a9db80 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#85c44e', endColorstr='#a9db80',GradientType=0 ); /* IE6-9 */
+	background: #207ce5; /* Old browsers */
+	background: -moz-linear-gradient(top, #207ce5 0%, #499bea 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#207ce5), color-stop(100%,#499bea)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #207ce5 0%,#499bea 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #207ce5 0%,#499bea 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #207ce5 0%,#499bea 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #207ce5 0%,#499bea 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#207ce5', endColorstr='#499bea',GradientType=0 ); /* IE6-9 */
 }
 
-.secondary-button {
+.secondary-button, .table-options input[type=submit] {
 	vertical-align: middle;
 	padding: 3px 12px;
 	border: 1px solid #ccc;
@@ -142,7 +142,7 @@ input.submit:hover {
 	font-size: 0.9em;
 }
 
-.secondary-button:hover {
+.secondary-button:hover, .table-options input[type=submit]:hover {
 	background: #ffffff; /* Old browsers */
 	background: -moz-linear-gradient(top, #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* Chrome,Safari4+ */
@@ -187,14 +187,12 @@ input.submit:hover {
 
 #navigation ul#menu li {
 	list-style: none;
-	background: #f4f4f4;
 	border-bottom: 1px solid #ddd;
 }
 
 #navigation ul#menu li img.nav-icon {
 	padding: 10px 10px 10px 18px;
 	vertical-align: -13px;
-	background: #989898;
 }
 
 #navigation ul#menu li .nav-link {
@@ -203,7 +201,7 @@ input.submit:hover {
 	font-size: .95em;
 	color: #111;
 	width: 160px;
-	padding: 8px 0 8px 8px;
+	padding: 9px 0 9px 8px;
 	display: inline-block;
 }
 
@@ -247,7 +245,12 @@ input.submit:hover {
 }
 
 #navigation ul#menu li ul li .nav-link.selected, #navigation ul#menu li a.nav-link.single.selected {
-	background: #ccc;
+	background: #66ACF2;
+	color: #fff;
+}
+
+#navigation ul#menu li .nav-link:hover {
+	text-decoration: none;
 }
 
 #footer {

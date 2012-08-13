@@ -19,7 +19,7 @@
 require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
-if(!empty($_REQUEST['backup']) && permissions('Backup'))
+if(!empty($_REQUEST['backup']) && permissions('EditSettings'))
 {
 	if(ob_get_length() > 0)
 	{
@@ -140,7 +140,7 @@ include('head.php');
 ?>
 		<div id="contentwrapper">
 			<div id="contentcolumn">
-				<?php if(permissions('Backup')): ?>
+				<?php if(permissions('EditSettings')): ?>
 					<h3>Backup Database</h3>
 					<p>It is recommended that the database be backed up periodically in case disaster should strike. In order to restore a database from a backup a tool such as <a href="http://phpliteadmin.googlecode.com/" target="_blank">phpLiteAdmin</a> must be utilized.</p>
 					<form action="<?php bloginfo('url') ?>admin/backup.php" method="post" id="settings">
@@ -151,7 +151,7 @@ include('head.php');
 						</div>
 					</form>
 				<?php endif; ?>
-				<?php if(permissions('Optimize')): ?>
+				<?php if(permissions('EditSettings')): ?>
 					<h3>Optimize</h3>
 					<p>Optimizing the database periodically can reduce the size of the database itself along with making the website faster.</p>
 				<?php

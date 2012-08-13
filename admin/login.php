@@ -81,12 +81,12 @@ if(isset($_GET['logout']))
 			<div>
 				<div>
 					<label for="username">Username</label>
-					<input name="username" type="text" size="16" id="username" value="<?php echo !empty($_POST['username']) ? utf_htmlspecialchars($_POST['username']) : ''; ?>" />
+					<input name="username" type="text" id="username" value="<?php echo !empty($_POST['username']) ? utf_htmlspecialchars($_POST['username']) : ''; ?>" />
 					<div class="clear"></div>
 				</div>
 				<div>
 					<label for="password">Password</label>
-					<input name="password" type="password" size="16" id="password" value="" />
+					<input name="password" type="password" id="password" value="" />
 					<div class="clear"></div>
 				</div>
 				<span>
