@@ -4,7 +4,7 @@
 	LightBlog 0.9
 	SQLite blogging platform
 
-	admin/settings.php
+	admin/backup.php
 
 	©2008-2012 The LightBlog Team. All
 	rights reserved. Released under the

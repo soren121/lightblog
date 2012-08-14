@@ -96,9 +96,9 @@ if(isset($_GET['logout']))
 				<input name="proclogin" type="submit" value="Log In" class="submit" />
 				<div class="clear" style="padding-top:15px;">
 					<a class="secondary-button" href="<?php bloginfo('url') ?>" style="float: left;">&laquo; Back</a>
-					<?php if(get_bloginfo('allow_registration')): ?>
-						<a class="secondary-button" href="#" style="float: right;padding:3px 34px;">Register</a>
-					<?php endif; ?>
+					<?php //if(get_bloginfo('allow_registration')): ?>
+						<!--<a class="secondary-button" href="#" style="float: right;padding:3px 34px;">Register</a>-->
+					<?php //endif; ?>
 					<div class="clear"></div>
 				</div>
 			</div>

@@ -333,7 +333,7 @@ function errorsMapType($errno)
 		E_STRICT => 'Compatibility',
 		E_DEPRECATED => 'Deprecated',
 		E_USER_DEPRECATED => 'Deprecated',
-		E_ALL => 'General',
+		E_ALL => 'General'
 	);
 
 	return isset($error_types[$errno]) ? $error_types[$errno] : 'Unknown';

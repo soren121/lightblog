@@ -59,23 +59,20 @@ function buildMenu($selected)
 			"children" => false
 		),
 		"Maintenance" => array(
-			"link" => "maintenance.php?area=errors",
+			"link" => "error-log.php",
 			"children" => array(
 				"Backup and Optimize" => "backup.php",
-				"Error Log" => "maintenance.php?area=errors"
+				"Error Log" => "error-log.php"
 			)
 		),
 	);
 
 	foreach($menu as $topname => $attr)
 	{
+		$select = '';
 		if(is_array($attr['children']) && in_array($selected, $attr['children']) || !is_array($attr['children']) && $attr['link'] == $selected)
 		{
 			$select = 'selected';
-		}
-		else
-		{
-			$select = '';
 		}
 		echo '<li class="'.$select.'">';
 		echo '<img src="style/new/'.strtolower($topname).'.png" class="nav-icon" alt="" />';
@@ -87,22 +84,24 @@ function buildMenu($selected)
 		else
 		{
 			echo '<a href="'.$attr['link'].'" class="nav-link">'.$topname.'</a>';
+			echo '<a href="#" class="nav-toggle"><img src="style/new/';
 			if($select != '')
 			{
-				echo '<a href="#" class="nav-toggle"><img src="style/new/minus.png" alt="-" /></a>';
+				echo 'minus.png" alt="-" /></a>';
 			}
 			else
 			{
-				echo '<a href="#" class="nav-toggle"><img src="style/new/plus.png" alt="+" /></a>';
+				echo 'plus.png" alt="+" /></a>';
 			}
 			echo '<ul class="submenu '.$select.'">';
 			foreach($attr['children'] as $name => $link)
 			{
-				if($link != $selected)
+				echo '<li><a href="'.$link.'" class="nav-link ';
+				if($link == $selected)
 				{
-					$select = '';
+					echo $select;
 				}
-				echo '<li><a href="'.$link.'" class="nav-link '.$select.'">'.$name.'</a></li>';
+				echo '">'.$name.'</a></li>';
 			}
 			echo '</ul></li>';
 		}
