@@ -133,19 +133,19 @@ function buildMenu($selected)
 
 	<script type="text/javascript">
 	//<![CDATA[
-		$('.submenu:not(".selected")').hide();
+		$('.submenu:not(".open")').hide();
 		$('ul#menu > li > a.nav-link:not(.single)').width(160);
 		$('.nav-toggle').show().click(function()
 		{
-			if(!$(this).closest('li').is('.selected'))
+			if(!$(this).closest('li').is('.open'))
 			{
 				$('.submenu:not(:hidden)').slideUp('fast').prev('.nav-toggle').children('img').attr('src', 'style/new/plus.png');
-				$('ul#menu > li.selected').removeClass('selected');
-				$(this).children('img').attr('src', 'style/new/minus.png').parent().next('ul').slideDown('fast').parent().addClass('selected');
+				$('ul#menu > li.open').removeClass('open');
+				$(this).children('img').attr('src', 'style/new/minus.png').parent().next('ul').slideDown('fast').parent().addClass('open');
 			}
 			else
 			{
-				$(this).children('img').attr('src', 'style/new/plus.png').parent().next('ul').slideUp('fast').parent().removeClass('selected');
+				$(this).children('img').attr('src', 'style/new/plus.png').parent().next('ul').slideUp('fast').parent().removeClass('open');
 			}
 		});
 	//]]>
