@@ -124,12 +124,12 @@ else
 							<input type="hidden" name="type" value="<?php echo $type ?>" />
 							<input type="hidden" name="form" value="Manage" />
 							<input type="hidden" name="page" value="<?php echo $page ?>" />
-							<input type="submit" id="prev-link" name="prev" onclick="javascript:loadpage('prev');return false;" style="float:left;<?php echo ($page == 1) ? 'display:none;' : '' ?>" value="&laquo; Prev Page" />
-							<input type="submit" id="next-link" name="next" onclick="javascript:loadpage('next');return false;" style="float:right;<?php echo (($page * 10) >= $rowtotal) ? 'display:none;' : '' ?>" value="Next Page &raquo;" />
+							<input type="submit" id="prev-link" name="prev" onclick="javascript:loadpage('prev');return false;" style="float:left;<?php echo ($page == 1) ? 'display:none;' : '' ?>" value="&laquo; Newer <?php echo ucwords($type) ?>s" />
+							<input type="submit" id="next-link" name="next" onclick="javascript:loadpage('next');return false;" style="float:right;<?php echo (($page * 10) >= $rowtotal) ? 'display:none;' : '' ?>" value="Older <?php echo ucwords($type) ?>s &raquo;" />
 							<div class="clear"></div>
 						</div>
 					</form>
-					<p class="table-info">Showing <span id="row-start"><?php echo $rowstart ?></span> - <span id="row-limit"><?php echo $rowlimit ?></span> out of <span id="row-total"><?php echo $rowtotal ?></span> <span id="type"><?php echo $type ?></span>s.</p>
+					<p class="table-info">Showing <span id="row-start"><?php echo $rowstart ?></span> - <span id="row-limit"><?php echo $rowlimit ?></span> out of <span id="row-total"><?php echo $rowtotal ?></span> <?php echo $type ?>s.</p>
 				<?php endif; endif; ?>
 			</div>
 		</div>
