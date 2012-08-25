@@ -78,12 +78,12 @@ function buildMenu($selected)
 		echo '<img src="style/new/'.strtolower($topname).'.png" class="nav-icon" alt="" />';
 		if($attr['children'] === false)
 		{
-			echo '<a href="'.$attr['link'].'" class="nav-link single '.$select.'">'.$topname.'</a>';		
+			echo '<a href="'.$attr['link'].'" class="nav-link single '.$select.'">'. l($topname).'</a>';
 			echo '</li>';
 		}
 		else
 		{
-			echo '<a href="'.$attr['link'].'" class="nav-link">'.$topname.'</a>';
+			echo '<a href="'.$attr['link'].'" class="nav-link">'.l($topname).'</a>';
 			echo '<a href="#" class="nav-toggle"><img src="style/new/';
 			if($select != '')
 			{
@@ -101,7 +101,7 @@ function buildMenu($selected)
 				{
 					echo 'selected';
 				}
-				echo '">'.$name.'</a></li>';
+				echo '">'.l($name).'</a></li>';
 			}
 			echo '</ul></li>';
 		}
@@ -114,11 +114,11 @@ function buildMenu($selected)
 
 		<div id="navigation">
 			<div id="user">
-				<img id="gravatar" src="<?php echo gravatar() ?>" title="Your Gravatar, from gravatar.com" alt="Gravatar" />
+				<img id="gravatar" src="<?php echo gravatar() ?>" title="<?php echo l('Your Gravatar, from gravatar.com'); ?>" alt="Gravatar" />
 				<div>
 					<strong><?php echo user()->displayName() ?></strong><br />
 					<span><?php echo $rolequery->fetchSingle() ?></span><br />
-					<a href="profile.php?id=<?php echo user()->id() ?>">Your Profile</a> | <a href="login.php?logout">Logout</a>
+					<a href="profile.php?id=<?php echo user()->id() ?>"><?php echo l('Your Profile'); ?></a> | <a href="login.php?logout"><?php echo l('Logout'); ?></a>
 				</div>
 				<div class="clear"></div>
 			</div>
@@ -126,7 +126,7 @@ function buildMenu($selected)
 				<?php buildMenu((!isset($selected) ? $selected = basename($_SERVER['REQUEST_URI']) : $selected)) ?>
 			</ul>
 			<div id="footer">
-				<p>Powered by LightBlog <?php LightyVersion() ?></p>
+				<p><?php echo l('Powered by LightBlog %s', LightyVersion('r')); ?></p>
 			</div>
 		</div>
 	</div>

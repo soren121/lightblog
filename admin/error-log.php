@@ -45,7 +45,7 @@ if(isset($response['response']))
 	$response = $response['response'];
 }
 
-$head_title = "Error Log";
+$head_title = l('Error Log');
 $head_css = "table.css";
 
 include('head.php');
@@ -73,16 +73,16 @@ else
 						<div class="table-options">
 							<p style="float:left">
 								<select name="action" class="bf" style="width: 140px;">
-									<option selected="selected" value="default">Bulk Actions:</option>
-									<option value="delete">Delete</option>
+									<option selected="selected" value="default"><?php echo l('Bulk Actions:'); ?></option>
+									<option value="delete"><?php echo l('Delete'); ?></option>
 								</select>
 								<input class="bf" type="hidden" name="type" value="error" />
 								<input class="bf" type="hidden" name="form" value="BulkAction" />
 								<input class="bf" type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
-								<input type="submit" class="bf" value="Apply" name="bulk" />
+								<input type="submit" class="bf" value="<?php echo l('Apply'); ?>" name="bulk" />
 							</p>
 							<p id="itemnum-container" style="float:right">
-								<label for="itemnum">Errors per page</label>
+								<label for="itemnum"><?php echo l('Errors per Page'); ?></label>
 								<select id="itemnum" name="items" style="width: 60px;">
 									<option value="10" selected="selected">10</option>
 									<option value="20">20</option>
@@ -94,11 +94,11 @@ else
 						<table id="manage" cellspacing="0">
 							<thead>
 								<tr>
-									<th class="{sorter: false}"><input type="checkbox" id="select-all" title="Select All/None" /></th>
-									<th>Type</th>
-									<th>Error</th>
-									<th>Date</th>
-									<th class="{sorter: false}">Delete</th>
+									<th class="{sorter: false}"><input type="checkbox" id="select-all" title="<?php echo l('Select All/None'); ?>" /></th>
+									<th><?php echo l('Type'); ?></th>
+									<th><?php echo l('Error'); ?></th>
+									<th><?php echo l('Date'); ?></th>
+									<th class="{sorter: false}"><?php echo l('Delete'); ?></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -111,12 +111,12 @@ else
 							<input type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
 							<input type="hidden" name="form" value="ErrorLog" />
 							<input type="hidden" name="page" value="<?php echo $page ?>" />
-							<input type="submit" id="prev-link" name="prev" onclick="javascript:loadpage('prev');return false;" style="float:left;<?php echo ($page == 1) ? 'display:none;' : '' ?>" value="&laquo; Newer Errors" />
-							<input type="submit" id="next-link" name="next" onclick="javascript:loadpage('next');return false;" style="float:right;<?php echo (($page * 10) >= $rowtotal) ? 'display:none;' : '' ?>" value="Older Errors &raquo;" />
+							<input type="submit" id="prev-link" name="prev" onclick="javascript:loadpage('prev');return false;" style="float:left;<?php echo ($page == 1) ? 'display:none;' : '' ?>" value="&laquo; <?php echo l('Newer Errors'); ?>" />
+							<input type="submit" id="next-link" name="next" onclick="javascript:loadpage('next');return false;" style="float:right;<?php echo (($page * 10) >= $rowtotal) ? 'display:none;' : '' ?>" value="<?php echo l('Older Errors'); ?> &raquo;" />
 							<div class="clear"></div>
 						</div>
 					</form>
-					<p class="table-info">Showing <span id="row-start"><?php echo $rowstart ?></span> - <span id="row-limit"><?php echo $rowlimit ?></span> out of <span id="row-total"><?php echo $rowtotal ?></span> errors.</p>
+					<p class="table-info"><?php echo l('Showing <span id="row-start">%s</span> - <span id="row-limit">%s</span> out of <span id="row-total">%s</span> errors.', $rowstart, $rowlimit, $rowtotal); ?></p>
 				<?php endif; ?>
 			</div>
 		</div>

@@ -26,21 +26,26 @@ function formCallback($response)
 	{
 		if($response['result'] == 'error')
 		{
-			return '<span class="result error">Failed to save settings;<br />'.$response['response'].'</span>';
+			return '<span class="result error">'. l('Failed to save settings'). ';<br />'. $response['response']. '</span>';
 		}
 		elseif($response['result'] == 'success')
 		{
-			return '<span class="result">Settings saved.</span>';
+			return '<span class="result">'. l('Settings saved.'). '</span>';
 		}
 		else
 		{
-			return '<span class="result error">Failed to save settings;<br />No response from form processor.</span>';
+			return '<span class="result error">'. l('Failed to save settings'). ';<br />'. l('No response from form processor.'). '</span>';
 		}
 	}
 }
 
 $head_response = formCallback(processForm($_POST));
-if(isset($_POST['ajax'])) { die(json_encode(array('response' => $head_response))); }
+if(isset($_POST['ajax']))
+{
+	die(json_encode(array(
+										'response' => $head_response
+									)));
+}
 
 // Now prepare what we're going to display.
 $timezones = array(
@@ -83,11 +88,11 @@ foreach($timezones as $offset => $name)
 {
 	if($selected_timezone == $offset)
 	{
-		$timezone_options .= '<option value="'.$offset.'" selected="selected">'.$name.'</option>';
+		$timezone_options .= '<option value="'.$offset.'" selected="selected">'. $name. '</option>';
 	}
 	else
 	{
-		$timezone_options .= '<option value="'.$offset.'">'.$name.'</option>';
+		$timezone_options .= '<option value="'.$offset.'">'. $name. '</option>';
 	}
 }
 
@@ -117,7 +122,7 @@ else
 	$time['custom_field'] = $db_time;
 }
 
-$head_title = "General Settings";
+$head_title = l('General Settings');
 $head_css = "settings.css";
 
 include('head.php');
@@ -129,7 +134,7 @@ include('head.php');
 					<form action="<?php bloginfo('url') ?>admin/settings.php" method="post" id="settings">
 						<div class="setting">
 							<div class="label">
-								<label for="title">Blog Title</label>
+								<label for="title"><?php echo l('Blog Title'); ?></label>
 							</div>
 							<div class="input">
 								<input type="text" name="title" id="title" value="<?php bloginfo('title') ?>" />
@@ -139,7 +144,7 @@ include('head.php');
 
 						<div class="setting even">
 							<div class="label">
-								<label for="url">LightBlog Address (URL)</label>
+								<label for="url"><?php echo l('LightBlog Address (URL)'); ?></label>
 							</div>
 							<div class="input">
 								<input type="text" name="url" id="url" value="<?php echo utf_htmlspecialchars(get_bloginfo('url')); ?>" />
@@ -149,7 +154,7 @@ include('head.php');
 
 						<div class="setting">
 							<div class="label">
-								<label for="timezone">Time Zone</label>
+								<label for="timezone"><?php echo l('Time Zone'); ?></label>
 							</div>
 							<div class="input">
 								<select name="timezone" id="timezone">
@@ -161,9 +166,9 @@ include('head.php');
 
 						<div class="setting even">
 							<div class="label">
-								<label>Date Format</label>
+								<label><?php echo l('Date Format'); ?></label>
 								<p>
-									For information on how to format a custom date or time, refer to <a href="http://php.net/manual/en/function.date.php" target="_blank">the PHP date() documentation</a>.
+									<?php echo l('For information on how to format a custom date or time, refer to <a href="http://php.net/manual/en/function.date.php" target="_blank">the PHP date() documentation</a>.'); ?>
 								</p>
 							</div>
 							<div class="input">
@@ -185,7 +190,7 @@ include('head.php');
 								</p>
 								<p>
 									<input type="radio" name="date" id="custom-date" value="custom" <?php echo $date['custom'] ?> />
-									<label for="custom-date">Custom: </label>
+									<label for="custom-date"><?php echo l('Custom:');?> </label>
 									<input type="text" name="custom_date" id="custom-date-field" value="<?php echo $date['custom_field'] ?>" />
 								</p>
 							</div>
@@ -194,7 +199,7 @@ include('head.php');
 
 						<div class="setting">
 							<div class="label">
-								<label>Time Format</label>
+								<label><?php echo l('Time Format'); ?></label>
 							</div>
 							<div class="input">
 								<p>
@@ -211,7 +216,7 @@ include('head.php');
 								</p>
 								<p>
 									<input type="radio" name="time" id="custom-time" value="custom" <?php echo $time['custom'] ?> />
-									<label for="custom-time">Custom: </label>
+									<label for="custom-time"><?php echo l('Custom:');?> </label>
 									<input type="text" name="custom_time" id="custom-time-field" value="<?php echo $time['custom_field'] ?>" />
 								</p>
 							</div>
@@ -221,7 +226,7 @@ include('head.php');
 						<div class="setting even">
 							<input type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
 							<input type="hidden" name="form" value="Settings" />
-							<input type="submit" class="submit" name="changesettings" value="Save" />
+							<input type="submit" class="submit" name="changesettings" value="<?php echo l('Save'); ?>" />
 							<div class="clear"></div>
 						</div>
 					</form>

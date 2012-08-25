@@ -19,7 +19,7 @@
 require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
-$head_title = "Appearance";
+$head_title = l('Appearance');
 $head_css = "create.css";
 
 include('head.php');

@@ -18,12 +18,12 @@
 class Create
 {
 	private $dbh;
-	
+
 	public function __construct()
 	{
 		$this->dbh = $GLOBALS['dbh'];
 	}
-	
+
 	public function processor($data)
 	{
 		$type = $data['type'];
@@ -34,14 +34,14 @@ class Create
 			{
 				return array("result" => "error", "response" => "you must give your ".$type." a title and content.");
 			}
-	
+
 			// Require the HTML filter class
 			require(ABSPATH .'/Sources/Class.htmLawed.php');
-	
+
 			// Grab the data from form and clean things up
 			$title = utf_htmlspecialchars($data['title']);
 			$text = htmLawed::hl($data['text'], array('safe' => 1, 'make_tag_strict' => 1, 'balance' => 1, 'keep_bad' => 3));
-	
+
 			$date = time();
 			$author = user()->displayName();
 			$author_id = (int)user()->id();
@@ -49,7 +49,7 @@ class Create
 			{
 				$categories = (int)$data['category'];
 			}
-	
+
 			// Check published checkbox
 			if(isset($data['published']) && $data['published'] == 1)
 			{
@@ -59,7 +59,7 @@ class Create
 			{
 				$published = 0;
 			}
-	
+
 			// Check comments checkbox
 			if(isset($data['comments']) && $data['comments'] == 1)
 			{
@@ -69,13 +69,18 @@ class Create
 			{
 				$comments = 0;
 			}
-	
+
+			if(!function_exists('generate_shortname'))
+			{
+				require(ABSPATH. '/Sources/PostFunctions.php');
+			}
+
 			// Insert post/page into database
 			if($type == 'post')
 			{
 				@$this->dbh->query("
-					INSERT INTO 
-						posts 
+					INSERT INTO
+						posts
 							(post_title,
 							short_name,
 							post_date,
@@ -86,36 +91,43 @@ class Create
 							categories,
 							allow_comments,
 							allow_pingbacks,
-							comments) 
+							comments)
 					VALUES(
-						'".sqlite_escape_string($title)."',
-						' ',
+						'". sqlite_escape_string($title). "',
+						'". sqlite_escape_string(generate_shortname(0, $title)). "',
 						$date,
 						$published,
-						'".sqlite_escape_string($author)."',
+						'". sqlite_escape_string($author). "',
 						$author_id,
-						'".sqlite_escape_string($text)."',
+						'". sqlite_escape_string($text). "',
 						$categories,
 						$comments,
 						0,
 						0
 					)"
 				);
-	
+
 				if($this->dbh->changes() == 0)
 				{
 					return array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()));
 				}
-	
+
 				$id = $this->dbh->lastInsertRowid();
-	
+
+				// Get the real short name.
+				$shortname = generate_shortname($id, $title);
+				@$this->dbh->query("
+					UPDATE posts
+					SET short_name = '". sqlite_escape_string($shortname). "'
+					WHERE post_id = ". (int)$id);
+
 				@$this->dbh->query("
 					INSERT INTO
-						post_categories 
+						post_categories
 							(post_id,
 							category_id)
 					VALUES(
-						$id, 
+						$id,
 						$categories
 					)"
 				);
@@ -123,15 +135,15 @@ class Create
 			else
 			{
 				@$this->dbh->query("
-					INSERT INTO 
-						pages 
+					INSERT INTO
+						pages
 							(page_title,
 							short_name,
 							page_date,
 							published,
 							author_name,
 							author_id,
-							page_text) 
+							page_text)
 					VALUES(
 						'".sqlite_escape_string($title)."',
 						' ',
@@ -142,18 +154,18 @@ class Create
 						'".sqlite_escape_string($text)."'
 					)
 				");
-	
+
 				$id = $this->dbh->lastInsertRowid();
 			}
-	
+
 			if($this->dbh->changes() == 0)
 			{
 				return array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()));
 			}
-	
+
 			// Create URL to return to jQuery
 			$url = get_bloginfo('url')."?".$type."=".$id;
-	
+
 			// Return JSON-encoded response
 			return array("result" => "success", "response" => $url);
 		}

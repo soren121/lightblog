@@ -29,11 +29,11 @@ if(isset($_GET['id']))
 				FROM error_log
 				WHERE error_id = '. ((int)$_GET['id']). '
 				LIMIT 1');
-				
+
 	$error = $request->fetch(SQLITE_ASSOC);
 }
 
-$head_title = "Error Info";
+$head_title = l('Error Info');
 $head_css = "settings.css";
 $selected = "error-log.php";
 
@@ -43,37 +43,37 @@ include('head.php');
 		<div id="contentwrapper">
 			<div id="contentcolumn">
 				<?php if(permissions('EditSettings')): if($request->numRows() == 0 || !isset($_GET['id'])): ?>
-					<p>The error you are trying to view does not exist.</p>
+					<p><?php l('The error you are trying to view does not exist.'); ?></p>
 				<?php else: ?>
-					<h3>Error #<?php echo (int)$_GET['id'] ?></h3>
+					<h3><?php echo l('Error #%s', (int)$_GET['id']); ?></h3>
 					<br />
 					<table style="width: 100%;">
 						<tr>
-							<td><strong>Error Type:</strong></td>
+							<td><strong><?php echo l('Error Type:'); ?></strong></td>
 							<td><?php echo errorsMapType($error['type']) ?></td>
-							<td><strong>Time:</strong></td>
+							<td><strong><?php echo l('Time:'); ?></strong></td>
 							<td><?php echo date('n/j/Y g:i:sA', $error['time']) ?></td>
 						</tr>
 						<tr>
-							<td colspan="4"><strong>Message:</strong></td>
+							<td colspan="4"><strong><?php echo l('Message:'); ?></strong></td>
 						</tr>
 						<tr>
 							<td colspan="4" style="padding: 4px;"><?php echo $error['message'] ?></td>
 						</tr>
 						<tr>
-							<td colspan="4"><strong>File / Line:</strong></td>
+							<td colspan="4"><strong><?php echo l('File / Line:'); ?></strong></td>
 						</tr>
 						<tr>
-							<td colspan="4"><?php echo ABSPATH. '/'. $error['filename']. ' on line '. $error['line']; ?></td>
+							<td colspan="4"><?php echo l('%s on line %s', ABSPATH. '/'. $error['filename'], $error['line']); ?></td>
 						</tr>
 						<tr>
-							<td colspan="4"><strong>URL:</strong></td>
+							<td colspan="4"><strong><?php echo l('URL:'); ?></strong></td>
 						</tr>
 						<tr>
 							<td colspan="4"><?php echo $error['url'] ?></td>
 						</tr>
 					</table>
-					<p style="text-align: right;">Delete | <a href="<?php bloginfo('url') ?>admin/error-log.php">Back to Error Log &raquo;</a></p>
+					<p style="text-align: right;"><?php echo l('Delete'); ?> | <a href="<?php bloginfo('url') ?>admin/error-log.php"><?php echo l('Back to Error Log'); ?> &raquo;</a></p>
 				<?php endif; endif; ?>
 			</div>
 		</div>

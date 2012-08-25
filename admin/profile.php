@@ -26,25 +26,34 @@ function formCallback($response)
 	{
 		if($response['result'] == 'error')
 		{
-			return '<span class="result error">Failed to update profile;<br />'.$response['response'].'</span>';
+			return '<span class="result error">'. l('Failed to update profile'). ';<br />'. $response['response']. '</span>';
 		}
 		elseif($response['result'] == 'success')
 		{
-			return '<span class="result">Profile updated.</span>';
+			return '<span class="result">'. l('Profile updated.'). '</span>';
 		}
 		else
 		{
-			return '<span class="result error">Failed to update profile;<br />No response from form processor.</span>';
+			return '<span class="result error">'. l('Failed to update profile'). ';<br />'. l('No response from form processor.'). '</span>';
 		}
 	}
 }
 
 $head_response = formCallback(processForm($_POST));
-if(isset($_POST['ajax'])) { die(json_encode(array('response' => $head_response))); }
+if(isset($_POST['ajax']))
+{
+	die(json_encode(array(
+										'response' => $head_response
+									)));
+	}
 
 if(permissions('EditOtherUsers') || (int)$_GET['id'] == user()->id())
 {
-	$userquery = $dbh->query("SELECT user_role FROM users WHERE user_id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
+	$userquery = $dbh->query("
+		SELECT
+			user_role
+		FROM users
+		WHERE user_id = ". (int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
 	$role_options = '';
 	foreach(get_roles() as $role_id => $role)
 	{
@@ -61,11 +70,11 @@ if(permissions('EditOtherUsers') || (int)$_GET['id'] == user()->id())
 	}
 }
 
-$head_title = "Edit Profile";
+$head_title = l('Edit Profile');
 $head_css = "settings.css";
 if((int)$_GET['id'] != user()->id())
 {
-	$head_title = "Edit User";
+	$head_title = l('Edit User');
 	$selected = "users.php";
 }
 
@@ -79,7 +88,7 @@ include('head.php');
 					<form action="<?php bloginfo('url') ?>admin/profile.php" method="post" id="settings">
 						<div class="setting">
 							<div class="label">
-								<label for="password">New Password</label>
+								<label for="password"><?php echo l('New Password'); ?></label>
 							</div>
 							<div class="input">
 								<input type="password" name="password" id="password" />
@@ -89,7 +98,7 @@ include('head.php');
 
 						<div class="setting">
 							<div class="label">
-								<label for="vpassword">Password (again)</label>
+								<label for="vpassword"><?php echo l('Password (again)'); ?></label>
 							</div>
 							<div class="input">
 								<input type="password" name="vpassword" id="vpassword" />
@@ -99,17 +108,17 @@ include('head.php');
 
 						<div class="setting">
 							<div class="label">
-								<label for="email">Email Address</label>
+								<label for="email"><?php echo l('Email Address'); ?></label>
 							</div>
 							<div class="input">
 								<input type="text" name="email" id="email" value="<?php echo user()->email() ?>" />
 							</div>
 							<div class="clear"></div>
 						</div>
-						
+
 						<div class="setting">
 							<div class="label">
-								<label for="displayname">Display Name</label>
+								<label for="displayname"><?php echo l('Display Name'); ?></label>
 							</div>
 							<div class="input">
 								<input type="text" name="displayname" id="displayname" value="<?php echo user()->displayName() ?>" />
@@ -120,7 +129,7 @@ include('head.php');
 						<?php if(permissions('EditRoles')): ?>
 							<div class="setting">
 								<div class="label">
-									<label for="role">Role</label>
+									<label for="role"><?php echo l('Role'); ?></label>
 								</div>
 								<div class="input">
 									<select name="role" id="role">
@@ -130,23 +139,23 @@ include('head.php');
 								<div class="clear"></div>
 							</div>
 						<?php endif; ?>
-						
+
 						<div class="setting">
 							<div class="label">
-								<label for="cpassword">Current Password</label>
-								<p>Required for security purposes.</p>
+								<label for="cpassword"><?php echo l('Current Password'); ?></label>
+								<p><?php echo l('Required for security purposes.'); ?></p>
 							</div>
 							<div class="input">
 								<input type="password" name="cpassword" id="cpassword" />
 							</div>
 							<div class="clear"></div>
-						</div>			
+						</div>
 
 						<div class="setting">
 							<input type="hidden" name="uid" value="<?php echo (int)$_GET['id'] ?>" />
 							<input type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
 							<input type="hidden" name="form" value="Profile" />
-							<input type="submit" class="submit" name="editprofile" value="Save" />
+							<input type="submit" class="submit" name="editprofile" value="<?php echo l('Save'); ?>" />
 							<div class="clear"></div>
 						</div>
 					</form>
@@ -157,10 +166,10 @@ include('head.php');
 		<script type="text/javascript">
 		//<![CDATA[
 			$('div.setting:odd').addClass('even');
-		
+
 			$(function() {
 				$('form').submit(function() {
-					$('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Saving" />');
+					$('#ajaxresponse').html('<img src="style/new/loading.gif" alt="<?php echo l('Saving'); ?>" />');
 					var inputs = [];
 					$(':input', this).each(function() {
 						if($(this).is(':checkbox, :radio') && $(this).is(':not(:checked)')) {
@@ -177,7 +186,7 @@ include('head.php');
 						url: $(this).attr('action'),
 						timeout: 2000,
 						error: function() {
-							$('#ajaxresponse').html('<span class="result">Failed to save settings;<br />(jQuery failure).</span>');
+							$('#ajaxresponse').html('<span class="result"><?php echo l('Failed to save settings'); ?>;<br /><?php echo l('(jQuery failure).'); ?></span>');
 						},
 						dataType: 'json',
 						success: function(r) {

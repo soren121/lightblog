@@ -20,44 +20,64 @@ require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 require(ABSPATH .'/Sources/Process.php');
 
-if((int)$_GET['type'] == 1) { $type = 'post'; }
-elseif((int)$_GET['type'] == 2) { $type = 'page'; }
-if(isset($_GET['id'])): $id = (int)$_GET['id']; endif;
+if((int)$_GET['type'] == 1)
+{
+	$type = 'post';
+}
+elseif((int)$_GET['type'] == 2)
+{
+	$type = 'page';
+}
+
+if(isset($_GET['id']))
+{
+	$id = (int)$_GET['id'];
+}
 
 function formCallback($response)
 {
 	if(!empty($response))
 	{
 		global $type;
+
 		if($response['result'] == 'error')
 		{
-			return '<span class="result error">Failed to edit '.$type.';<br />'.$response['response'].'</span>';
+			return '<span class="result error">'. l('Failed to edit %s', $type). ';<br />'. $response['response']. '</span>';
 		}
 		elseif($response['result'] == 'success')
 		{
 			if(isset($response['response']))
 			{
-				return '<a class="view" href="'.$response['response'].'">View '.$type.' &raquo;</a>';
+				return '<a class="view" href="'. $response['response']. '">'. l('View %s', $type). ' &raquo;</a>';
 			}
 		}
 		else
 		{
-			return '<span class="result error">Failed to edit '.$type.';<br />No response from form processor.</span>';
+			return '<span class="result error">'. l('Failed to edit %s', $type). ';<br />'. l('No response from form processor.'). '</span>';
 		}
 	}
 }
 
 $head_response = formCallback(processForm($_POST));
-if(isset($_POST['ajax'])) { die(json_encode(array('response' => $head_response))); }
+if(isset($_POST['ajax']))
+{
+	die(json_encode(array(
+										'response' => $head_response
+									)));
+}
 
-$head_title = "Edit ".ucwords($type);
+$head_title = l('Edit '. ucwords($type));
 $head_css = "create.css";
-$selected = "manage.php?type=".(int)$_GET['type'];
+$selected = "manage.php?type=". (int)$_GET['type'];
 
 include('head.php');
 
 // Query for past content
-$result = $dbh->query("SELECT * FROM {$type}s WHERE {$type}_id=".(int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
+$result = $dbh->query("
+	SELECT
+		*
+	FROM {$type}s
+	WHERE {$type}_id= ". (int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
 
 while($past = $result->fetchObject())
 {
@@ -88,42 +108,40 @@ while($past = $result->fetchObject())
 		<div id="contentwrapper">
 			<div id="contentcolumn">
 				<?php if(permissions('EditOthersPosts') || permissions('EditPosts') && $author_id == user()->id()): if(!isset($type)): ?>
-					<p>The type of content to add was not specified. You must have taken a bad link. Please
-					use the navigation bar above to choose the correct type.</p>
+					<p><?php echo l('The type of content to add was not specified. You must have taken a bad link. Please
+					use the navigation bar above to choose the correct type.'); ?></p>
 				<?php else: ?>
 					<form action="<?php bloginfo('url') ?>admin/edit.php?<?php echo http_build_query($_GET, '', '&amp;') ?>" method="post" id="edit">
 						<div>
-							<label class="tfl" for="title">Title</label><br />
-							<input id="title" class="textfield ef" name="title" type="text" title="Title" value="<?php echo $title ?>" /><br />
+							<label class="tfl" for="title"><?php echo l('Title'); ?></label><br />
+							<input id="title" class="textfield ef" name="title" type="text" title="<?php echo l('Title'); ?>" value="<?php echo $title ?>" /><br />
 							<textarea class="ef" rows="12" cols="36" name="text" id="wysiwyg"><?php echo $text ?></textarea><br />
 							<input class="ef" type="hidden" name="type" value="<?php echo $type ?>" />
 							<input class="ef" type="hidden" name="id" value="<?php echo $id ?>" />
-							<input class="ef" type="hidden" name="form" value="Edit" />
+							<input class="ef" type="hidden" name="form" value="<?php echo l('Edit'); ?>" />
 							<input class="ef" type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
 						</div>
 						<div class="settings">
 							<?php if($type == 'post'): ?>
 								<div style="float: left;margin-right: 30px;">
-									<label for="category">Category:</label>
+									<label for="category"><?php echo l('Category:'); ?></label>
 									<select class="ef" id="category" name="category">
 										<?php list_categories('option', null, $s_category) ?>
 									</select>
 								</div>
 								<div style="float: left;">
 									<p>
-										<label for="comments">Comments on?</label>
-										<input class="ef" type="checkbox" name="comments" id="comments" <?php echo @$cs_checked ?> value="1" />
+										<label for="comments"><input class="ef" type="checkbox" name="comments" id="comments" <?php echo @$cs_checked ?> value="1" /> <?php echo l('Allow Comments'); ?></label>
 									</p>
 							<?php elseif($type != 'category'): ?>
 								<div style="float: left;">
 							<?php endif; if($type != 'category'): ?>
 									<p>
-										<label for="published">Published?</label>
-										<input class="ef" type="checkbox" name="published" id="published" <?php echo @$cs_checked ?> value="1" />
+										<label for="published"><input class="ef" type="checkbox" name="published" id="published" <?php echo @$cs_checked ?> value="1" /> <?php echo l('Published'); ?></label>
 									</p>
 								</div>
 							<?php endif; ?>
-							<input class="ef submit" name="edit" type="submit" value="Save" />
+							<input class="ef submit" name="edit" type="submit" value="<?php echo l('Save'); ?>" />
 							<div class="clear"></div>
 						</div>
 					</form>

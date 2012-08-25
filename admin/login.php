@@ -49,7 +49,7 @@ if(isset($_GET['logout']))
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Log In // <?php bloginfo('title') ?> &mdash; LightBlog</title>
+	<title><?php echo l('Log In'); ?> // <?php bloginfo('title') ?> &mdash; LightBlog</title>
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/new/main.css" />
 	<link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/new/login.css" />
 	<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
@@ -57,45 +57,45 @@ if(isset($_GET['logout']))
 
 <body>
 	<?php
-	
+
 	if(isset($messages) && count($messages) > 0)
 	{
 		echo '<div id="login-response">';
-	
+
 		foreach($messages as $message)
 		{
 			echo '<p>', $message, '</p>';
 		}
-	
+
 		echo '</div>';
 	}
-	
+
 	?>
-	
+
 	<div id="login-container">
 		<div id="login-header">
 			<h2 id="blogtitle"><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a></h2>
-			<h2 id="section">// Log In</h2>
+			<h2 id="section">// <?php echo l('Log In'); ?></h2>
 		</div>
 		<form action="" method="post">
 			<div>
 				<div>
-					<label for="username">Username</label>
+					<label for="username"><?php echo l('Username'); ?></label>
 					<input name="username" type="text" id="username" value="<?php echo !empty($_POST['username']) ? utf_htmlspecialchars($_POST['username']) : ''; ?>" />
 					<div class="clear"></div>
 				</div>
 				<div>
-					<label for="password">Password</label>
+					<label for="password"><?php echo l('Password'); ?></label>
 					<input name="password" type="password" id="password" value="" />
 					<div class="clear"></div>
 				</div>
 				<span>
 					<input name="remember" type="checkbox" id="rememberme" <?php echo !empty($_POST['rememberme']) ? 'checked="checked"' : ''; ?> value="1" />
-					<label for="rememberme">Remember Me</label>
+					<label for="rememberme"><?php echo l('Remember Me'); ?></label>
 				</span>
-				<input name="proclogin" type="submit" value="Log In" class="submit" />
+				<input name="proclogin" type="submit" value="<?php echo l('Log In'); ?>" class="submit" />
 				<div class="clear" style="padding-top:15px;">
-					<a class="secondary-button" href="<?php bloginfo('url') ?>" style="float: left;">&laquo; Back</a>
+					<a class="secondary-button" href="<?php bloginfo('url') ?>" style="float: left;">&laquo; <?php echo l('Back'); ?></a>
 					<?php //if(get_bloginfo('allow_registration')): ?>
 						<!--<a class="secondary-button" href="#" style="float: right;padding:3px 34px;">Register</a>-->
 					<?php //endif; ?>
@@ -104,7 +104,7 @@ if(isset($_GET['logout']))
 			</div>
 		</form>
 	</div>
-	
+
 	<script type="text/javascript">
 		$('#username').focus();
 	</script>

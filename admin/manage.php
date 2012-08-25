@@ -20,8 +20,8 @@ require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 require(ABSPATH .'/Sources/Process.php');
 
-if((int)$_GET['type'] == 1) { $type = 'post'; }
-elseif((int)$_GET['type'] == 2) { $type = 'page'; }
+if(isset($_GET['type']) && (int)$_GET['type'] == 1) { $type = 'post'; }
+elseif(isset($_GET['type']) && (int)$_GET['type'] == 2) { $type = 'page'; }
 
 $response = processForm($_POST);
 if(isset($_POST['ajax'])) { die(json_encode($response)); }
@@ -133,7 +133,7 @@ else
 				<?php endif; endif; ?>
 			</div>
 		</div>
-		
+
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.Widgets.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Metadata.js"></script>
