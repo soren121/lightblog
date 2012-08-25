@@ -47,7 +47,7 @@ INSERT INTO 'settings' VALUES('timezone', '0.0');
 INSERT INTO 'settings' VALUES('date_format', 'm/j/Y');
 INSERT INTO 'settings' VALUES('time_format', 'g:i a');
 
-CREATE TABLE 'error_log'
+CREATE TABLE 'errors'
 (
 	'error_id' INTEGER PRIMARY KEY NOT NULL DEFAULT '0',
 	'error_time' INT(10) NOT NULL,
@@ -58,8 +58,8 @@ CREATE TABLE 'error_log'
 	'error_url' VARCHAR(255) NOT NULL
 );
 
-CREATE INDEX 'error_log_type_index' ON 'error_log' ('error_type');
-CREATE INDEX 'error_log_time_index' ON 'error_log' ('error_time');
+CREATE INDEX 'errors_type_index' ON 'errors' ('error_type');
+CREATE INDEX 'errors_time_index' ON 'errors' ('error_time');
 
 CREATE TABLE 'pages'
 (

@@ -72,7 +72,7 @@ function buildMenu($selected)
 		$select = '';
 		if(is_array($attr['children']) && in_array($selected, $attr['children']) || !is_array($attr['children']) && $attr['link'] == $selected)
 		{
-			$select = 'selected';
+			$select = 'selected open';
 		}
 		echo '<li class="'.$select.'">';
 		echo '<img src="style/new/'.strtolower($topname).'.png" class="nav-icon" alt="" />';
@@ -99,7 +99,7 @@ function buildMenu($selected)
 				echo '<li><a href="'.$link.'" class="nav-link ';
 				if($link == $selected)
 				{
-					echo $select;
+					echo 'selected';
 				}
 				echo '">'.$name.'</a></li>';
 			}
@@ -133,7 +133,7 @@ function buildMenu($selected)
 
 	<script type="text/javascript">
 	//<![CDATA[
-		$('.submenu:not(".open")').hide();
+		$('.submenu:not(".selected")').hide();
 		$('ul#menu > li > a.nav-link:not(.single)').width(160);
 		$('.nav-toggle').show().click(function()
 		{

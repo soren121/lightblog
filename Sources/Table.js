@@ -29,6 +29,21 @@ $('#itemnum').change(function()
 	loadpage('reset');
 });
 
+function ucwords(str)
+{
+	// http://kevin.vanzonneveld.net
+	// +   original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
+	// +   improved by: Waldo Malqui Silva
+	// +   bugfixed by: Onno Marsman
+	// +   improved by: Robin
+	// +      input by: James (http://www.james-bell.co.uk/)
+	// +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+	return (str + '').replace(/^([a-z])|\s+([a-z])/g, function($1)
+	{
+		return $1.toUpperCase();
+	});
+}
+
 function pagination_callback()
 {
 	var hash = window.location.hash;
@@ -82,7 +97,7 @@ function loadrow_js(count, clear, page)
 	var last = $('tbody tr.last').attr('id');
 	jQuery.ajax(
 	{
-		data: "ajax=true&form=Manage&type=" + type + "&count=" + count + "&before=" + last + "&page=" + page + "&csrf_token=" + csrf_token,
+		data: "ajax=true&form=" + form + "&type=" + type + "&count=" + count + "&before=" + last + "&page=" + page + "&csrf_token=" + csrf_token,
 		type: "POST",
 		url: window.location,
 		timeout: 2000,
@@ -164,7 +179,7 @@ function deleterow_callback(r, single)
 			var action = $('select[name=action]').val();
 			if(action == 'delete' || single == true)
 			{
-				$('#ajaxresponse').html('<p>' + ucwords(type) + ' deleted.</p>');
+				$('#ajaxresponse').html('<p>' + ucwords(type) + '(s) deleted.</p>');
 				var checked = $('.table:checked').size();
 				$('.table:checked').parent('td').parent('tr').remove();
 				var rowtotal = Number($('span#row-total').text());
@@ -188,7 +203,7 @@ function deleterow_callback(r, single)
 			}
 			else
 			{
-				$('#ajaxresponse').html('<p>' + ucwords(type) + ' updated.</p>');
+				$('#ajaxresponse').html('<p>' + ucwords(type) + '(s) updated.</p>');
 				$('.table:checked').parent().next().children('span').remove();
 			}
 			if(action == 'unpublish')
@@ -196,7 +211,6 @@ function deleterow_callback(r, single)
 				$('.table:checked').parent().next().append(' <span style="color:#E36868;">&mdash; Draft</span>');
 			}
 			$('select[name=action]').val('default');
-			$('.table:checked').attr('checked', 'false');
 		}
 		else
 		{
