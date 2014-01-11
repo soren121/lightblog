@@ -21,6 +21,10 @@
 	padding: 3px 5px;
 }
 
+#contentcolumn table tbody td {
+	height: 25px;
+}
+
 #contentcolumn table tbody tr.normal-row {
 	background-color: #f7f7f7;
 }

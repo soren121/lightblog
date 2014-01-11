@@ -50,8 +50,7 @@ $head_css = "table.css";
 
 include('head.php');
 
-$rowtotal = $dbh->query("SELECT error_id FROM error_log") or die(sqlite_error_string($dbh->lastError));
-$rowtotal = $rowtotal->numRows();
+$rowtotal = count_rows("SELECT COUNT(*) FROM error_log");
 
 $rowstart = (10 * $page) - 9;
 
@@ -96,7 +95,7 @@ else
 								<tr>
 									<th class="{sorter: false}"><input type="checkbox" id="select-all" title="<?php echo l('Select All/None'); ?>" /></th>
 									<th><?php echo l('Type'); ?></th>
-									<th><?php echo l('Error'); ?></th>
+									<th class="{sorter: false}"><?php echo l('Error'); ?></th>
 									<th><?php echo l('Date'); ?></th>
 									<th class="{sorter: false}"><?php echo l('Delete'); ?></th>
 								</tr>
@@ -124,7 +123,7 @@ else
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.Widgets.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Metadata.js"></script>
-		<script type="text/javascript">type = 'error'; csrf_token = '<?php echo user()->csrf_token() ?>';</script>
+		<script type="text/javascript">type = 'error'; form = 'ErrorLog'; csrf_token = '<?php echo user()->csrf_token() ?>';</script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/Table.js"></script>
 
 <?php include('footer.php') ?>

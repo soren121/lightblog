@@ -64,9 +64,9 @@ $result = $dbh->query("
 		INNER JOIN post_categories AS pc ON pc.post_id = p.post_id AND pc.category_id = '. $category : ''). "
 	WHERE p.published <= ". time(). "
 	ORDER BY p.post_date DESC
-	LIMIT 10") or die(sqlite_error_string($dbh->lastError));
+	LIMIT 10");
 
-while($row = $result->fetch(SQLITE_ASSOC)) {
+while($row = $result->fetch(PDO::FETCH_ASSOC)) {
 	// Create a FeedItem
 	$newItem = $TestFeed->createNewItem();
 

@@ -66,7 +66,7 @@ class CommentLoop
 	private function set_dbh($dbh)
 	{
 		// Is this a valid handle?
-		if(is_object($dbh) && $dbh instanceof SQLiteDatabase)
+		if(is_object($dbh) && is_a($dbh, 'PDO'))
 		{
 			$this->dbh = $dbh;
 		}
@@ -101,6 +101,13 @@ class CommentLoop
 		$this->data['post']['id'] = (int)$GLOBALS['pid'];
 
 		// There are a few things from the posts table we need to fetch.
+		$query_c = "
+			SELECT
+				COUNT(*)
+			FROM posts
+			WHERE post_id = {$this->data['post']['id']}
+			LIMIT 1";
+		
 		$request = $this->dbh->query("
 			SELECT
 				allow_comments, allow_pingbacks, comments
@@ -109,9 +116,9 @@ class CommentLoop
 			LIMIT 1");
 
 		// Does the post exist?
-		if($request->numRows() > 0)
+		if(count_rows($query_c))
 		{
-			list($allow_comments, $allow_pingbacks, $comments) = $request->fetch(SQLITE_NUM);
+			list($allow_comments, $allow_pingbacks, $comments) = $request->fetch(PDO::FETCH_NUM);
 
 			$this->data['post']['allow_comments'] = !empty($allow_comments);
 			$this->data['post']['allow_pingbacks'] = !empty($allow_pingbacks);
@@ -128,7 +135,7 @@ class CommentLoop
 				ORDER BY comment_date ASC");
 
 			$users = array();
-			while($row = $request->fetch(SQLITE_ASSOC))
+			while($row = $request->fetch(PDO::FETCH_ASSOC))
 			{
 				$this->data['comments'][] = array(
 					'id' => $row['comment_id'],

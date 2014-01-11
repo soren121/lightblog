@@ -53,8 +53,7 @@ $head_css = "table.css";
 
 include('head.php');
 
-$rowtotal = $dbh->query("SELECT {$type}_id FROM {$type}s") or die(sqlite_error_string($dbh->lastError));
-$rowtotal = $rowtotal->numRows();
+$rowtotal = count_rows("SELECT COUNT(*) FROM {$type}s");
 
 $rowstart = (10 * $page) - 9;
 
@@ -138,6 +137,7 @@ else
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.Widgets.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Metadata.js"></script>
 		<script type="text/javascript">type = '<?php echo $type ?>'; form = 'Manage'; csrf_token = '<?php echo user()->csrf_token() ?>';</script>
+		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Form.js"></script>
 		<script type="text/javascript" src="<?php bloginfo('url') ?>Sources/Table.js"></script>
 
 <?php include('footer.php') ?>

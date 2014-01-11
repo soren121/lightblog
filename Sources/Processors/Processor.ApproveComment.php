@@ -29,7 +29,7 @@ class ApproveComment
 		if(permissions('EditComments'))
 		{
 			// Execute query to approve comment
-			$query = @$this->dbh->query("UPDATE comments SET published=1 WHERE id=".(int)$data['id']);
+			$query = @$this->dbh->exec("UPDATE comments SET published=1 WHERE id=".(int)$data['id']);
 	
 			if(!$query)
 			{

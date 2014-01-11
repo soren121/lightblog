@@ -78,7 +78,7 @@ class Create
 			// Insert post/page into database
 			if($type == 'post')
 			{
-				@$this->dbh->query("
+				$sql_create_post = @$this->dbh->exec("
 					INSERT INTO
 						posts
 							(post_title,
@@ -107,21 +107,21 @@ class Create
 					)"
 				);
 
-				if($this->dbh->changes() == 0)
+				if($sql_create_post == 0)
 				{
 					return array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()));
 				}
 
-				$id = $this->dbh->lastInsertRowid();
+				$id = $this->dbh->lastInsertId();
 
 				// Get the real short name.
 				$shortname = generate_shortname($id, $title);
-				@$this->dbh->query("
+				$sql_shortname = @$this->dbh->exec("
 					UPDATE posts
 					SET short_name = '". sqlite_escape_string($shortname). "'
 					WHERE post_id = ". (int)$id);
 
-				@$this->dbh->query("
+				$sql_categories = @$this->dbh->exec("
 					INSERT INTO
 						post_categories
 							(post_id,
@@ -134,7 +134,7 @@ class Create
 			}
 			else
 			{
-				@$this->dbh->query("
+				$sql_create_page = @$this->dbh->exec("
 					INSERT INTO
 						pages
 							(page_title,
@@ -155,10 +155,10 @@ class Create
 					)
 				");
 
-				$id = $this->dbh->lastInsertRowid();
+				$id = $this->dbh->lastInsertId();
 			}
 
-			if($this->dbh->changes() == 0)
+			if($sql_create_post == 0 || $sql_shortname == 0 || $sql_categories == 0 || (isset($sql_create_page) && $sql_create_page == 0))
 			{
 				return array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()));
 			}

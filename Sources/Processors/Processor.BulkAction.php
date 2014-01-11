@@ -26,23 +26,31 @@ class BulkAction
 
 	public function processor($data)
 	{
-		if($data['checked'] != '' && permissions('EditOthersPosts'))
+		if(permissions('EditOthersPosts'))
 		{
 			$type = sqlite_escape_string(strip_tags($data['type']));
-			$in = sqlite_escape_string(implode(',', $data['checked']));
-			switch($data['action'])
+			
+			if($data['checked'] != '' && !array_key_exists('delete', $data))
 			{
-				case 'delete':
-					$query = @$this->dbh->query("DELETE FROM {$type}s WHERE {$type}_id IN ({$in})");
-					break;
-				case 'publish':
-					$query = @$this->dbh->query("UPDATE {$type}s SET published=".time()." WHERE {$type}_id IN ({$in})");
-					break;
-				case 'unpublish':
-					$query = @$this->dbh->query("UPDATE {$type}s SET published=0 WHERE {$type}_id IN ({$in})");
-					break;
+				$in = sqlite_escape_string(implode(',', $data['checked']));
+				switch($data['action'])
+				{
+					case 'delete':
+						$query = @$this->dbh->exec("DELETE FROM {$type}s WHERE {$type}_id IN ({$in})");
+						break;
+					case 'publish':
+						$query = @$this->dbh->exec("UPDATE {$type}s SET published=".time()." WHERE {$type}_id IN ({$in})");
+						break;
+					case 'unpublish':
+						$query = @$this->dbh->exec("UPDATE {$type}s SET published=0 WHERE {$type}_id IN ({$in})");
+				}
 			}
-	
+			elseif(array_key_exists('delete', $data))
+			{
+				$delete_id = (int)$data['delete'];
+				$query = @$this->dbh->exec("DELETE FROM {$type}s WHERE {$type}_id = ".$delete_id);
+			}
+			
 			if(!$query)
 			{
 				return array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()));

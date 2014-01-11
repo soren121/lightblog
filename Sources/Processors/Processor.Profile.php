@@ -36,13 +36,13 @@ class Profile
 		if(permissions('EditOtherUsers') || (int)$data['uid'] == user()->id())
 		{
 			// Get current user data from the database
-			$user_query = @$this->dbh->query("SELECT user_pass,user_email,display_name,user_role,user_salt FROM users WHERE user_id=".(int)$data['uid']);
-			if(!$user_query)
+			$sql_user = @$this->dbh->query("SELECT user_pass,user_email,display_name,user_role,user_salt FROM users WHERE user_id=".(int)$data['uid']);
+			if($sql_user == false)
 			{
 				$response['response'] = array("result" => "error", "response" => "couldn't read from the database.");
 				return $response;
 			}
-			while($row = $user_query->fetchObject())
+			while($row = $sql_user->fetchObject())
 			{
 				// Make variables from the database query
 				$cpassword_db = $row->user_pass;
@@ -51,6 +51,9 @@ class Profile
 				$role = $row->user_role;
 				$csalt = $row->user_salt;
 			}
+			
+			$sql_user->closeCursor();
+			
 			// Check if the current password given in the form matches the actual current password
 			if(sha1($csalt . $data['cpassword']) == $cpassword_db)
 			{
@@ -97,9 +100,9 @@ class Profile
 					return $response;
 				}
 				// Go, query, go!
-				$update_query = @$this->dbh->query("UPDATE users ".implode(',', $query)." WHERE user_id=".(int)$data['uid']);
+				$sql_user_update = @$this->dbh->exec("UPDATE users ".implode(',', $query)." WHERE user_id=".(int)$data['uid']);
 				// Did it work?
-				if(!$update_query)
+				if($sql_user_update == 0)
 				{
 					$response['response'] = "couldn't save data to the database.";
 				}

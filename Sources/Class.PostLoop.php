@@ -83,7 +83,7 @@ class PostLoop
 	private function set_dbh($dbh)
 	{
 		// Is this a valid handle?
-		if(is_object($dbh) && is_a($dbh, 'SQLiteDatabase'))
+		if(is_object($dbh) && is_a($dbh, 'PDO'))
 		{
 			$this->dbh = $dbh;
 		}
@@ -211,7 +211,7 @@ class PostLoop
 		// Okay, first off, we need to see how many posts there are in total.
 		$request = $this->dbh->query($this->generateQuery(true));
 
-		list($this->data['count']) = $request->fetch(SQLITE_NUM);
+		list($this->data['count']) = $request->fetch(PDO::FETCH_NUM);
 
 		// Let's see, how many pages can we have?
 		$this->data['max_page'] = ceil($this->data['count'] / (int)$limit);
@@ -247,7 +247,7 @@ class PostLoop
 		$users = array();
 		$categories = array();
 		$this->data['posts'] = array();
-		while($row = $request->fetch(SQLITE_BOTH))
+		while($row = $request->fetch(PDO::FETCH_BOTH))
 		{
 			$this->data['posts'][] = array(
 																 'id' => $row['post_id'],
@@ -292,7 +292,7 @@ class PostLoop
 			WHERE category_id IN(". implode(', ', $categories). ")");
 
 		$this->data['categories'] = array();
-		while($row = $request->fetch(SQLITE_ASSOC))
+		while($row = $request->fetch(PDO::FETCH_ASSOC))
 		{
 			$this->data['categories'][$row['category_id']] = array(
 																												 'id' => $row['category_id'],

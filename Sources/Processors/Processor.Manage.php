@@ -47,6 +47,8 @@ class Manage
 		}
 		((!empty($where)) ? $where = implode(' AND ', $where) : $where = '');
 		$result = @$this->dbh->query("SELECT * FROM ".sqlite_escape_string(strip_tags($data['type']))."s {$where} ORDER BY {$data['type']}_id desc LIMIT ".(int)$data['page'].", ".(int)$data['count']) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()))));
+		$query_c = "SELECT COUNT(*) FROM ".sqlite_escape_string(strip_tags($data['type']))."s {$where} ORDER BY {$data['type']}_id desc LIMIT ".(int)$data['page'].", ".(int)$data['count'];
+		$query_c_rows = count_rows($query_c);
 		if($data['type'] == 'post')
 		{
 			$category_query = @$this->dbh->query("SELECT * FROM post_categories");
@@ -67,7 +69,7 @@ class Manage
 		while($row = $result->fetchObject())
 		{
 			$i++;
-			if($i == $result->numRows())
+			if($i == $query_c_rows)
 			{
 				$return .= '<tr id="'.$row->{$data['type'].'_id'}.'" class="last">';
 			}
@@ -95,7 +97,7 @@ class Manage
 			if(permissions("EditOthers".ucwords($data['type'])."s") || permissions("Edit".ucwords($data['type'])."s") && user()->id() == $row->author_id)
 			{
 				$return .= '<td class="c"><a href="edit.php?type='.(int)$_GET['type'].'&amp;id='.$row->{$data['type'].'_id'}.'"><img src="style/edit.png" alt="Edit" style="border:0;" /></a></td>
-				<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem('.$row->{$data['type'].'_id'}.', \''.$row->{$data['type'].'_title'}.'\');" style="cursor:pointer;" /></td>';
+				<td class="c"><input type="submit" name="delete" value="'.$row->{$data['type'].'_id'}.'" class="bf table" /></td>';
 			}
 			else {
 				$return .= '<td class="c"><img src="style/edit-d.png" alt="" title="You aren\'t allowed to edit this '.$data['type'].'." /></td>

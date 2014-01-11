@@ -69,7 +69,7 @@ class PageLoop
 	private function set_dbh($dbh)
 	{
 		// Is this a valid handle?
-		if(is_object($dbh) && is_a($dbh, 'SQLiteDatabase'))
+		if(is_object($dbh) && is_a($dbh, 'PDO'))
 		{
 			$this->dbh = $dbh;
 		}

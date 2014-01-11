@@ -28,15 +28,15 @@ class Edit
 	{
 		$id = (int)$_POST['id'];
 		$type = sqlite_escape_string($_POST['type']);
-		$result = @$this->dbh->query("SELECT * FROM {$type}s WHERE {$type}_id=".$id);
+		$sql_past_data = @$this->dbh->query("SELECT * FROM {$type}s WHERE {$type}_id=".$id);
 		
-		if(!$result)
+		if($sql_past_data == false)
 		{
 			return array("result" => "error", "response" => sqlite_error_string($dbh->lastError()));
 		}
 		
 		// Fetch previous data
-		while($past = $result->fetchObject())
+		while($past = $sql_past_data->fetchObject())
 		{
 			if($_POST['type'] == 'post')
 			{
@@ -54,6 +54,8 @@ class Edit
 			}
 			$author_id = $past->author_id;
 		}
+		
+		$sql_past_data->closeCursor();
 		
 		if(permissions('EditOthersPosts') || permissions('EditPosts') && $author_id == user()->id())
 		{
@@ -130,9 +132,9 @@ class Edit
 			else
 			{
 				// Execute modified query
-				$update_query = @$this->dbh->query("UPDATE {$type}s SET " . implode(', ', $base) . " WHERE {$type}_id=".$id) or die(json_encode(array("result" => "error", "response" => $type.sqlite_error_string($this->dbh->lastError()))));
+				$sql_edit = @$this->dbh->exec("UPDATE {$type}s SET " . implode(', ', $base) . " WHERE {$type}_id=".$id) or die(json_encode(array("result" => "error", "response" => $type.sqlite_error_string($this->dbh->lastError()))));
 	
-				if(!$update_query)
+				if($sql_edit == 0)
 				{
 					return array("result" => "error", "response" => sqlite_error_string($dbh->lastError()));
 				}

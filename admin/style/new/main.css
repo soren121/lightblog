@@ -43,6 +43,7 @@ h2#blogtitle a, h2#blogtitle a:hover, h2#blogtitle a:visited {
 
 h2#section {
 	color: #bbb;
+	padding-left: 20px;
 }
 
 #header #ajaxresponse {
@@ -92,13 +93,6 @@ h2#section {
 	margin-left: 250px;
 	min-height: 480px;
 	padding: 0 2px 20px 20px;
-}
-
-#contentcolumn select {
-	height: 25px;
-	vertical-align: middle;
-	font-size: 1.0em;
-	padding: 3px;
 }
 
 input.submit {
@@ -201,7 +195,7 @@ input.submit:hover {
 	font-size: .95em;
 	color: #111;
 	width: 160px;
-	padding: 9px 0 9px 8px;
+	padding: 9px 0 10px 8px;
 	display: inline-block;
 }
 

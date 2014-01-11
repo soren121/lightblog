@@ -37,7 +37,7 @@ function permissions($permission)
 	{
 		$result = $dbh->query('
 		SELECT *
-		FROM role_permissions') or die(sqlite_error_string($dbh->lastError));
+		FROM role_permissions');
 
 		// Super fun array time!
 		$GLOBALS['permissions_data'] = array();

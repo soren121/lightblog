@@ -41,7 +41,7 @@ function get_bloginfo($var, $reload = false)
 		$result = $dbh->query('
 			SELECT
 				variable, value
-			FROM settings') or die(sqlite_error_string($dbh->lastError));
+			FROM settings');
 
 		// Let's make an array!
 		$GLOBALS['bloginfo_data'] = array();
@@ -77,7 +77,7 @@ function get_roles($role = null)
 			SELECT
 				*
 			FROM roles
-			ORDER BY role_id desc') or die(sqlite_error_string($dbh->lastError));
+			ORDER BY role_id desc');
 
 		$roles = array();
 		while($row = $result->fetchObject())
@@ -93,6 +93,16 @@ function get_roles($role = null)
 	{
 		return $roles;
 	}
+}
+
+function count_rows($sql) {
+	global $dbh;
+
+	$sql_rows = $dbh->query($sql);
+	$rows = $sql_rows->fetchColumn();
+	$sql_rows->closeCursor();
+	
+	return $rows;
 }
 
 ?>

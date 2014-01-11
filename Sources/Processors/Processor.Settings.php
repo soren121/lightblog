@@ -102,7 +102,7 @@ class Settings
 				$save_query[] = 'INSERT OR REPLACE INTO settings (variable, value) VALUES(\''. sqlite_escape_string($option). '\', '. (is_string($value) ? '\''. $value. '\'' : $value). ');';
 			}
 	
-			if($this->dbh->queryExec(implode("\r\n", $save_query)))
+			if($this->dbh->exec(implode("\r\n", $save_query)) > 0)
 			{
 				$response['result'] = 'success';
 				$response['response'] = 'Settings saved.';

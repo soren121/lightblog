@@ -34,7 +34,6 @@
 	<div id="maincontainer">
 		<div id="header">
 			<h2 id="blogtitle"><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a></h2>
-			<!-- the double slashes are not a bug -->
-			<h2 id="section">// <?php echo $head_title ?></h2>
+			<h2 id="section"><?php echo $head_title ?></h2>
 			<div id="ajaxresponse"><?php echo (!isset($head_response) ? '' : $head_response) ?></div>
 		</div>

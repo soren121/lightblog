@@ -53,7 +53,10 @@ if(permissions('EditOtherUsers') || (int)$_GET['id'] == user()->id())
 		SELECT
 			user_role
 		FROM users
-		WHERE user_id = ". (int)$_GET['id']) or die(sqlite_error_string($dbh->lastError));
+		WHERE user_id = ". (int)$_GET['id']);
+		
+	$user_role = $userquery->fetch(PDO::FETCH_NUM);
+		
 	$role_options = '';
 	foreach(get_roles() as $role_id => $role)
 	{
@@ -62,7 +65,7 @@ if(permissions('EditOtherUsers') || (int)$_GET['id'] == user()->id())
 		{
 			$select = 'selected="selected"';
 		}
-		elseif($userquery->fetchSingle() == $role_id)
+		elseif($user_role[0] == $role_id)
 		{
 			$select = 'selected="selected"';
 		}
@@ -96,7 +99,7 @@ include('head.php');
 							<div class="clear"></div>
 						</div>
 
-						<div class="setting">
+						<div class="setting even">
 							<div class="label">
 								<label for="vpassword"><?php echo l('Password (again)'); ?></label>
 							</div>
@@ -116,7 +119,7 @@ include('head.php');
 							<div class="clear"></div>
 						</div>
 
-						<div class="setting">
+						<div class="setting even">
 							<div class="label">
 								<label for="displayname"><?php echo l('Display Name'); ?></label>
 							</div>
@@ -140,7 +143,7 @@ include('head.php');
 							</div>
 						<?php endif; ?>
 
-						<div class="setting">
+						<div class="setting <?php if(permissions('EditRoles')): echo 'even'; endif; ?>">
 							<div class="label">
 								<label for="cpassword"><?php echo l('Current Password'); ?></label>
 								<p><?php echo l('Required for security purposes.'); ?></p>
@@ -151,7 +154,7 @@ include('head.php');
 							<div class="clear"></div>
 						</div>
 
-						<div class="setting">
+						<div class="setting <?php if(!permissions('EditRoles')): echo 'even'; endif; ?>">
 							<input type="hidden" name="uid" value="<?php echo (int)$_GET['id'] ?>" />
 							<input type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
 							<input type="hidden" name="form" value="Profile" />

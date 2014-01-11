@@ -63,7 +63,7 @@ function errorsHandle($errno, $message, $filename, $line, $errcontext)
 	// Do we need to make a connection to the SQLite database ourselves?
 	if(defined('DBH') && !array_key_exists('dbh', $GLOBALS) && file_exists(DBH))
 	{
-		$GLOBALS['dbh'] = new SQLiteDatabase(DBH, 0666, $error_message);
+		$GLOBALS['dbh'] = new PDO('sqlite:'.DBH);
 	}
 
 	// Make sure we can query the database.
@@ -76,7 +76,7 @@ function errorsHandle($errno, $message, $filename, $line, $errcontext)
 		$line = (int)$line;
 		$error_url = sqlite_escape_string('http://'. $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI']);
 
-		@$GLOBALS['dbh']->query("
+		@$GLOBALS['dbh']->exec("
 			INSERT INTO 'error_log'
 			('error_time', 'error_type', 'error_message', 'error_file', 'error_line', 'error_url')
 			VALUES('$timestamp', '$error_type', '$message', '$filename', '$line', '$error_url')");
@@ -322,7 +322,7 @@ function errorsShowFatal($message, $filename, $line)
 */
 function errorsMapType($errno)
 {
-	$error_types = array(
+	$error_types = @array(
 		E_ERROR => 'Fatal',
 		E_WARNING => 'Warning',
 		E_PARSE => 'Parse',

@@ -62,14 +62,16 @@ function user_login($options)
 	// Now we need to see if the user exists.
 	else
 	{
-		$request = $dbh->query("
+		$request = $dbh->prepare("
 			SELECT
 				user_id, user_pass, user_ip, user_salt
 			FROM users
-			WHERE LOWER(user_name) = '". sqlite_escape_string(utf_strtolower(utf_htmlspecialchars($options['username']))). "'
+			WHERE LOWER(user_name) = 'soren121'
 			LIMIT 1");
+			
+		$request->execute();
 
-		if($request->numRows() == 0)
+		if(!$request)
 		{
 			// We didn't find their user name, but we won't tell them whether it
 			// was due to the password being wrong or their user name :P.
@@ -77,8 +79,10 @@ function user_login($options)
 		}
 		else
 		{
-			list($user_id, $user_pass, $user_ip, $user_salt) = $request->fetch(SQLITE_NUM);
+			list($user_id, $user_pass, $user_ip, $user_salt) = $request->fetch(PDO::FETCH_NUM);
 		}
+		
+		$request->closeCursor();
 	}
 
 	// Make sure we don't have any messages yet.
@@ -103,7 +107,7 @@ function user_login($options)
 			$new_password = sqlite_escape_string(sha1($new_salt. $options['password']));
 			$new_ip = sqlite_escape_string(user()->ip());
 
-			$dbh->query("
+			$dbh->exec("
 				UPDATE users
 				SET user_salt = '$new_salt', user_pass = '$new_password'". (user()->ip() != $user_ip ? ', user_ip = \''. $new_ip. '\'' : ''). "
 				WHERE user_id = $user_id");
@@ -150,15 +154,22 @@ function user_name_allowed($name, $id = 0)
 	global $dbh;
 
 	// Alright, let's check!
-	$request = $dbh->query("
+	$request = "
 		SELECT
-			user_id
+			COUNT(*)
 		FROM users
 		WHERE (LOWER(user_name) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "') OR LOWER(display_name) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "')) AND user_id != ". ((int)$id). "
-		LIMIT 1");
+		LIMIT 1";
 
 	// If there are no rows, they're free to have at it!
-	return $request->numRows() == 0;
+	if(count_rows($request) == 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 /*
@@ -187,13 +198,20 @@ function user_email_allowed($email, $id = 0)
 	// Now to check the database.
 	$request = $dbh->query("
 		SELECT
-			id
+			COUNT(*)
 		FROM users
 		WHERE LOWER(user_email) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($email)). "') AND user_id != ". ((int)$id). "
 		LIMIT 1");
 
-	// Any rows? If none, it's okay for them to use it.
-	return $request->numRows() == 0;
+	// If there are no rows, they're free to have at it!
+	if(count_rows($request) == 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 /*
@@ -266,18 +284,27 @@ class User
 			if((int)$user_id > 0 && utf_strlen($user_pass) == 40)
 			{
 				// Now we need to see if they can log in.
-				$request = $dbh->query("
+				$query_c = "
+					SELECT
+						user_id, user_name, user_pass, user_email, display_name, user_role
+					FROM users
+					WHERE user_id = ". ((int)$user_id). " AND user_pass = '". sqlite_escape_string($user_pass). "'
+					LIMIT 1";
+				
+				$request = $dbh->prepare("
 					SELECT
 						user_id, user_name, user_pass, user_email, display_name, user_role
 					FROM users
 					WHERE user_id = ". ((int)$user_id). " AND user_pass = '". sqlite_escape_string($user_pass). "'
 					LIMIT 1");
+					
+				$request->execute();
 
 				// Did we find anything?
-				if($request->numRows() > 0)
+				if(count_rows($query_c))
 				{
 					// We sure did!
-					$row = $request->fetch(SQLITE_ASSOC);
+					$row = $request->fetch(PDO::FETCH_ASSOC);
 
 					// Now set their information.
 					$this->id = (int)$row['user_id'];
@@ -287,9 +314,11 @@ class User
 					$this->displayName = $row['display_name'];
 					$this->role = (int)$row['user_role'];
 
-					$_SESSION['user_id'] = $this->id();
-					$_SESSION['user_pass'] = $this->password();
+					$_SESSION['user_id'] = $this->id;
+					$_SESSION['user_pass'] = $this->password;
 				}
+				
+				$request->closeCursor();
 			}
 		}
 

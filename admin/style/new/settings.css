@@ -27,11 +27,11 @@ div.setting div.input {
 	width: 60%;
 }
 
-div.setting div.input > input, div.setting div.input > select {
+div.setting div.input > input {
 	width: 100%;
 }
 
-div.setting input[type=text], div.setting input[type=password] {
+div.setting input[type=text], div.setting input[type=password], div.setting select {
 	height: 25px;
 	width: 100%;
 	padding-left: 2px;

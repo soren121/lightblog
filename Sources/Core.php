@@ -49,8 +49,9 @@ else
 // Check to make sure that the database exists.
 if(file_exists(DBH))
 {
-	$dbh = new SQLiteDatabase(DBH, 0666, $error_message);
-	$dbh->query('PRAGMA short_column_names = 1');
+	$dbh = new PDO('sqlite2:'.DBH);
+	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	$dbh->setAttribute(PDO::ATTR_TIMEOUT, 5);
 }
 else
 {
@@ -76,14 +77,14 @@ require(ABSPATH. '/Sources/Language.php');
 session_start();
 
 // Now output buffering, too. With compression, if supported.
-if(function_exists('ob_gzhandler') && (get_bloginfo('disable_compression') === false || get_bloginfo('disable_compression') == 0))
+/*if(function_exists('ob_gzhandler') && (get_bloginfo('disable_compression') === false || get_bloginfo('disable_compression') == 0))
 {
 	ob_start('ob_gzhandler');
 }
 else
 {
 	ob_start();
-}
+}*/
 
 /*
 	Function: LightyVersion
@@ -186,10 +187,10 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
 	$query = $dbh->query("
 		SELECT
 			COUNT(*)
-		FROM '".sqlite_escape_string($type)."'") or die(sqlite_error_string($dbh->lastError));
+		FROM '".sqlite_escape_string($type)."'");
 
 	// Query the database
-	@list($totalitems) = $query->fetch(SQLITE_NUM);
+	@list($totalitems) = $query->fetch(PDO::FETCH_NUM);
 
 	// Set various required variables
 	$prev = $page - 1;						// Previous page is page - 1
@@ -364,14 +365,21 @@ function list_pages($tag = 'li', $limit = 5)
 {
 	global $dbh;
 
+	$query_c = "
+		SELECT
+			COUNT(*)
+		FROM pages
+		ORDER BY page_id DESC
+		LIMIT 0, ". ((int)$limit);
+		
 	$result = $dbh->query("
 		SELECT
 			*
 		FROM pages
 		ORDER BY page_id DESC
-		LIMIT 0, ". ((int)$limit));
+		LIMIT 0, ". ((int)$limit));	
 
-	if($result->numRows() > 0)
+	if(count_rows($query_c))
 	{
 		while($page = $result->fetchObject())
 		{
@@ -415,7 +423,7 @@ function list_categories($tag = 'li', $limit = 5, $selected = null)
 			*
 		FROM categories
 		ORDER BY category_id DESC
-		".$limit) or die(sqlite_error_string($dbh->lastError));
+		".$limit);
 
 	// What tag are we using?
 	if($tag == 'option')
@@ -501,10 +509,10 @@ function get_commentnum($id)
 		SELECT
 			COUNT(*)
 		FROM comments
-		WHERE published = 1 AND post_id= ". ((int)$id)) or die(sqlite_error_string($dbh->lastError));
+		WHERE published = 1 AND post_id= ". ((int)$id));
 
 	// Query the database
-	@list($commentnum) = $query->fetch(SQLITE_NUM);
+	@list($commentnum) = $query->fetch(PDO::FETCH_NUM);
 
 	// Return data
 	return $commentnum;

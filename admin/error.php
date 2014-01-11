@@ -30,7 +30,7 @@ if(isset($_GET['id']))
 				WHERE error_id = '. ((int)$_GET['id']). '
 				LIMIT 1');
 
-	$error = $request->fetch(SQLITE_ASSOC);
+	$error = $request->fetch(PDO::FETCH_ASSOC);
 }
 
 $head_title = l('Error Info');
@@ -42,7 +42,7 @@ include('head.php');
 ?>
 		<div id="contentwrapper">
 			<div id="contentcolumn">
-				<?php if(permissions('EditSettings')): if($request->numRows() == 0 || !isset($_GET['id'])): ?>
+				<?php if(permissions('EditSettings')): if(!$error || !isset($_GET['id'])): ?>
 					<p><?php l('The error you are trying to view does not exist.'); ?></p>
 				<?php else: ?>
 					<h3><?php echo l('Error #%s', (int)$_GET['id']); ?></h3>

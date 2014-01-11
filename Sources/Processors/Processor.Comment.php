@@ -35,12 +35,15 @@ class Comment
 			WHERE post_id = ". $comment_pid. "
 			LIMIT 1");
 			
+		$comments_allowed = $query->fetch(PDO::FETCH_NUM);
+		$query->closeCursor();
+			
 		if(!$query)
 		{
 			return array("result" => "error", "response" => "Failed to query database.");
 		}
 	
-		if($query->numRows() == 1 && $query->fetchSingle() == '1')
+		if($comments_allowed[0] == 1)
 		{
 			// If they're a logged in user, we will set these ourselves.
 			if(user()->is_logged())
@@ -76,14 +79,14 @@ class Comment
 					setcookie(LBCOOKIE. '_curl', !empty($_POST['commenter_website']) && is_url($_POST['commenter_website']) ? $_POST['commenter_website'] : '', time() + 2592000, '/');
 				}
 	
-				$submit_query = $this->dbh->query("
+				$submit_query = $this->dbh->exec("
 					INSERT INTO comments
 					(post_id, published, commenter_id, commenter_name, commenter_email, commenter_website,
 					 commenter_ip, comment_date, comment_text)
 					VALUES($comment_pid, $published, '$commenter_id', '$commenter_name', '$commenter_email', '$commenter_website',
 					 '$commenter_ip', '$comment_date', '$comment_text')");
 	
-				if(!$query)
+				if(!$submit_query)
 				{
 					return array("result" => "error", "response" => "Failed to submit comment to database.");
 				}
@@ -96,7 +99,7 @@ class Comment
 				else
 				{
 					// Increment the posts comment count, then.
-					$update_query = $this->dbh->query("
+					$update_query = $this->dbh->exec("
 						UPDATE posts
 						SET comments = comments + 1
 						WHERE post_id = $comment_pid");

@@ -47,12 +47,14 @@ class ErrorLog
 		}
 		((!empty($where)) ? $where = implode(' AND ', $where) : $where = '');
 		$result = @$this->dbh->query("SELECT error_id, error_type, error_time, error_message FROM error_log {$where} ORDER BY error_id desc LIMIT ".(int)$data['page'].", ".(int)$data['count']) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()))));
+		$query_c = "SELECT error_id, error_type, error_time, error_message FROM error_log {$where} ORDER BY error_id desc LIMIT ".(int)$data['page'].", ".(int)$data['count'];
+		$query_c_rows = count_rows($query_c);
 		$return = '';
 		$i = 0;
 		while($row = $result->fetchObject())
 		{
 			$i++;
-			if($i == $result->numRows())
+			if($i == $query_c_rows)
 			{
 				$return .= '<tr id="'.$row->error_id.'" class="last">';
 			}

@@ -128,7 +128,7 @@ class AddUser
 				}
 	
 				// Now insert the user.
-				$this->dbh->query("
+				$sql_adduser = $this->dbh->exec("
 					INSERT INTO 
 						users
 							(user_name, 
@@ -148,13 +148,13 @@ class AddUser
 						'{$options['role']}', 
 						'{$options['ip']}', 
 						'{$options['salt']}, 
-						'1', 
+						1, 
 						'".time()."'
 					)
 				");
 	
 				// Did we create it?
-				if($this->dbh->changes() > 0)
+				if($sql_adduser > 0)
 				{
 					// Yes!
 					$response['result'] = 'success';
@@ -173,6 +173,6 @@ class AddUser
 	
 		return $response;
 	}
-)
+}
 
 ?>

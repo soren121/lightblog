@@ -34,9 +34,9 @@ class DeleteSingle
 					return array("result" => "error", "response" => "You're not allowed to delete this post.");
 				}
 				// Delete comments associated with this post
-				@$this->dbh->query("DELETE FROM comments WHERE post_id=".(int)$data['id']);
+				@$this->dbh->exec("DELETE FROM comments WHERE post_id=".(int)$data['id']);
 				// Update comment number in the posts table
-				@$this->dbh->query("UPDATE posts SET comments=0 WHERE post_id=".(int)$data['id']);
+				@$this->dbh->exec("UPDATE posts SET comments=0 WHERE post_id=".(int)$data['id']);
 				break;
 			case 'page':
 				if(!permissions('EditPages'))
@@ -53,9 +53,9 @@ class DeleteSingle
 		}
 	
 		// Execute query to delete post/page/category
-		$delete_query = @$this->dbh->query("DELETE FROM ".sqlite_escape_string(strip_tags($_POST['type']))."s WHERE ".sqlite_escape_string($data['type'])."_id=".(int)$_POST['id']);
+		$sql_delete = @$this->dbh->exec("DELETE FROM ".sqlite_escape_string(strip_tags($_POST['type']))."s WHERE ".sqlite_escape_string($data['type'])."_id=".(int)$_POST['id']);
 	
-		if(!$delete_query)
+		if($sql_delete == 0)
 		{
 			return array("result" => "error", "response" => "Delete query failed.");
 		}

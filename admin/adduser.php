@@ -49,25 +49,10 @@ if(isset($_POST['ajax']))
 
 if(permissions('AddUsers'))
 {
-	$userquery = $dbh->query("
-		SELECT
-			user_role
-		FROM users
-		WHERE user_id = ". ((int)$_GET['id'])) or die(sqlite_error_string($dbh->lastError));
-
 	$role_options = '';
 	foreach(get_roles() as $role_id => $role)
 	{
-		$select = '';
-		if((int)$_GET['id'] == user()->id() && $role_id == user()->role())
-		{
-			$select = 'selected="selected"';
-		}
-		elseif($userquery->fetchSingle() == $role_id)
-		{
-			$select = 'selected="selected"';
-		}
-		$role_options .= '<option value="'.$role_id.'" '.$select.'>'.$role.'</option>';
+		$role_options .= '<option value="'.$role_id.'">'.$role.'</option>';
 	}
 }
 

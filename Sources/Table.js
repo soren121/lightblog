@@ -177,9 +177,9 @@ function deleterow_callback(r, single)
 		if(r.result == 'success')
 		{
 			var action = $('select[name=action]').val();
+			$('#ajaxresponse').html('<p>' + ucwords(type) + '(s) deleted.</p>');
 			if(action == 'delete' || single == true)
 			{
-				$('#ajaxresponse').html('<p>' + ucwords(type) + '(s) deleted.</p>');
 				var checked = $('.table:checked').size();
 				$('.table:checked').parent('td').parent('tr').remove();
 				var rowtotal = Number($('span#row-total').text());
@@ -203,7 +203,6 @@ function deleterow_callback(r, single)
 			}
 			else
 			{
-				$('#ajaxresponse').html('<p>' + ucwords(type) + '(s) updated.</p>');
 				$('.table:checked').parent().next().children('span').remove();
 			}
 			if(action == 'unpublish')
@@ -219,43 +218,21 @@ function deleterow_callback(r, single)
 	}
 }
 
-$('#bulk').submit(function()
+$('#bulk').ajaxForm(
 {
-	if($('#bulk select').val() == 'default')
-	{
-		return false;
+	dataType: 'json',
+	timeout: 2000,
+	data: {
+		ajax : 'true'
+	},
+	beforeSubmit: function() {
+		$('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Saving" />');
+		return true;
+	},
+	error: function() {
+		$('#ajaxresponse').html('AJAX request failed.').css("color","#E36868");
+	},
+	success: function(data) {
+		deleterow_callback(data, false);
 	}
-
-	var inputs = [];
-	$('.bf', this).each(function()
-	{
-		if($(this).is(':checkbox') && $(this).is(':not(:checked)'))
-		{
-			void(0);
-		}
-		else
-		{
-			inputs.push(this.name + '=' + this.value);
-		}
-	});
-
-	$('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Saving" />');
-
-	jQuery.ajax(
-	{
-		data: 'ajax=true&' + inputs.join('&'),
-		type: "POST",
-		url: $(this).attr('action'),
-		timeout: 2000,
-		error: function()
-		{
-			$('#ajaxresponse').html('AJAX request failed.').css("color","#E36868");
-		},
-		dataType: 'json',
-		success: function(data)
-		{
-			deleterow_callback(data, false);
-		}
-	})
-	return false;
 });
