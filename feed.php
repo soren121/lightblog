@@ -1,12 +1,12 @@
 <?php
 /*********************************************
 
-	LightBlog 0.9
-	SQLite blogging platform
+    LightBlog 0.9
+    SQLite blogging platform
 
-	feed.php
+    feed.php
 
-	©2008-2012 The LightBlog Team. All
+	Â©2008-2014 The LightBlog Team. All
 	rights reserved. Released under the
 	GNU General Public License 3. For
 	all licensing information, please
@@ -22,16 +22,16 @@ require(ABSPATH .'/Sources/Class.FeedWriter.php');
 
 // Check requested feed type
 if(!isset($_GET['type']) or $_GET['type'] == 'rss') {
-	$type = 'rss';
-	$TestFeed = new FeedWriter(RSS2);
+    $type = 'rss';
+    $TestFeed = new FeedWriter(RSS2);
 }
 elseif($_GET['type'] == 'atom') {
-	$type = 'atom';
-	$TestFeed = new FeedWriter(ATOM);
+    $type = 'atom';
+    $TestFeed = new FeedWriter(ATOM);
 }
 
 if(isset($_GET['category'])) {
-	$category = (int)$_GET['category'];
+    $category = (int)$_GET['category'];
 }
 
 // Setting the channel elements
@@ -39,54 +39,54 @@ if(isset($_GET['category'])) {
 $TestFeed->setTitle('Syndication feed for '.get_bloginfo('title'));
 
 if($type == 'rss') {
-	$TestFeed->setLink(get_bloginfo('url').'feed.php');
+    $TestFeed->setLink(get_bloginfo('url').'feed.php');
 }
 else {
-	$TestFeed->setLink(get_bloginfo('url').'feed.php?type=atom');
+    $TestFeed->setLink(get_bloginfo('url').'feed.php?type=atom');
 }
 
 // For other channel elements, use setChannelElement() function
 if($type == 'atom') {
-	$TestFeed->setChannelElement('updated', date(DATE_ATOM, time()));
-	$TestFeed->setChannelElement('author', 'LightBlog');
+    $TestFeed->setChannelElement('updated', date(DATE_ATOM, time()));
+    $TestFeed->setChannelElement('author', 'LightBlog');
 }
 elseif($type == 'rss') {
-	$TestFeed->setChannelElement('pubDate', date("D, d M Y h:i:s O", time()));
-	$TestFeed->setChannelElement('description', 'RSS2 syndication feed for '.get_bloginfo('title'));
+    $TestFeed->setChannelElement('pubDate', date("D, d M Y h:i:s O", time()));
+    $TestFeed->setChannelElement('description', 'RSS2 syndication feed for '.get_bloginfo('title'));
 }
 
 
 // Adding items to feed. Generally this portion will be in a loop and add all feeds.
 $result = $dbh->query("
-	SELECT
-		p.*
-	FROM posts AS p". (isset($category) ? '
-		INNER JOIN post_categories AS pc ON pc.post_id = p.post_id AND pc.category_id = '. $category : ''). "
-	WHERE p.published <= ". time(). "
-	ORDER BY p.post_date DESC
-	LIMIT 10");
+    SELECT
+        p.*
+    FROM posts AS p". (isset($category) ? '
+        INNER JOIN post_categories AS pc ON pc.post_id = p.post_id AND pc.category_id = '. $category : ''). "
+    WHERE p.published <= ". time(). "
+    ORDER BY p.post_date DESC
+    LIMIT 10");
 
 while($row = $result->fetch(PDO::FETCH_ASSOC)) {
-	// Create a FeedItem
-	$newItem = $TestFeed->createNewItem();
+    // Create a FeedItem
+    $newItem = $TestFeed->createNewItem();
 
-	// Add elements to the feed item
-	$newItem->setTitle(stripslashes($row['post_title']));
-	$newItem->setLink(get_bloginfo('url').'?post='.$row['post_id']);
-	$newItem->setDescription(stripslashes($row['post_text']));
-	$newItem->setDate(date("D, d M Y h:i:s O", $row['post_date']));
-	// Add RSS-unique elements
-	if($type == 'rss') {
-		$newItem->addElement('guid', get_bloginfo('url').'?post='.$row['post_id'], array('isPermaLink'=>'true'));
-		header('Content-Type: application/rss+xml');
-	}
-	// Add Atom-unique elements
-	elseif($type == 'atom') {
-		$newItem->addElement('id', get_bloginfo('url').'?post='.$row['post_id']);
-		header('Content-Type: application/atom+xml');
-	}
-	// Now add the feed item
-	$TestFeed->addItem($newItem);
+    // Add elements to the feed item
+    $newItem->setTitle(stripslashes($row['post_title']));
+    $newItem->setLink(get_bloginfo('url').'?post='.$row['post_id']);
+    $newItem->setDescription(stripslashes($row['post_text']));
+    $newItem->setDate(date("D, d M Y h:i:s O", $row['post_date']));
+    // Add RSS-unique elements
+    if($type == 'rss') {
+        $newItem->addElement('guid', get_bloginfo('url').'?post='.$row['post_id'], array('isPermaLink'=>'true'));
+        header('Content-Type: application/rss+xml');
+    }
+    // Add Atom-unique elements
+    elseif($type == 'atom') {
+        $newItem->addElement('id', get_bloginfo('url').'?post='.$row['post_id']);
+        header('Content-Type: application/atom+xml');
+    }
+    // Now add the feed item
+    $TestFeed->addItem($newItem);
 }
 
 // OK. Everything is done. Now generate the feed.

@@ -1,17 +1,17 @@
 <?php
 /***********************************************
 
-	LightBlog 0.9
-	SQLite blogging platform
+    LightBlog 0.9
+    SQLite blogging platform
 
-	admin/roles.php
+    admin/roles.php
 
-	©2008-2012 The LightBlog Team. All
-	rights reserved. Released under the
-	GNU General Public License 3. For
-	all licensing information, please
-	see the LICENSE.txt document
-	included in this distribution.
+    ©2008-2014 The LightBlog Team. All
+    rights reserved. Released under the
+    GNU General Public License 3. For
+    all licensing information, please
+    see the LICENSE.txt document
+    included in this distribution.
 
 ***********************************************/
 
@@ -26,10 +26,10 @@ include('head.php');
 
 ?>
 
-		<div id="contentwrapper">
-			<div id="contentcolumn">
-				TODO
-			</div>
-		</div>
+        <div id="contentwrapper">
+            <div id="contentcolumn">
+                TODO
+            </div>
+        </div>
 
 <?php include('footer.php') ?>

@@ -1,14 +1,14 @@
 [01.28.12] Changes in 0.9.3.1
     * Bug fixes, mainly
-	* Comment moderation has permalink to comment, link to email author
-	* list_comment() function outputs comment dates with a permalink
-	* NicEdit has more features
+    * Comment moderation has permalink to comment, link to email author
+    * list_comment() function outputs comment dates with a permalink
+    * NicEdit has more features
 
 [06.21.10] Changes in 0.9.3
-	* Comment moderation added
-	* Category support added
-	* Support for archive and category views
-	* Database update script added
-	* New, clean function documentation
-	* CSRF protection in all forms
-	* Fixed security and usability bugs
+    * Comment moderation added
+    * Category support added
+    * Support for archive and category views
+    * Database update script added
+    * New, clean function documentation
+    * CSRF protection in all forms
+    * Fixed security and usability bugs

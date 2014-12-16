@@ -1,12 +1,12 @@
 <?php
 /***********************************************
 
-	LightBlog 0.9
-	SQLite blogging platform
+    LightBlog 0.9
+    SQLite blogging platform
 
-	Sources/User.php
+    Sources/User.php
 
-	©2008-2012 The LightBlog Team. All
+	Â©2008-2014 The LightBlog Team. All
 	rights reserved. Released under the
 	GNU General Public License 3. For
 	all licensing information, please
@@ -16,523 +16,525 @@
 ***********************************************/
 
 /*
-	Function: user_init
+    Function: user_init
 
-	If the current user is actually logged in, this function will load their
-	information for use by their respective functions.
+    If the current user is actually logged in, this function will load their
+    information for use by their respective functions.
 
-	Parameters:
-		none
+    Parameters:
+        none
 
-	Returns:
-		void - Nothing is returned by this function.
+    Returns:
+        void - Nothing is returned by this function.
 */
 function user_init()
 {
-	// Perhaps they are logged in?
-	// In which case, we can let the User class do the work for us :-).
-	user();
+    // Perhaps they are logged in?
+    // In which case, we can let the User class do the work for us :-).
+    user();
 }
 
 /*
-	Function: user_login
+    Function: user_login
 
-	Processes the log in request and sets the proper cookies and session
-	information to keep them logged in if it is a success.
+    Processes the log in request and sets the proper cookies and session
+    information to keep them logged in if it is a success.
 
-	Parameters:
-		array $options
+    Parameters:
+        array $options
 
-	Returns:
-		array
+    Returns:
+        array
 */
 function user_login($options)
 {
-	global $dbh;
+    global $dbh;
 
-	loadLanguage('login');
+    loadLanguage('login');
 
-	$messages = array();
+    $messages = array();
 
-	// We need their user name.
-	if(empty($options['username']))
-	{
-		$messages[] = l('Please enter a user name.');
-	}
-	// Now we need to see if the user exists.
-	else
-	{
-		$request = $dbh->prepare("
-			SELECT
-				user_id, user_pass, user_ip, user_salt
-			FROM users
-			WHERE LOWER(user_name) = 'soren121'
-			LIMIT 1");
-			
-		$request->execute();
+    // We need their user name.
+    if(empty($options['username']))
+    {
+        $messages[] = l('Please enter a user name.');
+    }
+    // Now we need to see if the user exists.
+    else
+    {
+        $username = sqlite_escape_string($options['username']);
 
-		if(!$request)
-		{
-			// We didn't find their user name, but we won't tell them whether it
-			// was due to the password being wrong or their user name :P.
-			$messages[] = l('Incorrect user name or password.');
-		}
-		else
-		{
-			list($user_id, $user_pass, $user_ip, $user_salt) = $request->fetch(PDO::FETCH_NUM);
-		}
-		
-		$request->closeCursor();
-	}
+        $request = $dbh->prepare("
+            SELECT
+                user_id, user_pass, user_ip, user_salt
+            FROM users
+            WHERE LOWER(user_name) = '$username'
+            LIMIT 1");
 
-	// Make sure we don't have any messages yet.
-	if(count($messages) == 0)
-	{
-		// We need a password.
-		if(empty($options['password']))
-		{
-			$messages[] = l('Please enter a password.');
-		}
-		// On top of that, it needs to be right!
-		elseif(sha1($user_salt. $options['password']) != $user_pass)
-		{
-			$messages[] = l('Incorrect user name or password.');
-		}
-		else
-		{
-			// They have successfully proved they are who they say they are
-			// (unless they have a sucky password, of course ;-)).
-			// Now update their salt and then update their IP, perhaps.
-			$new_salt = sqlite_escape_string(randomString(9));
-			$new_password = sqlite_escape_string(sha1($new_salt. $options['password']));
-			$new_ip = sqlite_escape_string(user()->ip());
+        $request->execute();
 
-			$dbh->exec("
-				UPDATE users
-				SET user_salt = '$new_salt', user_pass = '$new_password'". (user()->ip() != $user_ip ? ', user_ip = \''. $new_ip. '\'' : ''). "
-				WHERE user_id = $user_id");
+        if(!$request)
+        {
+            // We didn't find their user name, but we won't tell them whether it
+            // was due to the password being wrong or their user name :P.
+            $messages[] = l('Incorrect user name or password.');
+        }
+        else
+        {
+            list($user_id, $user_pass, $user_ip, $user_salt) = $request->fetch(PDO::FETCH_NUM);
+        }
 
-			// Now, set that cookie!
-			setcookie(LBCOOKIE, implode('|', array($user_id, $new_password)), (!empty($options['remember_me']) ? time() + 2592000 : 0), '/');
+        $request->closeCursor();
+    }
 
-			// Along with some basic session information.
-			$_SESSION['user_id'] = $user_id;
-			$_SESSION['user_pass'] = $new_password;
+    // Make sure we don't have any messages yet.
+    if(count($messages) == 0)
+    {
+        // We need a password.
+        if(empty($options['password']))
+        {
+            $messages[] = l('Please enter a password.');
+        }
+        // On top of that, it needs to be right!
+        elseif(sha1($user_salt. $options['password']) != $user_pass)
+        {
+            $messages[] = l('Incorrect user name or password.');
+        }
+        else
+        {
+            // They have successfully proved they are who they say they are
+            // (unless they have a sucky password, of course ;-)).
+            // Now update their salt and then update their IP, perhaps.
+            $new_salt = sqlite_escape_string(randomString(9));
+            $new_password = sqlite_escape_string(sha1($new_salt. $options['password']));
+            $new_ip = sqlite_escape_string(user()->ip());
 
-			// Alright, now it is time to take them, somewhere...
-			if(!empty($options['redir_to']) && utf_substr($options['redir_to'], 0, 1) !== '/' && utf_strpos($options['redir_to'], '://') === false)
-			{
-				redirect(get_bloginfo('url'). $options['redir_to']);
-			}
-			else
-			{
-				redirect(get_bloginfo('url'). 'admin/dashboard.php');
-			}
+            $dbh->exec("
+                UPDATE users
+                SET user_salt = '$new_salt', user_pass = '$new_password'". (user()->ip() != $user_ip ? ', user_ip = \''. $new_ip. '\'' : ''). "
+                WHERE user_id = $user_id");
 
-			$messages[] = l('An unknown error occurred.');
-		}
-	}
+            // Now, set that cookie!
+            setcookie(LBCOOKIE, implode('|', array($user_id, $new_password)), (!empty($options['remember_me']) ? time() + 2592000 : 0), '/');
 
-	return $messages;
+            // Along with some basic session information.
+            $_SESSION['user_id'] = $user_id;
+            $_SESSION['user_pass'] = $new_password;
+
+            // Alright, now it is time to take them, somewhere...
+            if(!empty($options['redir_to']) && utf_substr($options['redir_to'], 0, 1) !== '/' && utf_strpos($options['redir_to'], '://') === false)
+            {
+                redirect(get_bloginfo('url'). $options['redir_to']);
+            }
+            else
+            {
+                redirect(get_bloginfo('url'). 'admin/dashboard.php');
+            }
+
+            $messages[] = l('An unknown error occurred.');
+        }
+    }
+
+    return $messages;
 }
 
 /*
-	Function: user_name_allowed
+    Function: user_name_allowed
 
-	Determines whether the user name is allowed (as in, it isn't in use by
-	another user [checking both log in and display names]).
+    Determines whether the user name is allowed (as in, it isn't in use by
+    another user [checking both log in and display names]).
 
-	Parameters:
-		string $name
-		int $id - The user's ID (to exclude them from the check).
+    Parameters:
+        string $name
+        int $id - The user's ID (to exclude them from the check).
 
-	Returns:
-		bool - Returns true if the name is allowed, false if not.
+    Returns:
+        bool - Returns true if the name is allowed, false if not.
 */
 function user_name_allowed($name, $id = 0)
 {
-	global $dbh;
+    global $dbh;
 
-	// Alright, let's check!
-	$request = "
-		SELECT
-			COUNT(*)
-		FROM users
-		WHERE (LOWER(user_name) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "') OR LOWER(display_name) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "')) AND user_id != ". ((int)$id). "
-		LIMIT 1";
+    // Alright, let's check!
+    $request = "
+        SELECT
+            COUNT(*)
+        FROM users
+        WHERE (LOWER(user_name) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "') OR LOWER(display_name) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "')) AND user_id != ". ((int)$id). "
+        LIMIT 1";
 
-	// If there are no rows, they're free to have at it!
-	if(count_rows($request) == 0)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+    // If there are no rows, they're free to have at it!
+    if(count_rows($request) == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 /*
-	Function: user_email_allowed
+    Function: user_email_allowed
 
-	Determines whether the email address is allowed (as in, it isn't in use by
-	another user and appears to be a valid email address).
+    Determines whether the email address is allowed (as in, it isn't in use by
+    another user and appears to be a valid email address).
 
-	Parameters:
-		string $email
-		int $id - The user's ID (to exclude them from the check).
+    Parameters:
+        string $email
+        int $id - The user's ID (to exclude them from the check).
 
-	Returns:
-		bool - Returns true if the email address is allowed, false if not.
+    Returns:
+        bool - Returns true if the email address is allowed, false if not.
 */
 function user_email_allowed($email, $id = 0)
 {
-	global $dbh;
+    global $dbh;
 
-	// First, check the email address with a regular expression.
-	if(!preg_match('~^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$~i', $email))
-	{
-		return false;
-	}
+    // First, check the email address with a regular expression.
+    if(!preg_match('~^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$~i', $email))
+    {
+        return false;
+    }
 
-	// Now to check the database.
-	$request = $dbh->query("
-		SELECT
-			COUNT(*)
-		FROM users
-		WHERE LOWER(user_email) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($email)). "') AND user_id != ". ((int)$id). "
-		LIMIT 1");
+    // Now to check the database.
+    $request = $dbh->query("
+        SELECT
+            COUNT(*)
+        FROM users
+        WHERE LOWER(user_email) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($email)). "') AND user_id != ". ((int)$id). "
+        LIMIT 1");
 
-	// If there are no rows, they're free to have at it!
-	if(count_rows($request) == 0)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+    // If there are no rows, they're free to have at it!
+    if(count_rows($request) == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 /*
-	Class: User
+    Class: User
 
-	Contains all the information about the currently logged in user (or guest).
+    Contains all the information about the currently logged in user (or guest).
 */
 class User
 {
-	// Variable: id
-	// The user's ID.
-	private $id;
+    // Variable: id
+    // The user's ID.
+    private $id;
 
-	// Variable: name
-	// The user's name.
-	private $name;
+    // Variable: name
+    // The user's name.
+    private $name;
 
-	// Variable: password
-	// The user's hashed password.
-	private $password;
+    // Variable: password
+    // The user's hashed password.
+    private $password;
 
-	// Variable: email
-	// The user's email address.
-	private $email;
+    // Variable: email
+    // The user's email address.
+    private $email;
 
-	// Variable: displayName
-	// The user's display name.
-	private $displayName;
+    // Variable: displayName
+    // The user's display name.
+    private $displayName;
 
-	// Variable: role
-	// The user's role (an integer).
-	private $role;
+    // Variable: role
+    // The user's role (an integer).
+    private $role;
 
-	/*
-		Constructor: __construct
+    /*
+        Constructor: __construct
 
-		Checks to see if the current user is logged in and loads their
-		information if they are.
+        Checks to see if the current user is logged in and loads their
+        information if they are.
 
-		Parameters:
-			none
-	*/
-	public function __construct()
-	{
-		global $dbh;
+        Parameters:
+            none
+    */
+    public function __construct()
+    {
+        global $dbh;
 
-		// Set everything to 0 or null.
-		$this->id = 0;
-		$this->name = null;
-		$this->password = null;
-		$this->email = null;
-		$this->displayName = null;
-		$this->role = 0;
+        // Set everything to 0 or null.
+        $this->id = 0;
+        $this->name = null;
+        $this->password = null;
+        $this->email = null;
+        $this->displayName = null;
+        $this->role = 0;
 
-		// Maybe they're logged in?
-		if(isset($_COOKIE[LBCOOKIE]) && utf_strpos($_COOKIE[LBCOOKIE], '|') !== false)
-		{
-			// We need to get their user ID and password.
-			list($user_id, $user_pass) = explode('|', $_COOKIE[LBCOOKIE], 2);
+        // Maybe they're logged in?
+        if(isset($_COOKIE[LBCOOKIE]) && utf_strpos($_COOKIE[LBCOOKIE], '|') !== false)
+        {
+            // We need to get their user ID and password.
+            list($user_id, $user_pass) = explode('|', $_COOKIE[LBCOOKIE], 2);
 
-			// Make sure their session data is theirs.
-			if((!empty($_SESSION['user_id']) && $_SESSION['user_id'] != $user_id) || (!empty($_SESSION['user_pass']) && $_SESSION['user_pass'] != $user_pass))
-			{
-				// This isn't yours! You cannot have it :-P.
-				$_SESSION = array();
-			}
+            // Make sure their session data is theirs.
+            if((!empty($_SESSION['user_id']) && $_SESSION['user_id'] != $user_id) || (!empty($_SESSION['user_pass']) && $_SESSION['user_pass'] != $user_pass))
+            {
+                // This isn't yours! You cannot have it :-P.
+                $_SESSION = array();
+            }
 
-			// Make sure that their user ID and password have the possibility of
-			// being valid.
-			if((int)$user_id > 0 && utf_strlen($user_pass) == 40)
-			{
-				// Now we need to see if they can log in.
-				$query_c = "
-					SELECT
-						user_id, user_name, user_pass, user_email, display_name, user_role
-					FROM users
-					WHERE user_id = ". ((int)$user_id). " AND user_pass = '". sqlite_escape_string($user_pass). "'
-					LIMIT 1";
-				
-				$request = $dbh->prepare("
-					SELECT
-						user_id, user_name, user_pass, user_email, display_name, user_role
-					FROM users
-					WHERE user_id = ". ((int)$user_id). " AND user_pass = '". sqlite_escape_string($user_pass). "'
-					LIMIT 1");
-					
-				$request->execute();
+            // Make sure that their user ID and password have the possibility of
+            // being valid.
+            if((int)$user_id > 0 && utf_strlen($user_pass) == 40)
+            {
+                // Now we need to see if they can log in.
+                $query_c = "
+                    SELECT
+                        user_id, user_name, user_pass, user_email, display_name, user_role
+                    FROM users
+                    WHERE user_id = ". ((int)$user_id). " AND user_pass = '". sqlite_escape_string($user_pass). "'
+                    LIMIT 1";
 
-				// Did we find anything?
-				if(count_rows($query_c))
-				{
-					// We sure did!
-					$row = $request->fetch(PDO::FETCH_ASSOC);
+                $request = $dbh->prepare("
+                    SELECT
+                        user_id, user_name, user_pass, user_email, display_name, user_role
+                    FROM users
+                    WHERE user_id = ". ((int)$user_id). " AND user_pass = '". sqlite_escape_string($user_pass). "'
+                    LIMIT 1");
 
-					// Now set their information.
-					$this->id = (int)$row['user_id'];
-					$this->name = $row['user_name'];
-					$this->password = $row['user_pass'];
-					$this->email = $row['user_email'];
-					$this->displayName = $row['display_name'];
-					$this->role = (int)$row['user_role'];
+                $request->execute();
 
-					$_SESSION['user_id'] = $this->id;
-					$_SESSION['user_pass'] = $this->password;
-				}
-				
-				$request->closeCursor();
-			}
-		}
+                // Did we find anything?
+                if(count_rows($query_c))
+                {
+                    // We sure did!
+                    $row = $request->fetch(PDO::FETCH_ASSOC);
 
-		// They showed signs of activity just now, they're not dead!
-		$_SESSION['last_activity'] = time();
-	}
+                    // Now set their information.
+                    $this->id = (int)$row['user_id'];
+                    $this->name = $row['user_name'];
+                    $this->password = $row['user_pass'];
+                    $this->email = $row['user_email'];
+                    $this->displayName = $row['display_name'];
+                    $this->role = (int)$row['user_role'];
 
-	/*
-		Function: id
+                    $_SESSION['user_id'] = $this->id;
+                    $_SESSION['user_pass'] = $this->password;
+                }
 
-		Returns the user's ID.
+                $request->closeCursor();
+            }
+        }
 
-		Parameters:
-			none
+        // They showed signs of activity just now, they're not dead!
+        $_SESSION['last_activity'] = time();
+    }
 
-		Returns:
-			int - Returns the user's ID (if they are a guest, it will be 0).
-	*/
-	public function id()
-	{
-		return $this->id;
-	}
+    /*
+        Function: id
 
-	/*
-		Function: userName
+        Returns the user's ID.
 
-		Returns the user's name they use to log in.
+        Parameters:
+            none
 
-		Parameters:
-			none
+        Returns:
+            int - Returns the user's ID (if they are a guest, it will be 0).
+    */
+    public function id()
+    {
+        return $this->id;
+    }
 
-		Returns:
-			string - Returns the users name if they're logged in, otherwise
-							 'Guest.'
-	*/
-	public function userName()
-	{
-		return $this->is_logged() ? $this->name : l('Guest');
-	}
+    /*
+        Function: userName
 
-	/*
-		Function: name
+        Returns the user's name they use to log in.
 
-		Returns the user's name (either their display name if set or log in name
-		if not.
+        Parameters:
+            none
 
-		Parameters:
-			none
+        Returns:
+            string - Returns the users name if they're logged in, otherwise
+                             'Guest.'
+    */
+    public function userName()
+    {
+        return $this->is_logged() ? $this->name : l('Guest');
+    }
 
-		Returns:
-			string - Returns their user name if they're logged in, but 'Guest' if
-							 they are, take a guess, a guest.
-	*/
-	public function name()
-	{
-		return $this->is_logged() ? (utf_strlen($this->displayName()) > 0 ? $this->displayName() : $this->userName()) : l('Guest');
-	}
+    /*
+        Function: name
 
-	/*
-		Function: password
+        Returns the user's name (either their display name if set or log in name
+        if not.
 
-		Returns the user's hashed password.
+        Parameters:
+            none
 
-		Parameters:
-			none
+        Returns:
+            string - Returns their user name if they're logged in, but 'Guest' if
+                             they are, take a guess, a guest.
+    */
+    public function name()
+    {
+        return $this->is_logged() ? (utf_strlen($this->displayName()) > 0 ? $this->displayName() : $this->userName()) : l('Guest');
+    }
 
-		Returns:
-			string - Returns their hashed password if they're logged in, but null
-							 if not.
-	*/
-	public function password()
-	{
-		return $this->is_logged() ? $this->password : null;
-	}
+    /*
+        Function: password
 
-	/*
-		Function: email
+        Returns the user's hashed password.
 
-		Returns the user's email address.
+        Parameters:
+            none
 
-		Parameters:
-			none
+        Returns:
+            string - Returns their hashed password if they're logged in, but null
+                             if not.
+    */
+    public function password()
+    {
+        return $this->is_logged() ? $this->password : null;
+    }
 
-		Returns:
-			string - Returns their email if they're logged in, but null if not.
-	*/
-	public function email()
-	{
-		return $this->is_logged() ? $this->email : null;
-	}
+    /*
+        Function: email
 
-	/*
-		Function: displayName
+        Returns the user's email address.
 
-		Returns the user's display name.
+        Parameters:
+            none
 
-		Parameters:
-			none
+        Returns:
+            string - Returns their email if they're logged in, but null if not.
+    */
+    public function email()
+    {
+        return $this->is_logged() ? $this->email : null;
+    }
 
-		Returns:
-			string - Returns their display name if they're logged in, but 'Guest'
-							 if they're a guest.
-	*/
-	public function displayName()
-	{
-		return $this->is_logged() ? $this->displayName : l('Guest');
-	}
+    /*
+        Function: displayName
 
-	/*
-		Function: role
+        Returns the user's display name.
 
-		Returns the user's role.
+        Parameters:
+            none
 
-		Parameters:
-			none
+        Returns:
+            string - Returns their display name if they're logged in, but 'Guest'
+                             if they're a guest.
+    */
+    public function displayName()
+    {
+        return $this->is_logged() ? $this->displayName : l('Guest');
+    }
 
-		Returns:
-			int - Returns the user's role ID (0 if they're a guest).
-	*/
-	public function role()
-	{
-		return $this->role;
-	}
+    /*
+        Function: role
 
-	/*
-		Function: is_logged
+        Returns the user's role.
 
-		Returns whether the user is logged in.
+        Parameters:
+            none
 
-		Parameters:
-			none
+        Returns:
+            int - Returns the user's role ID (0 if they're a guest).
+    */
+    public function role()
+    {
+        return $this->role;
+    }
 
-		Returns:
-			bool - Returns true if they're logged in, false if not.
-	*/
-	public function is_logged()
-	{
-		return $this->id() > 0;
-	}
+    /*
+        Function: is_logged
 
-	/*
-		Function: is_guest
+        Returns whether the user is logged in.
 
-		Returns whether the user is a guest.
+        Parameters:
+            none
 
-		Parameters:
-			none
+        Returns:
+            bool - Returns true if they're logged in, false if not.
+    */
+    public function is_logged()
+    {
+        return $this->id() > 0;
+    }
 
-		Returns:
-			bool - Returns true if they're a guest, false if not.
-	*/
-	public function is_guest()
-	{
-		return !$this->is_logged();
-	}
+    /*
+        Function: is_guest
 
-	/*
-		Function: ip
+        Returns whether the user is a guest.
 
-		Returns the user's IP.
+        Parameters:
+            none
 
-		Parameters:
-			none
+        Returns:
+            bool - Returns true if they're a guest, false if not.
+    */
+    public function is_guest()
+    {
+        return !$this->is_logged();
+    }
 
-		Returns:
-			string - Returns their IP.
-	*/
-	public function ip()
-	{
-		return isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
-	}
+    /*
+        Function: ip
 
-	/*
-		Function: csrf_token
+        Returns the user's IP.
 
-		Returns the user's current CSRF (Cross-Site Request Forgery) token.
+        Parameters:
+            none
 
-		Parameters:
-			bool $urlencode - Whether to URL encode the CSRF token. Defaults to
-												false.
+        Returns:
+            string - Returns their IP.
+    */
+    public function ip()
+    {
+        return isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
+    }
 
-		Returns:
-			string
-	*/
-	public function csrf_token($urlencode = false)
-	{
-		// Do they not have a token yet? Do we need to regenerate it?
-		if(empty($_SESSION['csrf_token']) || empty($_SESSION['last_activity']) || ($_SESSION['last_activity'] + 86400) < time())
-		{
-			$_SESSION['csrf_token'] = randomString(mt_rand(40, 60));
-		}
+    /*
+        Function: csrf_token
 
-		return !empty($urlencode) ? urlencode($_SESSION['csrf_token']) : $_SESSION['csrf_token'];
-	}
+        Returns the user's current CSRF (Cross-Site Request Forgery) token.
+
+        Parameters:
+            bool $urlencode - Whether to URL encode the CSRF token. Defaults to
+                                                false.
+
+        Returns:
+            string
+    */
+    public function csrf_token($urlencode = false)
+    {
+        // Do they not have a token yet? Do we need to regenerate it?
+        if(empty($_SESSION['csrf_token']) || empty($_SESSION['last_activity']) || ($_SESSION['last_activity'] + 86400) < time())
+        {
+            $_SESSION['csrf_token'] = randomString(mt_rand(40, 60));
+        }
+
+        return !empty($urlencode) ? urlencode($_SESSION['csrf_token']) : $_SESSION['csrf_token'];
+    }
 }
 
 /*
-	Function: user
+    Function: user
 
-	This function will return the current <User> object.
+    This function will return the current <User> object.
 
-	Parameters:
-		none
+    Parameters:
+        none
 
-	Returns:
-		object
+    Returns:
+        object
 */
 function user()
 {
-	if(!isset($GLOBALS['user_obj']) || !is_a($GLOBALS['user_obj'], 'User'))
-	{
-		$GLOBALS['user_obj'] = new User();
-	}
+    if(!isset($GLOBALS['user_obj']) || !is_a($GLOBALS['user_obj'], 'User'))
+    {
+        $GLOBALS['user_obj'] = new User();
+    }
 
-	return $GLOBALS['user_obj'];
+    return $GLOBALS['user_obj'];
 }
 ?>

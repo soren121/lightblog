@@ -1,51 +1,51 @@
 div.setting {
-	padding: 10px 15px 10px 10px;
-	font-size: 0.9em;
-	width: 80%;
+    padding: 10px 15px 10px 10px;
+    font-size: 0.9em;
+    width: 80%;
 }
 
 div.setting.even {
-	background: #f5f5f5;
+    background: #f5f5f5;
 }
 
 div.setting div.label {
-	width: 30%;
-	float: left;
-	padding-top: 3px;
+    width: 30%;
+    float: left;
+    padding-top: 3px;
 }
 
 div.setting div.label > p {
-	margin-top: 5px;
-	font-size: 0.8em;
-	color: #999;
-	font-style: italic;
+    margin-top: 5px;
+    font-size: 0.8em;
+    color: #999;
+    font-style: italic;
 }
 
 div.setting div.input {
-	float: left;
-	margin-left: 10%;
-	width: 60%;
+    float: left;
+    margin-left: 10%;
+    width: 60%;
 }
 
 div.setting div.input > input {
-	width: 100%;
+    width: 100%;
 }
 
 div.setting input[type=text], div.setting input[type=password], div.setting select {
-	height: 25px;
-	width: 100%;
-	padding-left: 2px;
+    height: 25px;
+    width: 100%;
+    padding-left: 2px;
 }
 
 div.setting div.input > p:first-child {
-	padding-top: 3px;
+    padding-top: 3px;
 }
 
 div.setting div.input > p {
-	padding-bottom: 8px;
+    padding-bottom: 8px;
 }
 
 div.setting #custom-date-field, div.setting #custom-time-field {
-	width: 20%;
-	font-family: 'Consolas', 'DejaVu Sans Mono', 'Courier New', monospace;
+    width: 20%;
+    font-family: 'Consolas', 'DejaVu Sans Mono', 'Courier New', monospace;
 }

@@ -1,152 +1,152 @@
 <?php
 /*********************************************
 
-	LightBlog 0.9
-	SQLite blogging platform
+    LightBlog 0.9
+    SQLite blogging platform
 
-	Sources/Processors/Processor.Edit.php
+    Sources/Processors/Processor.Edit.php
 
-	©2008-2012 The LightBlog Team. All
-	rights reserved. Released under the
-	GNU General Public License 3. For
-	all licensing information, please
-	see the LICENSE.txt document
-	included in this distribution.
+    ©2008-2014 The LightBlog Team. All
+    rights reserved. Released under the
+    GNU General Public License 3. For
+    all licensing information, please
+    see the LICENSE.txt document
+    included in this distribution.
 
 *********************************************/
 
 class Edit
 {
-	private $dbh;
+    private $dbh;
 
-	public function __construct()
-	{
-		$this->dbh = $GLOBALS['dbh'];
-	}
+    public function __construct()
+    {
+        $this->dbh = $GLOBALS['dbh'];
+    }
 
-	public function processor($data)
-	{
-		$id = (int)$_POST['id'];
-		$type = sqlite_escape_string($_POST['type']);
-		$sql_past_data = @$this->dbh->query("SELECT * FROM {$type}s WHERE {$type}_id=".$id);
-		
-		if($sql_past_data == false)
-		{
-			return array("result" => "error", "response" => sqlite_error_string($dbh->lastError()));
-		}
-		
-		// Fetch previous data
-		while($past = $sql_past_data->fetchObject())
-		{
-			if($_POST['type'] == 'post')
-			{
-				$ptitle = $past->post_title;
-				$ppublished = $past->published;
-				$ptext = $past->post_text;
-				$pcategory = $past->categories;
-				$pcomments = $past->allow_comments;
-			}
-			elseif($_POST['type'] == 'page')
-			{
-				$ptitle = $past->page_title;
-				$ppublished = $past->published;
-				$ptext = $past->page_text;
-			}
-			$author_id = $past->author_id;
-		}
-		
-		$sql_past_data->closeCursor();
-		
-		if(permissions('EditOthersPosts') || permissions('EditPosts') && $author_id == user()->id())
-		{
-			// Require the HTML filter class
-			require(ABSPATH .'/Sources/Class.htmLawed.php');
+    public function processor($data)
+    {
+        $id = (int)$_POST['id'];
+        $type = sqlite_escape_string($_POST['type']);
+        $sql_past_data = @$this->dbh->query("SELECT * FROM {$type}s WHERE {$type}_id=".$id);
 
-			// Grab the data from form and escape the text
-			$title = utf_htmlspecialchars($_POST['title']);
-			$text = htmLawed::hl($_POST['text'], array('safe' => 1, 'make_tag_strict' => 1, 'balance' => 1, 'keep_bad' => 3));
+        if($sql_past_data == false)
+        {
+            return array("result" => "error", "response" => sqlite_error_string($dbh->lastError()));
+        }
 
-			// Check published checkbox
-			if(isset($_POST['published']) && $_POST['published'] == 1)
-			{
-				$published = 1;
-			}
-			else
-			{
-				$published = 0;
-			}
+        // Fetch previous data
+        while($past = $sql_past_data->fetchObject())
+        {
+            if($_POST['type'] == 'post')
+            {
+                $ptitle = $past->post_title;
+                $ppublished = $past->published;
+                $ptext = $past->post_text;
+                $pcategory = $past->categories;
+                $pcomments = $past->allow_comments;
+            }
+            elseif($_POST['type'] == 'page')
+            {
+                $ptitle = $past->page_title;
+                $ppublished = $past->published;
+                $ptext = $past->page_text;
+            }
+            $author_id = $past->author_id;
+        }
 
-			// For posts only
-			if($_POST['type'] == 'post')
-			{
-				// Check comments checkbox
-				if(isset($_POST['comments']) && $_POST['comments'] == 1)
-				{
-					$comments = 1;
-				}
-				else
-				{
-					$comments = 0;
-				}
+        $sql_past_data->closeCursor();
 
-				// Check category
-				$category = (int)$_POST['category'];
-			}
+        if(permissions('EditOthersPosts') || permissions('EditPosts') && $author_id == user()->id())
+        {
+            // Require the HTML filter class
+            require(ABSPATH .'/Sources/Class.htmLawed.php');
 
-			// Set a base query to modify
-			$base = array();
+            // Grab the data from form and escape the text
+            $title = utf_htmlspecialchars($_POST['title']);
+            $text = htmLawed::hl($_POST['text'], array('safe' => 1, 'make_tag_strict' => 1, 'balance' => 1, 'keep_bad' => 3));
 
-			if($ptitle !== $title)
-			{
-				array_push($base, $type."_title='".sqlite_escape_string($title)."'");
-			}
+            // Check published checkbox
+            if(isset($_POST['published']) && $_POST['published'] == 1)
+            {
+                $published = 1;
+            }
+            else
+            {
+                $published = 0;
+            }
 
-			if($ptext !== $text)
-			{
-				array_push($base, $type."_text='".sqlite_escape_string($text)."'");
-			}
+            // For posts only
+            if($_POST['type'] == 'post')
+            {
+                // Check comments checkbox
+                if(isset($_POST['comments']) && $_POST['comments'] == 1)
+                {
+                    $comments = 1;
+                }
+                else
+                {
+                    $comments = 0;
+                }
 
-			if((int)$ppublished !== $published)
-			{
-				array_push($base, "published='".(int)$published);
-			}
+                // Check category
+                $category = (int)$_POST['category'];
+            }
 
-			if($_POST['type'] == 'post')
-			{
-				if((int)$pcategory !== $category)
-				{
-					array_push($base, "categories='".(int)$category);
-				}
+            // Set a base query to modify
+            $base = array();
 
-				if((int)$pcomments !== $comments)
-				{
-					array_push($base, "allow_comments='".(int)$comments);
-				}
-			}
+            if($ptitle !== $title)
+            {
+                array_push($base, $type."_title='".sqlite_escape_string($title)."'");
+            }
 
-			// If nothing's changed, then we don't need to do anything
-			if(empty($base))
-			{
-				return array("result" => "success");
-			}
-			else
-			{
-				// Execute modified query
-				$sql_edit = @$this->dbh->exec("UPDATE {$type}s SET " . implode(', ', $base) . " WHERE {$type}_id=".$id) or die(json_encode(array("result" => "error", "response" => $type.sqlite_error_string($this->dbh->lastError()))));
-	
-				if($sql_edit == 0)
-				{
-					return array("result" => "error", "response" => sqlite_error_string($dbh->lastError()));
-				}
-				
-				// Create URL to return to jQuery
-				$url = get_bloginfo('url')."?".$type."=".$id;
-				
-				// Return JSON-encoded response
-				return array("result" => "success", "response" => $url);
-			}
-		}
-	}
+            if($ptext !== $text)
+            {
+                array_push($base, $type."_text='".sqlite_escape_string($text)."'");
+            }
+
+            if((int)$ppublished !== $published)
+            {
+                array_push($base, "published='".(int)$published);
+            }
+
+            if($_POST['type'] == 'post')
+            {
+                if((int)$pcategory !== $category)
+                {
+                    array_push($base, "categories='".(int)$category);
+                }
+
+                if((int)$pcomments !== $comments)
+                {
+                    array_push($base, "allow_comments='".(int)$comments);
+                }
+            }
+
+            // If nothing's changed, then we don't need to do anything
+            if(empty($base))
+            {
+                return array("result" => "success");
+            }
+            else
+            {
+                // Execute modified query
+                $sql_edit = @$this->dbh->exec("UPDATE {$type}s SET " . implode(', ', $base) . " WHERE {$type}_id=".$id) or die(json_encode(array("result" => "error", "response" => $type.sqlite_error_string($this->dbh->lastError()))));
+
+                if($sql_edit == 0)
+                {
+                    return array("result" => "error", "response" => sqlite_error_string($dbh->lastError()));
+                }
+
+                // Create URL to return to jQuery
+                $url = get_bloginfo('url')."?".$type."=".$id;
+
+                // Return JSON-encoded response
+                return array("result" => "success", "response" => $url);
+            }
+        }
+    }
 }
 
 ?>

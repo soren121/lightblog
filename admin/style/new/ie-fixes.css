@@ -2,19 +2,19 @@
     IE8 and up work fine with the normal CSS */
 
 #header h1 {
-	padding-top: 0;
+    padding-top: 0;
 }
 
 #navigation ul#menu li img.nav-icon {
-	vertical-align: -6px;
-	padding-top: 12px;
+    vertical-align: -6px;
+    padding-top: 12px;
 }
 
 #navigation ul#menu li a.nav-link {
-	zoom: 1;
-	*display: inline;
+    zoom: 1;
+    *display: inline;
 }
 
 #navigation ul#menu li img.nav-toggle {
-	vertical-align: 6px;
+    vertical-align: 6px;
 }
