@@ -106,7 +106,7 @@ class PostLoop
         Returns:
             string - A complete SQL query.
     */
-    private function generateQuery($is_count = false)
+    private function generateQuery($is_count = false, $limit = [])
     {
         // What kind of query are we generating?
         if(!isset($GLOBALS['postquery']['type']))
@@ -117,10 +117,10 @@ class PostLoop
 
         $querytype = $GLOBALS['postquery']['type'];
         $options = array(
-                                 'join' => array(),
-                                 'where' => array(),
-                                 'order_by' => array('post_date DESC'),
-                             );
+            'join' => array(),
+            'where' => array(),
+            'order_by' => array('post_date DESC'),
+        );
 
         // Perhaps they're viewing a single post?
         if($querytype == 'post')
@@ -163,14 +163,22 @@ class PostLoop
         {
             trigger_error('Unknown post query type '. utf_htmlspecialchars($querytype), E_USER_ERROR);
         }
-
-        return '
+        
+        $post = $this->dbh->prepare("
             SELECT
-                '. (!empty($is_count) ? 'COUNT(*)' : 'p.*'). '
-            FROM posts AS p'. (count($options['join']) > 0 ? '
-            '. implode("\r\n", $options['join']). "\r\n" : ''). '
-            WHERE '. (count($options['where']) > 0 ? implode(' AND ', $options['where']) : '1'). (count($options['order_by']) > 0 ? '
-            ORDER BY '. implode(', ', $options['order_by']) : '');
+                :selection
+            FROM posts AS p:join
+            WHERE :where
+            ORDER BY :order 
+            :limit");
+        
+        $post->bindParam(":selection", (!empty($is_count) ? 'COUNT(*)' : 'p.*'));
+        $post->bindParam(":join", "p".(count($options['join']) > 0 ? implode("\r\n", $options['join']). "\r\n" : ''));
+        $post->bindParam(":where", (count($options['where']) > 0 ? implode(' AND ', $options['where']) : '1'));
+        $post->bindParam(":order", (count($options['order_by']) > 0 ? 'ORDER BY '. implode(', ', $options['order_by'])));
+        $post->bindParam(":limit", (!empty($limit) ? 'LIMIT '. $limit[0]. ', '. $limit[1]));
+        
+        return $post;
     }
 
     /*
@@ -188,7 +196,7 @@ class PostLoop
     {
         // Just load that single post, please!
         $this->data['count'] = 1;
-        $this->load($this->dbh->query($this->generateQuery()));
+        $this->load($this->generateQuery());
     }
 
     /*
@@ -221,7 +229,7 @@ class PostLoop
         $start = ($this->data['page'] - 1) * $limit;
 
         // Query the database for post data
-        $this->load($this->dbh->query($this->generateQuery(). "\r\n". 'LIMIT '. $start. ', '. $limit));
+        $this->load($this->generateQuery(false, [$start, $limit]));
     }
 
     /*
@@ -237,7 +245,7 @@ class PostLoop
     */
     private function load($request)
     {
-        if(empty($request))
+        if(!$request->execute())
         {
             trigger_error('An unknown error occurred while processing posts', E_USER_ERROR);
         }
@@ -247,25 +255,25 @@ class PostLoop
         $users = array();
         $categories = array();
         $this->data['posts'] = array();
-        while($row = $request->fetch(PDO::FETCH_BOTH))
+        while($row = $request->fetch())
         {
             $this->data['posts'][] = array(
-                                                                 'id' => $row['post_id'],
-                                                                 'title' => $row['post_title'],
-                                                                 'short_name' => $row['short_name'],
-                                                                 'date' => date('F j, Y', $row['post_date']),
-                                                                 'timestamp' => $row['post_date'],
-                                                                 'published' => $row['published'],
-                                                                 'author' => array(
-                                                                                             'id' => $row['author_id'],
-                                                                                             'name' => $row['author_name'],
-                                                                                         ),
-                                                                 'text' => $row['post_text'],
-                                                                 'categories' => explode(',', $row['categories']),
-                                                                 'allow_comments' => !empty($row['allow_comments']),
-                                                                 'allow_pingbacks' => !empty($row['allow_pingbacks']),
-                                                                 'comments' => $row['comments'],
-                                                             );
+                'id' => $row['post_id'],
+                'title' => $row['post_title'],
+                'short_name' => $row['short_name'],
+                'date' => date('F j, Y', $row['post_date']),
+                'timestamp' => $row['post_date'],
+                'published' => $row['published'],
+                'author' => array(
+                    'id' => $row['author_id'],
+                    'name' => $row['author_name'],
+                ),
+                'text' => $row['post_text'],
+                'categories' => explode(',', $row['categories']),
+                'allow_comments' => !empty($row['allow_comments']),
+                'allow_pingbacks' => !empty($row['allow_pingbacks']),
+                'comments' => $row['comments'],
+            );
 
             // Add the author's ID to the list to load.
             $users[] = $row['author_id'];
@@ -285,23 +293,26 @@ class PostLoop
             $categories[$key] = (int)$category_id;
         }
 
-        $request = $this->dbh->query("
+        $category_metadata = $this->dbh->prepare("
             SELECT
                 category_id, short_name, full_name, category_text
             FROM categories
-            WHERE category_id IN(". implode(', ', $categories). ")");
+            WHERE category_id IN(:selected)");
+            
+        $category_metadata->bindParam(":selected", implode(', ', $categories));
+        $category_metadata->execute();
 
         $this->data['categories'] = array();
-        while($row = $request->fetch(PDO::FETCH_ASSOC))
+        while($row = $category_metadata->fetch(PDO::FETCH_ASSOC))
         {
             $this->data['categories'][$row['category_id']] = array(
-                                                                                                                 'id' => $row['category_id'],
-                                                                                                                 'name' => $row['full_name'],
-                                                                                                                 'short_name' => $row['short_name'],
-                                                                                                                 'text' => $row['category_text'],
-                                                                                                                 'href' => get_bloginfo('url'). 'index.php?category='. $row['category_id'],
-                                                                                                                 'url' => '<a href="'. get_bloginfo('url'). 'index.php?category='. $row['category_id']. '" title="'. (utf_strlen($row['category_text']) > 255 ? utf_substr($row['category_text'], 0, 252). '...' : $row['category_text']). '">'. $row['full_name']. '</a>',
-                                                                                                             );
+                'id' => $row['category_id'],
+                'name' => $row['full_name'],
+                'short_name' => $row['short_name'],
+                'text' => $row['category_text'],
+                'href' => get_bloginfo('url'). 'index.php?category='. $row['category_id'],
+                'url' => '<a href="'. get_bloginfo('url'). 'index.php?category='. $row['category_id']. '" title="'. (utf_strlen($row['category_text']) > 255 ? utf_substr($row['category_text'], 0, 252). '...' : $row['category_text']). '">'. $row['full_name']. '</a>',
+            );
         }
 
         // Make sure our pointer in the posts array is at the beginning. That is

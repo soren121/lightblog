@@ -74,12 +74,12 @@ function grammarFix($number, $singular, $plural)
     Parameters:
         string $url - The URL to validate.
         array $protocols - An array containing protocols which should be
-                                             considered valid (without the :// part). Defaults
-                                             to http and https.
+            considered valid (without the :// part). Defaults
+            to http and https.
 
     Returns:
         bool - Returns true if the supplied URL is actually valid, false if
-                     not.
+            not.
 */
 function is_url($url, $protocols = array())
 {

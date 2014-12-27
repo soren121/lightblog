@@ -80,7 +80,7 @@ function l($text)
 
     Parameters:
         string $source - The name of the file (without .php or any directory) to
-                                         load translations from.
+        load translations from.
 
     Returns:
         bool - Returns true on success, false on failure.

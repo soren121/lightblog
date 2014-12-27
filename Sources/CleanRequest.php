@@ -57,9 +57,9 @@ function remove_magic($array, $depth = 5)
     Parameters:
         string $location - The new location redirect the browser to.
         mixed $status - The type of redirect to issue, such as 301 (Moved
-                                        Permanently) or 307 (Temporary). If you don't want to
-                                        remember either, you can supply permanent[ly] or
-                                        temporary. This defaults to a temporary move.
+                        Permanently) or 307 (Temporary). If you don't want to
+                        remember either, you can supply permanent[ly] or
+                        temporary. This defaults to a temporary move.
 
     Returns:
         void - Nothing is returned by this function.

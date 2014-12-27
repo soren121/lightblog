@@ -49,7 +49,7 @@ else
 // Check to make sure that the database exists.
 if(file_exists(DBH))
 {
-    $dbh = new PDO('sqlite2:'.DBH);
+    $dbh = new PDO('sqlite:'.DBH);
     $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $dbh->setAttribute(PDO::ATTR_TIMEOUT, 5);
 }
@@ -99,13 +99,20 @@ else
 
         The installed version number.
 */
-function LightyVersion($output = 'e') {
+function LightyVersion($output = 'e')
+{
     # DON'T TOUCH!
     $version = '0.9.4';
     # Are we echoing or returning?
-    if($output == 'e') { echo $version; }
+    if($output == 'e')
+    {
+        echo $version;
+    }
     # Returning!
-    else { return $version; }
+    else
+    {
+        return $version;
+    }
 }
 
 /*
@@ -121,9 +128,11 @@ function LightyVersion($output = 'e') {
 
         An array sorted in ascending order by values containing the directories in the given path.
 */
-function dirlist($input) {
+function dirlist($input)
+{
     # Start foreach loop and set search pattern
-    foreach(glob($input.'/*', GLOB_ONLYDIR) as $dir) {
+    foreach(glob($input.'/*', GLOB_ONLYDIR) as $dir)
+    {
         # Remove the containing directory
         $dir = str_replace($input.'/', '', $dir);
         # Place directories in an array
@@ -135,16 +144,20 @@ function dirlist($input) {
     return $array;
 }
 
-function currentURL() {
+function currentURL()
+{
     $pageURL = 'http';
-    if($_SERVER["HTTPS"] == "on") {
+    if($_SERVER["HTTPS"] == "on")
+    {
         $pageURL .= "s";
     }
     $pageURL .= "://";
-    if($_SERVER["SERVER_PORT"] != "80") {
+    if($_SERVER["SERVER_PORT"] != "80")
+    {
         $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
     }
-    else {
+    else
+    {
         $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
     }
     return $pageURL;
@@ -168,7 +181,8 @@ function currentURL() {
 
         HTML code for a full pagination menu.
 */
-function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 1, $pagestring = "&page=") {
+function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 1, $pagestring = "&page=")
+{
     // Global the database handle so we can use it in this function
     global $dbh;
 
@@ -183,19 +197,20 @@ function advancedPagination($type, $target, $page = 1, $limit = 8, $adjacents = 
     if(!$limit) $limit = 8;
     if(!$page) $page = 1;
 
-    // Set teh query to retrieve the number of rows
-    $query = $dbh->query("
+    $count = $dbh->prepare("
         SELECT
             COUNT(*)
-        FROM '".sqlite_escape_string($type)."'");
+        FROM :type");
 
-    // Query the database
-    @list($totalitems) = $query->fetch(PDO::FETCH_NUM);
+    $count->bindParam(":type", $type, PDO::PARAM_STR);
+    $count->execute();
+
+    @list($totalitems) = $count->fetch(PDO::FETCH_NUM);
 
     // Set various required variables
     $prev = $page - 1;                        // Previous page is page - 1
     $next = $page + 1;                        // Next page is page + 1
-    $lastpage = ceil($totalitems/$limit);    // Last page is = total items / items per page, rounded up.
+    $lastpage = ceil($totalitems/$limit);     // Last page is = total items / items per page, rounded up.
     $lpm1 = $lastpage - 1;                    // Last page minus 1
 
     // The page also cannot exceed the last page.
@@ -365,23 +380,27 @@ function list_pages($tag = 'li', $limit = 5)
 {
     global $dbh;
 
-    $query_c = "
+    $page_count = $dbh->prepare("
         SELECT
             COUNT(*)
         FROM pages
         ORDER BY page_id DESC
-        LIMIT 0, ". ((int)$limit);
+        LIMIT 0, ?");
 
-    $result = $dbh->query("
+    $page_count->execute([$limit]);
+
+    $pages = $dbh->prepare("
         SELECT
             *
         FROM pages
         ORDER BY page_id DESC
-        LIMIT 0, ". ((int)$limit));
+        LIMIT 0, ?");
 
-    if(count_rows($query_c))
+    $pages->execute([$limit]);
+
+    if($page_count->fetchColumn())
     {
-        while($page = $result->fetchObject())
+        while($page = $pages->fetchObject())
         {
             echo '<'. $tag. '><a href="'. get_bloginfo('url'). '?page='. $page->page_id. '">'. $page->page_title. '</a></'. $tag. '>';
         }
@@ -411,32 +430,28 @@ function list_categories($tag = 'li', $limit = 5, $selected = null)
     // Grab the database handle
     global $dbh;
 
-    // Is there a limit? If so, typecast it and add it to the query
-    if($limit != null)
-    {
-        $limit = "LIMIT 0, ".(int)$limit;
-    }
-
     // Get category data from database
-    $result = $dbh->query("
+    $categories = $dbh->prepare("
         SELECT
             *
         FROM categories
         ORDER BY category_id DESC
-        ".$limit);
+        LIMIT 0, ?");
+
+    $categories->bindParam(1, $limit, PDO::PARAM_INT);
+    $categories->execute();
 
     // What tag are we using?
     if($tag == 'option')
     {
-        while($row = $result->fetchObject())
+        while($row = $categories->fetchObject())
         {
             echo '<option value="'. $row->category_id. '"'. ($row->category_id == $selected ? ' selected="selected"' : ''). '>'. $row->full_name. '</option>';
         }
     }
     else
     {
-        // Sort through and create list items
-        while($row = $result->fetchObject())
+        while($row = $categories->fetchObject())
         {
             echo '<'. $tag. '><a href="'. get_bloginfo('url'). '?category='. $row->category_id. '">'. $row->full_name .'</a></'. $tag. '>';
         }
@@ -455,8 +470,8 @@ function list_archives($limit = 10)
     global $dbh;
 
     // Get archive data
-    $result = $dbh->query(
-        "SELECT
+    $archives = $dbh->query("
+        SELECT
             strftime('%m', post_date, 'unixepoch') AS 'month',
             strftime('%Y', post_date, 'unixepoch') AS 'year',
             post_date
@@ -467,7 +482,7 @@ function list_archives($limit = 10)
     // Sort through and create list items
     $i = 0;
     $return = '';
-    while($row = $result->fetchObject())
+    while($row = $archives->fetchObject())
     {
         $month = $row->month;
         $monthname = date('F', $row->post_date);
@@ -505,14 +520,17 @@ function get_commentnum($id)
     }
 
     // Set the query
-    $query = $dbh->query("
+    $comment_count = $dbh->prepare("
         SELECT
             COUNT(*)
         FROM comments
-        WHERE published = 1 AND post_id= ". ((int)$id));
+        WHERE published = 1 AND post_id = ?");
+
+    $comment_count->bindParam(1, $id, PDO::PARAM_INT);
+    $comment_count->execute();
 
     // Query the database
-    @list($commentnum) = $query->fetch(PDO::FETCH_NUM);
+    @list($commentnum) = $comment_count->fetch(PDO::FETCH_NUM);
 
     // Return data
     return $commentnum;
@@ -543,4 +561,5 @@ function alternateColor($class1, $class2)
 
     return (($count++) % 2) == 0 ? $class1 : $class2;
 }
+
 ?>

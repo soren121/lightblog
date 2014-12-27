@@ -48,9 +48,9 @@ class PageLoop
     {
         $this->dbh = null;
         $this->data = array(
-                                        'pages' => array(),
-                                        'count' => array(),
-                                    );
+            'pages' => array(),
+            'count' => array(),
+        );
         $this->current = null;
         $this->page = null;
 
@@ -92,15 +92,16 @@ class PageLoop
             trigger_error('Unknown pid', E_USER_ERROR);
         }
 
-        // Sanitize and set variables
-        $pid = (int)$GLOBALS['pid'];
-
-        $this->load($this->dbh->query("
+        $posts = $this->dbh->prepare("
             SELECT
                 *
             FROM pages
-            WHERE page_id = $pid". (!permissions(1) ? ' AND published = 1' : ''). "
-            LIMIT 1"));
+            WHERE page_id = :pid". (!permissions(1) ? ' AND published = 1' : ''). "
+            LIMIT 1");
+
+        $posts->bindParam(":pid", (int)$GLOBALS['pid']);
+
+        $this->load($posts->execute());
     }
 
     /*
@@ -110,12 +111,14 @@ class PageLoop
     */
     public function obtain_pages()
     {
-        $this->load($this->dbh->query("
+        $pages = $this->dbh->prepare("
             SELECT
                 *
             FROM pages
             WHERE ". (!permissions(1) ? 'published = 1' : '1'). "
-            ORDER BY post_title ASC"));
+            ORDER BY post_title ASC");
+
+        $this->load($pages->execute());
     }
 
     /*
@@ -170,7 +173,7 @@ class PageLoop
     */
     private function load($request)
     {
-        if(empty($request))
+        if(!$request)
         {
             trigger_error('An unknown error occurred while processing the pages', E_USER_ERROR);
         }
@@ -179,21 +182,21 @@ class PageLoop
         $users = array();
         $this->data['pages'] = array();
         $this->data['count'] = 0;
-        while($row = $request->fetch(SQLITE_ASSOC))
+        while($row = $request->fetch(PDO::FETCH_ASSOC))
         {
             $this->data['pages'][] = array(
-                                                                 'id' => $row['page_id'],
-                                                                 'title' => $row['page_title'],
-                                                                 'short_name' => $row['short_name'],
-                                                                 'date' => date('F j, Y', $row['page_date']),
-                                                                 'timestamp' => $row['page_date'],
-                                                                 'published' => $row['published'],
-                                                                 'author' => array(
-                                                                                             'id' => $row['author_id'],
-                                                                                             'name' => $row['author_name'],
-                                                                                         ),
-                                                                 'text' => $row['page_text'],
-                                                             );
+                'id' => $row['page_id'],
+                'title' => $row['page_title'],
+                'short_name' => $row['short_name'],
+                'date' => date('F j, Y', $row['page_date']),
+                'timestamp' => $row['page_date'],
+                'published' => $row['published'],
+                'author' => array(
+                    'id' => $row['author_id'],
+                    'name' => $row['author_name'],
+                ),
+                'text' => $row['page_text'],
+            );
 
             $users[] = $row['author_id'];
             $this->data['count']++;

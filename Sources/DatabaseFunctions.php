@@ -79,7 +79,7 @@ function get_roles($role = null)
             FROM roles
             ORDER BY role_id desc');
 
-        $roles = array();
+        $roles = [];
         while($row = $result->fetchObject())
         {
             $roles[$row->role_id] = $row->role_name;

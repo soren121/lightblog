@@ -62,18 +62,16 @@ function user_login($options)
     // Now we need to see if the user exists.
     else
     {
-        $username = sqlite_escape_string($options['username']);
-
-        $request = $dbh->prepare("
+        $user_metadata = $dbh->prepare("
             SELECT
                 user_id, user_pass, user_ip, user_salt
             FROM users
-            WHERE LOWER(user_name) = '$username'
+            WHERE LOWER(user_name) = '?'
             LIMIT 1");
 
-        $request->execute();
+        $user_metadata->bindParam(1, $options['username'], PDO::PARAM_STR);
 
-        if(!$request)
+        if(!$user_metadata->execute())
         {
             // We didn't find their user name, but we won't tell them whether it
             // was due to the password being wrong or their user name :P.
@@ -81,10 +79,8 @@ function user_login($options)
         }
         else
         {
-            list($user_id, $user_pass, $user_ip, $user_salt) = $request->fetch(PDO::FETCH_NUM);
+            list($user_id, $user_pass, $user_ip, $user_salt) = $user_metadata->fetch(PDO::FETCH_NUM);
         }
-
-        $request->closeCursor();
     }
 
     // Make sure we don't have any messages yet.
@@ -105,14 +101,17 @@ function user_login($options)
             // They have successfully proved they are who they say they are
             // (unless they have a sucky password, of course ;-)).
             // Now update their salt and then update their IP, perhaps.
-            $new_salt = sqlite_escape_string(randomString(9));
-            $new_password = sqlite_escape_string(sha1($new_salt. $options['password']));
-            $new_ip = sqlite_escape_string(user()->ip());
-
-            $dbh->exec("
+            $user_update = $dbh->prepare("
                 UPDATE users
-                SET user_salt = '$new_salt', user_pass = '$new_password'". (user()->ip() != $user_ip ? ', user_ip = \''. $new_ip. '\'' : ''). "
-                WHERE user_id = $user_id");
+                SET user_salt = :salt, user_pass = :pass, user_ip = :ip_addr
+                WHERE user_id = :id");
+
+            $user_update->bindParam(":salt", randomString(9), PDO::PARAM_STR);
+            $user_update->bindParam(":pass", sha1($new_salt. $options['password']), PDO::PARAM_STR);
+            $user_update->bindParam(":ip_addr", user()->ip(), PDO::PARAM_INT);
+            $user_update->bindParam(":id", $options['username'], PDO::PARAM_STR);
+
+            $user_update->execute();
 
             // Now, set that cookie!
             setcookie(LBCOOKIE, implode('|', array($user_id, $new_password)), (!empty($options['remember_me']) ? time() + 2592000 : 0), '/');
@@ -156,15 +155,20 @@ function user_name_allowed($name, $id = 0)
     global $dbh;
 
     // Alright, let's check!
-    $request = "
+    $allowed = $dbh->prepare"
         SELECT
             COUNT(*)
         FROM users
-        WHERE (LOWER(user_name) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "') OR LOWER(display_name) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($name)). "')) AND user_id != ". ((int)$id). "
+        WHERE (LOWER(user_name) = LOWER(:username) OR LOWER(display_name) = LOWER(:username)) AND user_id != :id
         LIMIT 1";
 
+    $allowed->bindParam(":username", utf_htmlspecialchars($name));
+    $allowed->bindParam(":id", $id, PDO::PARAM_INT);
+
+    $allowed->execute();
+
     // If there are no rows, they're free to have at it!
-    if(count_rows($request) == 0)
+    if($allowed->fetchColumn() == 0)
     {
         return true;
     }
@@ -192,21 +196,27 @@ function user_email_allowed($email, $id = 0)
     global $dbh;
 
     // First, check the email address with a regular expression.
+    // This ONLY checks to make sure the email is syntactically correct.
     if(!preg_match('~^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$~i', $email))
     {
         return false;
     }
 
     // Now to check the database.
-    $request = $dbh->query("
+    $allowed = $dbh->prepare("
         SELECT
             COUNT(*)
         FROM users
-        WHERE LOWER(user_email) = LOWER('". sqlite_escape_string(utf_htmlspecialchars($email)). "') AND user_id != ". ((int)$id). "
+        WHERE LOWER(user_email) = LOWER(:email) AND user_id != :id
         LIMIT 1");
 
+    $allowed->bindParam(":email", utf_htmlspecialchars($email), PDO::PARAM_STR);
+    $allowed->bindParam(":id", $id, PDO::PARAM_INT);
+
+    $allowed->execute();
+
     // If there are no rows, they're free to have at it!
-    if(count_rows($request) == 0)
+    if($allowed->fetchColumn() == 0)
     {
         return true;
     }
@@ -286,27 +296,23 @@ class User
             if((int)$user_id > 0 && utf_strlen($user_pass) == 40)
             {
                 // Now we need to see if they can log in.
-                $query_c = "
+                $user_metadata = $dbh->prepare("
                     SELECT
                         user_id, user_name, user_pass, user_email, display_name, user_role
                     FROM users
-                    WHERE user_id = ". ((int)$user_id). " AND user_pass = '". sqlite_escape_string($user_pass). "'
-                    LIMIT 1";
-
-                $request = $dbh->prepare("
-                    SELECT
-                        user_id, user_name, user_pass, user_email, display_name, user_role
-                    FROM users
-                    WHERE user_id = ". ((int)$user_id). " AND user_pass = '". sqlite_escape_string($user_pass). "'
+                    WHERE user_id = :id AND user_pass = :pass
                     LIMIT 1");
 
-                $request->execute();
+                $user_metadata->bindParam(":id", $user_id, PDO::PARAM_INT);
+                $user_metadata->bindParam(":pass", $user_pass, PDO::PARAM_STR);
+
+                $user_metadata->execute();
 
                 // Did we find anything?
-                if(count_rows($query_c))
+                if($user_metadata->fetchColumn())
                 {
                     // We sure did!
-                    $row = $request->fetch(PDO::FETCH_ASSOC);
+                    $row = $user_metadata->fetch(PDO::FETCH_ASSOC);
 
                     // Now set their information.
                     $this->id = (int)$row['user_id'];
@@ -319,8 +325,6 @@ class User
                     $_SESSION['user_id'] = $this->id;
                     $_SESSION['user_pass'] = $this->password;
                 }
-
-                $request->closeCursor();
             }
         }
 

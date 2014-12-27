@@ -80,7 +80,7 @@ function gravatar($email = null, $size = 80, $default = 'mm', $rating = 'pg')
 
     Parameters:
         mixed $users - Either an array of users to load or an integer specifying
-                                     the user to load.
+                       the user to load.
 
     Returns:
         void - Nothing is returned by this function.
@@ -121,31 +121,34 @@ function users_load($users)
     // Alright, do we have anything to load?
     if(count($users) > 0)
     {
-        $request = $dbh->query("
+        $users_data = $dbh->prepare("
             SELECT
                 user_id, user_name, user_pass, user_email, display_name, user_role,
                 user_ip, user_salt, user_activated, user_created
             FROM users
-            WHERE user_id IN(". implode(', ', $users). ")");
+            WHERE user_id IN(?)");
 
-        while($row = $request->fetch(SQLITE_ASSOC))
+        $users_data->bindParam(1, implode(', ', $users), PDO::PARAM_STR);
+        $users_data->execute();
+
+        while($row = $users_data->fetch(SQLITE_ASSOC))
         {
             $GLOBALS['loaded_users'][$row['user_id']] = array(
-                                                                                                        'id' => $row['user_id'],
-                                                                                                        'user_name' => $row['user_name'],
-                                                                                                        'password' => $row['user_pass'],
-                                                                                                        'email' => $row['user_email'],
-                                                                                                        'display_name' => $row['display_name'],
-                                                                                                        'name' => !empty($row['display_name']) ? $row['display_name'] : $row['user_name'],
-                                                                                                        'role' => array(
-                                                                                                                                'id' => $row['user_role'],
-                                                                                                                                'name' => null,
-                                                                                                                            ),
-                                                                                                        'ip' => $row['user_ip'],
-                                                                                                        'salt' => $row['user_salt'],
-                                                                                                        'activated' => !empty($row['user_activated']),
-                                                                                                        'created' => $row['user_created'],
-                                                                                                    );
+                'id' => $row['user_id'],
+                'user_name' => $row['user_name'],
+                'password' => $row['user_pass'],
+                'email' => $row['user_email'],
+                'display_name' => $row['display_name'],
+                'name' => !empty($row['display_name']) ? $row['display_name'] : $row['user_name'],
+                'role' => array(
+                    'id' => $row['user_role'],
+                    'name' => null,
+                ),
+                'ip' => $row['user_ip'],
+                'salt' => $row['user_salt'],
+                'activated' => !empty($row['user_activated']),
+                'created' => $row['user_created'],
+            );
         }
     }
 }
@@ -157,14 +160,14 @@ function users_load($users)
 
     Parameters:
         mixed $users - An array containing the users' ID to retrieve or a single
-                                     integer.
+                       integer.
 
     Returns:
         array - An array containing the loaded users' information. If $users was
-                        an array, then the array's keys are the users ID whereas if
-                        $users is a single integer just that user's information is
-                        returned. However, if the user does not exist, the value will be
-                        false.
+                an array, then the array's keys are the users ID whereas if
+                $users is a single integer just that user's information is
+                returned. However, if the user does not exist, the value will be
+                false.
 
     Note:
         The users information must have been loaded by the <users_load>

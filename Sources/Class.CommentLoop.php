@@ -138,7 +138,7 @@ class CommentLoop
                 WHERE post_id = ? ?
                 ORDER BY comment_date ASC");
 
-			$comment_data = $this->dbh->execute(array(
+			$comment_data->execute(array(
 				$this->data['post']['id'],
 				(permissions(3) ? '' : ' AND published = 1')
 			));

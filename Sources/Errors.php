@@ -63,26 +63,28 @@ function errorsHandle($errno, $message, $filename, $line, $errcontext)
     // Do we need to make a connection to the SQLite database ourselves?
     if(defined('DBH') && !array_key_exists('dbh', $GLOBALS) && file_exists(DBH))
     {
-        $GLOBALS['dbh'] = new PDO('sqlite:'.DBH);
+        $dbh = new PDO('sqlite:'.DBH);
     }
 
     // Make sure we can query the database.
     if(array_key_exists('dbh', $GLOBALS))
     {
-        $timestamp = time();
-        $error_type = (int)$errno;
-        $message = sqlite_escape_string($message);
-        $filename = sqlite_escape_string(substr($filename, strlen(ABSPATH)));
-        $line = (int)$line;
-        $error_url = sqlite_escape_string('http://'. $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI']);
-
-        @$GLOBALS['dbh']->exec("
+        $error = $dbh->prepare("
             INSERT INTO 'error_log'
             ('error_time', 'error_type', 'error_message', 'error_file', 'error_line', 'error_url')
-            VALUES('$timestamp', '$error_type', '$message', '$filename', '$line', '$error_url')");
+            VALUES(?, ?, ?, ?, ?, ?)");
+
+        $error->bindParam(1, time());
+        $error->bindParam(2, $errno, PDO::PARAM_INT);
+        $error->bindParam(3, $message, PDO::PARAM_STR);
+        $error->bindParam(4, substr($filename, strlen(ABSPATH)), PDO::PARAM_STR);
+        $error->bindParam(5, $line, PDO::PARAM_INT);
+        $error->bindParam(6, 'http://'. $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'], PDO::PARAM_STR);
+
+        return $error->execute();
     }
 
-    return true;
+    return false;
 }
 
 /*
@@ -135,11 +137,11 @@ function errorsFatalCatcher()
 
             // Now emulate the error_get_last function's return value.
             $last_error = array(
-                                            'type' => $is_fatal ? E_ERROR : E_PARSE,
-                                            'message' => $error_message,
-                                            'file' => $filename,
-                                            'line' => $line,
-                                        );
+                'type' => $is_fatal ? E_ERROR : E_PARSE,
+                'message' => $error_message,
+                'file' => $filename,
+                'line' => $line,
+            );
         }
     }
 
@@ -185,133 +187,134 @@ function errorsShowFatal($message, $filename, $line)
     }
 
     // It looks like it is time to show the error!
-    echo '<!DOCTYPE html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="robots" content="noindex" />
-    <title>Server Error: A Fatal Error Occurred</title>
-    <style type="text/css">
-        body
-        {
-            font: 13px Verdana, Tahoma, Arial, sans-serif;
-        }
+    echo '
+    <!DOCTYPE html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+            <meta name="robots" content="noindex" />
+            <title>Server Error: A Fatal Error Occurred</title>
+            <style type="text/css">
+                body
+                {
+                    font: 13px Verdana, Tahoma, Arial, sans-serif;
+                }
 
-        h1
-        {
-            font-family: Georgia;
-            font-weight: normal;
-            color: red;
-        }
+                h1
+                {
+                    font-family: Georgia;
+                    font-weight: normal;
+                    color: red;
+                }
 
-        hr
-        {
-            height: 1px;
-            background: #CCC;
-            border: none;
-        }
+                hr
+                {
+                    height: 1px;
+                    background: #CCC;
+                    border: none;
+                }
 
-        #code-box
-        {
-            background: #FFFFAA;
-        }
+                #code-box
+                {
+                    background: #FFFFAA;
+                }
 
-        #code-box p
-        {
-            display: block;
-            margin: 0;
-            padding: 0;
-        }
+                #code-box p
+                {
+                    display: block;
+                    margin: 0;
+                    padding: 0;
+                }
 
-        .highlighted-line
-        {
-            background: #FF7F50;
-        }
+                .highlighted-line
+                {
+                    background: #FF7F50;
+                }
 
-        .line-no
-        {
-            float: left;
-            display: block;
-            font-weight: bold;
-            border-right: 1px solid #000000;
-            padding: 0 3px;
-            margin-right: 3px;
-        }
+                .line-no
+                {
+                    float: left;
+                    display: block;
+                    font-weight: bold;
+                    border-right: 1px solid #000000;
+                    padding: 0 3px;
+                    margin-right: 3px;
+                }
 
-        .break { clear: both; }
-    </style>
-</head>
-<body>
-    <h1>Server Error: A Fatal Error Occurred</h1>
-    <hr />
-    <p>An unexpected fatal error has occurred which has prevented the page from loading properly. If you are not a server administrator, please attempt to contact one in order to have this issue resolved.</p>
-    <p>Please be sure to provide the following information when contacting the administrator.</p>
-    <hr />
-    <p><strong>Error:</strong> ', $message, ' in <strong>', htmlspecialchars($filename), '</strong> on line <strong>', (int)$line, '</strong></p>';
+                .break { clear: both; }
+            </style>
+        </head>
+        <body>
+            <h1>Server Error: A Fatal Error Occurred</h1>
+            <hr />
+            <p>An unexpected fatal error has occurred which has prevented the page from loading properly. If you are not a server administrator, please attempt to contact one in order to have this issue resolved.</p>
+            <p>Please be sure to provide the following information when contacting the administrator.</p>
+            <hr />
+            <p><strong>Error:</strong> ', $message, ' in <strong>', htmlspecialchars($filename), '</strong> on line <strong>', (int)$line, '</strong></p>';
 
-    // If they are an administrator, we can go ahead and show them the content
-    // of the file, but just the relevant lines (the line itself and a few
-    // others surrounding it.
-    if(function_exists('permissions') && permissions(1))
-    {
-        // We will want to open the file.
-        $fp = fopen($filename, 'rb');
-
-        // Let's find the proper lines.
-        $cur_line = 1;
-        $lines = array();
-        while(!feof($fp))
-        {
-            // Do we want this line?
-            if(abs(($cur_line < $line ? $cur_line + 1 : $cur_line)- $line) <= 10)
+            // If they are an administrator, we can go ahead and show them the content
+            // of the file, but just the relevant lines (the line itself and a few
+            // others surrounding it.
+            if(function_exists('permissions') && permissions(1))
             {
-                $lines[$cur_line] = fgets($fp);
+                // We will want to open the file.
+                $fp = fopen($filename, 'rb');
+
+                // Let's find the proper lines.
+                $cur_line = 1;
+                $lines = array();
+                while(!feof($fp))
+                {
+                    // Do we want this line?
+                    if(abs(($cur_line < $line ? $cur_line + 1 : $cur_line)- $line) <= 10)
+                    {
+                        $lines[$cur_line] = fgets($fp);
+                    }
+                    elseif($cur_line > $line)
+                    {
+                        // We are over the lines we wanted to get, so no point on continuing
+                        // to go through the file.
+                        break;
+                    }
+                    else
+                    {
+                        // Not the line we want, but go ahead and keep going...
+                        fgets($fp);
+                    }
+
+                    $cur_line++;
+                }
+
+                fclose($fp);
+
+                // Alright, let's display the lines, highlighting the one which is
+                // causing the problem.
+                echo '
+            <div id="code-box">';
+
+                foreach($lines as $cur_line => $line_text)
+                {
+                    // We will want to replace a few things.
+                    $line_text = strtr(htmlspecialchars($line_text, ENT_QUOTES, 'UTF-8'), array(
+                        "\r\n" => '',
+                        "\r" => '',
+                        "\n" => '',
+                        "\t" => '&nbsp;',
+                        ' ' => '&nbsp;',
+                    ));
+
+                    echo '
+                <p', $cur_line == $line ? ' class="highlighted-line"' : '', '><span class="line-no">', $cur_line, '</span> ', $line_text, '</p>
+                <div class="break">
+                </div>';
+                }
+
+                echo '
+            </div>';
             }
-            elseif($cur_line > $line)
-            {
-                // We are over the lines we wanted to get, so no point on continuing
-                // to go through the file.
-                break;
-            }
-            else
-            {
-                // Not the line we want, but go ahead and keep going...
-                fgets($fp);
-            }
-
-            $cur_line++;
-        }
-
-        fclose($fp);
-
-        // Alright, let's display the lines, highlighting the one which is
-        // causing the problem.
-        echo '
-    <div id="code-box">';
-
-        foreach($lines as $cur_line => $line_text)
-        {
-            // We will want to replace a few things.
-            $line_text = strtr(htmlspecialchars($line_text, ENT_QUOTES, 'UTF-8'), array(
-                                                                                                                                                            "\r\n" => '',
-                                                                                                                                                            "\r" => '',
-                                                                                                                                                            "\n" => '',
-                                                                                                                                                            "\t" => '&nbsp;',
-                                                                                                                                                            ' ' => '&nbsp;',
-                                                                                                                                                        ));
 
             echo '
-        <p', $cur_line == $line ? ' class="highlighted-line"' : '', '><span class="line-no">', $cur_line, '</span> ', $line_text, '</p>
-        <div class="break">
-        </div>';
-        }
-
-        echo '
-    </div>';
-    }
-
-    echo '
-</body>
-</html>';
+        </body>
+    </html>';
 
     // Stop executing.
     exit;
