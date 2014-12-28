@@ -134,22 +134,22 @@ class AddUser
                             user_activated,
                             user_created)
                     VALUES(
-                        '{$options['username']}',
-                        '{$options['password']}',
-                        '{$options['email']}',
-                        '{$options['displayname']}',
-                        '{$options['role']}',
-                        '{$options['ip']}',
-                        '{$options['salt']},
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
                         1,
                         '".time()."'
                     )
                 ");
 
                 // Then sanitize everything.
-                foreach ($params as $key => &$val)
+                foreach ($params as $key => $val)
                 {
-                    $adduser->bindParam($key, $val);
+                    $adduser->bindValue($key, $val);
                 }
 
                 // Did we create it?

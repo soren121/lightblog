@@ -42,14 +42,6 @@ class Create
             $title = utf_htmlspecialchars($data['title']);
             $text = htmLawed::hl($data['text'], array('safe' => 1, 'make_tag_strict' => 1, 'balance' => 1, 'keep_bad' => 3));
 
-            $date = time();
-            $author = user()->displayName();
-            $author_id = (int)user()->id();
-            if($type == 'post')
-            {
-                $categories = (int)$data['category'];
-            }
-
             // Check published checkbox
             if(isset($data['published']) && $data['published'] == 1)
             {
@@ -78,7 +70,7 @@ class Create
             // Insert post/page into database
             if($type == 'post')
             {
-                $sql_create_post = @$this->dbh->exec("
+                $create_post = $this->dbh->prepare("
                     INSERT INTO
                         posts
                             (post_title,
@@ -93,48 +85,74 @@ class Create
                             allow_pingbacks,
                             comments)
                     VALUES(
-                        '". sqlite_escape_string($title). "',
-                        '". sqlite_escape_string(generate_shortname(0, $title)). "',
-                        $date,
-                        $published,
-                        '". sqlite_escape_string($author). "',
-                        $author_id,
-                        '". sqlite_escape_string($text). "',
-                        $categories,
-                        $comments,
+                        :title,
+                        :shortname,
+                        :date,
+                        :published,
+                        :author,
+                        :author_id,
+                        :text,
+                        :categories,
+                        :comments,
                         0,
                         0
-                    )"
-                );
+                    )
+                ");
 
-                if($sql_create_post == 0)
+                $create_post->bindParam(":title", $title, PDO::PARAM_STR);
+                $create_post->bindValue(":shortname", generate_shortname(0, $title), PDO::PARAM_STR);
+                $create_post->bindValue(":date", time());
+                $create_post->bindParam(":published", $published);
+                $create_post->bindValue(":author", user()->displayName(), PDO::PARAM_STR);
+                $create_post->bindValue(":author_id", user()->id(), PDO::PARAM_INT);
+                $create_post->bindParam(":text", $text);
+                $create_post->bindValue(":categories", $data['category']);
+                $create_post->bindParam(":comments", $comments);
+
+                if(!$create_post->execute())
                 {
-                    return array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()));
+                    return array("result" => "error", "response" => $create_post->errorInfo()[2]);
                 }
 
                 $id = $this->dbh->lastInsertId();
 
                 // Get the real short name.
-                $shortname = generate_shortname($id, $title);
-                $sql_shortname = @$this->dbh->exec("
+                $update_shortname = $this->dbh->prepare("
                     UPDATE posts
-                    SET short_name = '". sqlite_escape_string($shortname). "'
-                    WHERE post_id = ". (int)$id);
+                    SET short_name = :shortname
+                    WHERE post_id = :id
+                ");
 
-                $sql_categories = @$this->dbh->exec("
+                $update_shortname->bindValue(":shortname", generate_shortname($id, $title));
+                $update_shortname->bindParam(":id", $id, PDO::PARAM_INT);
+
+                if(!$update_shortname->execute())
+                {
+                    return array("result" => "error", "response" => $update_shortname->errorInfo()[2]);
+                }
+
+                $update_categories = $this->dbh->prepare("
                     INSERT INTO
                         post_categories
                             (post_id,
                             category_id)
                     VALUES(
-                        $id,
-                        $categories
-                    )"
-                );
+                        :id,
+                        :categories
+                    )
+                ");
+
+                $update_categories->bindParam(":id", $id, PDO::PARAM_INT);
+                $update_categories->bindParam(":categories", $data['category']);
+
+                if(!$update_categories->execute())
+                {
+                    return array("result" => "error", "response" => $update_categories->errorInfo()[2]);
+                }
             }
             else
             {
-                $sql_create_page = @$this->dbh->exec("
+                $create_page = $this->dbh->prepare("
                     INSERT INTO
                         pages
                             (page_title,
@@ -145,22 +163,29 @@ class Create
                             author_id,
                             page_text)
                     VALUES(
-                        '".sqlite_escape_string($title)."',
+                        :title,
                         ' ',
-                        $date,
-                        $published,
-                        '".sqlite_escape_string($author)."',
-                        $author_id,
-                        '".sqlite_escape_string($text)."'
+                        :date,
+                        :published,
+                        :author,
+                        :author_id,
+                        :text
                     )
                 ");
 
-                $id = $this->dbh->lastInsertId();
-            }
+                $create_page->bindParam(":title", $title, PDO::PARAM_STR);
+                $create_page->bindValue(":date", time());
+                $create_page->bindParam(":published", $published);
+                $create_page->bindValue(":author", user()->displayName(), PDO::PARAM_STR);
+                $create_page->bindValue(":author_id", user()->id(), PDO::PARAM_INT);
+                $create_page->bindParam(":text", $text);
 
-            if($sql_create_post == 0 || $sql_shortname == 0 || $sql_categories == 0 || (isset($sql_create_page) && $sql_create_page == 0))
-            {
-                return array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()));
+                if(!$create_page->execute())
+                {
+                    return array("result" => "error", "response" => $create_page->errorInfo()[2]);
+                }
+
+                $id = $this->dbh->lastInsertId();
             }
 
             // Create URL to return to jQuery

@@ -24,12 +24,12 @@
     Parameters:
         string $text - The text to translate.
         mixed ... - You can pass additional parameters that contain values to be
-                                replaced in $text. See the notes for more details.
+                    replaced in $text. See the notes for more details.
 
     Returns:
         string - Returns a translated string. If the language is English or
-                         there is no translation available then the original string
-                         passed in $text will be used.
+                 there is no translation available then the original string
+                 passed in $text will be used.
 
     Note:
         The $text value is passed through PHP's <www.php.net/sprintf> function,

@@ -31,7 +31,7 @@ class ApproveComment
             // Execute query to approve comment
             $approve = $this->dbh->prepare("UPDATE comments SET published=1 WHERE id=?");
 
-            $approve->bindParam(1, $data['id'], PDO::PARAM_INT);
+            $approve->bindValue(1, $data['id'], PDO::PARAM_INT);
 
             if(!$approve->execute())
             {

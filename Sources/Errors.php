@@ -74,12 +74,12 @@ function errorsHandle($errno, $message, $filename, $line, $errcontext)
             ('error_time', 'error_type', 'error_message', 'error_file', 'error_line', 'error_url')
             VALUES(?, ?, ?, ?, ?, ?)");
 
-        $error->bindParam(1, time());
-        $error->bindParam(2, $errno, PDO::PARAM_INT);
-        $error->bindParam(3, $message, PDO::PARAM_STR);
-        $error->bindParam(4, substr($filename, strlen(ABSPATH)), PDO::PARAM_STR);
-        $error->bindParam(5, $line, PDO::PARAM_INT);
-        $error->bindParam(6, 'http://'. $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'], PDO::PARAM_STR);
+        $error->bindValue(1, time());
+        $error->bindValue(2, $errno, PDO::PARAM_INT);
+        $error->bindValue(3, $message, PDO::PARAM_STR);
+        $error->bindValue(4, substr($filename, strlen(ABSPATH)), PDO::PARAM_STR);
+        $error->bindValue(5, $line, PDO::PARAM_INT);
+        $error->bindValue(6, 'http://'. $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'], PDO::PARAM_STR);
 
         return $error->execute();
     }

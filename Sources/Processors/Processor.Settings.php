@@ -101,7 +101,7 @@ class Settings
                 )
             ");
 
-            foreach($options as $option => $value)
+            foreach($options as $option => &$value)
             {
                 $GLOBALS['bloginfo_data'][$option] = $value;
 

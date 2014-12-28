@@ -34,7 +34,7 @@ class Comment
             WHERE post_id = ?
             LIMIT 1");
 
-        $comments_allowed->bindParam(1, $_POST['comment_pid'], PDO::PARAM_INT);
+        $comments_allowed->bindValue(1, $_POST['comment_pid'], PDO::PARAM_INT);
 
         if(!$comments_allowed->execute())
         {
@@ -51,23 +51,13 @@ class Comment
                 $_POST['commenter_name'] = htmlspecialchars_decode(user()->userName(), ENT_QUOTES);
                 $_POST['commenter_email'] = htmlspecialchars_decode(user()->email(), ENT_QUOTES);
 
-                // !!! todo: auto-fill website
+                // TODO: auto-fill website
             }
 
             if(utf_strlen($_POST['commenter_name']) && utf_strlen($_POST['commenter_email']) > 0)
             {
                 // Require the HTML filter class
                 require(ABSPATH .'/Sources/Class.htmLawed.php');
-
-                // Escape values
-                $commenter_id = (int);
-                $published = ;
-                $commenter_ip = sqlite_escape_string();
-                $commenter_name = sqlite_escape_string();
-                $commenter_email = sqlite_escape_string();
-                $commenter_website = is_url($_POST['commenter_website']) ? utf_htmlspecialchars($_POST['commenter_website']) : '';
-                $comment_date = ;
-                $comment_text = sqlite_escape_string();
 
                 // Do they want us to remember them?
                 if(!empty($_POST['remember_me']))
@@ -94,15 +84,15 @@ class Comment
                     VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ");
 
-                $comment_submit->bindParam(1, $_POST['comment_pid'], PDO::PARAM_INT);
-                $comment_submit->bindParam(2, (get_bloginfo('comment_moderation') == 'none' ? 1 : 0));
-                $comment_submit->bindParam(3, user()->id(), PDO::PARAM_INT);
-                $comment_submit->bindParam(4, utf_htmlspecialchars($_POST['commenter_name']), PDO::PARAM_STR);
-                $comment_submit->bindParam(5, utf_htmlspecialchars($_POST['commenter_email']), PDO::PARAM_STR);
-                $comment_submit->bindParam(6, (is_url($_POST['commenter_website']) ? utf_htmlspecialchars($_POST['commenter_website'])), PDO::PARAM_STR);
-                $comment_submit->bindParam(7, user()->ip());
-                $comment_submit->bindParam(8, time());
-                $comment_submit->bindParam(9, htmLawed::hl($_POST['comment_text'], array('safe' => 1, 'elements' => 'a, b, strong, i, em, li, ol, ul, br, span, u, s, img, abbr, blockquote, strike, code')));
+                $comment_submit->bindValue(1, $_POST['comment_pid'], PDO::PARAM_INT);
+                $comment_submit->bindValue(2, (get_bloginfo('comment_moderation') == 'none' ? 1 : 0));
+                $comment_submit->bindValue(3, user()->id(), PDO::PARAM_INT);
+                $comment_submit->bindValue(4, utf_htmlspecialchars($_POST['commenter_name']), PDO::PARAM_STR);
+                $comment_submit->bindValue(5, utf_htmlspecialchars($_POST['commenter_email']), PDO::PARAM_STR);
+                $comment_submit->bindValue(6, (is_url($_POST['commenter_website']) ? utf_htmlspecialchars($_POST['commenter_website'])), PDO::PARAM_STR);
+                $comment_submit->bindValue(7, user()->ip());
+                $comment_submit->bindValue(8, time());
+                $comment_submit->bindValue(9, htmLawed::hl($_POST['comment_text'], array('safe' => 1, 'elements' => 'a, b, strong, i, em, li, ol, ul, br, span, u, s, img, abbr, blockquote, strike, code')));
 
                 if(!$comment_submit->execute())
                 {
@@ -123,7 +113,7 @@ class Comment
                         WHERE post_id = ?
                     ");
 
-                    $comment_index_update->bindParam(1, $_POST['comment_pid'], PDO::PARAM_INT);
+                    $comment_index_update->bindValue(1, $_POST['comment_pid'], PDO::PARAM_INT);
 
                     if(!$omment_index_update->execute())
                     {

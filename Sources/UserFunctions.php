@@ -128,7 +128,7 @@ function users_load($users)
             FROM users
             WHERE user_id IN(?)");
 
-        $users_data->bindParam(1, implode(', ', $users), PDO::PARAM_STR);
+        $users_data->bindValue(1, implode(', ', $users), PDO::PARAM_STR);
         $users_data->execute();
 
         while($row = $users_data->fetch(SQLITE_ASSOC))

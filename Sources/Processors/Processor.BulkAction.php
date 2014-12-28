@@ -41,16 +41,16 @@ class BulkAction
                     case 'unpublish':
                         $action = $this->dbh->prepare("UPDATE :type SET published=0 WHERE :type_id IN (:in)");
                 }
-                $action->bindParam(":in", implode(',', $data['checked']), PDO::PARAM_STR);
+                $action->bindValue(":in", implode(',', $data['checked']), PDO::PARAM_STR);
             }
             elseif(array_key_exists('delete', $data))
             {
                 $action = @$this->dbh->exec("DELETE FROM :type WHERE :type_id = :in");
-                $action->bindParam(":in", $data['delete'], PDO::PARAM_INT);
+                $action->bindValue(":in", $data['delete'], PDO::PARAM_INT);
             }
 
-            $action->bindParam(":type", strip_tags($data['type'])."s");
-            $action->bindParam(":type_in", strip_tags($data['type'])."_id");
+            $action->bindValue(":type", strip_tags($data['type'])."s");
+            $action->bindValue(":type_in", strip_tags($data['type'])."_id");
 
             if(!$action->execute())
             {

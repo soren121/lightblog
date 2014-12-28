@@ -101,7 +101,7 @@ class PostLoop
 
         Parameters:
             bool $is_count - Whether to replace COUNT(*) with the column selectors
-                                             in the generated query.
+                             in the generated query.
 
         Returns:
             string - A complete SQL query.
@@ -172,11 +172,11 @@ class PostLoop
             ORDER BY :order
             :limit");
 
-        $post->bindParam(":selection", (!empty($is_count) ? 'COUNT(*)' : 'p.*'));
-        $post->bindParam(":join", "p".(count($options['join']) > 0 ? implode("\r\n", $options['join']). "\r\n" : ''));
-        $post->bindParam(":where", (count($options['where']) > 0 ? implode(' AND ', $options['where']) : '1'));
-        $post->bindParam(":order", (count($options['order_by']) > 0 ? 'ORDER BY '. implode(', ', $options['order_by'])));
-        $post->bindParam(":limit", (!empty($limit) ? 'LIMIT '. $limit[0]. ', '. $limit[1]));
+        $post->bindValue(":selection", (!empty($is_count) ? 'COUNT(*)' : 'p.*'));
+        $post->bindValue(":join", "p".(count($options['join']) > 0 ? implode("\r\n", $options['join']). "\r\n" : ''));
+        $post->bindValue(":where", (count($options['where']) > 0 ? implode(' AND ', $options['where']) : '1'));
+        $post->bindValue(":order", (count($options['order_by']) > 0 ? 'ORDER BY '. implode(', ', $options['order_by'])));
+        $post->bindValue(":limit", (!empty($limit) ? 'LIMIT '. $limit[0]. ', '. $limit[1]));
 
         return $post;
     }
@@ -299,7 +299,7 @@ class PostLoop
             FROM categories
             WHERE category_id IN(:selected)");
 
-        $category_metadata->bindParam(":selected", implode(', ', $categories));
+        $category_metadata->bindValue(":selected", implode(', ', $categories));
         $category_metadata->execute();
 
         $this->data['categories'] = array();

@@ -69,7 +69,7 @@ function user_login($options)
             WHERE LOWER(user_name) = '?'
             LIMIT 1");
 
-        $user_metadata->bindParam(1, $options['username'], PDO::PARAM_STR);
+        $user_metadata->bindValue(1, $options['username'], PDO::PARAM_STR);
 
         if(!$user_metadata->execute())
         {
@@ -106,10 +106,10 @@ function user_login($options)
                 SET user_salt = :salt, user_pass = :pass, user_ip = :ip_addr
                 WHERE user_id = :id");
 
-            $user_update->bindParam(":salt", randomString(9), PDO::PARAM_STR);
-            $user_update->bindParam(":pass", sha1($new_salt. $options['password']), PDO::PARAM_STR);
-            $user_update->bindParam(":ip_addr", user()->ip(), PDO::PARAM_INT);
-            $user_update->bindParam(":id", $options['username'], PDO::PARAM_STR);
+            $user_update->bindValue(":salt", randomString(9), PDO::PARAM_STR);
+            $user_update->bindValue(":pass", sha1($new_salt. $options['password']), PDO::PARAM_STR);
+            $user_update->bindValue(":ip_addr", user()->ip(), PDO::PARAM_INT);
+            $user_update->bindValue(":id", $options['username'], PDO::PARAM_STR);
 
             $user_update->execute();
 
@@ -162,8 +162,8 @@ function user_name_allowed($name, $id = 0)
         WHERE (LOWER(user_name) = LOWER(:username) OR LOWER(display_name) = LOWER(:username)) AND user_id != :id
         LIMIT 1";
 
-    $allowed->bindParam(":username", utf_htmlspecialchars($name));
-    $allowed->bindParam(":id", $id, PDO::PARAM_INT);
+    $allowed->bindValue(":username", utf_htmlspecialchars($name));
+    $allowed->bindValue(":id", $id, PDO::PARAM_INT);
 
     $allowed->execute();
 
@@ -210,8 +210,8 @@ function user_email_allowed($email, $id = 0)
         WHERE LOWER(user_email) = LOWER(:email) AND user_id != :id
         LIMIT 1");
 
-    $allowed->bindParam(":email", utf_htmlspecialchars($email), PDO::PARAM_STR);
-    $allowed->bindParam(":id", $id, PDO::PARAM_INT);
+    $allowed->bindValue(":email", utf_htmlspecialchars($email), PDO::PARAM_STR);
+    $allowed->bindValue(":id", $id, PDO::PARAM_INT);
 
     $allowed->execute();
 

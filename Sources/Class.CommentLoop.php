@@ -108,7 +108,7 @@ class CommentLoop
             WHERE post_id = ?
             LIMIT 1");
 
-		$post_count->execute(array($this->data['post']['id']));
+		$post_count->execute([$this->data['post']['id']]);
 
         $comment_metadata = $this->dbh->prepare("
             SELECT
@@ -117,7 +117,7 @@ class CommentLoop
             WHERE post_id = ?
             LIMIT 1");
 
-		$comment_metadata->execute(array($this->data['post']['id']));
+		$comment_metadata->execute([$this->data['post']['id']]);
 
         // Does the post exist?
         if($post_count->fetchColumn())
@@ -143,7 +143,7 @@ class CommentLoop
 				(permissions(3) ? '' : ' AND published = 1')
 			));
 
-            $users = array();
+            $users = [];
             while($row = $comment_data->fetch(PDO::FETCH_ASSOC))
             {
                 $this->data['comments'][] = array(
