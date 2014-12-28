@@ -28,9 +28,9 @@ class Settings
     {
         // We will collect the response here.
         $response = array(
-                                    'result' => 'error',
-                                    'response' => array(),
-                                );
+            'result' => 'error',
+            'response' => array(),
+        );
 
         $options = array();
 
@@ -89,20 +89,28 @@ class Settings
         if(count($response['response']) == 0)
         {
             // Nope, so we can save the settings.
-            $save_query = array();
+            $this->dbh->beginTransaction();
+
+            $save_query = $this->dbh->prepare("
+                INSERT OR REPLACE INTO
+                    settings
+                (variable, value)
+                VALUES(
+                    :option,
+                    :value
+                )
+            ");
+
             foreach($options as $option => $value)
             {
                 $GLOBALS['bloginfo_data'][$option] = $value;
 
-                if(is_string($value))
-                {
-                    $value = sqlite_escape_string($value);
-                }
-
-                $save_query[] = 'INSERT OR REPLACE INTO settings (variable, value) VALUES(\''. sqlite_escape_string($option). '\', '. (is_string($value) ? '\''. $value. '\'' : $value). ');';
+                $save_query->bindParam(":option", $option, PDO::PARAM_STR);
+                $save_query->bindParam(":value", $value, PDO::PARAM_STR);
+                $save_query->execute();
             }
 
-            if($this->dbh->exec(implode("\r\n", $save_query)) > 0)
+            if($this->dbh->commit())
             {
                 $response['result'] = 'success';
                 $response['response'] = 'Settings saved.';

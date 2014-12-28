@@ -101,7 +101,7 @@ class PageLoop
 
         $posts->bindParam(":pid", (int)$GLOBALS['pid']);
 
-        $this->load($posts->execute());
+        $this->load($posts);
     }
 
     /*
@@ -118,7 +118,7 @@ class PageLoop
             WHERE ". (!permissions(1) ? 'published = 1' : '1'). "
             ORDER BY post_title ASC");
 
-        $this->load($pages->execute());
+        $this->load($pages);
     }
 
     /*
@@ -173,7 +173,7 @@ class PageLoop
     */
     private function load($request)
     {
-        if(!$request)
+        if(!$request->execute())
         {
             trigger_error('An unknown error occurred while processing the pages', E_USER_ERROR);
         }

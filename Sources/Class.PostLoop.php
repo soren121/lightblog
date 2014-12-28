@@ -56,13 +56,13 @@ class PostLoop
     {
         $this->dbh = null;
         $this->data  = array(
-                                         'posts' => array(),
-                                         'count' => null,
-                                         'max_page' => null,
-                                         'page' => null,
-                                         'categories' => array(),
-                                         'query_string' => null,
-                                     );
+            'posts' => array(),
+            'count' => null,
+            'max_page' => null,
+            'page' => null,
+            'categories' => array(),
+            'query_string' => null,
+        );
         $this->current = null;
         $this->post = null;
 
@@ -163,21 +163,21 @@ class PostLoop
         {
             trigger_error('Unknown post query type '. utf_htmlspecialchars($querytype), E_USER_ERROR);
         }
-        
+
         $post = $this->dbh->prepare("
             SELECT
                 :selection
-            FROM posts AS p:join
+            FROM posts AS :join
             WHERE :where
-            ORDER BY :order 
+            ORDER BY :order
             :limit");
-        
+
         $post->bindParam(":selection", (!empty($is_count) ? 'COUNT(*)' : 'p.*'));
         $post->bindParam(":join", "p".(count($options['join']) > 0 ? implode("\r\n", $options['join']). "\r\n" : ''));
         $post->bindParam(":where", (count($options['where']) > 0 ? implode(' AND ', $options['where']) : '1'));
         $post->bindParam(":order", (count($options['order_by']) > 0 ? 'ORDER BY '. implode(', ', $options['order_by'])));
         $post->bindParam(":limit", (!empty($limit) ? 'LIMIT '. $limit[0]. ', '. $limit[1]));
-        
+
         return $post;
     }
 
@@ -298,7 +298,7 @@ class PostLoop
                 category_id, short_name, full_name, category_text
             FROM categories
             WHERE category_id IN(:selected)");
-            
+
         $category_metadata->bindParam(":selected", implode(', ', $categories));
         $category_metadata->execute();
 

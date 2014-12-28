@@ -29,11 +29,13 @@ class ApproveComment
         if(permissions('EditComments'))
         {
             // Execute query to approve comment
-            $query = @$this->dbh->exec("UPDATE comments SET published=1 WHERE id=".(int)$data['id']);
+            $approve = $this->dbh->prepare("UPDATE comments SET published=1 WHERE id=?");
 
-            if(!$query)
+            $approve->bindParam(1, $data['id'], PDO::PARAM_INT);
+
+            if(!$approve->execute())
             {
-                return array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()));
+                return array("result" => "error", "response" => $approve->errorInfo()[2]);
             }
 
             return array('result' => 'success');

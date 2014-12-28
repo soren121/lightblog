@@ -35,7 +35,7 @@ class AddUser
         // They need to have permission too.
         if(permissions('AddUsers'))
         {
-            $options = array();
+            $options = [];
 
             // Make sure they gave us a user name.
             if(empty($data['username']) || utf_strlen(trim($data['username'])) == 0)
@@ -121,14 +121,7 @@ class AddUser
                 // Then their IP address.
                 $options['ip'] = user()->ip();
 
-                // Then sanitize everything.
-                foreach($options as $key => $value)
-                {
-                    $options[$key] = sqlite_escape_string($value);
-                }
-
-                // Now insert the user.
-                $sql_adduser = $this->dbh->exec("
+                $adduser = $this->dbh->prepare("
                     INSERT INTO
                         users
                             (user_name,
@@ -153,8 +146,14 @@ class AddUser
                     )
                 ");
 
+                // Then sanitize everything.
+                foreach ($params as $key => &$val)
+                {
+                    $adduser->bindParam($key, $val);
+                }
+
                 // Did we create it?
-                if($sql_adduser > 0)
+                if($adduser->execute())
                 {
                     // Yes!
                     $response['result'] = 'success';
@@ -162,7 +161,7 @@ class AddUser
                 }
                 else
                 {
-                    $response['response'] = sqlite_error_string($this->dbh->lastError());
+                    $response['response'] = $adduser->errorInfo()[2];
                 }
             }
         }

@@ -27,23 +27,21 @@ class Comment
     public function processor($data)
     {
         // We need to make sure that the post exists and allows comments!
-        $comment_pid = (int)$_POST['comment_pid'];
-        $query = $this->dbh->query("
+        $comments_allowed = $this->dbh->prepare("
             SELECT
                 allow_comments
             FROM posts
-            WHERE post_id = ". $comment_pid. "
+            WHERE post_id = ?
             LIMIT 1");
 
-        $comments_allowed = $query->fetch(PDO::FETCH_NUM);
-        $query->closeCursor();
+        $comments_allowed->bindParam(1, $_POST['comment_pid'], PDO::PARAM_INT);
 
-        if(!$query)
+        if(!$comments_allowed->execute())
         {
             return array("result" => "error", "response" => "Failed to query database.");
         }
 
-        if($comments_allowed[0] == 1)
+        if($comments_allowed->fetch(PDO::FETCH_NUM)[0] == 1)
         {
             // If they're a logged in user, we will set these ourselves.
             if(user()->is_logged())
@@ -62,14 +60,14 @@ class Comment
                 require(ABSPATH .'/Sources/Class.htmLawed.php');
 
                 // Escape values
-                $commenter_id = (int)user()->id();
-                $published = get_bloginfo('comment_moderation') == 'none' ? 1 : 0;
-                $commenter_ip = sqlite_escape_string(user()->ip());
-                $commenter_name = sqlite_escape_string(utf_htmlspecialchars($_POST['commenter_name']));
-                $commenter_email = sqlite_escape_string(utf_htmlspecialchars($_POST['commenter_email']));
-                $commenter_website = is_url($_POST['commenter_website']) ? sqlite_escape_string(utf_htmlspecialchars($_POST['commenter_website'])) : '';
-                $comment_date = time();
-                $comment_text = sqlite_escape_string(htmLawed::hl($_POST['comment_text'], array('safe' => 1, 'elements' => 'a, b, strong, i, em, li, ol, ul, br, span, u, s, img, abbr, blockquote, strike, code')));
+                $commenter_id = (int);
+                $published = ;
+                $commenter_ip = sqlite_escape_string();
+                $commenter_name = sqlite_escape_string();
+                $commenter_email = sqlite_escape_string();
+                $commenter_website = is_url($_POST['commenter_website']) ? utf_htmlspecialchars($_POST['commenter_website']) : '';
+                $comment_date = ;
+                $comment_text = sqlite_escape_string();
 
                 // Do they want us to remember them?
                 if(!empty($_POST['remember_me']))
@@ -79,14 +77,34 @@ class Comment
                     setcookie(LBCOOKIE. '_curl', !empty($_POST['commenter_website']) && is_url($_POST['commenter_website']) ? $_POST['commenter_website'] : '', time() + 2592000, '/');
                 }
 
-                $submit_query = $this->dbh->exec("
-                    INSERT INTO comments
-                    (post_id, published, commenter_id, commenter_name, commenter_email, commenter_website,
-                     commenter_ip, comment_date, comment_text)
-                    VALUES($comment_pid, $published, '$commenter_id', '$commenter_name', '$commenter_email', '$commenter_website',
-                     '$commenter_ip', '$comment_date', '$comment_text')");
+                $comment_submit = $this->dbh->prepare("
+                    INSERT INTO
+                        comments
+                    (
+                        post_id,
+                        published,
+                        commenter_id,
+                        commenter_name,
+                        commenter_email,
+                        commenter_website,
+                        commenter_ip,
+                        comment_date,
+                        comment_text
+                     )
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ");
 
-                if(!$submit_query)
+                $comment_submit->bindParam(1, $_POST['comment_pid'], PDO::PARAM_INT);
+                $comment_submit->bindParam(2, (get_bloginfo('comment_moderation') == 'none' ? 1 : 0));
+                $comment_submit->bindParam(3, user()->id(), PDO::PARAM_INT);
+                $comment_submit->bindParam(4, utf_htmlspecialchars($_POST['commenter_name']), PDO::PARAM_STR);
+                $comment_submit->bindParam(5, utf_htmlspecialchars($_POST['commenter_email']), PDO::PARAM_STR);
+                $comment_submit->bindParam(6, (is_url($_POST['commenter_website']) ? utf_htmlspecialchars($_POST['commenter_website'])), PDO::PARAM_STR);
+                $comment_submit->bindParam(7, user()->ip());
+                $comment_submit->bindParam(8, time());
+                $comment_submit->bindParam(9, htmLawed::hl($_POST['comment_text'], array('safe' => 1, 'elements' => 'a, b, strong, i, em, li, ol, ul, br, span, u, s, img, abbr, blockquote, strike, code')));
+
+                if(!$comment_submit->execute())
                 {
                     return array("result" => "error", "response" => "Failed to submit comment to database.");
                 }
@@ -99,12 +117,15 @@ class Comment
                 else
                 {
                     // Increment the posts comment count, then.
-                    $update_query = $this->dbh->exec("
+                    $comment_index_update = $this->dbh->prepare("
                         UPDATE posts
                         SET comments = comments + 1
-                        WHERE post_id = $comment_pid");
+                        WHERE post_id = ?
+                    ");
 
-                    if(!$update_query)
+                    $comment_index_update->bindParam(1, $_POST['comment_pid'], PDO::PARAM_INT);
+
+                    if(!$omment_index_update->execute())
                     {
                         return array("result" => "error", "response" => "Failed to query database.");
                     }

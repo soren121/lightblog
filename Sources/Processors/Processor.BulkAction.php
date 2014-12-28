@@ -28,32 +28,33 @@ class BulkAction
     {
         if(permissions('EditOthersPosts'))
         {
-            $type = sqlite_escape_string(strip_tags($data['type']));
-
             if($data['checked'] != '' && !array_key_exists('delete', $data))
             {
-                $in = sqlite_escape_string(implode(',', $data['checked']));
                 switch($data['action'])
                 {
                     case 'delete':
-                        $query = @$this->dbh->exec("DELETE FROM {$type}s WHERE {$type}_id IN ({$in})");
+                        $action = $this->dbh->prepare("DELETE FROM :type WHERE :type_id IN (:in)");
                         break;
                     case 'publish':
-                        $query = @$this->dbh->exec("UPDATE {$type}s SET published=".time()." WHERE {$type}_id IN ({$in})");
+                        $action = $this->dbh->prepare("UPDATE :type SET published=".time()." WHERE :type_id IN (:in)");
                         break;
                     case 'unpublish':
-                        $query = @$this->dbh->exec("UPDATE {$type}s SET published=0 WHERE {$type}_id IN ({$in})");
+                        $action = $this->dbh->prepare("UPDATE :type SET published=0 WHERE :type_id IN (:in)");
                 }
+                $action->bindParam(":in", implode(',', $data['checked']), PDO::PARAM_STR);
             }
             elseif(array_key_exists('delete', $data))
             {
-                $delete_id = (int)$data['delete'];
-                $query = @$this->dbh->exec("DELETE FROM {$type}s WHERE {$type}_id = ".$delete_id);
+                $action = @$this->dbh->exec("DELETE FROM :type WHERE :type_id = :in");
+                $action->bindParam(":in", $data['delete'], PDO::PARAM_INT);
             }
 
-            if(!$query)
+            $action->bindParam(":type", strip_tags($data['type'])."s");
+            $action->bindParam(":type_in", strip_tags($data['type'])."_id");
+
+            if(!$action->execute())
             {
-                return array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()));
+                return array("result" => "error", "response" => $action->errorInfo()[2]);
             }
             else
             {
