@@ -26,17 +26,28 @@ class Edit
 
     public function processor($data)
     {
-        $id = (int)$_POST['id'];
-        $type = sqlite_escape_string($_POST['type']);
-        $sql_past_data = @$this->dbh->query("SELECT * FROM {$type}s WHERE {$type}_id=".$id);
-
-        if($sql_past_data == false)
+        if(!in_array($_POST['type'], ['post', 'page']))
         {
-            return array("result" => "error", "response" => sqlite_error_string($dbh->lastError()));
+            return array("result" => "error", "response" => "Invalid content type.");
+        }
+
+        $past_data = $this->dbh->prepare("
+            SELECT
+                *
+            FROM :type
+            WHERE :type_id = :id");
+
+        $past_data->bindValue(":type", $_POST['type'].'s', PDO::PARAM_STR);
+        $past_data->bindValue(":type_id", $_POST['type'].'_id', PDO::PARAM_STR);
+        $past_data->bindParam(":id", $_POST['id'], PDO::PARAM_INT);
+
+        if(!$past_data->execute())
+        {
+            return array("result" => "error", "response" => $past_data->errorInfo()[2]);
         }
 
         // Fetch previous data
-        while($past = $sql_past_data->fetchObject())
+        while($past = $past_data->fetchObject())
         {
             if($_POST['type'] == 'post')
             {
@@ -55,7 +66,7 @@ class Edit
             $author_id = $past->author_id;
         }
 
-        $sql_past_data->closeCursor();
+        $past_data->closeCursor();
 
         if(permissions('EditOthersPosts') || permissions('EditPosts') && $author_id == user()->id())
         {

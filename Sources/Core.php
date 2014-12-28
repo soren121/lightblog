@@ -49,7 +49,15 @@ else
 // Check to make sure that the database exists.
 if(file_exists(DBH))
 {
-    $dbh = new PDO('sqlite:'.DBH);
+    try
+    {
+        $dbh = new PDO('sqlite:'.DBH);
+    }
+    catch(PDOException $e)
+    {
+        trigger_error($e->getMessage(), E_USER_ERROR);
+    }
+
     $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $dbh->setAttribute(PDO::ATTR_TIMEOUT, 5);
 }

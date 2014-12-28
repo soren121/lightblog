@@ -117,8 +117,8 @@ class PostLoop
 
         $querytype = $GLOBALS['postquery']['type'];
         $options = array(
-            'join' => array(),
-            'where' => array(),
+            'join' => [],
+            'where' => [],
             'order_by' => array('post_date DESC'),
         );
 
@@ -137,7 +137,7 @@ class PostLoop
             $options['where'][] = 'post_id= '. $pid;
 
             // We don't need to order by anything.
-            $options['order_by'] = array();
+            $options['order_by'] = [];
         }
         // Viewing the archive list?
         elseif($querytype == 'archive')
@@ -167,16 +167,14 @@ class PostLoop
         $post = $this->dbh->prepare("
             SELECT
                 :selection
-            FROM posts AS :join
-            WHERE :where
-            ORDER BY :order
-            :limit");
+            FROM posts AS p
+        ");
 
         $post->bindValue(":selection", (!empty($is_count) ? 'COUNT(*)' : 'p.*'));
-        $post->bindValue(":join", "p".(count($options['join']) > 0 ? implode("\r\n", $options['join']). "\r\n" : ''));
-        $post->bindValue(":where", (count($options['where']) > 0 ? implode(' AND ', $options['where']) : '1'));
-        $post->bindValue(":order", (count($options['order_by']) > 0 ? 'ORDER BY '. implode(', ', $options['order_by'])));
-        $post->bindValue(":limit", (!empty($limit) ? 'LIMIT '. $limit[0]. ', '. $limit[1]));
+        //$post->bindValue(":join", (count($options['join']) > 0 ? implode(' ', $options['join']) : ''));
+        //$post->bindValue(":where", (count($options['where']) > 0 ? implode(' AND ', $options['where']) : '1'));
+        //$post->bindValue(":order", (count($options['order_by']) > 0 ? 'ORDER BY '. implode(', ', $options['order_by']) : ''));
+        //$post->bindValue(":limit", (!empty($limit) ? 'LIMIT '. $limit[0]. ', '. $limit[1] : ''));
 
         return $post;
     }
@@ -217,9 +215,14 @@ class PostLoop
         $limit = (int)$limit >= 1 ? (int)$limit : 1;
 
         // Okay, first off, we need to see how many posts there are in total.
-        $request = $this->dbh->query($this->generateQuery(true));
+        $post_count = $this->generateQuery(true);
 
-        list($this->data['count']) = $request->fetch(PDO::FETCH_NUM);
+        if(!$post_count->execute())
+        {
+            trigger_error('Unable to retrieve post count: '.$post_count->errorInfo()[2], E_USER_ERROR);
+        }
+
+        $this->data['count'] = $post_count->fetchColumn();
 
         // Let's see, how many pages can we have?
         $this->data['max_page'] = ceil($this->data['count'] / (int)$limit);

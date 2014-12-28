@@ -160,14 +160,18 @@ function dbsetup()
     }
 
     // Create, write to, and close database
-    if(!$dbh = new SQLiteDatabase($dbpath))
+    try
+    {
+        $dbh = new PDO('sqlite:'.$dbpath);
+    }
+    catch(PDOException $e)
     {
         return 'Failed to create the database. Please <abbr title="change permissions">chmod</abbr> its directory to 760 and try again.';
     }
 
-    if(!$dbh->queryExec($sql, $errormsg))
+    if($dbh->exec($sql) === false)
     {
-        return 'Failed to write to the database because: '.$errormsg.'.';
+        return 'Failed to write to the database because: '.$dbh->errorInfo()[2];
     }
 
     unset($dbh);
@@ -238,38 +242,71 @@ function bsetup()
     // We need it to open the database
     require('config.php');
 
-    // Set (and for some, clean) variables
-    $username = sqlite_escape_string($_POST['bsusername']);
-    $password = $_POST['bspassword'];
-    $vpassword = $_POST['bsvpassword'];
-    $email = sqlite_escape_string($_POST['bsemail']);
-    $dname = sqlite_escape_string($_POST['bsdname']);
-    $title = sqlite_escape_string($_POST['bstitle']);
-    $url = sqlite_escape_string($_POST['bsurl']);
-    $ip = $_SERVER['REMOTE_ADDR'];
-
     // Match passwords
-    if($password !== $vpassword)
+    if($_POST['bspassword'] !== $_POST['bsvpassword'])
     {
-        return 'Passwords don\'t match. Please try again.';
+        return "Passwords don't match. Please try again.";
     }
-
-    // Open database
-    $dbh = new SQLiteDatabase( DBH );
 
     // Generate password salt
     $salt = substr(md5(uniqid(mt_rand(), true)), 0, 9);
+    $password = sha1($salt. $_POST['bspassword']);
 
-    // Clean remaining variables
-    $password = sha1($salt. $password);
+    // Open database
+    $dbh = new PDO('sqlite:'.DBH);
+    $dbh->beginTransaction();
 
-    // Save the data!
-    $dbh->query("
-        INSERT INTO users
-        (user_name, user_pass, user_email, display_name, user_role, user_ip, user_salt, user_activated, user_created)
-        VALUES('$username', '$password', '$email', '$dname', 1, '$ip', '$salt', 1, ". time(). ");
-        INSERT INTO settings VALUES('title', '$title');
-        INSERT INTO settings VALUES('url', '$url');");
+    $admin = $dbh->prepare("
+        INSERT INTO
+            users
+        (
+            user_name,
+            user_pass,
+            user_email,
+            display_name,
+            user_role,
+            user_ip,
+            user_salt,
+            user_activated,
+            user_created
+        )
+        VALUES(
+            :username,
+            :pass,
+            :email,
+            :displayname,
+            1,
+            :ip_addr,
+            :salt,
+            1,
+            :time
+        )
+    ");
+
+    $admin->bindParam(":username", $_POST['bsusername'], PDO::PARAM_STR);
+    $admin->bindParam(":pass", $password, PDO::PARAM_STR);
+    $admin->bindParam(":email", $_POST['bsemail'], PDO::PARAM_STR);
+    $admin->bindParam(":displayname", $_POST['bsdname'], PDO::PARAM_STR);
+    $admin->bindParam(":ip_addr", $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+    $admin->bindParam(":salt", $salt);
+    $admin->bindValue(":time", time());
+
+    $admin->execute();
+
+    $settings = $dbh->prepare("
+        INSERT INTO settings VALUES(title, :title);
+        INSERT INTO settings VALUES(url, :url);
+    ");
+
+    $settings->bindParam(":title", $_POST['bstitle'], PDO::PARAM_STR);
+    $settings->bindParam(":url", $_POST['bsurl'], PDO::PARAM_STR);
+
+    $settings->execute();
+
+    if(!$dbh->commit())
+    {
+        return "Failed to commit changes.";
+    }
 
     // Shut off database connection
     unset($dbh);
@@ -343,6 +380,7 @@ if(isset($_POST['bsetup']))
         }
         #sidebar ul li.done {
             color: #9BB1CF;
+            list-style-type: disc;
         }
         #sidebar ul li.notdone {
             color: #748CAB;
@@ -386,7 +424,7 @@ if(isset($_POST['bsetup']))
         #content th {
             background: #DCE8F2;
         }
-        #content span#error {
+        #content #error {
             margin: 15px 0 0 25px;
             color: #9C0606;
             font-size: .9em;
@@ -453,27 +491,21 @@ if(isset($_POST['bsetup']))
                     </tr>
                     <tr>
                         <td>PHP</td>
-                        <td><?php echo phpversion(); ?></td>
-                        <?php if(floatval(phpversion()) >= "5.1"): ?>
+                        <td><?php echo phpversion() ?></td>
+                        <?php if(version_compare(PHP_VERSION, '5.3.0', '>=')): ?>
                             <td>OK</td>
                         <?php else: ?>
-                            <td>Too old (5.1+ required)</td>
+                            <td>Too old (5.3+ required)</td>
                             <?php $disable = 'disabled="disabled"'; ?>
                         <?php endif; ?>
                     </tr>
                     <tr>
-                        <td>SQLite</td>
-                        <?php if(extension_loaded('sqlite')): ?>
-                            <td><?php echo sqlite_libversion(); ?></td>
-                            <?php if(floatval(sqlite_libversion()) >= "2.8"): ?>
-                                <td>OK</td>
-                            <?php else: ?>
-                                <td>Too old (2.8+ required)</td>
-                                <?php $disable = 'disabled="disabled"'; ?>
-                            <?php endif; ?>
+                        <td>SQLite (PDO)</td>
+                        <td><?php echo SQLite3::version()['versionString'] ?></td>
+                        <?php if(in_array("sqlite", PDO::getAvailableDrivers())): ?>
+                            <td>OK</td>
                         <?php else: ?>
-                            <td>&nbsp;</td>
-                            <td>Disabled (need 2.8+ enabled)</td>
+                            <td>Driver not available</td>
                             <?php $disable = 'disabled="disabled"'; ?>
                         <?php endif; ?>
                     </tr>

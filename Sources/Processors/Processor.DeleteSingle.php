@@ -26,13 +26,34 @@ class DeleteSingle
 
     public function processor($data)
     {
+        if($data['type'] == 'post' || $data['type'] == 'page')
+        {
+            $author_check = $this->dbh->prepare("
+            SELECT
+                author_id
+            FROM :type
+            WHERE :type_id = :id
+            LIMIT 1
+            ");
+
+            $author_check->bindValue(":type", $data['type'].'s', PDO::PARAM_STR);
+            $author_check->bindValue(":type_id", $data['type'].'_id', PDO::PARAM_STR);
+            $author_check->bindParam(":id", $data['id'], PDO::PARAM_INT);
+
+            if(!$author_check->execute())
+            {
+                return array("result" => "error", "response" => $author_check->errorInfo()[2]);
+            }
+        }
+
         switch($data['type'])
         {
             case 'post':
-                if(!permissions('EditOthersPosts'))
+                if(!permissions('EditOthersPosts') || permissions('EditPosts') && $author_check->fetchColumn() == user()->id())
                 {
                     return array("result" => "error", "response" => "You're not allowed to delete this post.");
                 }
+
                 // Delete comments associated with this post
                 $this->dbh->exec("DELETE FROM comments WHERE post_id=".(int)$data['id']);
                 // Update comment number in the posts table
@@ -40,7 +61,7 @@ class DeleteSingle
 
                 break;
             case 'page':
-                if(!permissions('EditPages'))
+                if(!permissions('EditOthersPages') || permissions('EditPages') && $author_check->fetchColumn() == user()->id())
                 {
                     return array("result" => "error", "response" => "You're not allowed to delete this page.");
                 }
@@ -53,16 +74,30 @@ class DeleteSingle
                 }
 
                 break;
+            case default:
+                return array("result" => "error", "response" => "Invalid content type.");
         }
 
         // Execute query to delete post/page/category
-        $sql_delete = $this->dbh->exec("DELETE FROM ".sqlite_escape_string(strip_tags($_POST['type']))."s WHERE ".sqlite_escape_string($data['type'])."_id=".(int)$_POST['id']);
+        $delete = $this->dbh->prepare("
+            DELETE FROM
+                :type
+            WHERE :type_id = :id
+        ");
 
-        if($sql_delete == 0)
+        $delete->bindValue(":type", $data['type'].'s', PDO::PARAM_STR);
+        $delete->bindValue(":type_id", $data['type'].'_id', PDO::PARAM_STR);
+        $delete->bindParam(":id", $data['id'], PDO::PARAM_INT);
+
+        if(!$delete->execute())
         {
             return array("result" => "error", "response" => "Delete query failed.");
         }
-        return array("result" => "success");
+
+        else
+        {
+            return array("result" => "success");
+        }
     }
 }
 

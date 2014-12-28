@@ -67,7 +67,8 @@ function user_login($options)
                 user_id, user_pass, user_ip, user_salt
             FROM users
             WHERE LOWER(user_name) = '?'
-            LIMIT 1");
+            LIMIT 1
+        ");
 
         $user_metadata->bindValue(1, $options['username'], PDO::PARAM_STR);
 
@@ -104,7 +105,8 @@ function user_login($options)
             $user_update = $dbh->prepare("
                 UPDATE users
                 SET user_salt = :salt, user_pass = :pass, user_ip = :ip_addr
-                WHERE user_id = :id");
+                WHERE user_id = :id
+            ");
 
             $user_update->bindValue(":salt", randomString(9), PDO::PARAM_STR);
             $user_update->bindValue(":pass", sha1($new_salt. $options['password']), PDO::PARAM_STR);
@@ -155,12 +157,13 @@ function user_name_allowed($name, $id = 0)
     global $dbh;
 
     // Alright, let's check!
-    $allowed = $dbh->prepare"
+    $allowed = $dbh->prepare("
         SELECT
             COUNT(*)
         FROM users
         WHERE (LOWER(user_name) = LOWER(:username) OR LOWER(display_name) = LOWER(:username)) AND user_id != :id
-        LIMIT 1";
+        LIMIT 1
+    ");
 
     $allowed->bindValue(":username", utf_htmlspecialchars($name));
     $allowed->bindValue(":id", $id, PDO::PARAM_INT);
@@ -301,7 +304,8 @@ class User
                         user_id, user_name, user_pass, user_email, display_name, user_role
                     FROM users
                     WHERE user_id = :id AND user_pass = :pass
-                    LIMIT 1");
+                    LIMIT 1
+                ");
 
                 $user_metadata->bindParam(":id", $user_id, PDO::PARAM_INT);
                 $user_metadata->bindParam(":pass", $user_pass, PDO::PARAM_STR);

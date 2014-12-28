@@ -63,8 +63,10 @@ function errorsHandle($errno, $message, $filename, $line, $errcontext)
     // Do we need to make a connection to the SQLite database ourselves?
     if(defined('DBH') && !array_key_exists('dbh', $GLOBALS) && file_exists(DBH))
     {
-        $dbh = new PDO('sqlite:'.DBH);
+        $GLOBALS['dbh'] = new PDO('sqlite:'.DBH);
     }
+
+    $dbh = $GLOBALS['dbh'];
 
     // Make sure we can query the database.
     if(array_key_exists('dbh', $GLOBALS))

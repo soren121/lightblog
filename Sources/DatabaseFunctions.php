@@ -41,7 +41,8 @@ function get_bloginfo($var, $reload = false)
         $result = $dbh->query('
             SELECT
                 variable, value
-            FROM settings');
+            FROM settings
+        ');
 
         // Let's make an array!
         $GLOBALS['bloginfo_data'] = array();
