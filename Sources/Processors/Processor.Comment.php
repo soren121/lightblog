@@ -89,7 +89,7 @@ class Comment
                 $comment_submit->bindValue(3, user()->id(), PDO::PARAM_INT);
                 $comment_submit->bindValue(4, utf_htmlspecialchars($_POST['commenter_name']), PDO::PARAM_STR);
                 $comment_submit->bindValue(5, utf_htmlspecialchars($_POST['commenter_email']), PDO::PARAM_STR);
-                $comment_submit->bindValue(6, (is_url($_POST['commenter_website']) ? utf_htmlspecialchars($_POST['commenter_website'])), PDO::PARAM_STR);
+                $comment_submit->bindValue(6, (is_url($_POST['commenter_website']) ? utf_htmlspecialchars($_POST['commenter_website']) : ''), PDO::PARAM_STR);
                 $comment_submit->bindValue(7, user()->ip());
                 $comment_submit->bindValue(8, time());
                 $comment_submit->bindValue(9, htmLawed::hl($_POST['comment_text'], array('safe' => 1, 'elements' => 'a, b, strong, i, em, li, ol, ul, br, span, u, s, img, abbr, blockquote, strike, code')));
@@ -115,7 +115,7 @@ class Comment
 
                     $comment_index_update->bindValue(1, $_POST['comment_pid'], PDO::PARAM_INT);
 
-                    if(!$omment_index_update->execute())
+                    if(!$comment_index_update->execute())
                     {
                         return array("result" => "error", "response" => "Failed to query database.");
                     }

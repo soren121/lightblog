@@ -105,19 +105,22 @@ class CommentLoop
             SELECT
                 COUNT(*)
             FROM posts
-            WHERE post_id = ?
+            WHERE post_id = :id
             LIMIT 1");
 
-		$post_count->execute([$this->data['post']['id']]);
+        $post_count->bindParam(":id", $this->data['post']['id'], PDO::PARAM_INT);
+
+		$post_count->execute();
 
         $comment_metadata = $this->dbh->prepare("
             SELECT
                 allow_comments, allow_pingbacks, comments
             FROM posts
-            WHERE post_id = ?
+            WHERE post_id = :id
             LIMIT 1");
 
-		$comment_metadata->execute([$this->data['post']['id']]);
+        $comment_metadata->bindParam(":id", $this->data['post']['id'], PDO::PARAM_INT);
+		$comment_metadata->execute();
 
         // Does the post exist?
         if($post_count->fetchColumn())
@@ -135,13 +138,13 @@ class CommentLoop
                     commenter_email, commenter_website, commenter_ip, comment_date,
                     comment_text
                 FROM comments
-                WHERE post_id = ? ?
+                WHERE post_id = :id AND published = :published
                 ORDER BY comment_date ASC");
 
-			$comment_data->execute(array(
-				$this->data['post']['id'],
-				(permissions(3) ? '' : ' AND published = 1')
-			));
+            $comment_data->bindParam(":id", $this->data['post']['id'], PDO::PARAM_INT);
+            $comment_data->bindValue(":published", (permissions(3) ? '0 OR 1' : '1'));
+
+            $comment_data->execute();
 
             $users = [];
             while($row = $comment_data->fetch(PDO::FETCH_ASSOC))

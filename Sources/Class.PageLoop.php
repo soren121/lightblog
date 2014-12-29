@@ -99,7 +99,7 @@ class PageLoop
             WHERE page_id = :pid". (!permissions(1) ? ' AND published = 1' : ''). "
             LIMIT 1");
 
-        $posts->bindParam(":pid", (int)$GLOBALS['pid']);
+        $posts->bindParam(":pid", $GLOBALS['pid'], PDO::PARAM_INT);
 
         $this->load($posts);
     }
