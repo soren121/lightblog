@@ -152,7 +152,7 @@ input.submit:hover {
 .role-1::after, .role-2::after {
     color: #fff;
     font-weight: bold;
-    border-radius: 64px;
+    border-radius: 100%;
     padding: 2px 4px;
     font-size: 0.7em;
     margin-left: 3px;

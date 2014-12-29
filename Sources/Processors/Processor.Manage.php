@@ -15,15 +15,10 @@
 
 *********************************************/
 
-class Manage
+require("Processor.TableSelection.php");
+
+class Manage extends TableSelection
 {
-    private $dbh;
-
-    public function __construct()
-    {
-        $this->dbh = $GLOBALS['dbh'];
-    }
-
     public function processor($data)
     {
         if(!in_array($data['type'], array('post', 'page')))
@@ -31,56 +26,7 @@ class Manage
             return array("result" => "error", "response" => "Invalid content type.");
         }
 
-        $where = array();
-        if(isset($data['prev']))
-        {
-            $data['page'] -= 1;
-        }
-        if(isset($data['next']))
-        {
-            $data['page'] += 1;
-        }
-        if($data['page'] != 0)
-        {
-            if(!isset($data['count']))
-            {
-                $data['count'] = 10;
-            }
-
-            $data['page'] = (int)(($data['page'] - 1) * $data['count']);
-        }
-        elseif($data['before'] != 0)
-        {
-            array_push($where, $data['type']."_id < ".(int)$data['before']);
-            $data['start'] = 0;
-        }
-
-        if(!empty($where))
-        {
-            $where = implode(' AND ', $where);
-        }
-        else
-        {
-            $where = "1";
-        }
-
-        $total = $this->dbh->query("
-            SELECT
-                COUNT(*)
-            FROM {$data['type']}s
-        ")->fetchColumn();
-
-        $manage = $this->dbh->prepare("
-            SELECT
-                *
-            FROM {$data['type']}s
-            WHERE {$where}
-            ORDER BY {$data['type']}_id desc
-            LIMIT :page , :count
-        ");
-
-        $manage->bindParam(":page", $data['page'], PDO::PARAM_INT);
-        $manage->bindParam(":count", $data['count'], PDO::PARAM_INT);
+        list($manage, $total) = $this->query($data, $data['type'].'s', $data['type'].'_id');
 
         if(!$manage->execute())
         {
@@ -175,6 +121,7 @@ class Manage
 
             $return .= '</tr>';
         }
+
         return array("result" => "success", "response" => $return);
     }
 }

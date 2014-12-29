@@ -35,7 +35,7 @@ class AddUser
         // They need to have permission too.
         if(permissions('AddUsers'))
         {
-            $options = [];
+            $options = array();
 
             // Make sure they gave us a user name.
             if(empty($data['username']) || utf_strlen(trim($data['username'])) == 0)
@@ -147,7 +147,7 @@ class AddUser
                 ");
 
                 // Then sanitize everything.
-                foreach ($params as $key => $val)
+                foreach ($options as $key => $val)
                 {
                     $adduser->bindValue($key, $val);
                 }

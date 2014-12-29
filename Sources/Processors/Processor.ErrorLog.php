@@ -15,67 +15,13 @@
 
 *********************************************/
 
-class ErrorLog
+require("Processor.TableSelection.php");
+
+class ErrorLog extends TableSelection
 {
-    private $dbh;
-
-    public function __construct()
-    {
-        $this->dbh = $GLOBALS['dbh'];
-    }
-
     public function processor($data)
     {
-        $where = array();
-        if(isset($data['prev']))
-        {
-            $data['page'] -= 1;
-        }
-        if(isset($data['next']))
-        {
-            $data['page'] += 1;
-        }
-        if($data['page'] != 0)
-        {
-            if(!isset($data['count']))
-            {
-                $data['count'] = 10;
-            }
-
-            $data['page'] = (int)(($data['page'] - 1) * $data['count']);
-        }
-        elseif($data['before'] != 0)
-        {
-            array_push($where, "error_id < ".(int)$data['before']);
-            $data['start'] = 0;
-        }
-
-        if(!empty($where))
-        {
-            $where = implode(' AND ', $where);
-        }
-        else
-        {
-            $where = "1";
-        }
-
-        $total = $this->dbh->query("
-            SELECT
-                COUNT(*)
-            FROM error_log
-        ")->fetchColumn();
-
-        $errorlog = $this->dbh->prepare("
-            SELECT
-                *
-            FROM error_log
-            WHERE {$where}
-            ORDER BY error_id desc
-            LIMIT :page , :count
-        ");
-
-        $errorlog->bindParam(":page", $data['page'], PDO::PARAM_INT);
-        $errorlog->bindParam(":count", $data['count'], PDO::PARAM_INT);
+        list($errorlog, $total) = $this->query($data, 'error_log', 'error_id');
 
         if(!$errorlog->execute())
         {
@@ -112,6 +58,7 @@ class ErrorLog
             $return .= '<td class="c"><img src="style/delete.png" alt="Delete" onclick="deleteItem('.$row->error_id.');" style="cursor:pointer;" /></td>';
             $return .= '</tr>';
         }
+
         return array("result" => "success", "response" => $return);
     }
 }

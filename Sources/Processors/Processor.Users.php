@@ -15,67 +15,13 @@
 
 *********************************************/
 
-class Users
+require("Processor.TableSelection.php");
+
+class Users extends TableSelection
 {
-    private $dbh;
-
-    public function __construct()
-    {
-        $this->dbh = $GLOBALS['dbh'];
-    }
-
     public function processor($data)
     {
-        $where = array();
-        if(isset($data['prev']))
-        {
-            $data['page'] -= 1;
-        }
-        if(isset($data['next']))
-        {
-            $data['page'] += 1;
-        }
-        if($data['page'] != 0)
-        {
-            if(!isset($data['count']))
-            {
-                $data['count'] = 10;
-            }
-
-            $data['page'] = (int)(($data['page'] - 1) * $data['count']);
-        }
-        elseif($data['before'] != 0)
-        {
-            array_push($where, "error_id < ".(int)$data['before']);
-            $data['start'] = 0;
-        }
-
-        if(!empty($where))
-        {
-            $where = implode(' AND ', $where);
-        }
-        else
-        {
-            $where = "1";
-        }
-
-        $total = $this->dbh->query("
-            SELECT
-                COUNT(*)
-            FROM users
-        ")->fetchColumn();
-
-        $users = $this->dbh->prepare("
-            SELECT
-                *
-            FROM users
-            WHERE {$where}
-            ORDER BY user_id desc
-            LIMIT :page , :count
-        ");
-
-        $users->bindParam(":page", $data['page'], PDO::PARAM_INT);
-        $users->bindParam(":count", $data['count'], PDO::PARAM_INT);
+        list($users, $total) = $this->query($data, 'users', 'user_id');
 
         if(!$users->execute())
         {
