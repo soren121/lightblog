@@ -22,8 +22,17 @@ require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 require(ABSPATH .'/Sources/Process.php');
 
-if((int)$_GET['type'] == 1) { $type = 'post'; }
-elseif((int)$_GET['type'] == 2) { $type = 'page'; }
+switch($_GET['type'])
+{
+    case 1:
+        $type = 'post';
+        break;
+    case 2:
+        $type = 'page';
+        break;
+    default:
+        trigger_error("Invalid content type", E_USER_ERROR);
+}
 
 function formCallback($response)
 {
@@ -49,8 +58,8 @@ $head_response = formCallback(processForm($_POST));
 if(isset($_POST['ajax']))
 {
     die(json_encode(array(
-                                        'response' => $head_response
-                                    )));
+        'response' => $head_response
+    )));
 }
 
 $head_title = l('Create '. ucwords($type));

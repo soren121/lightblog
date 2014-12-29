@@ -27,6 +27,9 @@ switch($_GET['type'])
         break;
     case 2:
         $type = 'page';
+        break;
+    default:
+        trigger_error("Invalid content type", E_USER_ERROR);
 }
 
 $response = processForm($_POST);

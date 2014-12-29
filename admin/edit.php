@@ -20,13 +20,16 @@ require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 require(ABSPATH .'/Sources/Process.php');
 
-if((int)$_GET['type'] == 1)
+switch($_GET['type'])
 {
-    $type = 'post';
-}
-elseif((int)$_GET['type'] == 2)
-{
-    $type = 'page';
+    case 1:
+        $type = 'post';
+        break;
+    case 2:
+        $type = 'page';
+        break;
+    default:
+        trigger_error("Invalid content type", E_USER_ERROR);
 }
 
 if(isset($_GET['id']))
@@ -62,8 +65,8 @@ $head_response = formCallback(processForm($_POST));
 if(isset($_POST['ajax']))
 {
     die(json_encode(array(
-                                        'response' => $head_response
-                                    )));
+        'response' => $head_response
+    )));
 }
 
 $head_title = l('Edit '. ucwords($type));
@@ -126,7 +129,7 @@ while($past = $result->fetchObject())
                                 <div style="float: left;margin-right: 30px;">
                                     <label for="category"><?php echo l('Category:'); ?></label>
                                     <select class="ef" id="category" name="category">
-                                        <?php list_categories('option', null, $s_category) ?>
+                                        <?php list_categories('option', -1, $s_category) ?>
                                     </select>
                                 </div>
                                 <div style="float: left;">

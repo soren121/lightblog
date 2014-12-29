@@ -31,17 +31,17 @@ a:hover {
     line-height: 1.6em;
 }
 
-h2#blogtitle {
+#blogtitle {
     margin: 0;
     padding-top: 15px;
     font-size: 1.7em;
 }
 
-h2#blogtitle a, h2#blogtitle a:hover, h2#blogtitle a:visited {
+#blogtitle a, #blogtitle a:hover, #blogtitle a:visited {
     color: #000;
 }
 
-h2#section {
+#section {
     color: #bbb;
     padding-left: 20px;
 }
@@ -156,13 +156,13 @@ input.submit:hover {
     min-height: 500px;
 }
 
-#navigation div#user {
+#navigation #user {
     margin: 4px auto 10px auto;
     width: 250px;
     line-height: 1.1em;
 }
 
-#navigation div#user img#gravatar {
+#navigation #user #gravatar {
     padding: 2px;
     border: 1px solid #ddd;
     margin-right: 5px;
@@ -171,25 +171,25 @@ input.submit:hover {
     height: 48px;
 }
 
-#navigation div#user div a {
+#navigation #user div a {
     font-size: 0.8em;
 }
 
-#navigation ul#menu {
+#navigation #menu {
     border-top: 1px solid #ddd;
 }
 
-#navigation ul#menu li {
+#navigation #menu li {
     list-style: none;
     border-bottom: 1px solid #ddd;
 }
 
-#navigation ul#menu li img.nav-icon {
+#navigation #menu li img.nav-icon {
     background: #b0b0b0;
     vertical-align: -13px;
 }
 
-#navigation ul#menu li .nav-link {
+#navigation #menu li .nav-link {
     letter-spacing: 1px;
     text-transform: uppercase;
     font-size: .95em;
@@ -199,16 +199,16 @@ input.submit:hover {
     display: inline-block;
 }
 
-#navigation ul#menu li > a.nav-link {
+#navigation #menu li > a.nav-link {
     width: 198px;
 }
 
-#navigation ul#menu li .nav-link.single {
+#navigation #menu li .nav-link.single {
     width: 198px;
     margin-right: 0;
 }
 
-#navigation ul#menu li a.nav-toggle {
+#navigation #menu li a.nav-toggle {
     vertical-align: -1px;
     width: 16px;
     height: 16px;
@@ -216,11 +216,11 @@ input.submit:hover {
     display: none;
 }
 
-#navigation ul#menu li a.nav-toggle img {
+#navigation #menu li a.nav-toggle img {
     border: 0;
 }
 
-#navigation ul#menu li ul li {
+#navigation #menu li ul li {
     width: 204px;
     border-top: 1px solid #ddd;
     border-bottom: none;
@@ -228,22 +228,22 @@ input.submit:hover {
     margin-left: 44px;
 }
 
-#navigation ul#menu li ul li:first-child {
+#navigation #menu li ul li:first-child {
     border-top: none;
 }
 
-#navigation ul#menu li ul li .nav-link {
+#navigation #menu li ul li .nav-link {
     width: 197px;
     margin: 0;
     text-transform: none;
 }
 
-#navigation ul#menu li ul li .nav-link.selected, #navigation ul#menu li a.nav-link.single.selected, #navigation ul#menu li.selected > img.nav-icon, #navigation ul#menu li:hover > img.nav-icon {
+#navigation #menu li ul li .nav-link.selected, #navigation #menu li a.nav-link.single.selected, #navigation #menu li.selected > img.nav-icon, #navigation #menu li:hover > img.nav-icon {
     background: #66ACF2;
     color: #fff;
 }
 
-#navigation ul#menu li .nav-link:hover {
+#navigation #menu li .nav-link:hover {
     text-decoration: none;
 }
 
