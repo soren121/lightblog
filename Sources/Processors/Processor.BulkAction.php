@@ -26,7 +26,7 @@ class BulkAction
 
     public function processor($data)
     {
-        if(!in_array($data['type'], ['post', 'page']))
+        if(!in_array($data['type'], array('post', 'page')))
         {
             return array("result" => "error", "response" => "Invalid content type.");
         }
@@ -56,7 +56,8 @@ class BulkAction
 
             if(!$action->execute())
             {
-                return array("result" => "error", "response" => $action->errorInfo()[2]);
+                $action->errorInfo();
+                return array("result" => "error", "response" => $e[2]);
             }
             else
             {

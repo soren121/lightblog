@@ -26,7 +26,7 @@ class ErrorLog
 
     public function processor($data)
     {
-        $where = [];
+        $where = array();
         if(isset($data['prev']))
         {
             $data['page'] -= 1;
@@ -59,6 +59,12 @@ class ErrorLog
             $where = "1";
         }
 
+        $total = $this->dbh->query("
+            SELECT
+                COUNT(*)
+            FROM error_log
+        ")->fetchColumn();
+
         $errorlog = $this->dbh->prepare("
             SELECT
                 *
@@ -73,7 +79,8 @@ class ErrorLog
 
         if(!$errorlog->execute())
         {
-            return array("result" => "error", "response" => $errorlog->errorInfo()[2]);
+            $e = $errorlog->errorInfo();
+            return array("result" => "error", "response" => $e[2]);
         }
 
         $return = '';
@@ -83,7 +90,7 @@ class ErrorLog
             $i++;
             $return .= '<tr id="'.$row->error_id.'"';
 
-            if($i == $query_c_rows)
+            if($i == $total)
             {
                 $return .= ' class="last">';
             }

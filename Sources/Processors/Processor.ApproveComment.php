@@ -35,7 +35,8 @@ class ApproveComment
 
             if(!$approve->execute())
             {
-                return array("result" => "error", "response" => $approve->errorInfo()[2]);
+                $e = $approve->errorInfo();
+                return array("result" => "error", "response" => $e[2]);
             }
 
             return array('result' => 'success');

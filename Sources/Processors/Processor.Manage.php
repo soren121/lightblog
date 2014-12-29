@@ -26,12 +26,12 @@ class Manage
 
     public function processor($data)
     {
-        if(!in_array($data['type'], ['post', 'page']))
+        if(!in_array($data['type'], array('post', 'page')))
         {
             return array("result" => "error", "response" => "Invalid content type.");
         }
 
-        $where = [];
+        $where = array();
         if(isset($data['prev']))
         {
             $data['page'] -= 1;
@@ -64,6 +64,12 @@ class Manage
             $where = "1";
         }
 
+        $total = $this->dbh->query("
+            SELECT
+                COUNT(*)
+            FROM {$data['type']}s
+        ")->fetchColumn();
+
         $manage = $this->dbh->prepare("
             SELECT
                 *
@@ -78,15 +84,16 @@ class Manage
 
         if(!$manage->execute())
         {
-            return array("result" => "error", "response" => $manage->errorInfo()[2]);
+            $e = $manage->errorInfo();
+            return array("result" => "error", "response" => $e[2]);
         }
 
         if($data['type'] == 'post')
         {
             $category_query = $this->dbh->query("SELECT * FROM post_categories");
             $categories_query = $this->dbh->query("SELECT category_id, full_name FROM categories");
-            $category_ids = [];
-            $categories = [];
+            $category_ids = array();
+            $categories = array();
 
             while($cat = $category_query->fetchObject())
             {
@@ -106,7 +113,7 @@ class Manage
             $i++;
             $return .= '<tr id="'.$row->{$data['type'].'_id'}.'"';
 
-            if($i == $query_c_rows)
+            if($i == $total)
             {
                 $return .= ' class="last">';
             }

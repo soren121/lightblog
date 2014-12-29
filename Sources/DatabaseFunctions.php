@@ -38,11 +38,11 @@ function get_bloginfo($var, $reload = false)
     // If this is the first time bloginfo's been called...
     if(!isset($GLOBALS['bloginfo_data']) || !empty($reload))
     {
-        $result = $dbh->query('
+        $result = $dbh->query("
             SELECT
                 variable, value
             FROM settings
-        ');
+        ");
 
         // Let's make an array!
         $GLOBALS['bloginfo_data'] = array();
@@ -74,13 +74,14 @@ function get_roles($role = null)
     static $rolequery = null;
     if($rolequery === null)
     {
-        $result = $dbh->query('
+        $result = $dbh->query("
             SELECT
                 *
             FROM roles
-            ORDER BY role_id desc');
+            ORDER BY role_id desc
+        ");
 
-        $roles = [];
+        $roles = array();
         while($row = $result->fetchObject())
         {
             $roles[$row->role_id] = $row->role_name;
@@ -95,15 +96,5 @@ function get_roles($role = null)
         return $roles;
     }
 }
-
-// function count_rows($sql) {
-//     global $dbh;
-//
-//     $sql_rows = $dbh->query($sql);
-//     $rows = $sql_rows->fetchColumn();
-//     $sql_rows->closeCursor();
-//
-//     return $rows;
-// }
 
 ?>

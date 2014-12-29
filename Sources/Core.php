@@ -396,7 +396,8 @@ function list_pages($tag = 'li', $limit = 5)
         LIMIT 0, ?
     ");
 
-    $page_count->execute([$limit]);
+    $page_count->bindParam(1, $limit, PDO::PARAM_INT);
+    $page_count->execute();
 
     $pages = $dbh->prepare("
         SELECT
@@ -406,7 +407,8 @@ function list_pages($tag = 'li', $limit = 5)
         LIMIT 0, ?
     ");
 
-    $pages->execute([$limit]);
+    $pages->bindParam(1, $limit, PDO::PARAM_INT);
+    $pages->execute();
 
     if($page_count->fetchColumn())
     {

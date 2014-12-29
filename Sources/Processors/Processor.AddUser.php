@@ -161,7 +161,8 @@ class AddUser
                 }
                 else
                 {
-                    $response['response'] = $adduser->errorInfo()[2];
+                    $e = $adduser->errorInfo();
+                    $response['response'] = $e[2];
                 }
             }
         }

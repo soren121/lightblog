@@ -26,7 +26,7 @@ class Edit
 
     public function processor($data)
     {
-        if(!in_array($_POST['type'], ['post', 'page']))
+        if(!in_array($data['type'], array('post', 'page')))
         {
             return array("result" => "error", "response" => "Invalid content type.");
         }
@@ -34,22 +34,21 @@ class Edit
         $past_data = $this->dbh->prepare("
             SELECT
                 *
-            FROM :type
-            WHERE :type_id = :id");
+            FROM {$data['type']}s
+            WHERE {$data['type']}_id = :id");
 
-        $past_data->bindValue(":type", $_POST['type'].'s', PDO::PARAM_STR);
-        $past_data->bindValue(":type_id", $_POST['type'].'_id', PDO::PARAM_STR);
-        $past_data->bindParam(":id", $_POST['id'], PDO::PARAM_INT);
+        $past_data->bindParam(":id", $data['id'], PDO::PARAM_INT);
 
         if(!$past_data->execute())
         {
-            return array("result" => "error", "response" => $past_data->errorInfo()[2]);
+            $e = past_data->errorInfo();
+            return array("result" => "error", "response" => $e[2]);
         }
 
         // Fetch previous data
         while($past = $past_data->fetchObject())
         {
-            if($_POST['type'] == 'post')
+            if($data['type'] == 'post')
             {
                 $ptitle = $past->post_title;
                 $ppublished = $past->published;
@@ -57,7 +56,7 @@ class Edit
                 $pcategory = $past->categories;
                 $pcomments = $past->allow_comments;
             }
-            elseif($_POST['type'] == 'page')
+            elseif($data['type'] == 'page')
             {
                 $ptitle = $past->page_title;
                 $ppublished = $past->published;
@@ -74,11 +73,11 @@ class Edit
             require(ABSPATH .'/Sources/Class.htmLawed.php');
 
             // Grab the data from form and escape the text
-            $title = utf_htmlspecialchars($_POST['title']);
-            $text = htmLawed::hl($_POST['text'], array('safe' => 1, 'make_tag_strict' => 1, 'balance' => 1, 'keep_bad' => 3));
+            $title = utf_htmlspecialchars($data['title']);
+            $text = htmLawed::hl($data['text'], array('safe' => 1, 'make_tag_strict' => 1, 'balance' => 1, 'keep_bad' => 3));
 
             // Check published checkbox
-            if(isset($_POST['published']) && $_POST['published'] == 1)
+            if(isset($data['published']) && $data['published'] == 1)
             {
                 $published = 1;
             }
@@ -88,10 +87,10 @@ class Edit
             }
 
             // For posts only
-            if($_POST['type'] == 'post')
+            if($data['type'] == 'post')
             {
                 // Check comments checkbox
-                if(isset($_POST['comments']) && $_POST['comments'] == 1)
+                if(isset($data['comments']) && $data['comments'] == 1)
                 {
                     $comments = 1;
                 }
@@ -101,7 +100,7 @@ class Edit
                 }
 
                 // Check category
-                $category = (int)$_POST['category'];
+                $category = (int)$data['category'];
             }
 
             // Set a base query to modify
@@ -122,7 +121,7 @@ class Edit
                 array_push($base, "published='".(int)$published);
             }
 
-            if($_POST['type'] == 'post')
+            if($data['type'] == 'post')
             {
                 if((int)$pcategory !== $category)
                 {
@@ -143,15 +142,23 @@ class Edit
             else
             {
                 // Execute modified query
-                $sql_edit = @$this->dbh->exec("UPDATE {$type}s SET " . implode(', ', $base) . " WHERE {$type}_id=".$id) or die(json_encode(array("result" => "error", "response" => $type.sqlite_error_string($this->dbh->lastError()))));
+                $edit = $this->dbh->prepare("
+                    UPDATE
+                        {$type}s
+                    SET " . implode(', ', $base) . "
+                    WHERE {$type}_id = :id
+                ");
 
-                if($sql_edit == 0)
+                $edit->bindParam(":id", $data['id'], PDO::PARAM_INT);
+
+                if(!$edit->execute())
                 {
-                    return array("result" => "error", "response" => sqlite_error_string($dbh->lastError()));
+                    $e = $edit->errorInfo();
+                    return array("result" => "error", "response" => $e[2]);
                 }
 
                 // Create URL to return to jQuery
-                $url = get_bloginfo('url')."?".$type."=".$id;
+                $url = get_bloginfo('url')."?".$data['type']."=".$data['id'];
 
                 // Return JSON-encoded response
                 return array("result" => "success", "response" => $url);

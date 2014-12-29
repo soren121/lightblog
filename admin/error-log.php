@@ -68,7 +68,7 @@ else
         <div id="contentwrapper">
             <div id="contentcolumn">
                 <?php if(permissions('EditSettings')): ?>
-                    <form action="<?php bloginfo('url') ?>admin/manage.php?<?php echo http_build_query($_GET, '', '&amp;') ?>" method="post" id="bulk">
+                    <form action="<?php bloginfo('url') ?>admin/error-log.php?<?php echo http_build_query($_GET, '', '&amp;') ?>" method="post" id="bulk">
                         <div class="table-options">
                             <p style="float:left">
                                 <select name="action" class="bf" style="width: 140px;">

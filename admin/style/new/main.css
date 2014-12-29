@@ -149,6 +149,26 @@ input.submit:hover {
     color: #000;
 }
 
+.role-1::after, .role-2::after {
+    color: #fff;
+    font-weight: bold;
+    border-radius: 64px;
+    padding: 2px 4px;
+    font-size: 0.7em;
+    margin-left: 3px;
+    vertical-align: 12%;
+}
+
+.role-1::after {
+    content: "A";
+    background: #F23737;
+}
+
+.role-2::after {
+    content: "M";
+    background: #43E097;
+}
+
 #navigation {
     float: left;
     width: 250px;

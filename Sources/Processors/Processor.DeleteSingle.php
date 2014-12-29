@@ -26,23 +26,27 @@ class DeleteSingle
 
     public function processor($data)
     {
+        if(!in_array($data['type'], array('post', 'page', 'user')))
+        {
+            return array("result" => "error", "response" => "Invalid content type.");
+        }
+
         if($data['type'] == 'post' || $data['type'] == 'page')
         {
             $author_check = $this->dbh->prepare("
             SELECT
                 author_id
-            FROM :type
-            WHERE :type_id = :id
+            FROM {$data['type']}s
+            WHERE {$data['type']}_id = :id
             LIMIT 1
             ");
 
-            $author_check->bindValue(":type", $data['type'].'s', PDO::PARAM_STR);
-            $author_check->bindValue(":type_id", $data['type'].'_id', PDO::PARAM_STR);
             $author_check->bindParam(":id", $data['id'], PDO::PARAM_INT);
 
             if(!$author_check->execute())
             {
-                return array("result" => "error", "response" => $author_check->errorInfo()[2]);
+                $e = $author_check->errorInfo();
+                return array("result" => "error", "response" => $e[2]);
             }
         }
 
@@ -55,9 +59,33 @@ class DeleteSingle
                 }
 
                 // Delete comments associated with this post
-                $this->dbh->exec("DELETE FROM comments WHERE post_id=".(int)$data['id']);
+                $delete_comments = $this->dbh->prepare("
+                    DELETE FROM
+                        comments
+                    WHERE post_id = ?
+                ");
+
+                $delete_comments->bindParam(1, $data['id'], PDO::PARAM_INT);
+                if(!$delete_comments->execute())
+                {
+                    $e = $delete_comments->errorInfo();
+                    return array("result" => "error", "response" => $e[2]);
+                }
+
                 // Update comment number in the posts table
-                $this->dbh->exec("UPDATE posts SET comments=0 WHERE post_id=".(int)$data['id']);
+                $update_comments = $this->dbh->prepare("
+                    UPDATE
+                        posts
+                    SET comments = 0
+                    WHERE post_id = ?
+                ");
+
+                $update_comments->bindParam(1, $data['id'], PDO::PARAM_INT);
+                if(!$update_comments->execute())
+                {
+                    $e = $update_comments->errorInfo();
+                    return array("result" => "error", "response" => $e[2]);
+                }
 
                 break;
             case 'page':
@@ -81,12 +109,10 @@ class DeleteSingle
         // Execute query to delete post/page/category
         $delete = $this->dbh->prepare("
             DELETE FROM
-                :type
-            WHERE :type_id = :id
+                {$data['type']}s
+            WHERE {$data['type']}_id = :id
         ");
 
-        $delete->bindValue(":type", $data['type'].'s', PDO::PARAM_STR);
-        $delete->bindValue(":type_id", $data['type'].'_id', PDO::PARAM_STR);
         $delete->bindParam(":id", $data['id'], PDO::PARAM_INT);
 
         if(!$delete->execute())

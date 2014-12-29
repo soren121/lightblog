@@ -26,6 +26,11 @@ class Create
 
     public function processor($data)
     {
+        if(!in_array($data['type'], array('post', 'page')))
+        {
+            return array("result" => "error", "response" => "Invalid content type.");
+        }
+
         $type = $data['type'];
         if(permissions('Create'.ucwords($type).'s'))
         {
@@ -111,7 +116,8 @@ class Create
 
                 if(!$create_post->execute())
                 {
-                    return array("result" => "error", "response" => $create_post->errorInfo()[2]);
+                    $e = $create_post->errorInfo();
+                    return array("result" => "error", "response" => $e[2]);
                 }
 
                 $id = $this->dbh->lastInsertId();
@@ -128,7 +134,8 @@ class Create
 
                 if(!$update_shortname->execute())
                 {
-                    return array("result" => "error", "response" => $update_shortname->errorInfo()[2]);
+                    $e = $update_shortname->errorInfo();
+                    return array("result" => "error", "response" => $e[2]);
                 }
 
                 $update_categories = $this->dbh->prepare("
@@ -147,7 +154,8 @@ class Create
 
                 if(!$update_categories->execute())
                 {
-                    return array("result" => "error", "response" => $update_categories->errorInfo()[2]);
+                    $e = $update_categories->errorInfo();
+                    return array("result" => "error", "response" => $e[2]);
                 }
             }
             else
@@ -182,7 +190,8 @@ class Create
 
                 if(!$create_page->execute())
                 {
-                    return array("result" => "error", "response" => $create_page->errorInfo()[2]);
+                    $e = $create_page->errorInfo();
+                    return array("result" => "error", "response" => $e[2]);
                 }
 
                 $id = $this->dbh->lastInsertId();

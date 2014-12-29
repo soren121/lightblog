@@ -16,10 +16,6 @@
 
 *********************************************/
 
-$rolequery = $dbh->query("SELECT role_name FROM roles WHERE role_id=".user()->role());
-$role = $rolequery->fetch(PDO::FETCH_OBJ);
-$role = $role->role_name;
-
 function buildMenu($selected)
 {
     $menu = array(
@@ -118,8 +114,7 @@ function buildMenu($selected)
             <div id="user">
                 <img id="gravatar" src="<?php echo gravatar() ?>" title="<?php echo l('Your Gravatar, from gravatar.com'); ?>" alt="Gravatar" />
                 <div>
-                    <strong><?php echo user()->displayName() ?></strong><br />
-                    <span><?php echo $role ?></span><br />
+                    <strong class="role-<?php echo user()->role() ?>"><?php echo user()->displayName() ?></strong><br />
                     <a href="profile.php?id=<?php echo user()->id() ?>"><?php echo l('Your Profile'); ?></a> | <a href="login.php?logout"><?php echo l('Logout'); ?></a>
                 </div>
                 <div class="clear"></div>

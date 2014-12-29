@@ -177,7 +177,7 @@ function users_get($users)
 {
     if(is_array($users))
     {
-        $loaded = [];
+        $loaded = array();
         foreach($users as $user_id)
         {
             $loaded[$user_id] = users_load((int)$user_id);

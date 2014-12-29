@@ -106,7 +106,7 @@ class PostLoop
         Returns:
             string - A complete SQL query.
     */
-    private function generateQuery($is_count = false, $limit = [])
+    private function generateQuery($is_count = false, $limit = array())
     {
         // What kind of query are we generating?
         if(!isset($GLOBALS['postquery']['type']))
@@ -213,7 +213,8 @@ class PostLoop
 
         if(!$post_count->execute())
         {
-            trigger_error('Unable to retrieve post count: '.$post_count->errorInfo()[2], E_USER_ERROR);
+            $e = $post_count->errorInfo();
+            trigger_error('Unable to retrieve post count: '.$e[2], E_USER_ERROR);
         }
 
         $this->data['count'] = $post_count->fetchColumn();
@@ -226,7 +227,7 @@ class PostLoop
         $start = ($this->data['page'] - 1) * $limit;
 
         // Query the database for post data
-        $this->load($this->generateQuery(false, [$start, $limit]));
+        $this->load($this->generateQuery(false, array($start, $limit)));
     }
 
     /*

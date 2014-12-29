@@ -52,7 +52,7 @@ function user_login($options)
 
     loadLanguage('login');
 
-    $messages = [];
+    $messages = array();
 
     // We need their user name.
     if(empty($options['username']))
@@ -113,7 +113,7 @@ function user_login($options)
 
             $user_update->bindParam(":salt", $new_salt, PDO::PARAM_STR);
             $user_update->bindParam(":pass", $new_pass, PDO::PARAM_STR);
-            $user_update->bindValue(":ip_addr", user()->ip(), PDO::PARAM_INT);
+            $user_update->bindValue(":ip_addr", user()->ip());
             $user_update->bindValue(":id", $user_id, PDO::PARAM_STR);
 
             if(!$user_update->execute())
@@ -296,7 +296,7 @@ class User
             // Make sure their session data is theirs.
             if((!empty($_SESSION['user_id']) && $_SESSION['user_id'] != $user_id) || (!empty($_SESSION['user_pass']) && $_SESSION['user_pass'] != $user_pass))
             {
-                $_SESSION = [];
+                $_SESSION = array();
             }
 
             // Make sure that their user ID and password have the possibility of
