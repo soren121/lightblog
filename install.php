@@ -294,17 +294,22 @@ function bsetup()
     $admin->execute();
 
     $settings = $dbh->prepare("
-        INSERT INTO settings VALUES(title, :title);
-        INSERT INTO settings VALUES(url, :url);
+        INSERT INTO settings VALUES(:var, :val);
     ");
 
-    $settings->bindParam(":title", $_POST['bstitle'], PDO::PARAM_STR);
-    $settings->bindParam(":url", $_POST['bsurl'], PDO::PARAM_STR);
+    $settings->bindValue(":var", "title");
+    $settings->bindParam(":val", $_POST['bstitle'], PDO::PARAM_STR);
+
+    $settings->execute();
+
+    $settings->bindValue(":var", "url");
+    $settings->bindParam(":val", $_POST['bsurl'], PDO::PARAM_STR);
 
     $settings->execute();
 
     if(!$dbh->commit())
     {
+        $dbh->rollBack();
         return "Failed to commit changes.";
     }
 

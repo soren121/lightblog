@@ -26,7 +26,7 @@ class ErrorLog
 
     public function processor($data)
     {
-        $where = array();
+        $where = [];
         if(isset($data['prev']))
         {
             $data['page'] -= 1;
@@ -37,7 +37,11 @@ class ErrorLog
         }
         if($data['page'] != 0)
         {
-            ((!isset($data['count'])) ? $data['count'] = 10 : '');
+            if(!isset($data['count']))
+            {
+                $data['count'] = 10;
+            }
+
             $data['page'] = (int)(($data['page'] - 1) * $data['count']);
         }
         elseif($data['before'] != 0)
@@ -45,27 +49,53 @@ class ErrorLog
             array_push($where, "error_id < ".(int)$data['before']);
             $data['start'] = 0;
         }
-        ((!empty($where)) ? $where = implode(' AND ', $where) : $where = '');
-        $result = @$this->dbh->query("SELECT error_id, error_type, error_time, error_message FROM error_log {$where} ORDER BY error_id desc LIMIT ".(int)$data['page'].", ".(int)$data['count']) or die(json_encode(array("result" => "error", "response" => sqlite_error_string($this->dbh->lastError()))));
-        $query_c = "SELECT error_id, error_type, error_time, error_message FROM error_log {$where} ORDER BY error_id desc LIMIT ".(int)$data['page'].", ".(int)$data['count'];
-        $query_c_rows = count_rows($query_c);
+
+        if(!empty($where))
+        {
+            $where = implode(' AND ', $where);
+        }
+        else
+        {
+            $where = "1";
+        }
+
+        $errorlog = $this->dbh->prepare("
+            SELECT
+                *
+            FROM error_log
+            WHERE {$where}
+            ORDER BY error_id desc
+            LIMIT :page , :count
+        ");
+
+        $errorlog->bindParam(":page", $data['page'], PDO::PARAM_INT);
+        $errorlog->bindParam(":count", $data['count'], PDO::PARAM_INT);
+
+        if(!$errorlog->execute())
+        {
+            return array("result" => "error", "response" => $errorlog->errorInfo()[2]);
+        }
+
         $return = '';
         $i = 0;
-        while($row = $result->fetchObject())
+        while($row = $errorlog->fetchObject())
         {
             $i++;
+            $return .= '<tr id="'.$row->error_id.'"';
+
             if($i == $query_c_rows)
             {
-                $return .= '<tr id="'.$row->error_id.'" class="last">';
+                $return .= ' class="last">';
             }
             elseif($i == 1)
             {
-                $return .= '<tr id="'.$row->error_id.'" class="first">';
+                $return .= ' class="first">';
             }
             else
             {
-                $return .= '<tr id="'.$row->error_id.'">';
+                $return .= '>';
             }
+
             $return .= '<td><input type="checkbox" name="checked[]" value="'.$row->error_id.'" class="bf table" /></td>';
             $return .= '<td>'.errorsMapType($row->error_type).'</td>';
             $return .= '<td>

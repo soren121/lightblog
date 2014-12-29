@@ -68,12 +68,11 @@ class Manage
             SELECT
                 *
             FROM {$data['type']}s
-            WHERE :where
+            WHERE {$where}
             ORDER BY {$data['type']}_id desc
             LIMIT :page , :count
         ");
 
-        $manage->bindParam(":where", $where, PDO::PARAM_STR);
         $manage->bindParam(":page", $data['page'], PDO::PARAM_INT);
         $manage->bindParam(":count", $data['count'], PDO::PARAM_INT);
 

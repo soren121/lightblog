@@ -20,8 +20,14 @@ require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 require(ABSPATH .'/Sources/Process.php');
 
-if(isset($_GET['type']) && (int)$_GET['type'] == 1) { $type = 'post'; }
-elseif(isset($_GET['type']) && (int)$_GET['type'] == 2) { $type = 'page'; }
+switch($_GET['type'])
+{
+    case 1:
+        $type = 'post';
+        break;
+    case 2:
+        $type = 'page';
+}
 
 $response = processForm($_POST);
 if(isset($_POST['ajax'])) { die(json_encode($response)); }
@@ -53,7 +59,7 @@ $head_css = "table.css";
 
 include('head.php');
 
-$rowtotal = count_rows("SELECT COUNT(*) FROM {$type}s");
+$rowtotal = $GLOBALS['dbh']->query("SELECT COUNT(*) FROM {$type}s")->fetchColumn();
 
 $rowstart = (10 * $page) - 9;
 

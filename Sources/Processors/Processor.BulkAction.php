@@ -26,6 +26,11 @@ class BulkAction
 
     public function processor($data)
     {
+        if(!in_array($data['type'], ['post', 'page']))
+        {
+            return array("result" => "error", "response" => "Invalid content type.");
+        }
+
         if(permissions('EditOthersPosts'))
         {
             if($data['checked'] != '' && !array_key_exists('delete', $data))
@@ -33,24 +38,21 @@ class BulkAction
                 switch($data['action'])
                 {
                     case 'delete':
-                        $action = $this->dbh->prepare("DELETE FROM :type WHERE :type_id IN (:in)");
+                        $action = $this->dbh->prepare("DELETE FROM {$data['type']}s WHERE {$data['type']}_id IN (:in)");
                         break;
                     case 'publish':
-                        $action = $this->dbh->prepare("UPDATE :type SET published=".time()." WHERE :type_id IN (:in)");
+                        $action = $this->dbh->prepare("UPDATE {$data['type']}s SET published=".time()." WHERE {$data['type']}_id IN (:in)");
                         break;
                     case 'unpublish':
-                        $action = $this->dbh->prepare("UPDATE :type SET published=0 WHERE :type_id IN (:in)");
+                        $action = $this->dbh->prepare("UPDATE {$data['type']}s SET published=0 WHERE {$data['type']}_id IN (:in)");
                 }
                 $action->bindValue(":in", implode(',', $data['checked']), PDO::PARAM_STR);
             }
             elseif(array_key_exists('delete', $data))
             {
-                $action = @$this->dbh->exec("DELETE FROM :type WHERE :type_id = :in");
+                $action = $this->dbh->prepare("DELETE FROM {$data['type']}s WHERE {$data['type']}_id = :in");
                 $action->bindValue(":in", $data['delete'], PDO::PARAM_INT);
             }
-
-            $action->bindValue(":type", strip_tags($data['type'])."s");
-            $action->bindValue(":type_in", strip_tags($data['type'])."_id");
 
             if(!$action->execute())
             {

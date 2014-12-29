@@ -50,7 +50,7 @@ $head_css = "table.css";
 
 include('head.php');
 
-$rowtotal = count_rows("SELECT COUNT(*) FROM error_log");
+$rowtotal = $GLOBALS['dbh']->query("SELECT COUNT(*) FROM error_log")->fetchColumn();
 
 $rowstart = (10 * $page) - 9;
 
