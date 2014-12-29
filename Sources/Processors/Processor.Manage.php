@@ -26,6 +26,11 @@ class Manage
 
     public function processor($data)
     {
+        if(!in_array($data['type'], ['post', 'page']))
+        {
+            return array("result" => "error", "response" => "Invalid content type.");
+        }
+
         $where = [];
         if(isset($data['prev']))
         {
@@ -62,15 +67,13 @@ class Manage
         $manage = $this->dbh->prepare("
             SELECT
                 *
-            FROM :type
+            FROM {$data['type']}s
             WHERE :where
-            ORDER BY :type_id desc
+            ORDER BY {$data['type']}_id desc
             LIMIT :page , :count
         ");
 
-        $manage->bindValue(":type", $data['type'].'s', PDO::PARAM_STR);
         $manage->bindParam(":where", $where, PDO::PARAM_STR);
-        $manage->bindValue(":type_id", $data['type'].'_id', PDO::PARAM_STR);
         $manage->bindParam(":page", $data['page'], PDO::PARAM_INT);
         $manage->bindParam(":count", $data['count'], PDO::PARAM_INT);
 

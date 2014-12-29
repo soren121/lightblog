@@ -32,9 +32,11 @@ div.setting div.input > input {
 }
 
 div.setting input[type=text], div.setting input[type=password], div.setting select {
-    height: 25px;
+    height: 30px;
     width: 100%;
-    padding-left: 2px;
+    padding-left: 5px;
+    border: 1px solid #bbb;
+    line-height: 2.3em;
 }
 
 div.setting div.input > p:first-child {

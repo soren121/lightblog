@@ -3,7 +3,7 @@ html, body
     height: 100%;
 }
 
-div#login-response
+#login-response
 {
     width: 550px;
     position: absolute;
@@ -19,7 +19,7 @@ div#login-response
     padding: 5px 0;
 }
 
-div#login-container
+#login-container
 {
     width: 500px;
     height: 350px;
@@ -31,7 +31,7 @@ div#login-container
     background: transparent url('logo.png') left top no-repeat;
 }
 
-div#login-header
+#login-header
 {
     padding-left: 270px;
     padding-top: 5px;
@@ -39,7 +39,7 @@ div#login-header
     width: 300px;
 }
 
-div#login-header h2
+#login-header h2
 {
     padding-top: 0;
     font-size: 1.4em !important;
@@ -67,4 +67,5 @@ form input[type=text], form input[type=password]
     float: right;
     font-size: 1.3em;
     line-height: 30px;
+    border: 1px solid #bbb;
 }

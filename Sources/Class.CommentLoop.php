@@ -138,11 +138,10 @@ class CommentLoop
                     commenter_email, commenter_website, commenter_ip, comment_date,
                     comment_text
                 FROM comments
-                WHERE post_id = :id AND published = :published
+                WHERE post_id = :id ".(permissions(3) ? 'AND published = 1' : '')."
                 ORDER BY comment_date ASC");
 
             $comment_data->bindParam(":id", $this->data['post']['id'], PDO::PARAM_INT);
-            $comment_data->bindValue(":published", (permissions(3) ? '0 OR 1' : '1'));
 
             $comment_data->execute();
 

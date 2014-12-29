@@ -40,7 +40,7 @@
                     <h4>Meta</h4>
                     <ul>
                         <li><a href="<?php bloginfo('url') ?>admin/">Site Admin</a></li>
-                        <li><a href="http://lightblog.googlecode.com/" rel="nofollow">LightBlog Home</a></li>
+                        <li><a href="http://github.com/soren121/lightblog" rel="nofollow">LightBlog Home</a></li>
                     </ul>
                 </div>
 
