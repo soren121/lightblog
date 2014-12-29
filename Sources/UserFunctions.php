@@ -126,12 +126,12 @@ function users_load($users)
                 user_id, user_name, user_pass, user_email, display_name, user_role,
                 user_ip, user_salt, user_activated, user_created
             FROM users
-            WHERE user_id IN(?)");
+            WHERE user_id IN( ? )");
 
         $users_data->bindValue(1, implode(', ', $users), PDO::PARAM_STR);
         $users_data->execute();
 
-        while($row = $users_data->fetch(SQLITE_ASSOC))
+        while($row = $users_data->fetch(PDO::FETCH_ASSOC))
         {
             $GLOBALS['loaded_users'][$row['user_id']] = array(
                 'id' => $row['user_id'],
@@ -177,10 +177,10 @@ function users_get($users)
 {
     if(is_array($users))
     {
-        $loaded = array();
+        $loaded = [];
         foreach($users as $user_id)
         {
-            $loaded[$user_id] = users_get((int)$user_id);
+            $loaded[$user_id] = users_load((int)$user_id);
         }
 
         return $loaded;

@@ -80,7 +80,7 @@ include('head.php');
                                 <div style="float: left;margin-right: 30px;">
                                     <label for="category"><?php echo l('Category:'); ?></label>
                                     <select class="cf" id="category" name="category">
-                                        <?php list_categories('option', null) ?>
+                                        <?php list_categories('option', -1) ?>
                                     </select>
                                 </div>
                                 <div style="float: left;">

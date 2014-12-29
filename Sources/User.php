@@ -52,7 +52,7 @@ function user_login($options)
 
     loadLanguage('login');
 
-    $messages = array();
+    $messages = [];
 
     // We need their user name.
     if(empty($options['username']))
@@ -66,11 +66,11 @@ function user_login($options)
             SELECT
                 user_id, user_pass, user_ip, user_salt
             FROM users
-            WHERE LOWER(user_name) = '?'
+            WHERE LOWER(user_name) = ?
             LIMIT 1
         ");
 
-        $user_metadata->bindValue(1, $options['username'], PDO::PARAM_STR);
+        $user_metadata->bindValue(1, strtolower($options['username']), PDO::PARAM_STR);
 
         if(!$user_metadata->execute())
         {
@@ -102,25 +102,31 @@ function user_login($options)
             // They have successfully proved they are who they say they are
             // (unless they have a sucky password, of course ;-)).
             // Now update their salt and then update their IP, perhaps.
+            $new_salt = randomString(9);
+            $new_pass = sha1($new_salt. $options['password']);
+
             $user_update = $dbh->prepare("
                 UPDATE users
                 SET user_salt = :salt, user_pass = :pass, user_ip = :ip_addr
                 WHERE user_id = :id
             ");
 
-            $user_update->bindValue(":salt", randomString(9), PDO::PARAM_STR);
-            $user_update->bindValue(":pass", sha1($new_salt. $options['password']), PDO::PARAM_STR);
+            $user_update->bindParam(":salt", $new_salt, PDO::PARAM_STR);
+            $user_update->bindParam(":pass", $new_pass, PDO::PARAM_STR);
             $user_update->bindValue(":ip_addr", user()->ip(), PDO::PARAM_INT);
-            $user_update->bindValue(":id", $options['username'], PDO::PARAM_STR);
+            $user_update->bindValue(":id", $user_id, PDO::PARAM_STR);
 
-            $user_update->execute();
+            if(!$user_update->execute())
+            {
+                $messages[] = l('An unknown error occurred.');
+            }
 
             // Now, set that cookie!
-            setcookie(LBCOOKIE, implode('|', array($user_id, $new_password)), (!empty($options['remember_me']) ? time() + 2592000 : 0), '/');
+            setcookie(LBCOOKIE, implode('|', array($user_id, $new_pass)), (!empty($options['remember_me']) ? time() + 2592000 : 0), '/');
 
             // Along with some basic session information.
             $_SESSION['user_id'] = $user_id;
-            $_SESSION['user_pass'] = $new_password;
+            $_SESSION['user_pass'] = $new_pass;
 
             // Alright, now it is time to take them, somewhere...
             if(!empty($options['redir_to']) && utf_substr($options['redir_to'], 0, 1) !== '/' && utf_strpos($options['redir_to'], '://') === false)
@@ -290,8 +296,7 @@ class User
             // Make sure their session data is theirs.
             if((!empty($_SESSION['user_id']) && $_SESSION['user_id'] != $user_id) || (!empty($_SESSION['user_pass']) && $_SESSION['user_pass'] != $user_pass))
             {
-                // This isn't yours! You cannot have it :-P.
-                $_SESSION = array();
+                $_SESSION = [];
             }
 
             // Make sure that their user ID and password have the possibility of
@@ -312,12 +317,11 @@ class User
 
                 $user_metadata->execute();
 
-                // Did we find anything?
-                if($user_metadata->fetchColumn())
-                {
-                    // We sure did!
-                    $row = $user_metadata->fetch(PDO::FETCH_ASSOC);
+                $row = $user_metadata->fetch(PDO::FETCH_ASSOC);
 
+                // Did we find anything?
+                if(!empty($row))
+                {
                     // Now set their information.
                     $this->id = (int)$row['user_id'];
                     $this->name = $row['user_name'];
@@ -330,10 +334,10 @@ class User
                     $_SESSION['user_pass'] = $this->password;
                 }
             }
-        }
 
-        // They showed signs of activity just now, they're not dead!
-        $_SESSION['last_activity'] = time();
+            // They showed signs of activity just now, they're not dead!
+            $_SESSION['last_activity'] = time();
+        }
     }
 
     /*

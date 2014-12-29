@@ -393,7 +393,8 @@ function list_pages($tag = 'li', $limit = 5)
             COUNT(*)
         FROM pages
         ORDER BY page_id DESC
-        LIMIT 0, ?");
+        LIMIT 0, ?
+    ");
 
     $page_count->execute([$limit]);
 
@@ -402,7 +403,8 @@ function list_pages($tag = 'li', $limit = 5)
             *
         FROM pages
         ORDER BY page_id DESC
-        LIMIT 0, ?");
+        LIMIT 0, ?
+    ");
 
     $pages->execute([$limit]);
 
@@ -444,7 +446,8 @@ function list_categories($tag = 'li', $limit = 5, $selected = null)
             *
         FROM categories
         ORDER BY category_id DESC
-        LIMIT 0, ?");
+        LIMIT 0, ?
+    ");
 
     $categories->bindParam(1, $limit, PDO::PARAM_INT);
     $categories->execute();

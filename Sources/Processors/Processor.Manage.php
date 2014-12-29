@@ -54,12 +54,16 @@ class Manage
         {
             $where = implode(' AND ', $where);
         }
+        else
+        {
+            $where = "1";
+        }
 
         $manage = $this->dbh->prepare("
             SELECT
                 *
             FROM :type
-            :where
+            WHERE :where
             ORDER BY :type_id desc
             LIMIT :page , :count
         ");

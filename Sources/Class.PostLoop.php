@@ -117,8 +117,8 @@ class PostLoop
 
         $querytype = $GLOBALS['postquery']['type'];
         $options = array(
-            'join' => [],
-            'where' => [],
+            'join' => array(),
+            'where' => array(),
             'order_by' => array('post_date DESC'),
         );
 
@@ -137,7 +137,7 @@ class PostLoop
             $options['where'][] = 'post_id= '. $pid;
 
             // We don't need to order by anything.
-            $options['order_by'] = [];
+            $options['order_by'] = array();
         }
         // Viewing the archive list?
         elseif($querytype == 'archive')
@@ -164,19 +164,13 @@ class PostLoop
             trigger_error('Unknown post query type '. utf_htmlspecialchars($querytype), E_USER_ERROR);
         }
 
-        $post = $this->dbh->prepare("
-            SELECT
-                :selection
-            FROM posts AS p
-        ");
-
-        $post->bindValue(":selection", (!empty($is_count) ? 'COUNT(*)' : 'p.*'));
-        //$post->bindValue(":join", (count($options['join']) > 0 ? implode(' ', $options['join']) : ''));
-        //$post->bindValue(":where", (count($options['where']) > 0 ? implode(' AND ', $options['where']) : '1'));
-        //$post->bindValue(":order", (count($options['order_by']) > 0 ? 'ORDER BY '. implode(', ', $options['order_by']) : ''));
-        //$post->bindValue(":limit", (!empty($limit) ? 'LIMIT '. $limit[0]. ', '. $limit[1] : ''));
-
-        return $post;
+        return $this->dbh->prepare('
+        SELECT
+        '. (!empty($is_count) ? 'COUNT(*)' : 'p.*'). '
+        FROM posts AS p'. (count($options['join']) > 0 ? '
+        '. implode("\r\n", $options['join']). "\r\n" : ''). '
+        WHERE '. (count($options['where']) > 0 ? implode(' AND ', $options['where']) : '1'). (count($options['order_by']) > 0 ? '
+        ORDER BY '. implode(', ', $options['order_by']) : ''));
     }
 
     /*
