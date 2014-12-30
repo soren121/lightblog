@@ -56,13 +56,14 @@ class Settings
         }
 
         // Make sure the time zone is valid.
-        if(!array_key_exists('timezone', $data) || (float)$data['timezone'] < -12 || (float)$data['timezone'] > 12)
+        if(empty($data['timezone']) || !timezone_open($data['timezone']))
         {
             $response['response'][] = 'Invalid time zone selected.';
         }
         else
         {
-            $options['timezone'] = (float)$data['timezone'];
+            $options['timezone'] = $data['timezone'];
+            date_default_timezone_set($data['timezone']);
         }
 
         // Now for the date...

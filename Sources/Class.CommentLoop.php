@@ -145,7 +145,7 @@ class CommentLoop
 
             $comment_data->execute();
 
-            $users = [];
+            $users = array();
             while($row = $comment_data->fetch(PDO::FETCH_ASSOC))
             {
                 $this->data['comments'][] = array(

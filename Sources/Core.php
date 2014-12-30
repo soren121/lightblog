@@ -84,6 +84,9 @@ require(ABSPATH. '/Sources/Language.php');
 // Start up our session.
 session_start();
 
+// Set timezone.
+date_default_timezone_set(get_bloginfo('timezone'));
+
 // Now output buffering, too. With compression, if supported.
 /*if(function_exists('ob_gzhandler') && (get_bloginfo('disable_compression') === false || get_bloginfo('disable_compression') == 0))
 {

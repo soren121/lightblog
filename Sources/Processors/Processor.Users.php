@@ -34,7 +34,7 @@ class Users extends TableSelection
         while($row = $users->fetchObject())
         {
             $i++;
-            $return .= '<tr id="'.$row->error_id.'"';
+            $return .= '<tr id="'.$row->user_id.'"';
 
             if($i == $total)
             {
