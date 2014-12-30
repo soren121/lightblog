@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<theme>
+    <title>Default</title>
+    <url></url>
+    <version>1.0</version>
+
+    <description>The ancient theme designed in 2008. Still, not too shabby.</description>
+    <screenshot>screenshot.png</screenshot>
+
+    <author>The LightBlog Team</author>
+    <authoruri>http://github.com/soren121/lightblog</authoruri>
+
+    <license>GNU General Public License 3</license>
+    <licenseuri>http://www.gnu.org/licenses/gpl-3.0.html</licenseuri>
+</theme>

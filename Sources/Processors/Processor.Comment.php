@@ -41,7 +41,9 @@ class Comment
             return array("result" => "error", "response" => "Failed to query database.");
         }
 
-        if($comments_allowed->fetch(PDO::FETCH_NUM)[0] == 1)
+        $row = $comments_allowed->fetch(PDO::FETCH_NUM);
+
+        if($row[0] == 1)
         {
             // If they're a logged in user, we will set these ourselves.
             if(user()->is_logged())

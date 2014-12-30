@@ -54,6 +54,9 @@ class Manage extends TableSelection
         $return = '';
         $i = 0;
 
+        $date_format = get_bloginfo('date_format');
+        $time_format = get_bloginfo('time_format');
+
         while($row = $manage->fetchObject())
         {
             $i++;
@@ -87,7 +90,7 @@ class Manage extends TableSelection
             $return .= '
                 </td>
                 <td>'.$row->author_name.'</td>
-                <td>'.date('n/j/Y', $row->{$data['type'].'_date'}).'</td>';
+                <td title="'. date($date_format.' \a\t '.$time_format, $row->{$data['type'].'_date'}) .'">'.date($date_format, $row->{$data['type'].'_date'}).'</td>';
 
             if($data['type'] == 'post')
             {

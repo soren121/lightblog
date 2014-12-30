@@ -43,7 +43,7 @@ CREATE UNIQUE INDEX 'settings_variable_index' ON 'settings' ('variable');
 
 INSERT INTO 'settings' VALUES('theme','default');
 INSERT INTO 'settings' VALUES('comment_moderation', 'none');
-INSERT INTO 'settings' VALUES('timezone', '0.0');
+INSERT INTO 'settings' VALUES('timezone', 'UTC');
 INSERT INTO 'settings' VALUES('date_format', 'm/j/Y');
 INSERT INTO 'settings' VALUES('time_format', 'g:i a');
 

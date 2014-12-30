@@ -146,6 +146,7 @@ class CommentLoop
             $comment_data->execute();
 
             $users = array();
+            $date_format = get_bloginfo('date_format').' \a\t '.get_bloginfo('time_format');
             while($row = $comment_data->fetch(PDO::FETCH_ASSOC))
             {
                 $this->data['comments'][] = array(
@@ -159,7 +160,7 @@ class CommentLoop
                         'website' => is_url($row['commenter_website']) ? $row['commenter_website'] : null,
                         'ip' => $row['commenter_ip'],
                     ),
-                    'date' => date('F j, Y \a\t g:i A', $row['comment_date']),
+                    'date' => date($date_format, $row['comment_date']),
                     'timestamp' => $row['comment_date'],
                     'text' => $row['comment_text'],
                 );

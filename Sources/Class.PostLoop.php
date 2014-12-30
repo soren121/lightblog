@@ -563,6 +563,11 @@ class PostLoop
         // We didn't screw up and keep an empty query, did we?
         if($this->post !== null)
         {
+            if($format == null)
+            {
+                $format = get_bloginfo('date_format');
+            }
+
             // Nope, so output the date in the right format
             echo !empty($format) ? date($format, $this->post['timestamp']) : $this->post['date'];
         }
