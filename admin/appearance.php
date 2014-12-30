@@ -49,9 +49,48 @@ foreach($theme_array as $theme_xml)
         $themes .= '<div class="no-screenshot">No image</div>';
     }
 
-    $themes .= '<span>'.$xml->title.'</span>';
+    $themes .= '<div class="theme-info"><p class="theme-headline"><span class="theme-title">'.$xml->title.'</span>';
 
-    $themes .= '</div>';
+    if(property_exists($xml, 'version'))
+    {
+        $themes .= '<span class="theme-version"> '.$xml->version.'</span>';
+    }
+
+    $themes .= '</p>';
+
+    if(property_exists($xml, 'author'))
+    {
+        $themes .= '<p class="theme-author">Author: ';
+
+        if(property_exists($xml, 'authoruri'))
+        {
+            $themes .= '<a href="'.$xml->authoruri.'">'.$xml->author.'</a>';
+        }
+        else
+        {
+            $themes .= $xml->author;
+        }
+
+        $themes .= '</span>';
+    }
+
+    if(property_exists($xml, 'license'))
+    {
+        $themes .= '<p class="theme-license">License: ';
+
+        if(property_exists($xml, 'licenseuri'))
+        {
+            $themes .= '<a href="'.$xml->licenseuri.'">'.$xml->license.'</a>';
+        }
+        else
+        {
+            $themes .= $xml->license;
+        }
+
+        $themes .= '</span>';
+    }
+
+    $themes .= '</div></div>';
 }
 
 $head_title = l('Appearance');

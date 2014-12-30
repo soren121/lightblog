@@ -32,7 +32,7 @@
 #contentcolumn table thead tr .tablesorter-header {
     background-image: url(sort-default.gif);
     background-repeat: no-repeat;
-    background-position: center right;
+    background-position: right center;
     cursor: pointer;
 }
 
@@ -63,6 +63,6 @@
     width: 45px;
 }
 
-p#itemnum-container, input#select-all {
+#itemnum-container, #select-all {
     display: none;
 }

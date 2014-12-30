@@ -42,7 +42,7 @@ html, body
 #login-header h2
 {
     padding-top: 0;
-    font-size: 1.4em !important;
+    font-size: 1.4em;
     line-height: 1em;
 }
 

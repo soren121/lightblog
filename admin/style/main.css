@@ -59,7 +59,7 @@ a:hover {
     padding: 26px 0 29px 29px;
 }
 
-#header #ajaxresponse a.view, #header #ajaxresponse span.result {
+#header #ajaxresponse a.view, #header #ajaxresponse .result {
     padding: 5px 20px;
     display: block;
     border: 1px solid #85c44e;
@@ -73,8 +73,8 @@ a:hover {
     margin: 15px 0;
 }
 
-#header #ajaxresponse span.result.error {
-    color: #E36868 !important;
+#header #ajaxresponse .result.error {
+    color: #E36868;
     border: 1px solid #E36868;
 }
 

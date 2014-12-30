@@ -5,16 +5,16 @@
     padding-top: 0;
 }
 
-#navigation #menu li img.nav-icon {
+#navigation #menu li .nav-icon {
     vertical-align: -6px;
     padding-top: 12px;
 }
 
-#navigation #menu li a.nav-link {
+#navigation #menu li .nav-link {
     zoom: 1;
     *display: inline;
 }
 
-#navigation #menu li img.nav-toggle {
+#navigation #menu li .nav-toggle {
     vertical-align: 6px;
 }

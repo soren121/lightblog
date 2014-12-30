@@ -1,4 +1,4 @@
-#contentcolumn input#title {
+#contentcolumn #title {
     width: 100%;
     height: 35px;
     margin-bottom: 11px;
@@ -13,7 +13,7 @@
     font: 12pt Georgia, Times, serif;
 }
 
-#contentcolumn div.settings p {
+#contentcolumn .settings p {
     margin-bottom: 6px;
 }
 
@@ -33,7 +33,7 @@
 
 .cleditorMain textarea {
     border: 0;
-    nowhitespace: afterproperty;
+    /*nowhitespace: afterproperty;*/
     margin: 0;
     padding: 0;
     overflow-y: scroll;
@@ -98,7 +98,7 @@
 .cleditorList p, .cleditorList h1, .cleditorList h2, .cleditorList h3, .cleditorList h4, .cleditorList h5, .cleditorList h6, .cleditorList font {
     padding: 0;
     margin: 0;
-    background-color: Transparent;
+    background-color: transparent;
 }
 
 .cleditorColor {
@@ -120,7 +120,7 @@
 }
 
 .cleditorPrompt input, .cleditorPrompt textarea {
-    font: 8.5pt Arial,Verdana
+    font: 8.5pt Arial, Verdana
 }
 
 .cleditorMsg {

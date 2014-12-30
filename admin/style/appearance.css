@@ -41,3 +41,23 @@
     clear: both;
     margin-bottom: 10px;
 }
+
+#theme-gallery .theme-info {
+    line-height: 0.9em;
+}
+
+#theme-gallery .theme-info .theme-headline {
+    margin-bottom: 4px;
+}
+
+#theme-gallery .theme-info .theme-title {
+    font-weight: bold;
+}
+
+#theme-gallery .theme-info .theme-version {
+    color: #999;
+}
+
+#theme-gallery .theme-info .theme-author, #theme-gallery .theme-info .theme-license {
+    font-size: 0.7em;
+}
