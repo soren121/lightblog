@@ -1,7 +1,8 @@
 div.setting {
     padding: 10px 15px 10px 10px;
     font-size: 0.9em;
-    width: 80%;
+    max-width: 800px;
+    min-width: 480px;
 }
 
 div.setting.even {

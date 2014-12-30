@@ -106,7 +106,7 @@ else
                             </tbody>
                         </table>
                     </form>
-                    <form action="<?php bloginfo('url') ?>admin/manage.php?<?php echo http_build_query($_GET, '', '&amp;') ?>" method="post">
+                    <form action="<?php bloginfo('url') ?>admin/users.php?<?php echo http_build_query($_GET, '', '&amp;') ?>" method="post">
                         <div class="table-options" style="height:20px;">
                             <input type="hidden" name="csrf_token" value="<?php echo user()->csrf_token() ?>" />
                             <input type="hidden" name="form" value="ErrorLog" />

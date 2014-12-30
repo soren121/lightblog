@@ -127,6 +127,8 @@ function buildMenu($selected)
                 <p><?php echo l('Powered by LightBlog %s', LightyVersion('r')); ?></p>
             </div>
         </div>
+
+        <div class="clear"></div>
     </div>
 
     <script type="text/javascript">
