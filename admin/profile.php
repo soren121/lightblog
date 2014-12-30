@@ -43,18 +43,20 @@ $head_response = formCallback(processForm($_POST));
 if(isset($_POST['ajax']))
 {
     die(json_encode(array(
-                                        'response' => $head_response
-                                    )));
-    }
+        'response' => $head_response
+    )));
+}
 
 if(permissions('EditOtherUsers') || (int)$_GET['id'] == user()->id())
 {
-    $userquery = $dbh->query("
+    $userquery = $dbh->prepare("
         SELECT
             user_role
         FROM users
-        WHERE user_id = ". (int)$_GET['id']);
+        WHERE user_id = ?");
 
+    $userquery->bindParam(1, $_GET['id'], PDO::PARAM_INT);
+    $userquery->execute();
     $user_role = $userquery->fetch(PDO::FETCH_NUM);
 
     $role_options = '';
@@ -75,6 +77,7 @@ if(permissions('EditOtherUsers') || (int)$_GET['id'] == user()->id())
 
 $head_title = l('Edit Profile');
 $head_css = "settings.css";
+
 if((int)$_GET['id'] != user()->id())
 {
     $head_title = l('Edit User');
@@ -101,7 +104,7 @@ include('head.php');
 
                         <div class="setting even">
                             <div class="label">
-                                <label for="vpassword"><?php echo l('Password (again)'); ?></label>
+                                <label for="vpassword"><?php echo l('New Password (again)'); ?></label>
                             </div>
                             <div class="input">
                                 <input type="password" name="vpassword" id="vpassword" />

@@ -113,7 +113,7 @@ else
 function LightyVersion($output = 'e')
 {
     # DON'T TOUCH!
-    $version = '0.9.4';
+    $version = '1.0-dev';
     # Are we echoing or returning?
     if($output == 'e')
     {

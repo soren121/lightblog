@@ -49,7 +49,8 @@ function buildMenu($selected)
             "children" => array(
                 "Manage Users" => "users.php",
                 "Your Profile" => "profile.php?id=".user()->id(),
-                "Add User" => "adduser.php"
+                "Add User" => "adduser.php",
+                "Manage Roles" => "roles.php"
             )
         ),
         "Settings" => array(

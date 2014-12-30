@@ -116,7 +116,7 @@ else
                             <div class="clear"></div>
                         </div>
                     </form>
-                    <p class="table-info"><?php echo l('Showing <span id="row-start">%s</span> - <span id="row-limit">%s</span> out of <span id="row-total">%s</span> errors.', $rowstart, $rowlimit, $rowtotal); ?></p>
+                    <p class="table-info"><?php echo l('Showing <span id="row-start">%s</span> - <span id="row-limit">%s</span> out of <span id="row-total">%s</span> error(s).', $rowstart, $rowlimit, $rowtotal); ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -124,7 +124,7 @@ else
         <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.js"></script>
         <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.Widgets.js"></script>
         <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Metadata.js"></script>
-        <script type="text/javascript">type = 'error'; form = 'ErrorLog'; csrf_token = '<?php echo user()->csrf_token() ?>';</script>
+        <script type="text/javascript">form = 'Users'; csrf_token = '<?php echo user()->csrf_token() ?>';</script>
         <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/Table.js"></script>
 
 <?php include('footer.php') ?>

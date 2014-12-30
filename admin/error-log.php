@@ -123,7 +123,7 @@ else
         <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.js"></script>
         <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.Widgets.js"></script>
         <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Metadata.js"></script>
-        <script type="text/javascript">type = 'error'; form = 'ErrorLog'; csrf_token = '<?php echo user()->csrf_token() ?>';</script>
+        <script type="text/javascript">form = 'ErrorLog'; csrf_token = '<?php echo user()->csrf_token() ?>';</script>
         <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/Table.js"></script>
 
 <?php include('footer.php') ?>

@@ -137,7 +137,7 @@ else
                             <div class="clear"></div>
                         </div>
                     </form>
-                    <p class="table-info">Showing <span id="row-start"><?php echo $rowstart ?></span> - <span id="row-limit"><?php echo $rowlimit ?></span> out of <span id="row-total"><?php echo $rowtotal ?></span> <?php echo $type ?>s.</p>
+                    <p class="table-info"><?php echo l('Showing <span id="row-start">%s</span> - <span id="row-limit">%s</span> out of <span id="row-total">%s</span> %s(s).', $rowstart, $rowlimit, $rowtotal, $type); ?></p>
                 <?php endif; endif; ?>
             </div>
         </div>
