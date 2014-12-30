@@ -21,7 +21,7 @@ class ErrorLog extends TableSelection
 {
     public function processor($data)
     {
-        list($errorlog, $total) = $this->query($data, 'error_log', 'error_id');
+        list($errorlog, $total) = $this->query($data, 'errors', 'error_id');
 
         if(!$errorlog->execute())
         {

@@ -74,7 +74,7 @@ function buildMenu($selected)
             $select = 'selected open';
         }
         echo '<li class="'.$select.'">';
-        echo '<img src="style/new/'.strtolower($topname).'.png" class="nav-icon" alt="" />';
+        echo '<img src="style/'.strtolower($topname).'.png" class="nav-icon" alt="" />';
         if($attr['children'] === false)
         {
             echo '<a href="'.$attr['link'].'" class="nav-link single '.$select.'">'. l($topname).'</a>';
@@ -83,7 +83,7 @@ function buildMenu($selected)
         else
         {
             echo '<a href="'.$attr['link'].'" class="nav-link">'.l($topname).'</a>';
-            echo '<a href="#" class="nav-toggle"><img src="style/new/';
+            echo '<a href="#" class="nav-toggle"><img src="style/';
             if($select != '')
             {
                 echo 'minus.png" alt="-" /></a>';
@@ -141,11 +141,11 @@ function buildMenu($selected)
             {
                 $('.submenu:not(:hidden)').slideUp('fast').prev('.nav-toggle').children('img').attr('src', 'style/new/plus.png');
                 $('ul#menu > li.open').removeClass('open');
-                $(this).children('img').attr('src', 'style/new/minus.png').parent().next('ul').slideDown('fast').parent().addClass('open');
+                $(this).children('img').attr('src', 'style/minus.png').parent().next('ul').slideDown('fast').parent().addClass('open');
             }
             else
             {
-                $(this).children('img').attr('src', 'style/new/plus.png').parent().next('ul').slideUp('fast').parent().removeClass('open');
+                $(this).children('img').attr('src', 'style/plus.png').parent().next('ul').slideUp('fast').parent().removeClass('open');
             }
         });
     //]]>

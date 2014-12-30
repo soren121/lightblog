@@ -171,7 +171,8 @@ function dbsetup()
 
     if($dbh->exec($sql) === false)
     {
-        return 'Failed to write to the database because: '.$dbh->errorInfo()[2];
+        $e = $dbh->errorInfo();
+        return 'Failed to write to the database because: '.$e[2];
     }
 
     unset($dbh);
@@ -506,7 +507,7 @@ if(isset($_POST['bsetup']))
                     </tr>
                     <tr>
                         <td>SQLite (PDO)</td>
-                        <td><?php echo SQLite3::version()['versionString'] ?></td>
+                        <td><?php $sqlite_version = SQLite3::version(); echo $sqlite_version['versionString']; ?></td>
                         <?php if(in_array("sqlite", PDO::getAvailableDrivers())): ?>
                             <td>OK</td>
                         <?php else: ?>

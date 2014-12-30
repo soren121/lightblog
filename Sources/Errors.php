@@ -72,7 +72,7 @@ function errorsHandle($errno, $message, $filename, $line, $errcontext)
     if(array_key_exists('dbh', $GLOBALS))
     {
         $error = $dbh->prepare("
-            INSERT INTO 'error_log'
+            INSERT INTO errors
             ('error_time', 'error_type', 'error_message', 'error_file', 'error_line', 'error_url')
             VALUES(?, ?, ?, ?, ?, ?)");
 

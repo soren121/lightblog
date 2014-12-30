@@ -115,10 +115,10 @@ class Manage extends TableSelection
             else {
                 $return .= '
                 <td class="c">
-                    <img src="style/edit-d.png" alt="" title="You aren\'t allowed to edit this '.$data['type'].'." />
+                    <img class="disabled" src="style/edit.png" alt="" title="You aren\'t allowed to edit this '.$data['type'].'." />
                 </td>
                 <td class="c">
-                    <img src="style/delete-d.png" alt="" title="You aren\'t allowed to delete this '.$data['type'].'." />
+                    <img class="disabled" src="style/delete.png" alt="" title="You aren\'t allowed to delete this '.$data['type'].'." />
                 </td>';
             }
 

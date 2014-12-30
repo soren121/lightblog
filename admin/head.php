@@ -23,8 +23,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title><?php echo $head_title ?> // <?php bloginfo('title') ?> &mdash; LightBlog</title>
-    <link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/new/main.css" />
-    <link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/new/<?php echo $head_css ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/main.css" />
+    <link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/<?php echo $head_css ?>" />
     <!--[if lte IE 7]>
         <link rel="stylesheet" type="text/css" href="style/ie-fixes.css" />
     <![endif]-->

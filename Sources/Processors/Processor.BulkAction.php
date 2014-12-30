@@ -26,7 +26,7 @@ class BulkAction
 
     public function processor($data)
     {
-        if(!in_array($data['type'], array('post', 'page')))
+        if(!in_array($data['type'], array('post', 'page', 'error', 'user')))
         {
             return array("result" => "error", "response" => "Invalid content type.");
         }
@@ -35,23 +35,31 @@ class BulkAction
         {
             if($data['checked'] != '' && !array_key_exists('delete', $data))
             {
+                function sanitize_ids(&$ids, $index)
+                {
+                    $ids = (int)$ids;
+                }
+
+                array_walk($data['checked'], 'sanitize_ids');
+
+                $in = implode(',', $data['checked']);
+
                 switch($data['action'])
                 {
                     case 'delete':
-                        $action = $this->dbh->prepare("DELETE FROM {$data['type']}s WHERE {$data['type']}_id IN (:in)");
+                        $action = $this->dbh->prepare("DELETE FROM {$data['type']}s WHERE {$data['type']}_id IN ({$in})");
                         break;
                     case 'publish':
-                        $action = $this->dbh->prepare("UPDATE {$data['type']}s SET published=".time()." WHERE {$data['type']}_id IN (:in)");
+                        $action = $this->dbh->prepare("UPDATE {$data['type']}s SET published=".time()." WHERE {$data['type']}_id IN ({$in})");
                         break;
                     case 'unpublish':
-                        $action = $this->dbh->prepare("UPDATE {$data['type']}s SET published=0 WHERE {$data['type']}_id IN (:in)");
+                        $action = $this->dbh->prepare("UPDATE {$data['type']}s SET published=0 WHERE {$data['type']}_id IN ({$in})");
                 }
-                $action->bindValue(":in", implode(',', $data['checked']), PDO::PARAM_STR);
             }
             elseif(array_key_exists('delete', $data))
             {
-                $action = $this->dbh->prepare("DELETE FROM {$data['type']}s WHERE {$data['type']}_id = :in");
-                $action->bindValue(":in", $data['delete'], PDO::PARAM_INT);
+                $action = $this->dbh->prepare("DELETE FROM {$data['type']}s WHERE {$data['type']}_id = :id");
+                $action->bindValue(":id", $data['delete'], PDO::PARAM_INT);
             }
 
             if(!$action->execute())
