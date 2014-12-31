@@ -43,8 +43,8 @@ $head_response = formCallback(processForm($_POST));
 if(isset($_POST['ajax']))
 {
     die(json_encode(array(
-                                        'response' => $head_response
-                                    )));
+        'response' => $head_response
+    )));
 }
 
 $timezone_options = '';
@@ -199,6 +199,6 @@ include('head.php');
             </div>
         </div>
 
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/Form.js"></script>
+        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/Form.js"></script>
 
 <?php include('footer.php') ?>

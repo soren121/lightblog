@@ -498,10 +498,10 @@ if(isset($_POST['bsetup']))
                     <tr>
                         <td>PHP</td>
                         <td><?php echo phpversion() ?></td>
-                        <?php if(version_compare(PHP_VERSION, '5.3.0', '>=')): ?>
+                        <?php if(version_compare(PHP_VERSION, '5.3.7', '>=')): ?>
                             <td>OK</td>
                         <?php else: ?>
-                            <td>Too old (5.3+ required)</td>
+                            <td>Too old (5.3.7+ required)</td>
                             <?php $disable = 'disabled="disabled"'; ?>
                         <?php endif; ?>
                     </tr>

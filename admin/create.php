@@ -112,10 +112,10 @@ include('head.php');
             </div>
         </div>
 
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/Form.js"></script>
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.CLEditor.js"></script>
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.CLEditor.XHTML.js"></script>
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.CLEditor.AdvancedTable.js"></script>
+        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/Form.js"></script>
+        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.CLEditor.js"></script>
+        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.CLEditor.XHTML.js"></script>
+        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.CLEditor.AdvancedTable.js"></script>
         <script type="text/javascript">
         //<![CDATA[
             $('#wysiwyg').cleditor({

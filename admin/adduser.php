@@ -43,8 +43,8 @@ $head_response = formCallback(processForm($_POST));
 if(isset($_POST['ajax']))
 {
     die(json_encode(array(
-                                        'response' => $head_response
-                                    )));
+        'response' => $head_response
+    )));
 }
 
 if(permissions('AddUsers'))

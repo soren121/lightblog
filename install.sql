@@ -201,7 +201,7 @@ CREATE TABLE 'users'
 (
     'user_id' INTEGER PRIMARY KEY NOT NULL DEFAULT '0',
     'user_name' VARCHAR(100) NOT NULL,
-    'user_pass' VARCHAR(40) NOT NULL,
+    'user_pass' VARCHAR(255) NOT NULL,
     'user_email' VARCHAR(255) NOT NULL,
     'display_name' VARCHAR(100) NOT NULL,
     'user_role' INTEGER NOT NULL DEFAULT '3',

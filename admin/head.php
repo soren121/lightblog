@@ -28,7 +28,7 @@
     <!--[if lte IE 7]>
         <link rel="stylesheet" type="text/css" href="style/ie-fixes.css" />
     <![endif]-->
-    <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
+    <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.js"></script>
 </head>
 <body>
     <div id="maincontainer">

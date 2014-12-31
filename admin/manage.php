@@ -142,11 +142,11 @@ else
             </div>
         </div>
 
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.js"></script>
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Tablesorter.Widgets.js"></script>
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Metadata.js"></script>
+        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.Tablesorter.js"></script>
+        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.Tablesorter.Widgets.js"></script>
+        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.Metadata.js"></script>
         <script type="text/javascript">type = '<?php echo $type ?>'; form = 'Manage'; csrf_token = '<?php echo user()->csrf_token() ?>';</script>
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.Form.js"></script>
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/Table.js"></script>
+        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.Form.js"></script>
+        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/Table.js"></script>
 
 <?php include('footer.php') ?>
