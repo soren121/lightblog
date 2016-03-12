@@ -124,7 +124,7 @@ function users_load($users)
         $users_data = $dbh->prepare("
             SELECT
                 user_id, user_name, user_pass, user_email, display_name, user_role,
-                user_ip, user_salt, user_activated, user_created
+                user_ip, user_activated, user_created
             FROM users
             WHERE user_id IN( ? )");
 
@@ -145,7 +145,6 @@ function users_load($users)
                     'name' => null,
                 ),
                 'ip' => $row['user_ip'],
-                'salt' => $row['user_salt'],
                 'activated' => !empty($row['user_activated']),
                 'created' => $row['user_created'],
             );

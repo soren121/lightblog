@@ -206,7 +206,6 @@ CREATE TABLE 'users'
     'display_name' VARCHAR(100) NOT NULL,
     'user_role' INTEGER NOT NULL DEFAULT '3',
     'user_ip' VARCHAR(150) NOT NULL,
-    'user_salt' VARCHAR(20) NOT NULL,
     'user_activated' TINYINT(1) NOT NULL DEFAULT '1',
     'user_created' INT(10) NOT NULL DEFAULT '0'
 );

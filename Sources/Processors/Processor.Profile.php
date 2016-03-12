@@ -36,7 +36,7 @@ class Profile
         if(permissions('EditOtherUsers') || (int)$data['uid'] == user()->id())
         {
             // Get current user data from the database
-            $sql_user = @$this->dbh->query("SELECT user_pass,user_email,display_name,user_role,user_salt FROM users WHERE user_id=".(int)$data['uid']);
+            $sql_user = @$this->dbh->query("SELECT user_pass,user_email,display_name,user_role FROM users WHERE user_id=".(int)$data['uid']);
             if($sql_user == false)
             {
                 $response['response'] = array("result" => "error", "response" => "couldn't read from the database.");
@@ -49,13 +49,12 @@ class Profile
                 $email = $row->user_email;
                 $displayname = $row->display_name;
                 $role = $row->user_role;
-                $csalt = $row->user_salt;
             }
 
             $sql_user->closeCursor();
 
             // Check if the current password given in the form matches the actual current password
-            if(sha1($csalt . $data['cpassword']) == $cpassword_db)
+            if(password_verify($data['cpassword'], $cpassword_db))
             {
                 // Make an array for the queries
                 $query = array();
@@ -65,12 +64,10 @@ class Profile
                     // Do both password fields match?
                     if($data['password'] === $data['vpassword'])
                     {
-                        // Make a new salt
-                        $salt = randomString(9);
                         // Make a new password hash
-                        $password = sha1($salt . $data['password']);
+                        $password = password_hash($data['password'], PASSWORD_DEFAULT);
                         // Add it to the query
-                        array_push($query, "SET user_pass='".sqlite_escape_string($password)."'", "SET user_salt='".sqlite_escape_string($salt)."'");
+                        array_push($query, "SET user_pass='".sqlite_escape_string($password)."'");
                     }
                     else
                     {

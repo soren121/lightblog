@@ -112,11 +112,8 @@ class AddUser
             // Is everything okay? May we create the user now?
             if($response['response'] === null)
             {
-                // We need to create a salt.
-                $options['salt'] = randomString(9);
-
-                // Now hash their password with the salt.
-                $options['password'] = sha1($options['salt']. $options['password']);
+                // Now hash their password.
+                $options['password'] = password_hash($options['password'], PASSWORD_DEFAULT);
 
                 // Then their IP address.
                 $options['ip'] = user()->ip();
@@ -130,11 +127,9 @@ class AddUser
                             display_name,
                             user_role,
                             user_ip,
-                            user_salt,
                             user_activated,
                             user_created)
                     VALUES(
-                        ?,
                         ?,
                         ?,
                         ?,

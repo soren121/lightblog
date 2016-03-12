@@ -249,9 +249,8 @@ function bsetup()
         return "Passwords don't match. Please try again.";
     }
 
-    // Generate password salt
-    $salt = substr(md5(uniqid(mt_rand(), true)), 0, 9);
-    $password = sha1($salt. $_POST['bspassword']);
+    // Generate password hash
+    $password = password_hash($_POST['bspassword'], PASSWORD_DEFAULT);
 
     // Open database
     $dbh = new PDO('sqlite:'.DBH);
@@ -267,7 +266,6 @@ function bsetup()
             display_name,
             user_role,
             user_ip,
-            user_salt,
             user_activated,
             user_created
         )
@@ -278,7 +276,6 @@ function bsetup()
             :displayname,
             1,
             :ip_addr,
-            :salt,
             1,
             :time
         )
@@ -289,7 +286,6 @@ function bsetup()
     $admin->bindParam(":email", $_POST['bsemail'], PDO::PARAM_STR);
     $admin->bindParam(":displayname", $_POST['bsdname'], PDO::PARAM_STR);
     $admin->bindParam(":ip_addr", $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
-    $admin->bindParam(":salt", $salt);
     $admin->bindValue(":time", time());
 
     $admin->execute();
@@ -346,7 +342,7 @@ if(isset($_POST['bsetup']))
     </script>
     <style type="text/css">
         body {
-            background: #EDEDED;
+            background: #fff;
             font-family: "Trebuchet MS", "Verdana", sans;
         }
         #wrapper {
@@ -441,12 +437,12 @@ if(isset($_POST['bsetup']))
         button {
             margin: 15px 0 0 25px;
         }
-        div#bsleft {
+        #bsleft {
             float: left;
             width: 200px;
             margin-right: 60px;
         }
-        div#bsright {
+        #bsright {
             float: left;
             width: 200px;
         }

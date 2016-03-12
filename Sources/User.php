@@ -64,7 +64,7 @@ function user_login($options)
     {
         $user_metadata = $dbh->prepare("
             SELECT
-                user_id, user_pass, user_ip, user_salt
+                user_id, user_pass, user_ip
             FROM users
             WHERE LOWER(user_name) = ?
             LIMIT 1
@@ -80,7 +80,7 @@ function user_login($options)
         }
         else
         {
-            list($user_id, $user_pass, $user_ip, $user_salt) = $user_metadata->fetch(PDO::FETCH_NUM);
+            list($user_id, $user_pass, $user_ip) = $user_metadata->fetch(PDO::FETCH_NUM);
         }
     }
 
@@ -93,43 +93,46 @@ function user_login($options)
             $messages[] = l('Please enter a password.');
         }
         // On top of that, it needs to be right!
-        elseif(sha1($user_salt. $options['password']) != $user_pass)
+        elseif(!password_verify($options['password'], $user_pass))
         {
             $messages[] = l('Incorrect user name or password.');
         }
+        // They have successfully proved they are who they say they are
+        // Now update their password if necessary then update their IP, perhaps.
         else
         {
-            // They have successfully proved they are who they say they are
-            // (unless they have a sucky password, of course ;-)).
-            // Now update their salt and then update their IP, perhaps.
-            $new_salt = randomString(9);
-            $new_pass = sha1($new_salt. $options['password']);
-
-            $user_update = $dbh->prepare("
-                UPDATE users
-                SET user_salt = :salt, user_pass = :pass, user_ip = :ip_addr
-                WHERE user_id = :id
-            ");
-
-            $user_update->bindParam(":salt", $new_salt, PDO::PARAM_STR);
-            $user_update->bindParam(":pass", $new_pass, PDO::PARAM_STR);
-            $user_update->bindValue(":ip_addr", user()->ip());
-            $user_update->bindValue(":id", $user_id, PDO::PARAM_STR);
-
-            if(!$user_update->execute())
+            // Destroy old session
+            session_regenerate_id(true);
+            
+            $dbh->beginTransaction();
+            
+            // See if password needs to be rehashed; if so, do that and update the hash in the db
+            if(password_needs_rehash($user_pass, PASSWORD_DEFAULT))
             {
-                $messages[] = l('An unknown error occurred.');
+                $user_pass = password_hash($options['password'], PASSWORD_DEFAULT);
+                $pass_update = $dbh->prepare("UPDATE users SET user_pass = :pass WHERE user_id = :id");
+                
+                $pass_update->bindParam(":pass", $user_pass, PDO::PARAM_STR);
+                $pass_update->bindValue(":id", $user_id, PDO::PARAM_STR);
+                $pass_update->execute();
             }
+            
+            $ip_update = $dbh->prepare("UPDATE users SET user_ip = :ip_addr WHERE user_id = :id");
 
-            // Now, set that cookie!
-            setcookie(LBCOOKIE, implode('|', array($user_id, $new_pass)), (!empty($options['remember_me']) ? time() + 2592000 : 0), '/');
+            $ip_update->bindValue(":ip_addr", user()->ip());
+            $ip_update->bindValue(":id", $user_id, PDO::PARAM_STR);
+            $ip_update->execute();
+            
+            $dbh->commit();
+            
+            // TODO: remember me
 
             // Along with some basic session information.
             $_SESSION['user_id'] = $user_id;
-            $_SESSION['user_pass'] = $new_pass;
+            $_SESSION['user_pass'] = $user_pass;
 
             // Alright, now it is time to take them, somewhere...
-            if(!empty($options['redir_to']) && utf_substr($options['redir_to'], 0, 1) !== '/' && utf_strpos($options['redir_to'], '://') === false)
+            if(!empty($options['redir_to']) && strpos($options['redir_to'], '/') !== 0 && strpos($options['redir_to'], '://') === false)
             {
                 redirect(get_bloginfo('url'). $options['redir_to']);
             }
@@ -288,20 +291,14 @@ class User
         $this->role = 0;
 
         // Maybe they're logged in?
-        if(isset($_COOKIE[LBCOOKIE]) && utf_strpos($_COOKIE[LBCOOKIE], '|') !== false)
+        if(session_status() == PHP_SESSION_ACTIVE)
         {
-            // We need to get their user ID and password.
-            list($user_id, $user_pass) = explode('|', $_COOKIE[LBCOOKIE], 2);
-
-            // Make sure their session data is theirs.
-            if((!empty($_SESSION['user_id']) && $_SESSION['user_id'] != $user_id) || (!empty($_SESSION['user_pass']) && $_SESSION['user_pass'] != $user_pass))
-            {
-                $_SESSION = array();
-            }
-
-            // Make sure that their user ID and password have the possibility of
-            // being valid.
-            if((int)$user_id > 0 && utf_strlen($user_pass) == 40)
+            $user_id = $_SESSION['user_id'];
+            $user_pass = $_SESSION['user_pass'];
+            
+            // Make sure that their user ID is valid
+            // Password hash cannot be intrinsically validated
+            if((int)$user_id > 0)
             {
                 // Now we need to see if they can log in.
                 $user_metadata = $dbh->prepare("
