@@ -1,6 +1,6 @@
 $('#itemnum-container, #select-all').show();
 
-if(window.location.hash == '')
+if(window.location.hash === '')
 {
     window.location.hash = '#page=1';
 }
@@ -20,7 +20,7 @@ $('input#select-all').click(function()
     $("input:checkbox.bf").each(function()
     {
         this.checked = checked;
-    })
+    });
 });
 
 $('#itemnum').change(function()
@@ -76,14 +76,14 @@ function loadrow_js(count, clear, page)
 {
     function callback(r, clear)
     {
-        if(r == null || r.result == 'error')
+        if(r === null || r.result == 'error')
         {
             $('#ajaxresponse').html('<p>AJAX request failed;<br />failed to fetch new row(s).</p>').css("color","#E36868");
             return false;
         }
         if(r.result == 'success')
         {
-            if(clear == true)
+            if(clear === true)
             {
                 $('table tbody').html(r.response);
             }
@@ -168,7 +168,7 @@ loadpage('initial');
 function deleterow_callback(r, single)
 {
     var type = $('span#type').text();
-    if(r == null)
+    if(r === null)
     {
         $('#ajaxresponse').html('<p>AJAX request failed.</p>').css("color","#E36868");
     }
@@ -178,7 +178,7 @@ function deleterow_callback(r, single)
         {
             var action = $('select[name=action]').val();
             $('#ajaxresponse').html('<p>' + ucwords(type) + '(s) deleted.</p>');
-            if(action == 'delete' || single == true)
+            if(action == 'delete' || single === true)
             {
                 var checked = $('.table:checked').size();
                 $('.table:checked').parent('td').parent('tr').remove();
@@ -191,7 +191,7 @@ function deleterow_callback(r, single)
                 }
                 var hash = window.location.hash;
                 var page = Number(hash.substr(6, 1));
-                if($('#searchTable tbody').children().length == 0 && page > 1)
+                if($('#searchTable tbody').children().length === 0 && page > 1)
                 {
                     loadpage('prev');
                     $('#next-link').hide();
