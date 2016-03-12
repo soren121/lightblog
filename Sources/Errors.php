@@ -1,20 +1,23 @@
 <?php
+/*
+    LightBlog, a PHP/SQLite blogging platform
+    Copyright (C) 2008-2016 The LightBlog Team.
+    
+    Sources/Errors.php
 
-/***********************************************
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-    LightBlog 0.9
-    SQLite blogging platform
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-    Sources/Template.php
-
-    ©2008-2014 The LightBlog Team. All
-    rights reserved. Released under the
-    GNU General Public License 3. For
-    all licensing information, please
-    see the LICENSE.txt document
-    included in this distribution.
-
-***********************************************/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 if(!defined('E_USER_DEPRECATED'))
 {
