@@ -136,7 +136,7 @@ function user_login($options)
             $_SESSION['user_pass'] = $user_pass;
 
             // Alright, now it is time to take them, somewhere...
-            if(!empty($options['redir_to']) && strpos($options['redir_to'], '/') !== 0 && strpos($options['redir_to'], '://') === false)
+            if(!empty($options['redir_to']) && utf_strpos($options['redir_to'], '/') !== 0 && utf_strpos($options['redir_to'], '://') === false)
             {
                 redirect(get_bloginfo('url'). $options['redir_to']);
             }
