@@ -131,7 +131,7 @@ function loadrow_js(count, clear, page)
 
 function loadpage(type)
 {
-    $('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Loading" />');
+    $('#ajaxresponse').html('<img src="style/loading.gif" alt="Loading" />');
 
     var hash = window.location.hash;
     var page = Number(hash.substr(6, 1));
@@ -246,7 +246,7 @@ $('#bulk').ajaxForm(
         ajax : 'true'
     },
     beforeSubmit: function() {
-        $('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Saving" />');
+        $('#ajaxresponse').html('<img src="style/loading.gif" alt="Saving" />');
         return true;
     },
     error: function() {

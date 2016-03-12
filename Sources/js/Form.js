@@ -26,7 +26,7 @@ $('form').ajaxForm(
     },
     timeout: 2000,
     beforeSubmit: function() {
-        $('#ajaxresponse').html('<img src="style/new/loading.gif" alt="Saving" />');
+        $('#ajaxresponse').html('<img src="style/loading.gif" alt="Saving" />');
         return true;
     },
     error: function() {

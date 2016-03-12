@@ -179,7 +179,7 @@ include('head.php');
 
             $(function() {
                 $('form').submit(function() {
-                    $('#ajaxresponse').html('<img src="style/new/loading.gif" alt="<?php echo l('Saving'); ?>" />');
+                    $('#ajaxresponse').html('<img src="style/loading.gif" alt="<?php echo l('Saving'); ?>" />');
                     var inputs = [];
                     $(':input', this).each(function() {
                         if($(this).is(':checkbox, :radio') && $(this).is(':not(:checked)')) {

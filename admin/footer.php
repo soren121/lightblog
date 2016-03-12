@@ -142,7 +142,7 @@ function buildMenu($selected)
         {
             if(!$(this).closest('li').is('.open'))
             {
-                $('.submenu:not(:hidden)').slideUp('fast').prev('.nav-toggle').children('img').attr('src', 'style/new/plus.png');
+                $('.submenu:not(:hidden)').slideUp('fast').prev('.nav-toggle').children('img').attr('src', 'style/plus.png');
                 $('ul#menu > li.open').removeClass('open');
                 $(this).children('img').attr('src', 'style/minus.png').parent().next('ul').slideDown('fast').parent().addClass('open');
             }
