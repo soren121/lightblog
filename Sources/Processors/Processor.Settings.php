@@ -15,15 +15,8 @@
 
 *********************************************/
 
-class Settings
+class Settings extends Processor
 {
-    private $dbh;
-
-    public function __construct()
-    {
-        $this->dbh = $GLOBALS['dbh'];
-    }
-
     public function processor($data)
     {
         // We will collect the response here.

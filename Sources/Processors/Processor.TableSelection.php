@@ -15,15 +15,8 @@
 
 *********************************************/
 
-class TableSelection
+class TableSelection extends Processor
 {
-    protected $dbh;
-
-    public function __construct()
-    {
-        $this->dbh = $GLOBALS['dbh'];
-    }
-
     public function query($data, $table, $id)
     {
         $where = array();

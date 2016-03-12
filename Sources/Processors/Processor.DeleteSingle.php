@@ -15,15 +15,8 @@
 
 *********************************************/
 
-class DeleteSingle
+class DeleteSingle extends Processor
 {
-    private $dbh;
-
-    public function __construct()
-    {
-        $this->dbh = $GLOBALS['dbh'];
-    }
-
     public function processor($data)
     {
         if(!in_array($data['type'], array('post', 'page', 'user')))

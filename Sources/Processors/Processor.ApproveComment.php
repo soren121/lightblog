@@ -15,15 +15,8 @@
 
 *********************************************/
 
-class ApproveComment
+class ApproveComment extends Processor
 {
-    private $dbh;
-
-    public function __construct()
-    {
-        $this->dbh = $GLOBALS['dbh'];
-    }
-
     public function processor($data)
     {
         if(permissions('EditComments'))

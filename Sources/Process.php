@@ -28,6 +28,7 @@ function processForm($data)
         }
         if(file_exists(ABSPATH .'/Sources/Processors/Processor.'.$data['form'].'.php'))
         {
+            require(ABSPATH .'/Sources/Processors/Processor.php');
             require(ABSPATH .'/Sources/Processors/Processor.'.$data['form'].'.php');
             $class = new $data['form']();
             return $class->processor($data);

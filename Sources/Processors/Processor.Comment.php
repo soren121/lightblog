@@ -15,7 +15,7 @@
 
 *********************************************/
 
-class Comment
+class Comment extends Processor
 {
     private $dbh;
 

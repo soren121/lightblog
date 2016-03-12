@@ -15,15 +15,8 @@
 
 *********************************************/
 
-class Profile
+class Profile extends Processor
 {
-    private $dbh;
-
-    public function __construct()
-    {
-        $this->dbh = $GLOBALS['dbh'];
-    }
-
     public function processor($data)
     {
         // Later on, we will send this as JSON to the browser
