@@ -19,26 +19,6 @@
 define('INLB', true);
 define('INDEVMODE', true);
 
-// Shutdown Magic Quotes automatically
-// Highly inefficient, but there isn't much we can do about it
-if((function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() == 1) || @ini_get('magic_quotes_sybase'))
-{
-    function stripslashes_gpc(&$value)
-    {
-        $value = stripslashes($value);
-    }
-
-    array_walk_recursive($_GET, 'stripslashes_gpc');
-    array_walk_recursive($_POST, 'stripslashes_gpc');
-    array_walk_recursive($_COOKIE, 'stripslashes_gpc');
-    array_walk_recursive($_REQUEST, 'stripslashes_gpc');
-}
-
-if(function_exists('get_magic_quotes_runtime') && @get_magic_quotes_runtime())
-{
-    @set_magic_quotes_runtime(false);
-}
-
 // Gets directory URL
 function baseurl()
 {

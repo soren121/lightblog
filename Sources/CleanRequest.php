@@ -20,40 +20,6 @@
 */
 
 /*
-    Function: remove_magic
-
-    Removes the effects of magic quotes from the specified variable.
-
-    Parameters:
-        array $array - The array to remove magic quotes effects from.
-        int $depth - The maximum depth to go within the array.
-
-    Returns:
-        array - Returns the cleaned array.
-*/
-function remove_magic($array, $depth = 5)
-{
-    if(count($array) == 0 || !is_array($array))
-    {
-        return array();
-    }
-    elseif($depth <= 0)
-    {
-        return $array;
-    }
-
-    foreach($array as $key => $value)
-    {
-        // The keys can also be escaped, so we will delete it.
-        unset($array[$key]);
-
-        $array[stripslashes($key)] = is_array($value) ? remove_magic($value, $depth - 1) : stripslashes($value);
-    }
-
-    return $array;
-}
-
-/*
     Function: redirect
 
     Redirects the browser to the specified URL.
@@ -136,8 +102,7 @@ function redirect($location = null, $status = 307)
 /*
     Function: clean_request
 
-    Removes any affects magic quotes has on $_COOKIE, $_GET, $_POST or
-    $_REQUEST. It also removes the $_COOKIE variable from $_REQUEST.
+    Removes the $_COOKIE variable from $_REQUEST.
 
     Parameters:
         none
@@ -152,22 +117,8 @@ function clean_request()
 {
     global $_COOKIE, $_GET, $_POST, $_REQUEST;
 
-    // Remove magic quotes, if it is on...
-    if((function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() == 1) || @ini_get('magic_quotes_sybase'))
-    {
-        $_COOKIE = remove_magic($_COOKIE);
-        $_GET = remove_magic($_GET);
-        $_POST = remove_magic($_POST);
-    }
-
     // $_REQUEST should only contain $_POST and $_GET, no cookies!
     $_REQUEST = array_merge($_POST, $_GET);
-
-    // While we're at it, let's disable magic quotes runtime, if enabled.
-    if(function_exists('get_magic_quotes_runtime') && @get_magic_quotes_runtime())
-    {
-        @set_magic_quotes_runtime(false);
-    }
 }
 
 // Clean up our request, then :P

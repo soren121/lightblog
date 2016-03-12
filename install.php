@@ -51,8 +51,6 @@ if(!empty($_GET['delete']))
 // Get some extra functions
 require(dirname(__FILE__). '/Sources/FunctionReplacements.php');
 require(dirname(__FILE__). '/Sources/StringFunctions.php');
-
-// Just including CleanRequest.php will disable magic quotes.
 require(dirname(__FILE__). '/Sources/CleanRequest.php');
 
 // Operates the side menu selectors
