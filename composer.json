@@ -1,0 +1,8 @@
+{
+    "require": {
+        "suin/php-rss-writer": "^1.3",
+        "twig/twig": "^1.24",
+        "ircmaxell/password-compat": "^1.0",
+        "htmlawed/htmlawed": "^1.1"
+    }
+}

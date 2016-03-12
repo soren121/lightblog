@@ -1,2 +1,4 @@
 *.db
 config.php
+vendor/
+bower_components/
