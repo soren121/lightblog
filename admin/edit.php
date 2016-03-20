@@ -157,17 +157,5 @@ while($past = $result->fetchObject())
         </div>
 
         <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/Form.js"></script>
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.CLEditor.js"></script>
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.CLEditor.XHTML.js"></script>
-        <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.CLEditor.AdvancedTable.js"></script>
-        <script type="text/javascript">
-        //<![CDATA[
-            $('#wysiwyg').cleditor({
-                width: '100%',
-                height: '320px',
-                bodyStyle: 'margin:10px; font:11pt Georgia,Times,serif; cursor:text'
-            });
-        //]]>
-        </script>
 
 <?php include('footer.php') ?>
