@@ -1,4 +1,4 @@
-# lightblog
+![Lightblog](https://soren121.github.io/lightblog/images/logotype-min.svg)
 
 Lightblog is a lightweight blogging platform designed especially with rich media 
 in mind (think Tumblr.) It's written in PHP and uses SQLite 3, making it a great 

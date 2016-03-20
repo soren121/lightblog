@@ -54,8 +54,8 @@ if(isset($_GET['logout']))
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title><?php echo l('Log In'); ?> // <?php bloginfo('title') ?> &mdash; LightBlog</title>
-    <link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/main.css" />
-    <link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/login.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/login.css" />
     <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/jQuery.js"></script>
 </head>
 
@@ -78,8 +78,13 @@ if(isset($_GET['logout']))
 
     <div id="login-container">
         <div id="login-header">
-            <h2 id="blogtitle"><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a></h2>
-            <h2 id="section">// <?php echo l('Log In'); ?></h2>
+            <img id="logo" src="assets/images/logotype-min.svg" />
+            <div>
+                <h2 id="blogtitle">
+                    <a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>
+                </h2>
+                <h2 id="section">// <?php echo l('Log In'); ?></h2>
+            </div>
         </div>
         <form action="" method="post">
             <div>

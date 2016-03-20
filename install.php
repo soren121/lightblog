@@ -504,10 +504,11 @@ if(isset($_POST['bsetup']))
                     </tr>
                     <tr>
                         <td>SQLite (PDO)</td>
-                        <td><?php $sqlite_version = SQLite3::version(); echo $sqlite_version['versionString']; ?></td>
-                        <?php if(in_array("sqlite", PDO::getAvailableDrivers())): ?>
+                        <?php if(extension_loaded('pdo_sqlite')): ?>
+                            <td><?php echo (new PDO('sqlite::memory:'))->getAttribute(PDO::ATTR_CLIENT_VERSION); ?></td>
                             <td>OK</td>
                         <?php else: ?>
+                            <td>&nbsp;</td>
                             <td>Driver not available</td>
                             <?php $disable = 'disabled="disabled"'; ?>
                         <?php endif; ?>
@@ -519,15 +520,6 @@ if(isset($_POST['bsetup']))
                             <td>OK</td>
                         <?php else: ?>
                             <td>&nbsp;</td>
-                            <td>Disabled</td>
-                        <?php endif; ?>
-                    </tr>
-                    <tr>
-                        <td>fsockopen</td>
-                        <td>n/a</td>
-                        <?php if(is_resource(@fsockopen("127.0.0.1"))): ?>
-                            <td>OK</td>
-                        <?php else: ?>
                             <td>Disabled</td>
                         <?php endif; ?>
                     </tr>
