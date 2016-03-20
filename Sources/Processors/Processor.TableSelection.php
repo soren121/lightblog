@@ -19,7 +19,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-class TableSelection extends Processor
+abstract class TableSelection extends Processor
 {
     public function query($data, $table, $id)
     {

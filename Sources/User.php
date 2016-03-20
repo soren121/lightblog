@@ -297,13 +297,13 @@ class User
         // Maybe they're logged in?
         if(session_status() == PHP_SESSION_ACTIVE)
         {
-            $user_id = $_SESSION['user_id'];
-            $user_pass = $_SESSION['user_pass'];
-            
             // Make sure that their user ID is valid
             // Password hash cannot be intrinsically validated
-            if((int)$user_id > 0)
+            if(isset($_SESSION['user_id']) && (int)$_SESSION['user_id'] > 0)
             {
+                $user_id = $_SESSION['user_id'];
+                $user_pass = $_SESSION['user_pass'];
+                
                 // Now we need to see if they can log in.
                 $user_metadata = $dbh->prepare("
                     SELECT
