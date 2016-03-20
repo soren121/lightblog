@@ -27,17 +27,17 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title><?php echo $head_title ?> // <?php bloginfo('title') ?> &mdash; LightBlog</title>
-    <link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/main.css" />
-    <link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/style/<?php echo $head_css ?>" />
-    <!--[if lte IE 7]>
-        <link rel="stylesheet" type="text/css" href="style/ie-fixes.css" />
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/assets/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="<?php bloginfo('url') ?>admin/assets/css/<?php echo $head_css ?>" />
     <script type="text/javascript" src="<?php bloginfo('url') ?>Sources/js/jQuery.js"></script>
 </head>
 <body>
     <div id="maincontainer">
         <div id="header">
-            <h2 id="blogtitle"><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a></h2>
-            <h2 id="section"><?php echo $head_title ?></h2>
-            <div id="ajaxresponse"><?php echo (!isset($head_response) ? '' : $head_response) ?></div>
+            <img id="logo" src="assets/images/logotype-min.svg" />
+            <div>  
+                <h2 id="blogtitle"><a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a></h2>
+                <h2 id="section"><?php echo $head_title ?></h2>
+                <div id="ajaxresponse"><?php echo (!isset($head_response) ? '' : $head_response) ?></div>
+            </div>
         </div>
