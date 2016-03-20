@@ -39,20 +39,16 @@ if(isset($_GET['logout']))
     // Destroy the session
     session_destroy();
 
-    // Unset their cookie, too.
-    setcookie(LBCOOKIE, '', time() - 2592000, '/');
-
     // Send them to the homepage
     redirect(get_bloginfo('url'));
 }
 
 ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title><?php echo l('Log In'); ?> // <?php bloginfo('title') ?> &mdash; LightBlog</title>
     <link rel="stylesheet" type="text/css" href="assets/css/main.css" />
     <link rel="stylesheet" type="text/css" href="assets/css/login.css" />
@@ -79,12 +75,9 @@ if(isset($_GET['logout']))
     <div id="login-container">
         <div id="login-header">
             <img id="logo" src="assets/images/logotype-min.svg" />
-            <div>
-                <h2 id="blogtitle">
-                    <a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>
-                </h2>
-                <h2 id="section">// <?php echo l('Log In'); ?></h2>
-            </div>
+            <h2 id="blogtitle">
+                <a href="<?php bloginfo('url') ?>"><?php bloginfo('title') ?></a>
+            </h2>
         </div>
         <form action="" method="post">
             <div>

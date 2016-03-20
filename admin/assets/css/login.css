@@ -22,31 +22,19 @@ html, body
 #login-container
 {
     width: 500px;
-    height: 350px;
+    height: 375px;
     position: absolute;
     top: 50%;
     left: 50%;
-    margin-top: -210px; /* half height */
+    margin-top: -235px; /* half height */
     margin-left: -250px; /* half width */
 }
 
 #login-header
 {
     padding-top: 5px;
-    height: 85px;
-}
-
-#logo
-{
-    width: 250px;
-    display: inline-block;
-}
-
-#login-header > div
-{
-    display: inline-block;
-    vertical-align: 100%;
-    margin-left: 20px;
+    padding-bottom: 15px;
+    text-align: center;
 }
 
 #login-header h2
