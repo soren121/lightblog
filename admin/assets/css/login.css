@@ -67,3 +67,8 @@ form input[type=text], form input[type=password]
     line-height: 30px;
     border: 1px solid #bbb;
 }
+
+#extra-actions
+{
+    padding-top: 15px;
+}

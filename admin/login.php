@@ -96,7 +96,7 @@ if(isset($_GET['logout']))
                     <label for="rememberme"><?php echo l('Remember Me'); ?></label>
                 </span>
                 <input name="proclogin" type="submit" value="<?php echo l('Log In'); ?>" class="submit" />
-                <div class="clear" style="padding-top:15px;">
+                <div class="clear" id="extra-actions">
                     <a class="secondary-button" href="<?php bloginfo('url') ?>" style="float: left;">&laquo; <?php echo l('Back'); ?></a>
                     <?php //if(get_bloginfo('allow_registration')): ?>
                         <!--<a class="secondary-button" href="#" style="float: right;padding:3px 34px;">Register</a>-->
@@ -108,7 +108,7 @@ if(isset($_GET['logout']))
     </div>
 
     <script type="text/javascript">
-        $('#username').focus();
+        document.getElementById("username").focus();
     </script>
 </body>
 </html>
