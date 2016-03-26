@@ -23,7 +23,7 @@
 require('../Sources/Core.php');
 require(ABSPATH .'/Sources/Admin.php');
 
-if(!empty($_REQUEST['backup']) && permissions('EditSettings'))
+if(!empty($_POST['backup']) && permissions('EditSettings'))
 {
     if(ob_get_length() > 0)
     {

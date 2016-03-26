@@ -29,7 +29,7 @@ if(!empty($_POST['proclogin']))
         'username' => isset($_POST['username']) ? $_POST['username'] : '',
         'password' => isset($_POST['password']) ? $_POST['password'] : '',
         'remember_me' => !empty($_POST['rememberme']),
-        'redir_to' => !empty($_REQUEST['return_to']) ? $_REQUEST['return_to'] : '',
+        'redir_to' => !empty($_GET['return_to']) ? $_GET['return_to'] : '',
     ));
 }
 

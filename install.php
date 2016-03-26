@@ -25,7 +25,7 @@ define('INDEVMODE', true);
 // An array of files which the installer requires to operate.
 $required_files = array(
     'Sources/FunctionReplacements.php', 'Sources/StringFunctions.php',
-    'config-example.php', 'Sources/CleanRequest.php', 'install.sql',
+    'config-example.php', 'install.sql',
 );
 
 foreach($required_files as $filename)
@@ -39,7 +39,6 @@ foreach($required_files as $filename)
 // Get some extra functions
 require(dirname(__FILE__). '/Sources/FunctionReplacements.php');
 require(dirname(__FILE__). '/Sources/StringFunctions.php');
-require(dirname(__FILE__). '/Sources/CleanRequest.php');
 
 // Adds trailing slash if needed
 function endslash($path)
