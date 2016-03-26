@@ -311,11 +311,11 @@ else
 $requirements = [
     'php' => [
         'check' => version_compare(phpversion(), "5.4", ">="),
-        'statuses' => ['OK', 'Too old']
+        'statuses' => ['Yes', 'Too old']
     ],
     'pdo_sqlite' => [
         'check' => extension_loaded('pdo_sqlite'),
-        'statuses' => ['Enabled', 'Not installed']
+        'statuses' => ['Enabled', 'Not enabled']
     ],
     'config' => [
         'check' => file_exists('./config.php') || is_writable('.'),
@@ -393,7 +393,7 @@ foreach($requirements as &$req)
             
             <section id="database-setup">
                 <input class="accordion-input" id="accordion-database-setup" name="accordion" type="radio" <?php echo $accordion_options[1] ?> />
-                <label for="accordion-database-setup">Step 2: Database Setup</label>
+                <label for="accordion-database-setup">Step 2: Database Configuration</label>
                 <div class="accordion-content">
                     <p>
                         The installer will now try to setup your SQLite database. This
@@ -432,7 +432,7 @@ foreach($requirements as &$req)
             
             <section id="user-setup">
                 <input class="accordion-input" id="accordion-user-setup" name="accordion" type="radio" <?php echo $accordion_options[2] ?> />
-                <label for="accordion-user-setup">Step 3: Configure Blog & Admin User</label>
+                <label for="accordion-user-setup">Step 3: Configure Blog &amp; Admin User</label>
                 <div class="accordion-content">
                     <form method="post" id="form-user-setup">                   
                         <fieldset class="float">
@@ -440,27 +440,27 @@ foreach($requirements as &$req)
                             
                             <p>
                                 <label>Username</label>
-                                <input type="text" id="username" name="username" tabindex="1" required />
+                                <input type="text" id="username" name="username" required />
                             </p>
                             
                             <p>
                                 <label for="email">Email</label>
-                                <input type="email" id="email" name="email" tabindex="2" required />
+                                <input type="email" id="email" name="email" required />
                             </p>
                             
                             <p>
                                 <label for="password">Password</label>
-                                <input type="password" id="password" name="password" tabindex="3" required />
+                                <input type="password" id="password" name="password" required />
                             </p>
                             
                             <p>
                                 <label for="password-repeat">Repeat Password</label>
-                                <input type="password" id="password-repeat" name="password-repeat" tabindex="4" required />
+                                <input type="password" id="password-repeat" name="password-repeat" required />
                             </p>
                             
                             <p>
                                 <label for="display-name">Display Name</label>
-                                <input type="text" id="display-name" name="display-name"  tabindex="5" required />
+                                <input type="text" id="display-name" name="display-name" required />
                             </p>
                         </fieldset>
                         
@@ -469,17 +469,17 @@ foreach($requirements as &$req)
                             
                             <p>
                                 <label for="blog-title">Blog Title</label>
-                                <input type="text" id="blog-title" name="blog-title" tabindex="6" required />
+                                <input type="text" id="blog-title" name="blog-title" required />
                             </p>
                             
                             <p>
                                 <label for="blog-url">Blog URL</label>
-                                <input type="text" id="blog-url" name="blog-url" tabindex="7" value="<?php echo baseurl() ?>" required />
+                                <input type="text" id="blog-url" name="blog-url" value="<?php echo baseurl() ?>" required />
                             </p>
                         </fieldset>
                         
                         <fieldset class="float" style="clear: both">
-                            <input class="submit" name="user-ok" type="submit" tabindex="8" value="Continue" />
+                            <input class="submit" name="user-ok" type="submit" value="Continue" />
                         </fieldset>
                     </form>
                 </div>
@@ -487,7 +487,7 @@ foreach($requirements as &$req)
             
             <section id="completion">
                 <input class="accordion-input" id="accordion-completion" name="accordion" type="radio" <?php echo $accordion_options[3] ?> />
-                <label for="accordion-completion">Step 4: Setup Complete</label>
+                <label for="accordion-completion">Step 4: Install Complete</label>
                 <div class="accordion-content">
                     <h2>You're done!</h2>
                     <p>Click the button below to see your new blog!</p>
@@ -521,6 +521,7 @@ foreach($requirements as &$req)
         {
             var submit = e.target.querySelector("input[type=submit]");
             submit.value = "Please wait...";
+            // Wait to disable the button so that it still gets submitted
             setTimeout(function(){ submit.disabled = true }, 100);
         }
     
