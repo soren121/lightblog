@@ -115,7 +115,7 @@ function redirect($location = null, $status = 307)
 */
 function clean_request()
 {
-    global $_COOKIE, $_GET, $_POST, $_REQUEST;
+    global $_GET, $_POST, $_REQUEST;
 
     // $_REQUEST should only contain $_POST and $_GET, no cookies!
     $_REQUEST = array_merge($_POST, $_GET);
