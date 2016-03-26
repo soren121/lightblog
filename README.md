@@ -9,8 +9,7 @@ Lightblog is not currently recommended for production use.
 ## Runtime requirements
 
  * PHP 5.4+ (5.6+ is recommended)
-   * pdo_sqlite enabled
-   * curl enabled
+ * PHP extension `pdo_sqlite`
 
 ## License
 
