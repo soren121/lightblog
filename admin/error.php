@@ -30,7 +30,7 @@ if(isset($_GET['id']))
                     error_id AS id, error_time AS time, error_type AS type,
                     error_message AS message, error_file AS filename, error_line AS line,
                     error_url AS url
-                FROM error_log
+                FROM errors
                 WHERE error_id = '. ((int)$_GET['id']). '
                 LIMIT 1');
 

@@ -41,7 +41,7 @@ CREATE TABLE 'settings'
 
 CREATE UNIQUE INDEX 'settings_variable_index' ON 'settings' ('variable');
 
-INSERT INTO 'settings' VALUES('theme','default');
+INSERT INTO 'settings' VALUES('theme','classic');
 INSERT INTO 'settings' VALUES('comment_moderation', 'none');
 INSERT INTO 'settings' VALUES('timezone', 'UTC');
 INSERT INTO 'settings' VALUES('date_format', 'm/j/Y');
