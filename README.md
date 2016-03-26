@@ -14,5 +14,13 @@ Lightblog is not currently recommended for production use.
 
 ## License
 
-Lightblog is licensed under the GNU General Public License, either version 3 or 
-(at your option) any later version.
+Lightblog is licensed under the 
+[GNU General Public License](https://www.gnu.org/licenses/#GPL), 
+either version 3 or (at your option) any later version. See `LICENSE.txt` for 
+more information.
+
+Some components (where specified) are derived from the 
+[SnowCMS project](https://code.google.com/archive/p/snowcms/). For their use 
+in Lightblog, these components were generously dual-licensed by the author, 
+Ian Aldrighetti, under both the GNU GPLv3+ and SnowCMS's primary license, the 
+[Microsoft Reciprocal License](https://opensource.org/licenses/MS-RL).
